@@ -1,6 +1,23 @@
 pragma solidity ^0.4.11;
-contract Citadelv01 {
+contract AbstractWallet {
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
+}
+
+
+contract managed {
     address public citadel_comptroller;
+    modifier onlyComptroller {
+        require(msg.sender == citadel_comptroller);
+        _;
+    }
+}
+
+contract Citadelv01 is managed {
+    address public wallet_address;
+    
+    function Citadelv01() {
+        citadel_comptroller = msg.sender;
+    }
     
     struct Authorg {
        Submission selfBioSubmission;
@@ -22,7 +39,17 @@ contract Citadelv01 {
     
     mapping(address => Authorg) internalAuthorgs;
     
+    function spend(uint256 value) private {
+        AbstractWallet(wallet_address).transferFrom(msg.sender, wallet_address, value);
+    }
+    
+    function setWalletAddress(address newWalletAddress) onlyComptroller {
+        wallet_address = newWalletAddress;
+    }
+    
+    
     function submitBioRevision(bytes32 citadelManifestHash) {
+        spend(50);
         var newResponseArray = new bytes32[](0);
         internalAuthorgs[msg.sender].selfBioSubmission.submissionRevisionHashes.push(citadelManifestHash);
         var revision = Revision({
@@ -51,6 +78,7 @@ contract Citadelv01 {
     }
     
     function submitRevision(bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash) {
+        spend(50);
         submitRevision(msg.sender, subCitadelManifestHash, revCitadelManifestHash);
     }
     
@@ -70,6 +98,7 @@ contract Citadelv01 {
     
     function respondToBio(address originalAuthorgAddress, bytes32 originalSubmissionRevisionHash, bytes32 responseSubmissionHash, bytes32 responseRevisionHash) {
         if(isAuthorgOfBio(originalAuthorgAddress, originalSubmissionRevisionHash)) {
+            spend(5);
             submitRevision(msg.sender, responseSubmissionHash, responseRevisionHash);
             internalAuthorgs[originalAuthorgAddress].selfBioSubmission.submissionRevisionMap[originalSubmissionRevisionHash].responseManifestHashes.push(responseSubmissionHash);
         }
@@ -77,6 +106,7 @@ contract Citadelv01 {
     
     function respondToSubmission(address originalAuthorgAddress, bytes32 originalSubmissionHash, bytes32 originalSubmissionRevisionHash, bytes32 responseSubmissionHash, bytes32 responseRevisionHash) {
         if(isAuthorgOfSubmissionRevision(originalAuthorgAddress, originalSubmissionHash, originalSubmissionRevisionHash)) {
+            spend(5);
             submitRevision(msg.sender, responseSubmissionHash, responseRevisionHash);
             var authorg = internalAuthorgs[originalAuthorgAddress];
             var submission = authorg.submissions[originalSubmissionHash];
