@@ -15,12 +15,13 @@ contract managed {
 contract Citadelv01 is managed {
     address public wallet_address;
     
-    function Citadelv01() {
+    function Citadelv01(address wallet) {
         citadel_comptroller = msg.sender;
+        wallet_address = wallet;
     }
     
     struct Authorg {
-       Submission selfBioSubmission;
+        Submission selfBioSubmission;
         
         mapping(bytes32 => Submission) submissions;
         bytes32[] allAuthorgSubmissionHashes;
@@ -46,7 +47,6 @@ contract Citadelv01 is managed {
     function setWalletAddress(address newWalletAddress) onlyComptroller {
         wallet_address = newWalletAddress;
     }
-    
     
     function submitBioRevision(bytes32 citadelManifestHash) {
         spend(50);
