@@ -73,6 +73,10 @@ concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
 
+cross-os@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/cross-os/-/cross-os-1.1.2.tgz#366784d0e0ccf36f36feb62df36eaed853f785c8"
+
 cross-spawn@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-4.0.2.tgz#7b9247621c23adfdd3856004a823cbe397424d41"

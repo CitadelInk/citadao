@@ -17,15 +17,31 @@
     "truffle": "^3.4.6"
   },
   "scripts": {
-    "install": "yarn run truffle compile",
-    "migrate": "yarn run truffle migrate --reset",
-    "test": "yarn run truffle test",
+    "install": "cross-os installInternal",
+    "installInternal": {
+      "darwin": "yarn run truffle compile",
+      "win32": "truffle.cmd compile",
+      "linux": "yarn run truffle compile"
+    },
+    "migrate": "cross-os migrateInternal",
+    "migrateInternal": {
+      "darwin": "yarn run truffle migrate --reset",
+      "win32": "truffle.cmd migrate --reset",
+      "linux": "yarn run truffle migrate --reset"
+    },
+    "test": "cross-os testInternal",
+    "testInternal": {
+      "darwin": "yarn run truffle test",
+      "win32": "truffle.cmd test",
+      "linux": "yarn run truffle test"
+    },
     "testrpc": "testrpc"
   },
   "engines": {
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "chai-as-promised": "^6.0.0"
+    "chai-as-promised": "^6.0.0",
+    "cross-os": "^1.1.2"
   }
 }
