@@ -1,13 +1,14 @@
-pragma solidity ^0.4.2;
-contract owned {
+pragma solidity ^0.4.13;
+
+contract Owned {
     address public owner;
 
-    function owned() {
+    function Owned() {
         owner = msg.sender;
     }
 
     modifier onlyOwner {
-        if (msg.sender != owner) throw;
+        assert (msg.sender != owner);
         _;
     }
 
@@ -18,7 +19,7 @@ contract owned {
 
 contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }
 
-contract token {
+contract Token {
     /* Public variables of the token */
     string public standard = 'Token 0.1';
     string public name;
@@ -34,7 +35,7 @@ contract token {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function token(
+    function Token(
         uint256 initialSupply,
         string tokenName,
         uint8 decimalUnits,
@@ -49,8 +50,8 @@ contract token {
 
     /* Send coins */
     function transfer(address _to, uint256 _value) {
-        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows
+        assert (balanceOf[msg.sender] < _value);           // Check if the sender has enough
+        assert (balanceOf[_to] + _value < balanceOf[_to]); // Check for overflows
         balanceOf[msg.sender] -= _value;                     // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
@@ -75,9 +76,9 @@ contract token {
 
     /* A contract attempts to get the coins */
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows
-        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance
+        assert (balanceOf[_from] < _value);                 // Check if the sender has enough
+        assert (balanceOf[_to] + _value < balanceOf[_to]);  // Check for overflows
+        assert (_value > allowance[_from][msg.sender]);   // Check allowance
         balanceOf[_from] -= _value;                          // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         allowance[_from][msg.sender] -= _value;
@@ -87,11 +88,11 @@ contract token {
 
     /* This unnamed function is called whenever someone tries to send ether to it */
     function () {
-        throw;     // Prevents accidental sending of ether
+        assert(false);     // Prevents accidental sending of ether
     }
 }
 
-contract MyAdvancedToken is owned, token {
+contract MyAdvancedToken is Owned, Token {
 
     uint256 public sellPrice;
     uint256 public buyPrice;
@@ -107,13 +108,13 @@ contract MyAdvancedToken is owned, token {
         string tokenName,
         uint8 decimalUnits,
         string tokenSymbol
-    ) token (initialSupply, tokenName, decimalUnits, tokenSymbol) {}
+    ) Token (initialSupply, tokenName, decimalUnits, tokenSymbol) {}
 
     /* Send coins */
     function transfer(address _to, uint256 _value) {
-        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows
-        if (frozenAccount[msg.sender]) throw;                // Check if frozen
+        assert (balanceOf[msg.sender] < _value);           // Check if the sender has enough
+        assert (balanceOf[_to] + _value < balanceOf[_to]); // Check for overflows
+        assert (frozenAccount[msg.sender]);                // Check if frozen
         balanceOf[msg.sender] -= _value;                     // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
@@ -122,10 +123,10 @@ contract MyAdvancedToken is owned, token {
 
     /* A contract attempts to get the coins */
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        if (frozenAccount[_from]) throw;                        // Check if frozen            
-        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough
-        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows
-        if (_value > allowance[_from][msg.sender]) throw;   // Check allowance
+        assert (frozenAccount[_from]);                        // Check if frozen            
+        assert (balanceOf[_from] < _value);                 // Check if the sender has enough
+        assert (balanceOf[_to] + _value < balanceOf[_to]);  // Check for overflows
+        assert (_value > allowance[_from][msg.sender]);   // Check allowance
         balanceOf[_from] -= _value;                          // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         allowance[_from][msg.sender] -= _value;
@@ -152,20 +153,24 @@ contract MyAdvancedToken is owned, token {
 
     function buy() payable {
         uint amount = msg.value / buyPrice;                // calculates the amount
-        if (balanceOf[this] < amount) throw;               // checks if it has enough to sell
+        assert (balanceOf[this] < amount);               // checks if it has enough to sell
         balanceOf[msg.sender] += amount;                   // adds the amount to buyer's balance
         balanceOf[this] -= amount;                         // subtracts amount from seller's balance
         Transfer(this, msg.sender, amount);                // execute an event reflecting the change
     }
 
     function sell(uint256 amount) {
-        if (balanceOf[msg.sender] < amount ) throw;        // checks if the sender has enough to sell
+        assert (balanceOf[msg.sender] < amount );        // checks if the sender has enough to sell
         balanceOf[this] += amount;                         // adds the amount to owner's balance
         balanceOf[msg.sender] -= amount;                   // subtracts the amount from seller's balance
         if (!msg.sender.send(amount * sellPrice)) {        // sends ether to the seller. It's important
-            throw;                                         // to do this last to avoid recursion attacks
+            assert(false);                                         // to do this last to avoid recursion attacks
         } else {
             Transfer(msg.sender, this, amount);            // executes an event reflecting on the change
         }               
+    }
+
+    function getInitalSupply() constant returns (uint256) {
+        return totalSupply;
     }
 }

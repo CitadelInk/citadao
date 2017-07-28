@@ -1,0 +1,31 @@
+{
+  "name": "app-contracts",
+  "version": "0.1.0",
+  "description": "Contracts for information app",
+  "main": "index.js",
+  "repository": "ssh://git@github.com:nickreynolds/citadao.git",
+  "contributors": [
+    "Andrew Spiering",
+    "Nick Reynolds"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "child-process-promise": "^2.2.1",
+    "ethereumjs-testrpc": "^3.0.5",
+    "fs-extra-promise": "^1.0.1",
+    "is-port-reachable": "^2.0.0",
+    "truffle": "^3.4.6"
+  },
+  "scripts": {
+    "install": "yarn run truffle compile",
+    "migrate": "yarn run truffle migrate --reset",
+    "test": "yarn run truffle test",
+    "testrpc": "testrpc"
+  },
+  "engines": {
+    "node": ">=7.6.0"
+  },
+  "dependencies": {
+    "chai-as-promised": "^6.0.0"
+  }
+}

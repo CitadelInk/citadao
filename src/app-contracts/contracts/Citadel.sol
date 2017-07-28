@@ -1,10 +1,10 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.13;
+
 contract AbstractWallet {
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
 }
 
-
-contract managed {
+contract Managed {
     address public citadel_comptroller;
     modifier onlyComptroller {
         require(msg.sender == citadel_comptroller);
@@ -12,10 +12,10 @@ contract managed {
     }
 }
 
-contract Citadelv01 is managed {
+contract Citadel is Managed {
     address public wallet_address;
     
-    function Citadelv01(address wallet) {
+    function Citadel(address wallet) {
         citadel_comptroller = msg.sender;
         wallet_address = wallet;
     }
