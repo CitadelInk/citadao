@@ -10,11 +10,23 @@
   "license": "MIT",
   "devDependencies": {},
   "scripts": {
-    "postinstall": "local_modules install --force --dir src",
-    "devsetup": "yarn install && local_modules link --force --dir src && ( cd src/app-contracts && yarn install ) && ( cd src/app-frontend && yarn install ) && ( cd src/app-apiserver && yarn install )",
+    "postinstall": "cross-os postinstallInternal",
+    "postinstallInternal": {
+      "darwin": "local_modules install --force --dir src",
+      "win32": "local_modules.cmd install --force --dir src",
+      "linux": "local_modules install --force --dir src"
+    },
+    "localmod": "cross-os localmodInternal",
+    "localmodInternal": {
+      "darwin": "local_modules link --force --dir src",
+      "win32": "local_modules.cmd link --force --dir src",
+      "linux": "local_modules link --force --dir src"
+    },
+    "devsetup": "yarn install && yarn localmod && ( cd src/app-contracts && yarn install ) && ( cd src/app-frontend && yarn install ) && ( cd src/app-apiserver && yarn install )",
     "testrpc": "( cd src/app-contracts && yarn testrpc )"
   },
   "dependencies": {
+    "cross-os": "^1.1.2",
     "local_modules": "^1.0.8"
   },
   "main": "index.js"
