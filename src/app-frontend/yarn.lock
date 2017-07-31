@@ -1092,6 +1092,10 @@ create-react-class@^15.6.0:
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
+cross-os@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/cross-os/-/cross-os-1.1.2.tgz#366784d0e0ccf36f36feb62df36eaed853f785c8"
+
 cryptiles@2.x.x:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/cryptiles/-/cryptiles-2.0.5.tgz#3bdfecdc608147c1c67202fa291e7dca59eaa3b8"
@@ -3146,7 +3150,7 @@ truffle-contract-schema@^0.0.5:
   dependencies:
     crypto-js "^3.1.9-1"
 
-truffle-contract@^2.0.0:
+truffle-contract@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/truffle-contract/-/truffle-contract-2.0.4.tgz#c23c4eaf66397927bab8751b674149c3f8b933eb"
   dependencies:

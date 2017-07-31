@@ -10,14 +10,21 @@
   ],
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --hot --history-api-fallback --open --host 0.0.0.0",
+    "config": "cross-os configInternal",
+    "configInternal": {
+      "darwin": "echo {'\"Server\"':$(ip route get 1 | awk '{print $NF;exit}' | sed -e 's/^/\"/' | sed -e 's/$/\"/')} > ./app/config.json",
+      "win32": "FIX ME",
+      "linux": "echo {'\"Server\"':$(ip route get 1 | awk '{print $NF;exit}' | sed -e 's/^/\"/' | sed -e 's/$/\"/')} > ./app/config.json"
+    },
+    "start": "yarn run config && webpack-dev-server --hot --history-api-fallback --open --host 0.0.0.0",
     "test": "mocha  --compilers js:babel-register",
     "test:watch": "yarn run test -- --reporter min --watch"
   },
   "dependencies": {
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "truffle-contract": "^2.0.0"
+    "truffle-contract": "^2.0.4",
+    "cross-os": "^1.1.2"
   },
   "devDependencies": {
     "babel-core": "^6.23.1",
