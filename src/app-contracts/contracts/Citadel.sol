@@ -21,6 +21,7 @@ contract Citadel is Managed {
     }
     
     struct Authorg {
+        string name;
         Submission selfBioSubmission;
         
         mapping(bytes32 => Submission) submissions;
@@ -46,6 +47,14 @@ contract Citadel is Managed {
     
     function setWalletAddress(address newWalletAddress) onlyComptroller {
         wallet_address = newWalletAddress;
+    }
+
+    function setName(string name) {
+        internalAuthorgs[msg.sender].name = name;
+    }
+
+    function getName(address authorgAddress) constant returns (string name) {
+        return internalAuthorgs[authorgAddress].name;
     }
     
     function submitBioRevision(bytes32 citadelManifestHash) {
