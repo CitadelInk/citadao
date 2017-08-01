@@ -29,11 +29,7 @@ class App extends Component {
 				.then((p) => parseInt(p.toString())) // stupid BigNumber
 				.then((p) => this.setState({tokenSupply: p}));	
 				
-				appContracts.MyAdvancedToken.deployed()
-				.then((instance) => instance)
-				.then((data) => data.buyPrice())
-				.then((p) => parseInt(p.toString()))
-				.then((p) => this.setState({citaBuyPrice : p}));	
+				this.updateBuyPrice();
 
 				appContracts.MyAdvancedToken.deployed()
 				.then((instance) => instance)
@@ -46,7 +42,7 @@ class App extends Component {
 					localWeb3.eth.defaultAccount = accounts[0];
 					
 					this.setState({account: accounts[0]});
-					//localWeb3.personal.unlockAccount(this.state.account, '7b1fcfd05569450eccb37e6e9c976775752db53da1ff4e38fc7cd93b1184c178', 1500)
+					//localWeb3.personal.unlockAccount(this.state.account, "7b1fcfd05569450eccb37e6e9c976775752db53da1ff4e38fc7cd93b1184c178", 1500)
 					appContracts.Citadel.deployed()
 					.then((instance) => instance.getName(accounts[0]))
 					.then((data) => this.setState({citadelName : data}))
@@ -61,6 +57,7 @@ class App extends Component {
 			this.handleNameChangeSuccess = this.handleNameChangeSuccess.bind(this);
 
 			this.updateCitaBalance = this.updateCitaBalance.bind(this);
+			this.updateBuyPrice = this.updateBuyPrice.bind(this);
 
 			this.handleEtherSendChange = this.handleEtherSendChange.bind(this);
 			this.handleBuySubmit = this.handleBuySubmit.bind(this);
@@ -77,6 +74,14 @@ class App extends Component {
 		.then((data) => data.balanceOf(this.state.account))
 		.then((p) => parseInt(p.toString()))
 		.then((p) => this.setState({citaBalance : p}));	
+	}
+
+	updateBuyPrice() {
+		appContracts.MyAdvancedToken.deployed()
+		.then((instance) => instance)
+		.then((data) => data.buyPrice())
+		.then((p) => parseInt(p.toString()))
+		.then((p) => this.setState({citaBuyPrice : p}));	
 	}
 
 	render() {
@@ -151,7 +156,7 @@ class App extends Component {
 		console.log('account = ' + this.state.account + ' newBuyPrice = ' + newBuyPrice);
 		appContracts.MyAdvancedToken.deployed()
 		.then((instance) => instance.setPrices.sendTransaction(localWeb3.toBigNumber('0'), newBuyPrice, {from : this.state.account})).then(function(tx_id) {
-			appInstance.handleSetBuyPriceChangeSuccess(tx_id)
+			appInstance.handleSetBuyPriceSuccess(tx_id)
 		}).catch(function(e) {
 			alert("error - " + e);
 		})
