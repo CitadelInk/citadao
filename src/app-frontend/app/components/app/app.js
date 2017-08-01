@@ -85,7 +85,8 @@ class App extends Component {
 
 			this.updateCitaBalance = this.updateCitaBalance.bind(this);
 			this.updateBuyPrice = this.updateBuyPrice.bind(this);
-
+			this.updateName = this.updateName.bind(this);
+			
 			this.handleEtherSendChange = this.handleEtherSendChange.bind(this);
 			this.handleBuySubmit = this.handleBuySubmit.bind(this);
 			this.handleBuyCitaSuccess = this.handleBuyCitaSuccess.bind(this);
@@ -95,6 +96,7 @@ class App extends Component {
 			this.handleSetBuyPrice = this.handleSetBuyPrice.bind(this);
 
 			this.handleApproveClicked = this.handleApproveClicked.bind(this);
+			this.handleTestTransfer = this.handleTestTransfer.bind(this);
 	}
 
 	updateCitaBalance() {
@@ -111,6 +113,12 @@ class App extends Component {
 		.then((data) => data.buyPrice())
 		.then((p) => parseFloat(p.toString()))
 		.then((p) => this.setState({citaBuyPrice : p}));	
+	}
+
+	updateName() {
+		appContracts.Citadel.deployed()
+		.then((instance) => instance.getName(this.state.account))
+		.then((data) => this.setState({citadelName : data}))
 	}
 
 	render() {
@@ -148,10 +156,24 @@ class App extends Component {
 				<button onClick={this.handleApproveClicked}>{'Approve Citadel Contract to spend CITA for you'}</button><br />
 				<input onChange={this.handleChange} value={this.state.newName} />
 				<button onClick={this.handleSubmit}>{'Update Name - ' + this.state.nameChangeCostInCita + 'CITA'}</button><br />
+				<button onClick={this.handleTestTransfer}>{'Test Transfer CITA'}</button><br />
 			
 			</p>
 			</div>
 		);
+	}
+
+	handleTestTransfer(e) {
+		var name = this.state.newName;
+		var account = this.state.account;
+		var appInstance = this;
+		var testValue = localWeb3.toBigNumber('1');
+		appContracts.MyAdvancedToken.deployed()
+		.then((instance) => instance.transfer.sendTransaction(this.state.tokenOwnerAccount, testValue, {from : this.state.account, to : this.state.tokenAddress})).then(function(tx_id) {
+			alert("successy");
+		}).catch(function(e) {
+			alert("error - " + e);
+		})
 	}
 
 	handleSubmit(e) {
@@ -180,9 +202,8 @@ class App extends Component {
 
 	handleNameChangeSuccess(tx_id) {
 		alert("Transaction successful - name is updated");
-		appContracts.Citadel.deployed()
-		.then((instance) => instance.getName(this.state.account))
-		.then((data) => this.setState({citadelName : data}))
+		this.updateName();
+		this.updateCitaBalance();
 	}
 
 	handleChange(e) {
