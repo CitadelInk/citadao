@@ -7,11 +7,12 @@ class App extends Component {
 		 super();
 
 			this.state = {
+				accountIndex: 0,
 				account: null,
 				tokenSupply: 0,
 				citaBalance: 0,
 				ethBalance: 0,
-				citaBuyPrice: 0,
+				citaBuyPrice: 0.0,
 				etherToSend: 0,
 				newBuyPrice: 0,
 				citadelName: '',
@@ -37,14 +38,16 @@ class App extends Component {
 				.then((p) => this.setState({tokenOwnerAccount : p}));	
 			}
 
+			var accountIndex = this.state.accountIndex;
 			localWeb3.eth.getAccounts((error, accounts) => {
 				if (accounts) {
-					localWeb3.eth.defaultAccount = accounts[0];
+					localWeb3.eth.defaultAccount = accounts[accountIndex];
 					
-					this.setState({account: accounts[0]});
-					//localWeb3.personal.unlockAccount(this.state.account, "7b1fcfd05569450eccb37e6e9c976775752db53da1ff4e38fc7cd93b1184c178", 1500)
+					this.setState({account: accounts[accountIndex]});
+					this.setState({ ethBalance : localWeb3.fromWei(localWeb3.eth.getBalance(accounts[accountIndex]), 'ether').toString()})
+
 					appContracts.Citadel.deployed()
-					.then((instance) => instance.getName(accounts[0]))
+					.then((instance) => instance.getName(accounts[accountIndex]))
 					.then((data) => this.setState({citadelName : data}))
 					
 					this.updateCitaBalance();
@@ -80,7 +83,7 @@ class App extends Component {
 		appContracts.MyAdvancedToken.deployed()
 		.then((instance) => instance)
 		.then((data) => data.buyPrice())
-		.then((p) => parseInt(p.toString()))
+		.then((p) => parseFloat(p.toString()))
 		.then((p) => this.setState({citaBuyPrice : p}));	
 	}
 
@@ -113,7 +116,7 @@ class App extends Component {
 				<button onClick={this.handleSubmit}>{'Update Name'}</button><br /><br />
 
 				<input onChange={this.handleEtherSendChange} value={this.state.etherToSend} />
-				<button onClick={this.handleBuySubmit}>{'Send Ether to buy CITA / 1 ETH'}</button><br /><br />				
+				<button onClick={this.handleBuySubmit}>{'Send WEI to buy 1 CITA / ' + this.state.citaBuyPrice + ' WEI'}</button><br /><br />				
 			</p>
 			</div>
 		);
@@ -163,12 +166,13 @@ class App extends Component {
 	}
 
 	handleBuySubmit(e) {
-		var ethToSend = this.state.etherToSend;
+		var ethToSend = localWeb3.toBigNumber(this.state.etherToSend);
 		var account = this.state.account;
 		var appInstance = this;
-		appContracts.Citadel.deployed()
-		.then((instance) => instance.sendTransaction(ethToSend, {from : this.state.account})).then(function(tx_id) {
-			appInstance.handleNameChangeSuccess(tx_id)
+		console.log("from: " + this.state.account + " - to: " + this.state.tokenOwnerAccount);
+		appContracts.MyAdvancedToken.deployed()
+		.then((instance) => instance.buy.sendTransaction({from : this.state.account, to : this.state.tokenOwnerAccount, value : ethToSend})).then(function(tx_id) {
+			appInstance.handleBuyCitaSuccess(tx_id)
 		}).catch(function(e) {
 			alert("error - " + e);
 		})
