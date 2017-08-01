@@ -14,10 +14,12 @@ contract Managed {
 
 contract Citadel is Managed {
     address public wallet_address;
+    uint256 public cost_name_update_in_cita;
     
     function Citadel(address wallet) {
         citadel_comptroller = msg.sender;
         wallet_address = wallet;
+        cost_name_update_in_cita = 2;
     }
     
     struct Authorg {
@@ -50,6 +52,7 @@ contract Citadel is Managed {
     }
 
     function setName(string name) {
+        spend(cost_name_update_in_cita);
         internalAuthorgs[msg.sender].name = name;
     }
 

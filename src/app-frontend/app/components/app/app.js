@@ -7,7 +7,7 @@ class App extends Component {
 		 super();
 
 			this.state = {
-				accountIndex: 0,
+				accountIndex: 1,
 				account: null,
 				tokenSupply: 0,
 				citaBalance: 0,
@@ -15,10 +15,14 @@ class App extends Component {
 				citaBuyPrice: 0.0,
 				etherToSend: 0,
 				newBuyPrice: 0,
+				nameChangeCostInCita: 0,
 				citadelName: '',
 				newName: '',
 				tokenOwnerAccount: null,
-				citadelComptrollerAccount: null
+				citadelComptrollerAccount: null,
+				tokenAddress: null,
+				citadelAddress: null,
+				citadelWalletAddress: null
 			};
 			// can't run this in mist as of yet as we are not deployed to a public network
 			// SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
@@ -36,6 +40,26 @@ class App extends Component {
 				.then((instance) => instance)
 				.then((data) => data.owner())
 				.then((p) => this.setState({tokenOwnerAccount : p}));	
+
+				appContracts.MyAdvancedToken.deployed()
+				.then((instance) => instance.address)
+				.then(address => this.setState({tokenAddress : address}));
+
+				appContracts.Citadel.deployed()
+				.then((instance) => instance.address)
+				.then(address => this.setState({citadelAddress : address}));
+
+				appContracts.Citadel.deployed()
+				.then((instance) => instance)
+				.then((data) => data.cost_name_update_in_cita())
+				.then((p) => this.setState({nameChangeCostInCita : p}));	
+
+				appContracts.Citadel.deployed()
+				.then((instance) => instance.citadel_comptroller())
+				.then((data) => this.setState({citadelComptrollerAccount : data}));
+				appContracts.Citadel.deployed()
+				.then((instance) => instance.wallet_address())
+				.then((data) => this.setState({citadelWalletAddress : data}));
 			}
 
 			var accountIndex = this.state.accountIndex;
@@ -69,6 +93,8 @@ class App extends Component {
 			this.handleChangeBuyPrice = this.handleChangeBuyPrice.bind(this);
 			this.handleSetBuyPriceSuccess = this.handleSetBuyPriceSuccess.bind(this);
 			this.handleSetBuyPrice = this.handleSetBuyPrice.bind(this);
+
+			this.handleApproveClicked = this.handleApproveClicked.bind(this);
 	}
 
 	updateCitaBalance() {
@@ -100,6 +126,10 @@ class App extends Component {
 						CITA Buy Price = {this.state.citaBuyPrice}<br />
 						Total Supply = {this.state.tokenSupply}<br />
 						CITA token owner = {this.state.tokenOwnerAccount}<br />
+						CITA token address = {this.state.tokenAddress}<br />
+						Citadel Comptroller = {this.state.citadelComptrollerAccount}<br />
+						Citadel address = {this.state.citadelAddress}<br />
+						Citadel wallet address (should match CITA token address) = {this.state.citadelWalletAddress}<br />
 				
 
 				{isOwner && 
@@ -112,11 +142,13 @@ class App extends Component {
 					<br />
 				}
 
-				<input onChange={this.handleChange} value={this.state.newName} />
-				<button onClick={this.handleSubmit}>{'Update Name'}</button><br /><br />
-
 				<input onChange={this.handleEtherSendChange} value={this.state.etherToSend} />
-				<button onClick={this.handleBuySubmit}>{'Send WEI to buy 1 CITA / ' + this.state.citaBuyPrice + ' WEI'}</button><br /><br />				
+				<button onClick={this.handleBuySubmit}>{'Send WEI to buy 1 CITA / ' + this.state.citaBuyPrice + ' WEI'}</button><br />	
+
+				<button onClick={this.handleApproveClicked}>{'Approve Citadel Contract to spend CITA for you'}</button><br />
+				<input onChange={this.handleChange} value={this.state.newName} />
+				<button onClick={this.handleSubmit}>{'Update Name - ' + this.state.nameChangeCostInCita + 'CITA'}</button><br />
+			
 			</p>
 			</div>
 		);
@@ -129,6 +161,18 @@ class App extends Component {
 		appContracts.Citadel.deployed()
 		.then((instance) => instance.setName.sendTransaction(name, {from : this.state.account})).then(function(tx_id) {
 			appInstance.handleNameChangeSuccess(tx_id)
+		}).catch(function(e) {
+			alert("error - " + e);
+		})
+	}
+
+	handleApproveClicked(e) {
+		var name = this.state.newName;
+		var account = this.state.account;
+		var appInstance = this;
+		appContracts.MyAdvancedToken.deployed()
+		.then((instance) => instance.approve.sendTransaction(this.state.citadelAddress, this.state.citaBalance, {from : this.state.account})).then(function(tx_id) {
+			alert("Citadel Contract address approved as spender.");
 		}).catch(function(e) {
 			alert("error - " + e);
 		})
