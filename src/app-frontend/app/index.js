@@ -1,14 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
+import Root from './containers/Root'
+import configureStore from './store/configureStore'
 
-import App from './components/app'
-import Header from './components/header'
+const store = configureStore();
 
 ReactDOM.render(
-  <div>
-    <Header />
-    <App />
-  </div>,
+  <Root store={store}/>,
   document.getElementById('root')
 );

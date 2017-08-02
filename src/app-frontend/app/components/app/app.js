@@ -1,14 +1,30 @@
 import React, { Component } from 'react';
 import localWeb3 from "./web3Helper"
 import appContracts from 'app-contracts'
+import Redux from 'redux'
+
+function something2() {
+	console.log('somethingHappened')
+}
 
 class App extends Component {
+	componentWillMount() {
+		this.props.store.subscribe(this.onStoreChange)
+	}
+
+	onStoreChange() {
+		console.log('something changed')
+		this.updateEverything()
+	}
+
+	getSelectedAccount() {
+		return this.props.store.getState().selectedAccount;
+	}
+
 	 constructor() {
 		 super();
 
 			this.state = {
-				accountIndex: 1,
-				account: null,
 				tokenSupply: 0,
 				citaBalance: 0,
 				ethBalance: 0,
@@ -24,6 +40,8 @@ class App extends Component {
 				citadelAddress: null,
 				citadelWalletAddress: null
 			};
+
+
 			// can't run this in mist as of yet as we are not deployed to a public network
 			// SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
 			if (typeof(mist) === "undefined") {
@@ -61,23 +79,10 @@ class App extends Component {
 				.then((instance) => instance.wallet_address())
 				.then((data) => this.setState({citadelWalletAddress : data}));
 			}
+			
+			this.updateEverything();
+					
 
-			var accountIndex = this.state.accountIndex;
-			localWeb3.eth.getAccounts((error, accounts) => {
-				if (accounts) {
-					localWeb3.eth.defaultAccount = accounts[accountIndex];
-					
-					this.setState({account: accounts[accountIndex]});
-					this.setState({ ethBalance : localWeb3.fromWei(localWeb3.eth.getBalance(accounts[accountIndex]), 'ether').toString()})
-
-					appContracts.Citadel.deployed()
-					.then((instance) => instance.getName(accounts[accountIndex]))
-					.then((data) => this.setState({citadelName : data}))
-					
-					this.updateCitaBalance();
-					
-				}
-			});
 
 			this.handleChange = this.handleChange.bind(this);
 			this.handleSubmit = this.handleSubmit.bind(this);
@@ -86,6 +91,8 @@ class App extends Component {
 			this.updateCitaBalance = this.updateCitaBalance.bind(this);
 			this.updateBuyPrice = this.updateBuyPrice.bind(this);
 			this.updateName = this.updateName.bind(this);
+			this.updateEverything = this.updateEverything.bind(this);
+			this.onStoreChange = this.onStoreChange.bind(this);
 			
 			this.handleEtherSendChange = this.handleEtherSendChange.bind(this);
 			this.handleBuySubmit = this.handleBuySubmit.bind(this);
@@ -97,12 +104,35 @@ class App extends Component {
 
 			this.handleApproveClicked = this.handleApproveClicked.bind(this);
 			this.handleTestTransfer = this.handleTestTransfer.bind(this);
+
+			this.getSelectedAccount = this.getSelectedAccount.bind(this);
+	}
+
+	updateEverything() {
+		localWeb3.eth.getAccounts((error, accounts) => {
+				if (accounts) {
+					if(this.props != null && this.props.store != null) {
+						var account = this.getSelectedAccount();
+						if (account != null) {
+							localWeb3.eth.defaultAccount = account;
+							
+							this.setState({ ethBalance : localWeb3.fromWei(localWeb3.eth.getBalance(account), 'ether').toString()})
+
+							appContracts.Citadel.deployed()
+							.then((instance) => instance.getName(account))
+							.then((data) => this.setState({citadelName : data}))
+							
+							this.updateCitaBalance();
+						}
+					}
+				}
+		});
 	}
 
 	updateCitaBalance() {
 		appContracts.MyAdvancedToken.deployed()
 		.then((instance) => instance)
-		.then((data) => data.balanceOf(this.state.account))
+		.then((data) => data.balanceOf(this.getSelectedAccount()))
 		.then((p) => parseInt(p.toString()))
 		.then((p) => this.setState({citaBalance : p}));	
 	}
@@ -117,18 +147,19 @@ class App extends Component {
 
 	updateName() {
 		appContracts.Citadel.deployed()
-		.then((instance) => instance.getName(this.state.account))
+		.then((instance) => instance.getName(this.getSelectedAccount()))
 		.then((data) => this.setState({citadelName : data}))
 	}
 
 	render() {
-		var isOwner =  this.state.account != null && this.state.tokenOwnerAccount != null && this.state.account == this.state.tokenOwnerAccount;	
+		var isOwner =  this.getSelectedAccount() != null && this.state.tokenOwnerAccount != null && this.getSelectedAccount() == this.state.tokenOwnerAccount;	
 		console.log('isOwner=' + isOwner);
 		
 		return (
+			<div>
 			<div id="app" className="App"><p className="App-intro">
 						Name = {this.state.citadelName}<br />
-						Address = {this.state.account}<br />
+						Address = {this.getSelectedAccount()}<br />
 						My ETH Balance = {this.state.ethBalance}<br />
 						My CITA balance = {this.state.citaBalance}<br />
 						CITA Buy Price = {this.state.citaBuyPrice}<br />
@@ -192,6 +223,7 @@ class App extends Component {
 				bleah2<br />
 				bleah2<br />
 			</p>
+			</div>
 			</div>
 		);
 	}
