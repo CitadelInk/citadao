@@ -152,10 +152,23 @@ class App extends Component {
 
 				<input onChange={this.handleEtherSendChange} value={this.state.etherToSend} />
 				<button onClick={this.handleBuySubmit}>{'Send WEI to buy 1 CITA / ' + this.state.citaBuyPrice + ' WEI'}</button><br />	
+				
+				{(this.state.citaBalance !== 0) &&
+					<button onClick={this.handleApproveClicked}>{'Approve Citadel Contract to spend CITA for you'}</button>
+				}
+				{(this.state.citaBalance !== 0) &&
+					<br />
+				}
+				{(this.state.citaBalance !== 0) &&
+					<input onChange={this.handleChange} value={this.state.newName} />
+				}
+				{(this.state.citaBalance !== 0) &&
+					<button onClick={this.handleSubmit}>{'Update Name - ' + this.state.nameChangeCostInCita + 'CITA'}</button>
+				}
+				{(this.state.citaBalance !== 0) &&
+					<br />
+				}
 
-				<button onClick={this.handleApproveClicked}>{'Approve Citadel Contract to spend CITA for you'}</button><br />
-				<input onChange={this.handleChange} value={this.state.newName} />
-				<button onClick={this.handleSubmit}>{'Update Name - ' + this.state.nameChangeCostInCita + 'CITA'}</button><br />
 				<button onClick={this.handleTestTransfer}>{'Test Transfer CITA'}</button><br />
 			
 			</p>
