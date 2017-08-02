@@ -11,7 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "child-process-promise": "^2.2.1",
-    "ethereumjs-testrpc": "^3.0.5",
+    "ethereumjs-testrpc": "^4.0.1",
     "fs-extra-promise": "^1.0.1",
     "is-port-reachable": "^2.0.0",
     "truffle": "^3.4.6",
@@ -28,7 +28,7 @@
     "migrateInternal": {
       "darwin": "yarn run truffle migrate --reset",
       "win32": "truffle.cmd migrate --reset",
-      "linux": "yarn run truffle migrate --reset"
+      "linux": "yarn run truffle migrate -- --reset"
     },
     "test": "cross-os testInternal",
     "testInternal": {
