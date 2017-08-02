@@ -1,1 +1,37 @@
-h1 { font-family: sans-serif; }
+h1 {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 24px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 26.4px;
+}
+#header {    
+    width:100%; 
+    position:fixed;
+    height: 100px;
+    top:0px;
+    left:0px;
+    display:inline-block;
+}
+#app {
+    width:100%;
+    position:fixed;
+    height:100%;
+    top:100px;
+    left:0px;
+}
+#accountDropdown {
+    position:absolute;
+    bottom: 20px;
+    left:20px;
+}
+#headerCitadel {
+    witdh:100%;
+    top:20px;
+}
+#currencies {
+    position:absolute;
+    bottom : 20px;
+    right : 20px;
+}
