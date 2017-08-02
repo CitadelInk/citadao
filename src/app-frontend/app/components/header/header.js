@@ -5,6 +5,18 @@ import appContracts from 'app-contracts'
 import {resetErrorMessage, selectAccount} from '../../actions'
 
 class Header extends Component {
+	componentWillMount() {
+		this.props.store.subscribe(this.onStoreChange)
+	}
+
+	onStoreChange(c) {
+		this.updateEverything()
+	}
+
+	getSelectedAccount() {
+		return this.props.store.getState().selectedAccount;
+	}
+
 	 constructor() {
 		 super();
 
@@ -38,17 +50,6 @@ class Header extends Component {
 		}
 	}
 
-	componentWillMount() {
-		this.props.store.subscribe(this.onStoreChange)
-	}
-
-	onStoreChange(c) {
-		this.updateEverything()
-	}
-
-	getSelectedAccount() {
-		return this.props.store.getState().selectedAccount;
-	}
 
 	updateEverything() {
 		var account = this.getSelectedAccount();

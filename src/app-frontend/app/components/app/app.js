@@ -3,9 +3,6 @@ import localWeb3 from "./web3Helper"
 import appContracts from 'app-contracts'
 import Redux from 'redux'
 
-function something2() {
-	console.log('somethingHappened')
-}
 
 class App extends Component {
 	componentWillMount() {
@@ -81,7 +78,7 @@ class App extends Component {
 			}
 			
 			this.updateEverything();
-			
+
 			localWeb3.bzz.put("test file", (error, hash) => {
 				console.log(hash);
 			});
