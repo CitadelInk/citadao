@@ -61,6 +61,11 @@ class App extends Component {
 				.then((instance) => instance.wallet_address())
 				.then((data) => this.setState({citadelWalletAddress : data}));
 			}
+			
+			localWeb3.bzz.put("test file", (error, hash) => {
+				console.log(hash);
+			});
+
 
 			var accountIndex = this.state.accountIndex;
 			localWeb3.eth.getAccounts((error, accounts) => {
