@@ -126,7 +126,7 @@ class App extends Component {
 		console.log('isOwner=' + isOwner);
 		
 		return (
-			<div className="App"><p className="App-intro">
+			<div id="app" className="App"><p className="App-intro">
 						Name = {this.state.citadelName}<br />
 						Address = {this.state.account}<br />
 						My ETH Balance = {this.state.ethBalance}<br />
@@ -170,7 +170,27 @@ class App extends Component {
 				}
 
 				<button onClick={this.handleTestTransfer}>{'Test Transfer CITA'}</button><br />
-			
+				bleah1<br />
+				bleah1<br />
+				bleah1<br />
+				bleah1<br />
+				bleah1<br />
+				bleah1<br />
+				bleah1<br />
+				bleah1<br />
+				bleah1<br />
+				bleah1<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
+				bleah2<br />
 			</p>
 			</div>
 		);

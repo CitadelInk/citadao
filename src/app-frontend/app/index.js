@@ -3,8 +3,12 @@ import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
 
 import App from './components/app'
+import Header from './components/header'
 
 ReactDOM.render(
-  <App />,
+  <div>
+    <Header />
+    <App />
+  </div>,
   document.getElementById('root')
 );
