@@ -81,6 +81,11 @@ class App extends Component {
 			}
 			
 			this.updateEverything();
+			
+			localWeb3.bzz.put("test file", (error, hash) => {
+				console.log(hash);
+			});
+
 					
 
 

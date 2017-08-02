@@ -4,6 +4,10 @@ All CITADAO/CITADEL work before we go public
 ### Requirments
 Install Yarn: https://yarnpkg.com/lang/en/docs/install/
 
+### Testing Swarm 
+1. run yarn upgrade within src/app-contracts
+2. run yarn testrpc as normal
+
 ### Usage
 
 1. Check out a clean copy of this repository
@@ -16,5 +20,9 @@ modules configured properly.
 
 ### Testing Contracts against TestRPC Issues
 If you are not running on localhost all your services you may run into issues where you are not seeing the proper contracts and connecting to the proper network this could be because in web3Helper.js its pointing to the improper node. look in config.js within the app folde to see if the lan ip is correct if not change it and refresh the page. This should only be relevant when testing locally aginast testRPC or other test networks running against geth. 
+
+
+
+
 
 
