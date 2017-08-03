@@ -7,7 +7,7 @@ class App extends Component {
 		 super();
 
 			this.state = {
-				accountIndex: 0,
+				accountIndex: 1,
 				account: null,
 				tokenSupply: 0,
 				citaBalance: 0,
@@ -83,17 +83,19 @@ class App extends Component {
 					.then((data) => {
 						this.setState({bioRevisions : data})
 						var hash = data[this.state.selectedBioRevisionIndex];
-						var bzzAddress = hash.substring(2);
-						console.log("1 state set - data[selectedBioRevisionIndex]=" + hash)
-						localWeb3.bzz.retrieve(bzzAddress, (error, bio) => {	
-							console.log('bio - ' + bio)
-							var jsonBio = JSON.parse(bio)
-							console.log('jsonBio entries - ' + jsonBio.entries[0].hash)			
-							localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
-								console.log('bio text = ' + bioText)
-								this.setState({selectedBioRevision : bioText})
-							});
-						});
+						if (hash) {
+							var bzzAddress = hash.substring(2);
+							console.log("1 state set - data[selectedBioRevisionIndex]=" + hash)
+							localWeb3.bzz.retrieve(bzzAddress, (error, bio) => {	
+								console.log('bio - ' + bio)
+								var jsonBio = JSON.parse(bio)
+								console.log('jsonBio entries - ' + jsonBio.entries[0].hash)			
+								localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
+									console.log('bio text = ' + bioText)
+									this.setState({selectedBioRevision : bioText})
+								});
+							});	
+						}
 					})
 					
 					this.updateCitaBalance();
