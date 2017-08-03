@@ -59,6 +59,10 @@ contract Citadel is Managed {
     function getName(address authorgAddress) constant returns (string name) {
         return internalAuthorgs[authorgAddress].name;
     }
+
+    function getBioRevisions(address authorgAddress) constant returns (bytes32[] hashes) {
+        return internalAuthorgs[authorgAddress].selfBioSubmission.submissionRevisionHashes;
+    }
     
     function submitBioRevision(bytes32 citadelManifestHash) {
         spend(50);
@@ -69,7 +73,6 @@ contract Citadel is Managed {
             responseManifestHashes : newResponseArray
         });
         internalAuthorgs[msg.sender].selfBioSubmission.submissionRevisionMap[citadelManifestHash] = revision;
-
     }
     
     function isAuthorgOfSubmission(address authorgAddress, bytes32 submissionHash) constant returns (bool) {

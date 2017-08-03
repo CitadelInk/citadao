@@ -7,7 +7,7 @@ class App extends Component {
 		 super();
 
 			this.state = {
-				accountIndex: 1,
+				accountIndex: 0,
 				account: null,
 				tokenSupply: 0,
 				citaBalance: 0,
@@ -22,7 +22,11 @@ class App extends Component {
 				citadelComptrollerAccount: null,
 				tokenAddress: null,
 				citadelAddress: null,
-				citadelWalletAddress: null
+				citadelWalletAddress: null,
+				bioRevisions: [],
+				bioRevisionResults: [],
+				selectedBioRevisionIndex: 0,
+				bioInput: ''
 			};
 			// can't run this in mist as of yet as we are not deployed to a public network
 			// SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
@@ -61,11 +65,6 @@ class App extends Component {
 				.then((instance) => instance.wallet_address())
 				.then((data) => this.setState({citadelWalletAddress : data}));
 			}
-			
-			localWeb3.bzz.put("test file", (error, hash) => {
-				console.log(hash);
-			});
-
 
 			var accountIndex = this.state.accountIndex;
 			localWeb3.eth.getAccounts((error, accounts) => {
@@ -78,6 +77,24 @@ class App extends Component {
 					appContracts.Citadel.deployed()
 					.then((instance) => instance.getName(accounts[accountIndex]))
 					.then((data) => this.setState({citadelName : data}))
+
+					appContracts.Citadel.deployed()
+					.then((instance) => instance.getBioRevisions(accounts[accountIndex]))
+					.then((data) => {
+						this.setState({bioRevisions : data})
+						var hash = data[this.state.selectedBioRevisionIndex];
+						var bzzAddress = hash.substring(2);
+						console.log("1 state set - data[selectedBioRevisionIndex]=" + hash)
+						localWeb3.bzz.retrieve(bzzAddress, (error, bio) => {	
+							console.log('bio - ' + bio)
+							var jsonBio = JSON.parse(bio)
+							console.log('jsonBio entries - ' + jsonBio.entries[0].hash)			
+							localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
+								console.log('bio text = ' + bioText)
+								this.setState({selectedBioRevision : bioText})
+							});
+						});
+					})
 					
 					this.updateCitaBalance();
 					
@@ -85,6 +102,7 @@ class App extends Component {
 			});
 
 			this.handleChange = this.handleChange.bind(this);
+			this.handleBioChange = this.handleBioChange.bind(this);
 			this.handleSubmit = this.handleSubmit.bind(this);
 			this.handleNameChangeSuccess = this.handleNameChangeSuccess.bind(this);
 
@@ -101,7 +119,7 @@ class App extends Component {
 			this.handleSetBuyPrice = this.handleSetBuyPrice.bind(this);
 
 			this.handleApproveClicked = this.handleApproveClicked.bind(this);
-			this.handleTestTransfer = this.handleTestTransfer.bind(this);
+			this.handleSubmitBio = this.handleSubmitBio.bind(this);
 	}
 
 	updateCitaBalance() {
@@ -128,8 +146,7 @@ class App extends Component {
 
 	render() {
 		var isOwner =  this.state.account != null && this.state.tokenOwnerAccount != null && this.state.account == this.state.tokenOwnerAccount;	
-		console.log('isOwner=' + isOwner);
-		
+
 		return (
 			<div className="App"><p className="App-intro">
 						Name = {this.state.citadelName}<br />
@@ -143,6 +160,9 @@ class App extends Component {
 						Citadel Comptroller = {this.state.citadelComptrollerAccount}<br />
 						Citadel address = {this.state.citadelAddress}<br />
 						Citadel wallet address (should match CITA token address) = {this.state.citadelWalletAddress}<br />
+						Bio Revisions Length = {this.state.bioRevisions.length}<br />
+						Selected Bio Revision Index - {this.state.selectedBioRevisionIndex}<br />
+						Selected Bio Revision Value - {this.state.selectedBioRevision}<br />
 				
 
 				{isOwner && 
@@ -174,24 +194,35 @@ class App extends Component {
 					<br />
 				}
 
-				<button onClick={this.handleTestTransfer}>{'Test Transfer CITA'}</button><br />
-			
+				{(this.state.citaBalance !== 0) &&
+				<input onChange={this.handleBioChange} value={this.state.bioInput} />
+				}
+				{(this.state.citaBalance !== 0) &&
+				<button onClick={this.handleSubmitBio}>{'Submit Bio'}</button>
+				}
+
 			</p>
 			</div>
 		);
 	}
 
-	handleTestTransfer(e) {
+
+
+	handleSubmitBio(e) {
 		var name = this.state.newName;
 		var account = this.state.account;
 		var appInstance = this;
-		var testValue = localWeb3.toBigNumber('1');
-		appContracts.MyAdvancedToken.deployed()
-		.then((instance) => instance.transfer.sendTransaction(this.state.tokenOwnerAccount, testValue, {from : this.state.account, to : this.state.tokenAddress})).then(function(tx_id) {
-			alert("successy");
-		}).catch(function(e) {
-			alert("error - " + e);
-		})
+		var testValue = this.state.bioInput;
+		console.log('bio value = ' + testValue);
+		localWeb3.bzz.put(testValue, (error, hash) => {
+			appContracts.Citadel.deployed()
+			.then((instance) => instance.submitBioRevision.sendTransaction('0x' + hash, {from : this.state.account, gas : 200000})).then(function(tx_id) {
+				alert("bio added to contract");
+			}).catch(function(e) {
+				alert("error - " + e);
+			})
+		});
+		
 	}
 
 	handleSubmit(e) {
@@ -226,6 +257,10 @@ class App extends Component {
 
 	handleChange(e) {
 		this.setState({newName : e.target.value});	
+	}
+
+	handleBioChange(e) {
+		this.setState({bioInput : e.target.value})
 	}
 
 	handleEtherSendChange(e) {
