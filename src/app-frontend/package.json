@@ -21,10 +21,14 @@
     "test:watch": "yarn run test -- --reporter min --watch"
   },
   "dependencies": {
+    "cross-os": "^1.1.2",
+    "immutable": "^3.8.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "truffle-contract": "^2.0.4",
-    "cross-os": "^1.1.2"
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "truffle-contract": "^2.0.4"
   },
   "devDependencies": {
     "babel-core": "^6.23.1",
