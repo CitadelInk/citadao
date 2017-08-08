@@ -1,6 +1,11 @@
 import appContracts from 'app-contracts';
 import localWeb3 from "../helpers/web3Helper";
-import {getAdvancedTokenPublicData, getCitadelPublicData} from '../api/getPublicData';
+import {
+  getAdvancedTokenPublicData,
+  getCitadelPublicData,
+  getCitaBalance
+} from '../api/getPublicData';
+import getAccounts from '../api/getAccounts';
 
 export const SET_TOKEN_SUPPLY = "SET_TOKEN_SUPPLY";
 
@@ -89,4 +94,11 @@ export const initializeContract = (dispatch) => {
     getAdvancedTokenPublicData(),
     getCitadelPublicData()
   ]).then(([token, citadel]) => dispatch(setWalletData({...token, ...citadel})));
+};
+
+export const initializeAccount = (accountIndex, revisionIndex) => dispatch => {
+  Promise.all([
+    getAccounts(accountIndex, revisionIndex),
+    getCitaBalance()
+  ]).then(([account, citaBalance]) => dispatch(setWalletData({...account, citaBalance})));
 };

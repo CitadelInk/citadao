@@ -26,3 +26,10 @@ export const getCitadelPublicData = () => {
     });
 };
 
+export const getCitaBalance = () => {
+  return appContracts.MyAdvancedToken.deployed()
+    .then((instance) => instance)
+    .then((data) => data.balanceOf(this.props.account))
+    .then((p) => parseInt(p.toString()));
+};
+

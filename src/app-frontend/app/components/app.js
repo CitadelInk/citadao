@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import { initializeContract } from '../actions';
+import { initializeContract, initializeAccount } from '../actions';
 
 class App extends Component {
 	 constructor() {
@@ -10,65 +10,12 @@ class App extends Component {
 			// can't run this in mist as of yet as we are not deployed to a public network
 			// SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
 			if (typeof mist === "undefined") {
-				this.props.dispatch(initializeContract());
+				this.props.dispatch(initializeContract);
 			}
 
-			var accountIndex = this.props.wallet.get(accountIndex);
-			localWeb3.eth.getAccounts((error, accounts) => {
-				if (accounts) {
-					localWeb3.eth.defaultAccount = accounts[accountIndex];
-					
-					this.setState({account: accounts[accountIndex]});
-					this.setState({ ethBalance : localWeb3.fromWei(localWeb3.eth.getBalance(accounts[accountIndex]), 'ether').toString()})
-
-					appContracts.Citadel.deployed()
-					.then((instance) => instance.getName(accounts[accountIndex]))
-					.then((data) => this.setState({citadelName : data}))
-
-					appContracts.Citadel.deployed()
-					.then((instance) => instance.getBioRevisions(accounts[accountIndex]))
-					.then((data) => {
-						this.setState({bioRevisions : data})
-						var hash = data[this.props.selectedBioRevisionIndex];
-						if (hash) {
-							var bzzAddress = hash.substring(2);
-							console.log("1 state set - data[selectedBioRevisionIndex]=" + hash)
-							localWeb3.bzz.retrieve(bzzAddress, (error, bio) => {	
-								console.log('bio - ' + bio)
-								var jsonBio = JSON.parse(bio)
-								console.log('jsonBio entries - ' + jsonBio.entries[0].hash)			
-								localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
-									console.log('bio text = ' + bioText)
-									this.setState({selectedBioRevision : bioText})
-								});
-							});	
-						}
-					})
-					
-					this.updateCitaBalance();
-					
-				}
-			});
-
-			this.handleChange = this.handleChange.bind(this);
-			this.handleBioChange = this.handleBioChange.bind(this);
-			this.handleSubmit = this.handleSubmit.bind(this);
-			this.handleNameChangeSuccess = this.handleNameChangeSuccess.bind(this);
-
-			this.updateCitaBalance = this.updateCitaBalance.bind(this);
-			this.updateBuyPrice = this.updateBuyPrice.bind(this);
-			this.updateName = this.updateName.bind(this);
-			
-			this.handleEtherSendChange = this.handleEtherSendChange.bind(this);
-			this.handleBuySubmit = this.handleBuySubmit.bind(this);
-			this.handleBuyCitaSuccess = this.handleBuyCitaSuccess.bind(this);
-
-			this.handleChangeBuyPrice = this.handleChangeBuyPrice.bind(this);
-			this.handleSetBuyPriceSuccess = this.handleSetBuyPriceSuccess.bind(this);
-			this.handleSetBuyPrice = this.handleSetBuyPrice.bind(this);
-
-			this.handleApproveClicked = this.handleApproveClicked.bind(this);
-			this.handleSubmitBio = this.handleSubmitBio.bind(this);
+			const accountIndex = this.props.wallet.get('accountIndex');
+			const selectedBioRevisionIndex = this.props.wallet.get('selectedBioRevisionIndex');
+			this.props.dispatch(getAccounts(accountIndex, selectedBioRevisionIndex));					
 	}
 
 	updateCitaBalance() {

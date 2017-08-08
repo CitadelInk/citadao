@@ -4,7 +4,7 @@ const getEthBalance = account => localWeb3.fromWei(localWeb3.eth.getBalance(acco
 
 // could be cleaned
 
-export const getAccounts = (accountIndex, selectedBioRevisionIndex) => {
+export default (accountIndex, selectedBioRevisionIndex) => {
   return new Promise((res, rej) => {
     localWeb3.eth.getAccounts((error, accounts) => {
       if (error) {
@@ -14,8 +14,7 @@ export const getAccounts = (accountIndex, selectedBioRevisionIndex) => {
         localWeb3.eth.defaultAccount = account;
         Promise.all([
           appContracts.Citadel.deployed()
-            .then((instance) => instance.getName(account))
-
+            .then((instance) => instance.getName(account)),
           appContracts.Citadel.deployed()
             .then((instance) => instance.getBioRevisions(account))
         ]).then(([citadelName, bioRevisions]) => {
@@ -31,7 +30,7 @@ export const getAccounts = (accountIndex, selectedBioRevisionIndex) => {
                 localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
                   console.log('bio text = ' + bioText)
                   res({
-                    selectedBioRevision : bioText,
+                    selectedBioRevision: bioText,
                     bioRevisions,
                     citadelName,
                     ethBalance: getEthBalance(account),
