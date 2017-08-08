@@ -8,7 +8,8 @@ import {
   SET_TOKEN_ADRESS,
   SET_TOKEN_OWNER_ACCONT,
   SET_BUY_PRICE,
-  SET_TOKEN_SUPPLY
+  SET_TOKEN_SUPPLY,
+  SET_WALLET_DATA
 } from '../actions';
 
 const wallet = (state = Map({
@@ -50,6 +51,8 @@ const wallet = (state = Map({
       return state.set("citadelComptrollerAccount", action.data);
     case SET_CITADEL_WALLET_ADRESS:
       return state.set("citadelWalletAddress", action.data);
+    case SET_WALLET_DATA:
+      return state.merge(action.data);
     default:
       return state;
   }

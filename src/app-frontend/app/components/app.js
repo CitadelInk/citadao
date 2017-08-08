@@ -13,7 +13,7 @@ class App extends Component {
 				this.props.dispatch(initializeContract());
 			}
 
-			var accountIndex = this.props.accountIndex;
+			var accountIndex = this.props.wallet.get(accountIndex);
 			localWeb3.eth.getAccounts((error, accounts) => {
 				if (accounts) {
 					localWeb3.eth.defaultAccount = accounts[accountIndex];
@@ -259,7 +259,7 @@ class App extends Component {
 const mapStateToProps = state => {
   const { wallet } = state;
 
-  return wallet;
+  return {wallet};
 }
 
 export default connect(mapStateToProps)(App)

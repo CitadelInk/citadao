@@ -1,6 +1,6 @@
-import appContracts from 'app-contracts'
-import localWeb3 from "../helpers/web3Helper"
-appContracts.setProvider(localWeb3.currentProvider);
+import appContracts from 'app-contracts';
+import localWeb3 from "../helpers/web3Helper";
+import {getAdvancedTokenPublicData, getCitadelPublicData} from '../api/getPublicData';
 
 export const SET_TOKEN_SUPPLY = "SET_TOKEN_SUPPLY";
 
@@ -29,7 +29,7 @@ export const setTokenOwnerAccount = (tokenOwnerAccount) => {
   };
 };
 
-export const SET_TOKEN_ADRESS = "SET_TOKEN_ADRESS";
+export const SET_TOKEN_ADDRESS = "SET_TOKEN_ADDRESS";
 
 export const setTokenAdress = (address) => {
   return {
@@ -38,11 +38,11 @@ export const setTokenAdress = (address) => {
   };
 };
 
-export const SET_CITADEL_ADRESS = "SET_CITADEL_ADRESS";
+export const SET_CITADEL_ADDRESS = "SET_CITADEL_ADDRESS";
 
-export const setCitadelAdress = (address) => {
+export const setCitadelAddress = (address) => {
   return {
-    type: SET_CITADEL_ADRESS,
+    type: SET_CITADEL_ADDRESS,
     data: address
   };
 };
@@ -66,7 +66,7 @@ export const setCitadelComptrollerAccount = (account) => {
   };
 };
 
-export const SET_CITADEL_WALLET_ADRESS = "SET_CITADEL_WALLET_ADRESS";
+export const SET_CITADEL_WALLET_ADDRESS = "SET_CITADEL_WALLET_ADRESS";
 
 export const setCitadelWalletAddress = (address) => {
   return {
@@ -75,46 +75,18 @@ export const setCitadelWalletAddress = (address) => {
   };
 };
 
+export const SET_WALLET_DATA = "SET_WALLET_DATA";
 
-export const updateBuyPrice = (dispatch) => {
-  return appContracts.MyAdvancedToken.deployed()
-    .then((data) => data.buyPrice())
-    .then((p) => parseFloat(p.toString()))
-    .then((p) => dispatch(setBuyPrice(p)));
+export const setWalletData = (data) => {
+  return {
+    type: SET_WALLET_DATA,
+    data: data
+  };
 };
 
 export const initializeContract = (dispatch) => {
   return Promise.all([
-    appContracts.MyAdvancedToken.deployed()
-      .then((data) => data.totalSupply())
-      .then((p) => parseInt(p.toString())) // stupid BigNumber
-      .then((p) => dispatch(setTokenSupply(p))),
-
-    updateBuyPrice(dispatch),
-
-    appContracts.MyAdvancedToken.deployed()
-    .then((data) => data.owner())
-    .then((p) => dispatch(setTokenOwnerAccount(p))),
-
-    appContracts.MyAdvancedToken.deployed()
-    .then((instance) => instance.address)
-    .then(address => dispatch(setTokenAdress(address)),
-
-    appContracts.Citadel.deployed()
-    .then((instance) => instance.address)
-    .then(address => dispatch(setCitadelAdress(address))),
-
-    appContracts.Citadel.deployed()
-    .then((instance) => instance)
-    .then((data) => data.cost_name_update_in_cita())
-    .then((p) => dispatch(setNameChangeCostInCita(p))),  
-
-    appContracts.Citadel.deployed()
-      .then((instance) => instance.citadel_comptroller())
-      .then((data) => dispatch(setCitadelComptrollerAccount(data))),
-
-    appContracts.Citadel.deployed()
-      .then((instance) => instance.wallet_address())
-      .then((data) => dispatch(setCitadelWalletAddress(data))),
-  ]);
+    getAdvancedTokenPublicData(),
+    getCitadelPublicData()
+  ]).then(([token, citadel]) => dispatch(setWalletData({...token, ...citadel})));
 };
