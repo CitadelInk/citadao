@@ -1,10 +1,11 @@
 import localWeb3 from "../helpers/web3Helper"
+import appContracts from 'app-contracts'
 
 const getEthBalance = account => localWeb3.fromWei(localWeb3.eth.getBalance(account), 'ether').toString();
 
 // could be cleaned
 
-export default (accountIndex, selectedBioRevisionIndex) => {
+export const getAccounts = (accountIndex, selectedBioRevisionIndex) => {
   return new Promise((res, rej) => {
     localWeb3.eth.getAccounts((error, accounts) => {
       if (error) {
@@ -12,12 +13,13 @@ export default (accountIndex, selectedBioRevisionIndex) => {
       } else if (accounts) {
         const account = accounts[accountIndex];
         localWeb3.eth.defaultAccount = account;
-        Promise.all([
-          appContracts.Citadel.deployed()
-            .then((instance) => instance.getName(account)),
-          appContracts.Citadel.deployed()
-            .then((instance) => instance.getBioRevisions(account))
-        ]).then(([citadelName, bioRevisions]) => {
+        
+        appContracts.Citadel.deployed()
+        .then((instance) => {
+          Promise.all([
+            instance.getName(account),
+            instance.getBioRevisions(account)
+          ]).then(([citadelName, bioRevisions]) => {
             const hash = bioRevisions[selectedBioRevisionIndex];
             if (hash) {
               const bzzAddress = hash.substring(2);
@@ -39,8 +41,9 @@ export default (accountIndex, selectedBioRevisionIndex) => {
                 });
               }); 
             }
+          });
         });
       }
     });
   });
-}
+};

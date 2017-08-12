@@ -2,20 +2,22 @@ import React, { Component } from 'react';
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import { initializeContract, initializeAccount } from '../actions';
+import actions from '../actions';
+
+const {initializeContract, initializeAccount} = actions;
 
 class App extends Component {
-	 constructor() {
-		 super();
+	 constructor(props) {
+		 super(props);
 			// can't run this in mist as of yet as we are not deployed to a public network
 			// SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
 			if (typeof mist === "undefined") {
-				this.props.dispatch(initializeContract);
+				props.dispatch(initializeContract());
 			}
 
-			const accountIndex = this.props.wallet.get('accountIndex');
-			const selectedBioRevisionIndex = this.props.wallet.get('selectedBioRevisionIndex');
-			this.props.dispatch(getAccounts(accountIndex, selectedBioRevisionIndex));					
+			const accountIndex = props.wallet.get('accountIndex');
+			const selectedBioRevisionIndex = props.wallet.get('selectedBioRevisionIndex');
+			props.dispatch(initializeAccount(accountIndex, selectedBioRevisionIndex));					
 	}
 
 	updateCitaBalance() {
@@ -40,64 +42,70 @@ class App extends Component {
 		.then((data) => this.setState({citadelName : data}))
 	}
 
+	isOwner() {
+		return this.props.wallet.get('account') !== null &&
+			this.props.wallet.get('tokenOwnerAccount') !== null &&
+			this.props.wallet.get('account') === this.props.wallet.get('tokenOwnerAccount');
+	}
+
 	render() {
-		var isOwner =  this.props.account != null && this.props.tokenOwnerAccount != null && this.props.account == this.props.tokenOwnerAccount;	
 
 		return (
-			<div className="App"><p className="App-intro">
-						Name = {this.props.citadelName}<br />
-						Address = {this.props.account}<br />
-						My ETH Balance = {this.props.ethBalance}<br />
-						My CITA balance = {this.props.citaBalance}<br />
-						CITA Buy Price = {this.props.citaBuyPrice}<br />
-						Total Supply = {this.props.tokenSupply}<br />
-						CITA token owner = {this.props.tokenOwnerAccount}<br />
-						CITA token address = {this.props.tokenAddress}<br />
-						Citadel Comptroller = {this.props.citadelComptrollerAccount}<br />
-						Citadel address = {this.props.citadelAddress}<br />
-						Citadel wallet address (should match CITA token address) = {this.props.citadelWalletAddress}<br />
-						Bio Revisions Length = {this.props.bioRevisions.length}<br />
-						Selected Bio Revision Index - {this.props.selectedBioRevisionIndex}<br />
-						Selected Bio Revision Value - {this.props.selectedBioRevision}<br />
+			<div className="App">
+				<p className="App-intro">
+					Name = {this.props.wallet.get('citadelName')}<br />
+					Address = {this.props.wallet.get('account')}<br />
+					My ETH Balance = {this.props.wallet.get('ethBalance')}<br />
+					My CITA balance = {this.props.wallet.get('citaBalance')}<br />
+					CITA Buy Price = {this.props.wallet.get('citaBuyPrice')}<br />
+					Total Supply = {this.props.wallet.get('tokenSupply')}<br />
+					CITA token owner = {this.props.wallet.get('tokenOwnerAccount')}<br />
+					CITA token address = {this.props.wallet.get('tokenAddress')}<br />
+					Citadel Comptroller = {this.props.wallet.get('citadelComptrollerAccount')}<br />
+					Citadel address = {this.props.wallet.get('citadelAddress')}<br />
+					Citadel wallet address (should match CITA token address) = {this.props.wallet.get('citadelWalletAddress')}<br />
+					Bio Revisions Length = {this.props.wallet.get('bioRevisions').length}<br />
+					Selected Bio Revision Index - {this.props.wallet.get('selectedBioRevisionIndex')}<br />
+					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevision')}<br />
+				</p>
 				
+				<form>
+					{this.isOwner() && 
+						<input onChange={this.handleChangeBuyPrice} value={this.props.wallet.get('newBuyPrice')} />
+					}
+					{this.isOwner() &&
+						<button onClick={this.handleSetBuyPrice}> Update Buy Price </button>
+					}
+					{this.isOwner() &&
+						<br />
+					}
 
-				{isOwner && 
-					<input onChange={this.handleChangeBuyPrice} value={this.props.newBuyPrice} />
-				}
-				{isOwner &&
-					<button onClick={this.handleSetBuyPrice}>{'Update Buy Price'}</button>
-				}
-				{isOwner &&
-					<br />
-				}
+					<input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} />
+					<button onClick={this.handleBuySubmit}>Send WEI to buy 1 CITA / {this.props.wallet.get('citaBuyPrice')} WEI</button><br />	
+					
+					{(this.props.wallet.get('citaBalance') !== 0) &&
+						<button onClick={this.handleApproveClicked}>Approve Citadel Contract to spend CITA for you</button>
+					}
+					{(this.props.wallet.get('citaBalance') !== 0) &&
+						<br />
+					}
+					{(this.props.wallet.get('citaBalance') !== 0) &&
+						<input onChange={this.handleChange} value={this.props.wallet.get('newName')} />
+					}
+					{(this.props.wallet.get('citaBalance') !== 0) &&
+						<button onClick={this.handleSubmit}>{`Update Name - ${this.props.wallet.get('nameChangeCostInCita')} CITA`}</button>
+					}
+					{(this.props.wallet.get('citaBalance') !== 0) &&
+						<br />
+					}
 
-				<input onChange={this.handleEtherSendChange} value={this.props.etherToSend} />
-				<button onClick={this.handleBuySubmit}>{'Send WEI to buy 1 CITA / ' + this.props.citaBuyPrice + ' WEI'}</button><br />	
-				
-				{(this.props.citaBalance !== 0) &&
-					<button onClick={this.handleApproveClicked}>{'Approve Citadel Contract to spend CITA for you'}</button>
-				}
-				{(this.props.citaBalance !== 0) &&
-					<br />
-				}
-				{(this.props.citaBalance !== 0) &&
-					<input onChange={this.handleChange} value={this.props.newName} />
-				}
-				{(this.props.citaBalance !== 0) &&
-					<button onClick={this.handleSubmit}>{'Update Name - ' + this.props.nameChangeCostInCita + 'CITA'}</button>
-				}
-				{(this.props.citaBalance !== 0) &&
-					<br />
-				}
-
-				{(this.props.citaBalance !== 0) &&
-				<input onChange={this.handleBioChange} value={this.props.bioInput} />
-				}
-				{(this.props.citaBalance !== 0) &&
-				<button onClick={this.handleSubmitBio}>{'Submit Bio'}</button>
-				}
-
-			</p>
+					{(this.props.wallet.get('citaBalance') !== 0) &&
+					<input onChange={this.handleBioChange} value={this.props.wallet.get('bioInput')} />
+					}
+					{(this.props.wallet.get('citaBalance') !== 0) &&
+					<button onClick={this.handleSubmitBio}>Submit Bio</button>
+					}
+				</form>
 			</div>
 		);
 	}

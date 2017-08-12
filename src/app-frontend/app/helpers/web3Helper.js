@@ -1,6 +1,6 @@
 import Web3 from 'web3'
 import appContracts from 'app-contracts'
-import config from "../../config.json"
+import config from "../config.json"
 
 let web3Provider
 // this will be true if using Mist/MetaWHAVETER

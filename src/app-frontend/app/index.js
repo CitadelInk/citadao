@@ -7,6 +7,7 @@ import reducers from './reducers';
 import { AppContainer } from 'react-hot-loader';
 import appContracts from 'app-contracts';
 import App from './components/app';
+import localWeb3 from "./helpers/web3Helper"
 
 const middleware = [ thunk ];
 

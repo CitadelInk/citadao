@@ -5,11 +5,11 @@ import {
   getCitadelPublicData,
   getCitaBalance
 } from '../api/getPublicData';
-import getAccounts from '../api/getAccounts';
+import {getAccounts} from '../api/getAccounts';
 
 export const SET_TOKEN_SUPPLY = "SET_TOKEN_SUPPLY";
 
-export const setTokenSupply = (tokenSupply) {
+export const setTokenSupply = (tokenSupply) => {
   return {
     type: SET_TOKEN_SUPPLY,
     data: tokenSupply
@@ -89,7 +89,7 @@ export const setWalletData = (data) => {
   };
 };
 
-export const initializeContract = (dispatch) => {
+export const initializeContract = () => (dispatch) => {
   return Promise.all([
     getAdvancedTokenPublicData(),
     getCitadelPublicData()
@@ -97,8 +97,37 @@ export const initializeContract = (dispatch) => {
 };
 
 export const initializeAccount = (accountIndex, revisionIndex) => dispatch => {
-  Promise.all([
-    getAccounts(accountIndex, revisionIndex),
-    getCitaBalance()
-  ]).then(([account, citaBalance]) => dispatch(setWalletData({...account, citaBalance})));
+  debugger;
+  return new Promise((res, rej) => {
+    getAccounts(accountIndex, revisionIndex).then((accountData) => {
+      getCitaBalance(accountData.account).then((citaBalance) => {
+        res({...account, citaBalance})
+      });
+    });
+  }).then((data) => dispatch(setWalletData(data)));
+};
+
+export default {
+  initializeContract,
+  initializeAccount,
+  setWalletData,
+  SET_WALLET_DATA,
+  setCitadelWalletAddress,
+  SET_CITADEL_WALLET_ADDRESS,
+  setCitadelComptrollerAccount,
+  SET_CITADEL_WALLET_ADDRESS,
+  setCitadelComptrollerAccount,
+  SET_CITADEL_COMPTROLLER_ACCOUNT,
+  setNameChangeCostInCita,
+  SET_NAME_CHANGE_COST_IN_CITA,
+  setCitadelAddress,
+  SET_CITADEL_ADDRESS,
+  setTokenAdress,
+  SET_TOKEN_ADDRESS,
+  setTokenOwnerAccount,
+  SET_TOKEN_OWNER_ACCONT,
+  setBuyPrice,
+  SET_BUY_PRICE,
+  setTokenSupply,
+  SET_TOKEN_SUPPLY
 };
