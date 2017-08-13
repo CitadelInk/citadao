@@ -14,7 +14,7 @@ const {
 } = actions;
 
 const wallet = (state = Map({
-  accountIndex: 1,
+  accountIndex: 0,
   account: null,
   tokenSupply: 0,
   citaBalance: 0,

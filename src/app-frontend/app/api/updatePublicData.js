@@ -4,10 +4,10 @@ import localWeb3 from "../helpers/web3Helper";
 export const updateBuyPrice = (newBuyPrice, account) => {
   return appContracts.MyAdvancedToken.deployed()
     .then((instance) => instance.setPrices.sendTransaction(localWeb3.toBigNumber('0'), newBuyPrice, {from : account})).then(function(tx_id) {
-      appContracts.MyAdvancedToken.deployed()
+      return appContracts.MyAdvancedToken.deployed()
         .then((data) => data.buyPrice())
         .then((p) => parseFloat(p.toString()))
-        .then((p) => {citaBuyPrice : p});  
+        .then((p) => {return {citaBuyPrice : p}});  
     }).catch(function(e) {
       alert("error - " + e);
     })
@@ -16,7 +16,7 @@ export const updateBuyPrice = (newBuyPrice, account) => {
 export const updateBio = (bioInput, account) => {
   console.log('bio value = ' + bioInput);
   return localWeb3.bzz.put(bioInput, (error, hash) => {
-    appContracts.Citadel.deployed()
+    return appContracts.Citadel.deployed()
     .then((instance) => {
       return instance.submitBioRevision.sendTransaction('0x' + hash, {from : account, gas : 200000})
     }).then(function(tx_id) {

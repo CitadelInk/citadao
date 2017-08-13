@@ -20,7 +20,7 @@ export const setBuyPrice = () => (dispatch, getState) => {
   const account = wallet.get('account');
   console.log('account = ' + account + ' newBuyPrice = ' + newBuyPrice);
   return updateBuyPrice(newBuyPrice, account).then((data) => {
-    return setWalletData(data);
+    return dispatch(setWalletData(data));
   });
 };
 

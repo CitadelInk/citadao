@@ -86,14 +86,12 @@ class App extends Component {
 					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevision')}<br />
 				</p>
 				
-				<form>
-					{this.isOwner() && ownerSection}
+				{this.isOwner() && ownerSection}
 
-					<input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} />
-					<button onClick={this.handleBuySubmit}>Send WEI to buy 1 CITA / {this.props.wallet.get('citaBuyPrice')} WEI</button><br />	
-					
-					{(this.props.wallet.get('citaBalance') !== 0) && hasCitaSection}
-				</form>
+				<input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} />
+				<button onClick={this.handleBuySubmit}>Send WEI to buy 1 CITA / {this.props.wallet.get('citaBuyPrice')} WEI</button><br />	
+				
+				{(this.props.wallet.get('citaBalance') !== 0) && hasCitaSection}
 			</div>
 		);
 	}
