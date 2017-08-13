@@ -19,10 +19,6 @@ export const updateBio = (bioInput, account) => {
     return appContracts.Citadel.deployed()
     .then((instance) => {
       return instance.submitBioRevision.sendTransaction('0x' + hash, {from : account, gas : 200000})
-    }).then(function(tx_id) {
-      alert("bio added to contract");
-    }).catch(function(e) {
-      alert("error - " + e);
     });
   });
 }

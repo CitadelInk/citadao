@@ -105,7 +105,7 @@ class App extends Component {
 	}
 
 	handleApproveClicked(e) {
-		this.props.dispatc(handleApproveClicked());
+		this.props.dispatch(handleApproveClicked());
 	}
 
 	handleChange(e) {

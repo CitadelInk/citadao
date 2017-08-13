@@ -61,8 +61,11 @@ export const submitBio = () => (dispatch, getState) => {
   const {wallet} = getState();
   const account = wallet.get('account');
   const bioInput = wallet.get('bioInput');
-  return updateBio(bioInput, account)
-    .then(() => dispatch(setWalletData({bioInput})));
+  return updateBio(bioInput, account).then(function(tx_id) {
+      alert("bio added to contract");
+    }).catch(function(e) {
+      alert("error - " + e);
+    });
 };
 
 export const setName = () => (dispatch, getState) => {
@@ -86,7 +89,7 @@ export const handleBuySubmit = () => (dispatch, getState) => {
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
   console.log("from: " + account + " - to: " + tokenOwnerAccount);
-  submitBuy().then(() => {
+  submitBuy(ethToSend, account, tokenOwnerAccount).then(() => {
     alert("Transaction successful - CITA bought");
     dispatch(updateCitaBalance(account));
   }).catch(function(e) {
