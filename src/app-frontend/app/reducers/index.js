@@ -14,6 +14,7 @@ const {
 } = actions;
 
 const wallet = (state = Map({
+  accounts: [],
   accountIndex: 0,
   account: null,
   tokenSupply: 0,
@@ -33,7 +34,8 @@ const wallet = (state = Map({
   bioRevisions: [],
   bioRevisionResults: [],
   selectedBioRevisionIndex: 0,
-  bioInput: ''
+  bioInput: '',
+  selectedBioRevision: null
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:

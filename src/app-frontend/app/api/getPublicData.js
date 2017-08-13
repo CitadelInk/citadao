@@ -32,7 +32,7 @@ export const getCitadelPublicData = () => {
           citadelAddress: instance.address,
           nameChangeCostInCita: cost_name_update_in_cita,
           citadelComptrollerAccount: citadel_comptroller,
-          CitadelWalletAddress: wallet_address
+          citadelWalletAddress: wallet_address
         };
       });
     });

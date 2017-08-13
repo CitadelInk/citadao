@@ -2,6 +2,7 @@ import appContracts from 'app-contracts';
 import localWeb3 from "../helpers/web3Helper";
 
 export const updateBuyPrice = (newBuyPrice, account) => {
+  console.log("update buy price - newBuyPrice=" + newBuyPrice)
   return appContracts.MyAdvancedToken.deployed()
     .then((instance) => instance.setPrices.sendTransaction(localWeb3.toBigNumber('0'), newBuyPrice, {from : account})).then(function(tx_id) {
       return appContracts.MyAdvancedToken.deployed()
@@ -43,6 +44,7 @@ export const submitNameChange = (name, account) => {
 };
 
 export const submitBuy = (eth, account, tokenOwnerAccount) => {
+  console.log("submitBuy - from: " + account + " - to: " + tokenOwnerAccount + " - amount: " + eth);
   return appContracts.MyAdvancedToken.deployed()
     .then((instance) => {
       return instance.buy.sendTransaction({

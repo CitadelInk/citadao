@@ -12,7 +12,12 @@ import {
   submitNameChange,
   submitBuy
 } from '../api/updatePublicData';
-import {getAccounts} from '../api/getAccounts';
+import {
+  getAccounts, 
+  getAccountBioData,
+  getAccountBioRevisions,
+  getAccountBioRevision
+} from '../api/getAccounts';
 
 export const setBuyPrice = () => (dispatch, getState) => {
   const {wallet} = getState();
@@ -41,14 +46,31 @@ export const initializeContract = () => (dispatch) => {
   ]).then(([token, citadel]) => dispatch(setWalletData({...token, ...citadel})));
 };
 
-export const initializeAccount = (accountIndex, revisionIndex) => dispatch => {
+export const initializeAccounts = () => dispatch => {
   return new Promise((res, rej) => {
-    getAccounts(accountIndex, revisionIndex).then((accountData) => {
-      getCitaBalance(accountData.account).then((citaBalance) => {
-        res({...accountData, citaBalance})
-      });
-    });
-  }).then((data) => dispatch(setWalletData(data)));
+    getAccounts().then((accounts) => {
+      var account = accounts.accounts[0];
+      getAccountBioRevisions(account).then((bioRevisions) => {
+        res({...accounts, ...bioRevisions, account}); 
+      })
+    })
+  }).then((data) => {
+    dispatch(setWalletData(data))
+  })
+  
+}
+
+export const setSelectedAccount = (account) => dispatch => {
+  return getAccountBioRevisions(account).then((bioRevisions) => {
+    localWeb3.eth.defaultAccount = account
+    return dispatch(setWalletData({account, ...bioRevisions}))
+  })
+};
+
+export const setSelectedBioRevision = (selectedRevision) => dispatch => {
+  return getAccountBioRevision(selectedRevision).then((revision) => {
+    return dispatch(setWalletData({selectedRevision : selectedRevision, revision : revision}))
+  })
 };
 
 export const updateCitaBalance = (account) => dispatch => {
@@ -117,7 +139,7 @@ export const handleApproveClicked = () => (dispatch, getState) => {
 
 export default {
   initializeContract,
-  initializeAccount,
+  initializeAccounts,
   updateCitaBalance,
   setWalletData,
   SET_WALLET_DATA,
@@ -126,5 +148,7 @@ export default {
   setName,
   handleSubmit,
   handleBuySubmit,
-  handleApproveClicked
+  handleApproveClicked,
+  setSelectedAccount,
+  setSelectedBioRevision
 };

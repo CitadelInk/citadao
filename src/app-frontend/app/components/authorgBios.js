@@ -4,7 +4,6 @@ import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import actions from '../actions';
 import Header from './header';
-import BioRevisionSelector from './bioRevisionSelector'
 
 const {
 	initializeContract,
@@ -19,16 +18,13 @@ const {
 	handleApproveClicked
 } = actions;
 
-class App extends Component {
+class AuthorgBios extends Component {
 	 constructor(props) {
 		 super(props);
-			// can't run this in mist as of yet as we are not deployed to a public network
-			// SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
-			if (typeof mist === "undefined") {
-				props.dispatch(initializeContract());
-			}
 
-			props.dispatch(initializeAccounts());
+			if(props.wallet.get('account' !== null)) {
+				//props.dispatch(initializeAccount(accountIndex, selectedBioRevisionIndex));
+			}
 
 			this.handleSubmit = this.handleSubmit.bind(this);
 			this.handleSubmitBio = this.handleSubmitBio.bind(this);
@@ -69,9 +65,9 @@ class App extends Component {
 
 		return (
 			<div className="App">
-    			<Header /><br />
-				<BioRevisionSelector />
+    			<Header />
 				<p className="App-intro">
+					Accounts = {this.props.wallet.get('accounts')}<br />
 					Name = {this.props.wallet.get('citadelName')}<br />
 					Address = {this.props.wallet.get('account')}<br />
 					My ETH Balance = {this.props.wallet.get('ethBalance')}<br />
@@ -83,6 +79,8 @@ class App extends Component {
 					Citadel Comptroller = {this.props.wallet.get('citadelComptrollerAccount')}<br />
 					Citadel address = {this.props.wallet.get('citadelAddress')}<br />
 					Citadel wallet address (should match CITA token address) = {this.props.wallet.get('citadelWalletAddress')}<br />
+					Bio Revisions Length = {this.props.wallet.get('bioRevisions').length}<br />
+					Selected Bio Revision Index - {this.props.wallet.get('selectedBioRevisionIndex')}<br />
 					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevision')}<br />
 				</p>
 				
