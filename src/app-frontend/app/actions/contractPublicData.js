@@ -69,7 +69,7 @@ export const setSelectedAccount = (account) => dispatch => {
 
 export const setSelectedBioRevision = (selectedRevision) => dispatch => {
   return getAccountBioRevision(selectedRevision).then((revision) => {
-    return dispatch(setWalletData({selectedRevision : selectedRevision, revision : revision}))
+    return dispatch(setWalletData({selectedBioRevision : selectedRevision, selectedBioRevisionValue : revision}))
   })
 };
 

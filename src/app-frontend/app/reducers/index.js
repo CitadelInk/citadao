@@ -32,10 +32,9 @@ const wallet = (state = Map({
   citadelAddress: null,
   citadelWalletAddress: null,
   bioRevisions: [],
-  bioRevisionResults: [],
-  selectedBioRevisionIndex: 0,
   bioInput: '',
-  selectedBioRevision: null
+  selectedBioRevision: null,
+  selectedBioRevisionValue: null
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:

@@ -83,7 +83,7 @@ class App extends Component {
 					Citadel Comptroller = {this.props.wallet.get('citadelComptrollerAccount')}<br />
 					Citadel address = {this.props.wallet.get('citadelAddress')}<br />
 					Citadel wallet address (should match CITA token address) = {this.props.wallet.get('citadelWalletAddress')}<br />
-					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevision')}<br />
+					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevisionValue')}<br />
 				</p>
 				
 				{this.isOwner() && ownerSection}
