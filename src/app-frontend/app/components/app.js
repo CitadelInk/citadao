@@ -4,7 +4,18 @@ import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import actions from '../actions';
 
-const {initializeContract, initializeAccount} = actions;
+const {
+	initializeContract,
+	initializeAccount,
+	updateCitaBalance,
+	setWalletData,
+	setBuyPrice,
+	submitBio,
+	setName,
+	handleSubmit,
+	handleBuySubmit,
+	handleApproveClicked
+} = actions;
 
 class App extends Component {
 	 constructor(props) {
@@ -17,29 +28,17 @@ class App extends Component {
 
 			const accountIndex = props.wallet.get('accountIndex');
 			const selectedBioRevisionIndex = props.wallet.get('selectedBioRevisionIndex');
-			props.dispatch(initializeAccount(accountIndex, selectedBioRevisionIndex));					
-	}
+			props.dispatch(initializeAccount(accountIndex, selectedBioRevisionIndex));
 
-	updateCitaBalance() {
-		appContracts.MyAdvancedToken.deployed()
-		.then((instance) => instance)
-		.then((data) => data.balanceOf(this.props.account))
-		.then((p) => parseInt(p.toString()))
-		.then((p) => this.setState({citaBalance : p}));	
-	}
-
-	updateBuyPrice() {
-		appContracts.MyAdvancedToken.deployed()
-		.then((instance) => instance)
-		.then((data) => data.buyPrice())
-		.then((p) => parseFloat(p.toString()))
-		.then((p) => this.setState({citaBuyPrice : p}));	
-	}
-
-	updateName() {
-		appContracts.Citadel.deployed()
-		.then((instance) => instance.getName(this.props.account))
-		.then((data) => this.setState({citadelName : data}))
+			this.handleSubmit = this.handleSubmit.bind(this);
+			this.handleSubmitBio = this.handleSubmitBio.bind(this);
+			this.handleApproveClicked = this.handleApproveClicked.bind(this);
+			this.handleChange = this.handleChange.bind(this);	
+			this.handleBioChange = this.handleBioChange.bind(this);
+			this.handleEtherSendChange = this.handleEtherSendChange.bind(this);
+			this.handleChangeBuyPrice = this.handleChangeBuyPrice.bind(this);
+			this.handleSetBuyPrice = this.handleSetBuyPrice.bind(this);
+			this.handleBuySubmit = this.handleBuySubmit.bind(this);
 	}
 
 	isOwner() {
@@ -49,6 +48,24 @@ class App extends Component {
 	}
 
 	render() {
+		const ownerSection = (
+			<div>
+				<input onChange={this.handleChangeBuyPrice} value={this.props.wallet.get('newBuyPrice')} />
+				<button onClick={this.handleSetBuyPrice}> Update Buy Price </button>
+			</div>
+		);
+
+		const hasCitaSection = (
+			<div>
+				<button onClick={this.handleApproveClicked}>Approve Citadel Contract to spend CITA for you</button>
+				<br />
+				<input onChange={this.handleChange} value={this.props.wallet.get('newName')} />
+				<button onClick={this.handleSubmit}>{`Update Name - ${this.props.wallet.get('nameChangeCostInCita')} CITA`}</button>
+				<br />
+				<input onChange={this.handleBioChange} value={this.props.wallet.get('bioInput')} />
+				<button onClick={this.handleSubmitBio}>Submit Bio</button>
+			</div>
+		);
 
 		return (
 			<div className="App">
@@ -70,144 +87,51 @@ class App extends Component {
 				</p>
 				
 				<form>
-					{this.isOwner() && 
-						<input onChange={this.handleChangeBuyPrice} value={this.props.wallet.get('newBuyPrice')} />
-					}
-					{this.isOwner() &&
-						<button onClick={this.handleSetBuyPrice}> Update Buy Price </button>
-					}
-					{this.isOwner() &&
-						<br />
-					}
+					{this.isOwner() && ownerSection}
 
 					<input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} />
 					<button onClick={this.handleBuySubmit}>Send WEI to buy 1 CITA / {this.props.wallet.get('citaBuyPrice')} WEI</button><br />	
 					
-					{(this.props.wallet.get('citaBalance') !== 0) &&
-						<button onClick={this.handleApproveClicked}>Approve Citadel Contract to spend CITA for you</button>
-					}
-					{(this.props.wallet.get('citaBalance') !== 0) &&
-						<br />
-					}
-					{(this.props.wallet.get('citaBalance') !== 0) &&
-						<input onChange={this.handleChange} value={this.props.wallet.get('newName')} />
-					}
-					{(this.props.wallet.get('citaBalance') !== 0) &&
-						<button onClick={this.handleSubmit}>{`Update Name - ${this.props.wallet.get('nameChangeCostInCita')} CITA`}</button>
-					}
-					{(this.props.wallet.get('citaBalance') !== 0) &&
-						<br />
-					}
-
-					{(this.props.wallet.get('citaBalance') !== 0) &&
-					<input onChange={this.handleBioChange} value={this.props.wallet.get('bioInput')} />
-					}
-					{(this.props.wallet.get('citaBalance') !== 0) &&
-					<button onClick={this.handleSubmitBio}>Submit Bio</button>
-					}
+					{(this.props.wallet.get('citaBalance') !== 0) && hasCitaSection}
 				</form>
 			</div>
 		);
 	}
 
-
-
 	handleSubmitBio(e) {
-		var name = this.props.newName;
-		var account = this.props.account;
-		var appInstance = this;
-		var testValue = this.props.bioInput;
-		console.log('bio value = ' + testValue);
-		localWeb3.bzz.put(testValue, (error, hash) => {
-			appContracts.Citadel.deployed()
-			.then((instance) => instance.submitBioRevision.sendTransaction('0x' + hash, {from : this.props.account, gas : 200000})).then(function(tx_id) {
-				alert("bio added to contract");
-			}).catch(function(e) {
-				alert("error - " + e);
-			})
-		});
-		
+		this.props.dispatch(submitBio());
 	}
 
 	handleSubmit(e) {
-		var name = this.props.newName;
-		var account = this.props.account;
-		var appInstance = this;
-		appContracts.Citadel.deployed()
-		.then((instance) => instance.setName.sendTransaction(name, {from : this.props.account})).then(function(tx_id) {
-			appInstance.handleNameChangeSuccess(tx_id)
-		}).catch(function(e) {
-			alert("error - " + e);
-		})
+		this.props.dispatch(handleSubmit());
 	}
 
 	handleApproveClicked(e) {
-		var name = this.props.newName;
-		var account = this.props.account;
-		var appInstance = this;
-		appContracts.MyAdvancedToken.deployed()
-		.then((instance) => instance.approve.sendTransaction(this.props.citadelAddress, this.props.citaBalance, {from : this.props.account})).then(function(tx_id) {
-			alert("Citadel Contract address approved as spender.");
-		}).catch(function(e) {
-			alert("error - " + e);
-		})
-	}
-
-	handleNameChangeSuccess(tx_id) {
-		alert("Transaction successful - name is updated");
-		this.updateName();
-		this.updateCitaBalance();
+		this.props.dispatc(handleApproveClicked());
 	}
 
 	handleChange(e) {
-		this.setState({newName : e.target.value});	
+		this.props.dispatch(setWalletData({newName : e.target.value}));	
 	}
 
 	handleBioChange(e) {
-		this.setState({bioInput : e.target.value})
+		this.props.dispatch(setWalletData({bioInput : e.target.value}));
 	}
 
 	handleEtherSendChange(e) {
-		this.setState({etherToSend : e.target.value});
+		this.props.dispatch(setWalletData({etherToSend : e.target.value}));
 	}
 
 	handleChangeBuyPrice(e) {
-		this.setState({newBuyPrice : e.target.value})
+		this.props.dispatch(setWalletData({newBuyPrice : e.target.value}))
 	}
 
 	handleSetBuyPrice(e) {
-		var newBuyPrice = localWeb3.toBigNumber(this.props.newBuyPrice);
-		var appInstance = this;
-		console.log('account = ' + this.props.account + ' newBuyPrice = ' + newBuyPrice);
-		appContracts.MyAdvancedToken.deployed()
-		.then((instance) => instance.setPrices.sendTransaction(localWeb3.toBigNumber('0'), newBuyPrice, {from : this.props.account})).then(function(tx_id) {
-			appInstance.handleSetBuyPriceSuccess(tx_id)
-		}).catch(function(e) {
-			alert("error - " + e);
-		})
+		this.props.dispatch(setBuyPrice());
 	}
 
 	handleBuySubmit(e) {
-		var ethToSend = localWeb3.toBigNumber(this.props.etherToSend);
-		var account = this.props.account;
-		var appInstance = this;
-		console.log("from: " + this.props.account + " - to: " + this.props.tokenOwnerAccount);
-		appContracts.MyAdvancedToken.deployed()
-		.then((instance) => instance.buy.sendTransaction({from : this.props.account, to : this.props.tokenOwnerAccount, value : ethToSend})).then(function(tx_id) {
-			appInstance.handleBuyCitaSuccess(tx_id)
-		}).catch(function(e) {
-			alert("error - " + e);
-		})
-	}
-
-	handleBuyCitaSuccess(tx_id) {
-		alert("Transaction successful - CITA bought");
-		this.updateCitaBalance();
-	}
-
-	handleSetBuyPriceSuccess(tx_id) {
-		alert("Transaction successful - Buy Price updated");
-		this.updateBuyPrice();
+		this.props.dispatch(handleBuySubmit());
 	}
 }
 

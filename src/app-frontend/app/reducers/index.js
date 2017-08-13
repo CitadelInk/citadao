@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { Map } from 'immutable';
-import {
+import actions from '../actions';
+const {
   SET_CITADEL_WALLET_ADRESS,
   SET_CITADEL_COMPTROLLER_ACCOUNT,
   SET_NAME_CHANGE_COST_IN_CITA,
@@ -10,7 +11,7 @@ import {
   SET_BUY_PRICE,
   SET_TOKEN_SUPPLY,
   SET_WALLET_DATA
-} from '../actions';
+} = actions;
 
 const wallet = (state = Map({
   accountIndex: 1,

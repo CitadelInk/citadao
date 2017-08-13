@@ -13,7 +13,7 @@ export const getAccounts = (accountIndex, selectedBioRevisionIndex) => {
       } else if (accounts) {
         const account = accounts[accountIndex];
         localWeb3.eth.defaultAccount = account;
-        
+
         appContracts.Citadel.deployed()
         .then((instance) => {
           Promise.all([
@@ -40,6 +40,13 @@ export const getAccounts = (accountIndex, selectedBioRevisionIndex) => {
                   });
                 });
               }); 
+            } else {
+              res({
+                citadelName,
+                bioRevisions,
+                ethBalance: getEthBalance(account),
+                account
+              });
             }
           });
         });
