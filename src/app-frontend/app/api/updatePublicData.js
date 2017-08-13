@@ -15,12 +15,16 @@ export const updateBuyPrice = (newBuyPrice, account) => {
 
 export const updateBio = (bioInput, account) => {
   console.log('bio value = ' + bioInput);
-  return localWeb3.bzz.put(bioInput, (error, hash) => {
-    return appContracts.Citadel.deployed()
-    .then((instance) => {
-      return instance.submitBioRevision.sendTransaction('0x' + hash, {from : account, gas : 200000})
+  return new Promise((res, rej) => {
+    localWeb3.bzz.put(bioInput, (error, hash) => {
+      appContracts.Citadel.deployed()
+      .then((instance) => {
+        instance.submitBioRevision.sendTransaction('0x' + hash, {from : account, gas : 200000}).then((tx_id) => {
+          res(tx_id)
+        }).catch(rej);
+      });
     });
-  });
+  }); 
 }
 
 export const updateName = (account) => {
