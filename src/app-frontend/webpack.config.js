@@ -18,7 +18,24 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }
+      { 
+        test: /\.js$/, 
+        exclude: /node_modules/, 
+        use: [
+            {
+                loader: require.resolve('babel-loader'),
+                query: {
+                    presets: [
+                        require.resolve('babel-preset-es2015'),
+                        require.resolve('babel-preset-react')
+                    ],
+                    plugins: [
+                        require.resolve('babel-plugin-transform-object-rest-spread')
+                    ]
+                }
+            }
+        ]
+      }
     ]
   },
   devServer: {
