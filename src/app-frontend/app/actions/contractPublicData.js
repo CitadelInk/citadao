@@ -16,7 +16,9 @@ import {
   getAccounts, 
   getAccountBioData,
   getAccountBioRevisions,
-  getAccountBioRevision
+  getAccountBioRevision,
+  getAccountName,
+  getEthBalance
 } from '../api/getAccounts';
 
 export const setBuyPrice = () => (dispatch, getState) => {
@@ -49,10 +51,23 @@ export const initializeContract = () => (dispatch) => {
 export const initializeAccounts = () => dispatch => {
   return new Promise((res, rej) => {
     getAccounts().then((accounts) => {
-      var account = accounts.accounts[0];
-      getAccountBioRevisions(account).then((bioRevisions) => {
-        res({...accounts, ...bioRevisions, account}); 
+      var accountNamePromises = accounts.accounts.map(acct => {
+        return getAccountName(acct)
       })
+      Promise.all(accountNamePromises).then(values => {
+        var accountNamesResults = values;
+        var accountNames = accountNamesResults.map(result => {
+          return result.accountName
+        })
+        var account = accounts.accounts[0];
+        Promise.all([
+          getEthBalance(account),
+          getCitaBalance(account)
+        ]).then(([ethBalance, citaBalance]) => {
+          res({...accounts, accountNames, account, ethBalance, citaBalance}); 
+        })
+      })
+      
     })
   }).then((data) => {
     dispatch(setWalletData(data))
@@ -61,9 +76,13 @@ export const initializeAccounts = () => dispatch => {
 }
 
 export const setSelectedAccount = (account) => dispatch => {
-  return getAccountBioRevisions(account).then((bioRevisions) => {
+  return Promise.all([
+        getEthBalance(account),
+        getCitaBalance(account),
+        getAccountBioRevisions(account)
+      ]) .then(([ethBalance, citaBalance, bioRevisions]) => {
     localWeb3.eth.defaultAccount = account
-    return dispatch(setWalletData({account, ...bioRevisions}))
+    return dispatch(setWalletData({account, ...bioRevisions, ethBalance, citaBalance}))
   })
 };
 

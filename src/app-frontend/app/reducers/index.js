@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import actions from '../actions';
 const {
   SET_CITADEL_WALLET_ADRESS,
@@ -14,7 +14,8 @@ const {
 } = actions;
 
 const wallet = (state = Map({
-  accounts: [],
+  accounts: List([]),
+  accountNames: List([]),
   accountIndex: 0,
   account: null,
   tokenSupply: 0,
@@ -32,6 +33,7 @@ const wallet = (state = Map({
   citadelAddress: null,
   citadelWalletAddress: null,
   bioRevisions: [],
+  bioRevisionsByAccount: {},
   bioInput: '',
   selectedBioRevision: null,
   selectedBioRevisionValue: null

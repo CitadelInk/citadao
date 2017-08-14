@@ -1,17 +1,14 @@
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 
-const getEthBalance = account => localWeb3.fromWei(localWeb3.eth.getBalance(account), 'ether').toString();
+export const getEthBalance = (account) => localWeb3.fromWei(localWeb3.eth.getBalance(account), 'ether').toString();
 
 // could be cleaned
 
 export const getAccounts = () => {
   return new Promise((res, rej) => {
-    console.log("promise 1")
     localWeb3.eth.getAccounts((error, accounts) => {
-      console.log("promise accounts = " + accounts.length)
       if (error) {
-        console.log(error)
         rej(error);
       } else if (accounts) {
         res({accounts})
@@ -22,10 +19,6 @@ export const getAccounts = () => {
 
 export const getAccountBioRevisions = (account) => {
   return new Promise((res, rej) => {
-    
-    //const account = accounts[accountIndex];
-    //localWeb3.eth.defaultAccount = account;
-
     appContracts.Citadel.deployed()
     .then((instance) => {
       Promise.all([
@@ -38,17 +31,45 @@ export const getAccountBioRevisions = (account) => {
   });
 }
 
+export const getAccountName = (account) => {
+  console.log("getAccountName - " + account)
+   return new Promise((res, rej) => {
+    appContracts.Citadel.deployed()
+    .then((instance) => {
+      Promise.all([
+        instance.getBioRevisions(account)]
+      )      
+      .then(([bioRevisions]) => {
+        if(bioRevisions !== null) {
+          if (bioRevisions.length > 0) {
+            const mostRecentBio = bioRevisions[bioRevisions.length - 1];
+            getAccountBioRevision(mostRecentBio)
+            .then((data) => {
+              console.log("name found = " + data.selectedBioRevision);
+              res({
+                accountName : data.selectedBioRevision
+              })
+            })
+          } else {
+            console.log("no name found 1")
+            res({accountName : "none"})
+          }
+        } else {
+          console.log("no name found 2")
+          res({accountName : "none"})
+        }
+      })
+    })
+  });
+}
+
 export const getAccountBioRevision = (revisionHash) => {
   return new Promise((res, rej) => {
     const bzzAddress = revisionHash.substring(2);
-    //console.log("1 state set - data[selectedBioRevisionIndex]=" + hash)
     localWeb3.bzz.retrieve(bzzAddress, (error, bio) => {
       // prolly want to handle errors
-      console.log('bio - ' + bio)
       const jsonBio = JSON.parse(bio)
-      console.log('jsonBio entries - ' + jsonBio.entries[0].hash)     
       localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
-        console.log('bio text = ' + bioText)
         res({
           selectedBioRevision: bioText
         });
@@ -56,46 +77,3 @@ export const getAccountBioRevision = (revisionHash) => {
     });
   });
 }
-
-export const getAccountBioData = (account, selectedBioRevisionIndex) => {
-  return new Promise((res, rej) => {
-    
-    //const account = accounts[accountIndex];
-    //localWeb3.eth.defaultAccount = account;
-
-    appContracts.Citadel.deployed()
-    .then((instance) => {
-      Promise.all([
-        instance.getName(account),
-        instance.getBioRevisions(account)
-      ]).then(([citadelName, bioRevisions]) => {
-        const hash = bioRevisions[selectedBioRevisionIndex];
-        if (hash) {
-          const bzzAddress = hash.substring(2);
-          console.log("1 state set - data[selectedBioRevisionIndex]=" + hash)
-          localWeb3.bzz.retrieve(bzzAddress, (error, bio) => {
-            // prolly want to handle errors
-            console.log('bio - ' + bio)
-            const jsonBio = JSON.parse(bio)
-            console.log('jsonBio entries - ' + jsonBio.entries[0].hash)     
-            localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
-              console.log('bio text = ' + bioText)
-              res({
-                selectedBioRevision: bioText,
-                bioRevisions,
-                citadelName,
-                ethBalance: getEthBalance(account)
-              });
-            });
-          }); 
-        } else {
-          res({
-            citadelName,
-            bioRevisions,
-            ethBalance: getEthBalance(account)
-          });
-        }
-      });
-    });
-  });
-};
