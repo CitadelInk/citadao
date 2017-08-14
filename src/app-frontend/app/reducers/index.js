@@ -10,7 +10,8 @@ const {
   SET_TOKEN_OWNER_ACCONT,
   SET_BUY_PRICE,
   SET_TOKEN_SUPPLY,
-  SET_WALLET_DATA
+  SET_WALLET_DATA,
+  NAVIGATE_PAGE
 } = actions;
 
 const wallet = (state = Map({
@@ -18,13 +19,13 @@ const wallet = (state = Map({
   accountNames: List([]),
   accountIndex: 0,
   account: null,
+  accounts: List([]),
   tokenSupply: 0,
   citaBalance: 0,
   ethBalance: 0,
   citaBuyPrice: 0.0,
   etherToSend: 0,
   newBuyPrice: 0,
-  nameChangeCostInCita: 0,
   citadelName: '',
   newName: '',
   tokenOwnerAccount: null,
@@ -62,8 +63,18 @@ const wallet = (state = Map({
   }
 };
 
+const ui = (state = Map({page: 'home', route: '/'}), action) => {
+  switch (action.type) {
+    case NAVIGATE_PAGE:
+      return state.merge(action.data);
+    default:
+      return state;
+  }
+};
+
 const rootReducer = combineReducers({
-  wallet
+  wallet,
+  ui
 });
 
 export default rootReducer;

@@ -9,6 +9,7 @@ import appContracts from 'app-contracts';
 import App from './components/app';
 import Header from './components/header';
 import localWeb3 from "./helpers/web3Helper"
+import Router from './router';
 
 const middleware = [ thunk ];
 
@@ -18,6 +19,9 @@ const store = createStore(
 );
 
 appContracts.setProvider(localWeb3.currentProvider);
+
+const router = new Router({store: store});
+router.history.start();
 
 ReactDOM.render(
   <Provider store={store}>

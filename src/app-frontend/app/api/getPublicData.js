@@ -30,7 +30,6 @@ export const getCitadelPublicData = () => {
       ]).then(([cost_name_update_in_cita, citadel_comptroller, wallet_address]) => {
         return {
           citadelAddress: instance.address,
-          nameChangeCostInCita: cost_name_update_in_cita,
           citadelComptrollerAccount: citadel_comptroller,
           citadelWalletAddress: wallet_address
         };

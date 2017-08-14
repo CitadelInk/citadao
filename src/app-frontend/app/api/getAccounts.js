@@ -32,7 +32,6 @@ export const getAccountBioRevisions = (account) => {
 }
 
 export const getAccountName = (account) => {
-  console.log("getAccountName - " + account)
    return new Promise((res, rej) => {
     appContracts.Citadel.deployed()
     .then((instance) => {
@@ -45,17 +44,14 @@ export const getAccountName = (account) => {
             const mostRecentBio = bioRevisions[bioRevisions.length - 1];
             getAccountBioRevision(mostRecentBio)
             .then((data) => {
-              console.log("name found = " + data.selectedBioRevision);
               res({
                 accountName : data.selectedBioRevision
               })
             })
           } else {
-            console.log("no name found 1")
             res({accountName : "none"})
           }
         } else {
-          console.log("no name found 2")
           res({accountName : "none"})
         }
       })

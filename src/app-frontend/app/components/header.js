@@ -25,42 +25,19 @@ class Header extends Component {
 	}
 
 	render() {
-		var accounts = this.props.wallet.get('accounts')
-		var accountsArray = accounts.toArray();
-		console.log("accounts[0]=" + accounts[0])
-		var names = this.props.wallet.get('accountNames').toArray();
-		var nameMap = new Map()
-		console.log("accounts.length = " + accounts.size)
-		if (accounts.size > 0) {
-			console.log("YES 0")
-			if(accounts.size === names.size) {
-				console.log("YES 1")
-				for(var i = 0; i < accounts.size; i++) {
-					console.log("YES 2 - accounts[i]=" + accounts[i] + " - names[i]=" + names[i]);
-					nameMap[accounts[i]] = names[i];
-				}
-			}
-		}
-		console.log("type of accounts = " + typeof(accounts))
-		console.log("HEADER - accounts = " + accounts);
-		console.log("HEADER - names = " + names);
-		console.log("HEADER options - " + nameMap)
-
 		const accountsDropDown = (
 			<select onChange={this.handleAccountSelected}>
 			{
-				accounts.map(function(account) {
- 					return (<option value={account}>{nameMap[account]} - {account}</option>)
- 				})
+				this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
+					return (<option value={item[0]} key={item[0]}> {item[1]}-{item[0]} </option>);
+				})
 			}			
-			</select>
-			
+			</select>			
 		);
 
 		return (
 			<div className="header">
 				{accountsDropDown}
-				<br />(names={this.props.wallet.get('accountNames')})
 			</div>
 		)
 	}
