@@ -7,7 +7,6 @@ import Header from './header';
 
 const {
 	initializeContract,
-	initializeAccount,
 	initializeAccounts,
 	updateCitaBalance,
 	setWalletData,
@@ -19,16 +18,13 @@ const {
 	handleApproveClicked
 } = actions;
 
-class Home extends Component {
+class AuthorgBios extends Component {
 	 constructor(props) {
 		 super(props);
-			// can't run this in mist as of yet as we are not deployed to a public network
-			// SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
-			if (typeof mist === "undefined") {
-				props.dispatch(initializeContract());
-			}
 
-			props.dispatch(initializeAccounts());
+			if(props.wallet.get('account' !== null)) {
+				//props.dispatch(initializeAccount(accountIndex, selectedBioRevisionIndex));
+			}
 
 			this.handleSubmit = this.handleSubmit.bind(this);
 			this.handleSubmitBio = this.handleSubmitBio.bind(this);
@@ -59,6 +55,9 @@ class Home extends Component {
 			<div>
 				<button onClick={this.handleApproveClicked}>Approve Citadel Contract to spend CITA for you</button>
 				<br />
+				<input onChange={this.handleChange} value={this.props.wallet.get('newName')} />
+				<button onClick={this.handleSubmit}>{`Update Name - ${this.props.wallet.get('nameChangeCostInCita')} CITA`}</button>
+				<br />
 				<input onChange={this.handleBioChange} value={this.props.wallet.get('bioInput')} />
 				<button onClick={this.handleSubmitBio}>Submit Bio</button>
 			</div>
@@ -66,8 +65,10 @@ class Home extends Component {
 
 		return (
 			<div className="App">
-    			<Header /><br />
+    			<Header />
 				<p className="App-intro">
+					Accounts = {this.props.wallet.get('accounts')}<br />
+					Name = {this.props.wallet.get('citadelName')}<br />
 					Address = {this.props.wallet.get('account')}<br />
 					My ETH Balance = {this.props.wallet.get('ethBalance')}<br />
 					My CITA balance = {this.props.wallet.get('citaBalance')}<br />
@@ -78,7 +79,9 @@ class Home extends Component {
 					Citadel Comptroller = {this.props.wallet.get('citadelComptrollerAccount')}<br />
 					Citadel address = {this.props.wallet.get('citadelAddress')}<br />
 					Citadel wallet address (should match CITA token address) = {this.props.wallet.get('citadelWalletAddress')}<br />
-					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevisionValue')}<br />
+					Bio Revisions Length = {this.props.wallet.get('bioRevisions').length}<br />
+					Selected Bio Revision Index - {this.props.wallet.get('selectedBioRevisionIndex')}<br />
+					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevision')}<br />
 				</p>
 				
 				{this.isOwner() && ownerSection}
@@ -134,4 +137,4 @@ const mapStateToProps = state => {
   return {wallet};
 }
 
-export default connect(mapStateToProps)(Home)
+export default connect(mapStateToProps)(App)

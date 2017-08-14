@@ -15,6 +15,8 @@ const {
 } = actions;
 
 const wallet = (state = Map({
+  accounts: List([]),
+  accountNames: List([]),
   accountIndex: 0,
   account: null,
   accounts: List([]),
@@ -24,7 +26,6 @@ const wallet = (state = Map({
   citaBuyPrice: 0.0,
   etherToSend: 0,
   newBuyPrice: 0,
-  nameChangeCostInCita: 0,
   citadelName: '',
   newName: '',
   tokenOwnerAccount: null,
@@ -33,9 +34,10 @@ const wallet = (state = Map({
   citadelAddress: null,
   citadelWalletAddress: null,
   bioRevisions: [],
-  bioRevisionResults: [],
-  selectedBioRevisionIndex: 0,
-  bioInput: ''
+  bioRevisionsByAccount: {},
+  bioInput: '',
+  selectedBioRevision: null,
+  selectedBioRevisionValue: null
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:

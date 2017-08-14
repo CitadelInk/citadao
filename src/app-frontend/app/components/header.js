@@ -1,0 +1,57 @@
+import React, { Component } from 'react';
+import localWeb3 from "../helpers/web3Helper"
+import appContracts from 'app-contracts'
+import { connect } from 'react-redux';
+import actions from '../actions';
+import { List } from 'immutable';
+
+const {
+	initializeContract,
+	updateCitaBalance,
+	setWalletData,
+	setBuyPrice,
+	submitBio,
+	setName,
+	handleSubmit,
+	handleBuySubmit,
+	handleApproveClicked,
+	setSelectedAccount
+} = actions;
+
+class Header extends Component {
+	 constructor(props) {
+		super(props);
+		this.handleAccountSelected = this.handleAccountSelected.bind(this);
+	}
+
+	render() {
+		const accountsDropDown = (
+			<select onChange={this.handleAccountSelected}>
+			{
+				this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
+					return (<option value={item[0]} key={item[0]}> {item[1]}-{item[0]} </option>);
+				})
+			}			
+			</select>			
+		);
+
+		return (
+			<div className="header">
+				{accountsDropDown}
+			</div>
+		)
+	}
+
+	handleAccountSelected(e) {
+		console.log("account selected - " + e.target.value)
+		this.props.dispatch(setSelectedAccount(e.target.value));
+	}
+}
+
+const mapStateToProps = state => {
+  const { wallet } = state;
+
+  return {wallet};
+}
+
+export default connect(mapStateToProps)(Header)
