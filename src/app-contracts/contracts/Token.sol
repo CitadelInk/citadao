@@ -48,10 +48,6 @@ contract Token {
         decimals = decimalUnits;                            // Amount of decimals for display purposes
     }
 
-    function SetComptroller(address comptroller) onlyOwner {
-        citadelComptroller = comptroller;
-    }
-
     /* Send coins */
     function transfer(address _to, uint256 _value) {
         require (balanceOf[msg.sender] >= _value);           // Check if the sender has enough
@@ -59,23 +55,6 @@ contract Token {
         balanceOf[msg.sender] -= _value;                     // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
-    }
-
-    /* Allow another contract to spend some tokens in your behalf */
-    function approve(address _spender, uint256 _value)
-        returns (bool success) {
-        allowance[msg.sender][_spender] = _value;
-        return true;
-    }
-
-    /* Approve and then communicate the approved contract in a single tx */
-    function approveAndCall(address _spender, uint256 _value, bytes _extraData)
-        returns (bool success) {    
-        tokenRecipient spender = tokenRecipient(_spender);
-        if (approve(_spender, _value)) {
-            spender.receiveApproval(msg.sender, _value, this, _extraData);
-            return true;
-        }
     }
 
     /* A contract attempts to get the coins */
@@ -112,6 +91,10 @@ contract MyAdvancedToken is Owned, Token {
         uint8 decimalUnits,
         string tokenSymbol
     ) Token (initialSupply, tokenName, decimalUnits, tokenSymbol) {}
+
+    function setCitadelAddress(address comptroller) onlyOwner {
+        citadelComptroller = comptroller;
+    }
 
     /* Send coins */
     function transfer(address _to, uint256 _value) {

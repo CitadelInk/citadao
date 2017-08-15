@@ -7,13 +7,15 @@ export const getAdvancedTokenPublicData = () => {
       return Promise.all([
           data.buyPrice(),
           data.totalSupply(),
-          data.owner()
-      ]).then(([buyPrice, totalSupply, owner]) => {
+          data.owner(),
+          data.citadelComptroller()
+      ]).then(([buyPrice, totalSupply, owner, comptroller]) => {
         return {
           buyPrice: parseFloat(buyPrice.toString()),
           tokenSupply: parseInt(totalSupply.toString()),
           tokenOwnerAccount: owner,
           tokenAddress: data.address,
+          tokenCitadelComptroller: comptroller
         };
       });
     });

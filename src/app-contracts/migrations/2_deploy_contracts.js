@@ -1,4 +1,4 @@
-var MyAdvancedToken = artifacts.require('./MyAdvancedToken.sol')
+var MyAdvancedToken = artifacts.require('./MyAdvancedToken')
 var CitadelLib = artifacts.require('./Citadel.sol')
 
 module.exports = function (deployer) {

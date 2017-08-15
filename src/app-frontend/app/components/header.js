@@ -28,15 +28,13 @@ class Header extends Component {
 		const divStyle = {
 			height: '100px',
 			background:'#F0F0F0',
-			//border:'1px solid #CCC',
 			width:'100%',
-			//margin:'0px auto',
 			position:'fixed',
 			top:'0px'
 		}
 		const headerStyle = {
-			'font-family': 'sans-serif',
-			'text-align': 'center'
+			fontFamily: 'sans-serif',
+			textAlign: 'center'
 		}
 		const dropDownStyle = {
 			position:'fixed',
