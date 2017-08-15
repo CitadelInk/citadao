@@ -15,7 +15,11 @@ import {
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
 export const gotoUserPage  = (user) => dispatch =>  {
-  dispatch(navigatePage({page:'user',route:'\/user\/' + user}))
+  dispatch(navigatePage({page:'user',route:'\/user\/' + user})); 
+  return dispatch(getUserPageBios(user)) 
+}
+
+export const getUserPageBios = (user) => dispatch => {
   return Promise.all([
         getAccountBioRevisions(user)
     ]).then(([bioRevisions]) => {
@@ -26,7 +30,7 @@ export const gotoUserPage  = (user) => dispatch =>  {
       }
       return dispatch(setWalletData({...bioRevisions}))
   });
-}
+} 
 
 export const navigatePage = (data) => {
   return {
@@ -38,5 +42,6 @@ export const navigatePage = (data) => {
 export default {
   NAVIGATE_PAGE,
   navigatePage,
-  gotoUserPage
+  gotoUserPage,
+  getUserPageBios
 };

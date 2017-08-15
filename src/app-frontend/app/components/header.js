@@ -53,7 +53,7 @@ class Header extends Component {
 			<select style={dropDownStyle} onChange={this.handleAccountSelected}>
 			{
 				this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
-					return (<option value={item[0]} key={item[0]}> {item[1]}-{item[0]} </option>);
+					return (<option value={item[0]} key={item[0]}> {item[1]} - {item[0]} </option>);
 				})
 			}			
 			</select>			

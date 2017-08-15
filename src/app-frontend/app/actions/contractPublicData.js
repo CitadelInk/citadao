@@ -101,9 +101,10 @@ export const updateCitaBalance = (account) => dispatch => {
 export const submitBio = () => (dispatch, getState) => {
   const {wallet} = getState();
   const account = wallet.get('account');
-  const bioInput = wallet.get('bioInput');
-  const bioObject = "{\"name\":\""+bioInput+"\"}" //do better json
-  return updateBio(bioObject, account).then(function(tx_id) {
+  const bioNameInput = wallet.get('bioNameInput');
+  const bioTextInput = wallet.get('bioTextInput')
+  var bioJson = {"name" : bioNameInput, "text" : bioTextInput}
+  return updateBio(JSON.stringify(bioJson), account).then(function(tx_id) {
       alert("bio added to contract");
     }).catch(function(e) {
       alert("error - " + e);

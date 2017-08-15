@@ -1,7 +1,10 @@
 import Router from 'ampersand-router';
 import qs from 'qs';
 import actions from './actions';
-const {navigatePage} = actions;
+const {
+    navigatePage,
+    gotoUserPage
+} = actions;
 
 
 export default Router.extend({
@@ -22,6 +25,6 @@ export default Router.extend({
         this.store.dispatch(navigatePage({page:'home', route:'/'}));
     },
     userpage(account) {
-        this.store.dispatch(navigatePage({page:'user', route:`user/${account}`}));
+        this.store.dispatch(gotoUserPage(account));
     }
 });
