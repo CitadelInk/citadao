@@ -15,19 +15,26 @@ class BioRevisionSelector extends Component {
 	}
 
 	render() {
-		console.log("bios = " + this.props.wallet.get('bioRevisions'));
+		const dropDownStyle = {
+			position: 'absolute', 
+			left: '0',
+			right: '0', 
+			marginLeft: 'auto', 
+			marginRight: 'auto', 
+			width: '564px' /* Need a specific value to work */
+		}
 		const accountsDropDown = (
-			<select onChange={this.handleBioRevisionSelected}>
+			<select style={dropDownStyle} onChange={this.handleBioRevisionSelected}>
 			{
 				this.props.wallet.get('bioRevisions').map(function(bioRevision) {
- 							return (<option value={bioRevision}>{bioRevision}</option>)
+ 					return (<option value={bioRevision}>{bioRevision}</option>)
  				})
 			}
 			</select>
 		);
 
 		return (
-			<div className="header">
+			<div className="bioRevisionSelector">
 				{accountsDropDown}
 			</div>
 		)

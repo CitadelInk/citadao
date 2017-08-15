@@ -102,7 +102,8 @@ export const submitBio = () => (dispatch, getState) => {
   const {wallet} = getState();
   const account = wallet.get('account');
   const bioInput = wallet.get('bioInput');
-  return updateBio(bioInput, account).then(function(tx_id) {
+  const bioObject = "{\"name\":\""+bioInput+"\"}" //do better json
+  return updateBio(bioObject, account).then(function(tx_id) {
       alert("bio added to contract");
     }).catch(function(e) {
       alert("error - " + e);

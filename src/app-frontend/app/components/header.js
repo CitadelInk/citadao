@@ -15,13 +15,16 @@ const {
 	handleSubmit,
 	handleBuySubmit,
 	handleApproveClicked,
-	setSelectedAccount
+	setSelectedAccount,
+	navigatePage,
+	gotoUserPage
 } = actions;
 
 class Header extends Component {
 	 constructor(props) {
 		super(props);
 		this.handleAccountSelected = this.handleAccountSelected.bind(this);
+		this.gotoAccountPageClicked = this.gotoAccountPageClicked.bind(this);
 	}
 
 	render() {
@@ -55,6 +58,9 @@ class Header extends Component {
 			}			
 			</select>			
 		);
+		const gotoAccountPage = (
+			<span onClick={this.gotoAccountPageClicked}>gotoAccountPage</span>
+		)
 		const citaBalance = (
 			<div style={citaBalanceDivStyle}>
 			<span>{this.props.wallet.get('citaBalance')} CITA</span>
@@ -66,6 +72,7 @@ class Header extends Component {
 				<h1 style={headerStyle}>C I T A D E L</h1>
 				{accountsDropDown}
 				{citaBalance}
+				{gotoAccountPage}
 			</div>
 		)
 	}
@@ -73,6 +80,10 @@ class Header extends Component {
 	handleAccountSelected(e) {
 		console.log("account selected - " + e.target.value)
 		this.props.dispatch(setSelectedAccount(e.target.value));
+	}
+
+	gotoAccountPageClicked(e) {
+		this.props.dispatch(gotoUserPage(this.props.wallet.get('account')));
 	}
 }
 

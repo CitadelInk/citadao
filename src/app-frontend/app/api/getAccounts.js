@@ -45,7 +45,7 @@ export const getAccountName = (account) => {
             getAccountBioRevision(mostRecentBio)
             .then((data) => {
               res({
-                accountName : data.selectedBioRevision
+                accountName : JSON.parse(data.selectedBioRevision.toString()).name
               })
             })
           } else {
