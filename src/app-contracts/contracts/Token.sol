@@ -26,10 +26,10 @@ contract Token {
     string public symbol;
     uint8 public decimals;
     uint256 public totalSupply;
+    address public citadelComptroller;
 
     /* This creates an array with all balances */
     mapping (address => uint256) public balanceOf;
-    mapping (address => mapping (address => uint256)) public allowance;
 
     /* This generates a public event on the blockchain that will notify clients */
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -46,6 +46,10 @@ contract Token {
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purposes
         decimals = decimalUnits;                            // Amount of decimals for display purposes
+    }
+
+    function SetComptroller(address comptroller) onlyOwner {
+        citadelComptroller = comptroller;
     }
 
     /* Send coins */
@@ -78,10 +82,9 @@ contract Token {
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
         require (balanceOf[_from] >= _value);                 // Check if the sender has enough
         require (balanceOf[_to] + _value >= balanceOf[_to]);  // Check for overflows
-        require (_value <= allowance[_from][msg.sender]);   // Check allowance
+        require (msg.sender == _from || msg.sender == citadelComptroller);   // Check sender
         balanceOf[_from] -= _value;                          // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
-        allowance[_from][msg.sender] -= _value;
         Transfer(_from, _to, _value);
         return true;
     }
@@ -126,10 +129,9 @@ contract MyAdvancedToken is Owned, Token {
         require (!frozenAccount[_from]);                        // Check if frozen            
         require (balanceOf[_from] >= _value);                 // Check if the sender has enough
         require (balanceOf[_to] + _value > balanceOf[_to]);  // Check for overflows
-        require (_value <= allowance[_from][msg.sender]);   // Check allowance
+        require (msg.sender == _from || msg.sender == citadelComptroller);   // Check sender
         balanceOf[_from] -= _value;                          // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
-        allowance[_from][msg.sender] -= _value;
         Transfer(_from, _to, _value);
         return true;
     }

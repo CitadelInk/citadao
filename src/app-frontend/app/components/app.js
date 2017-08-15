@@ -13,12 +13,12 @@ class App extends Component {
       default:
         page = <Home/>
         break;
-    }
-    return (
-      <div className="app">
+    }	
+	return (
+	<div className="app">
         {page}
       </div>
-    );
+	)
   }
 }
 

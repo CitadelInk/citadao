@@ -64,9 +64,20 @@ class Home extends Component {
 			</div>
 		);
 
+		const style = {
+				height: '10000px',
+				background:'#FFFFFF',
+				width:'100%',
+				margin:'0px auto',
+				position:'fixed',
+				top:'100px'
+		}
+
 		return (
-			<div className="App">
+			
+				<div className="App">
     			<Header /><br />
+				<div style={style} className="rest">
 				<p className="App-intro">
 					Address = {this.props.wallet.get('account')}<br />
 					My ETH Balance = {this.props.wallet.get('ethBalance')}<br />
@@ -87,6 +98,7 @@ class Home extends Component {
 				<button onClick={this.handleBuySubmit}>Send WEI to buy 1 CITA / {this.props.wallet.get('citaBuyPrice')} WEI</button><br />	
 				
 				{(this.props.wallet.get('citaBalance') !== 0) && hasCitaSection}
+				</div>
 			</div>
 		);
 	}
