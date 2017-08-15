@@ -15,7 +15,6 @@ export const updateBuyPrice = (newBuyPrice, account) => {
 };
 
 export const updateBio = (bioInput, account) => {
-  console.log('bio value = ' + bioInput);
   return new Promise((res, rej) => {
     localWeb3.bzz.put(bioInput, (error, hash) => {
       appContracts.Citadel.deployed()
@@ -27,21 +26,6 @@ export const updateBio = (bioInput, account) => {
     });
   }); 
 }
-
-export const updateName = (account) => {
-  return appContracts.Citadel.deployed()
-    .then((instance) => instance.getName(account))
-    .then((data) => {citadelName : data});
-};
-
-export const submitNameChange = (name, account) => {
-  return appContracts.Citadel.deployed()
-    .then((instance) => instance.setName.sendTransaction(name, {from : account})).then(function(tx_id) {
-      return tx_id;
-    }).catch(function(e) {
-      alert("error - " + e);
-    })
-};
 
 export const submitBuy = (eth, account, tokenOwnerAccount) => {
   console.log("submitBuy - from: " + account + " - to: " + tokenOwnerAccount + " - amount: " + eth);
