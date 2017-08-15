@@ -1,6 +1,10 @@
-export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
+// @flow
+export const NAVIGATE_PAGE: string = "NAVIGATE_PAGE";
 
-export const navigatePage = (data) => {
+type Data = {| route: string, page: string |};
+
+
+export const navigatePage = (data: Data): {|type: string, data: Data|} => {
   return {
     type: NAVIGATE_PAGE,
     data
