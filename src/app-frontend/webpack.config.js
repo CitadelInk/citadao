@@ -1,5 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
+const FlowBabelWebpackPlugin = require('flow-babel-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -27,7 +28,8 @@ module.exports = {
                 query: {
                     presets: [
                         require.resolve('babel-preset-es2015'),
-                        require.resolve('babel-preset-react')
+                        require.resolve('babel-preset-react'),
+                        require.resolve('babel-preset-flow')
                     ],
                     plugins: [
                         require.resolve('babel-plugin-transform-object-rest-spread')
@@ -48,5 +50,8 @@ module.exports = {
 
     // enable HMR on the server
     hot: true
-  }
+  },
+  plugins: [
+    new FlowBabelWebpackPlugin(),
+  ]
 }
