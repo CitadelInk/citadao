@@ -25,8 +25,29 @@ class Header extends Component {
 	}
 
 	render() {
+		const divStyle = {
+			height: '100px',
+			background:'#F0F0F0',
+			width:'100%',
+			position:'fixed',
+			top:'0px'
+		}
+		const headerStyle = {
+			fontFamily: 'sans-serif',
+			textAlign: 'center'
+		}
+		const dropDownStyle = {
+			position:'fixed',
+			top:'50px',
+			left:'10px'
+		}
+		const citaBalanceDivStyle = {
+			position:'fixed',
+			top:'60px',
+			right:'10px'
+		}
 		const accountsDropDown = (
-			<select onChange={this.handleAccountSelected}>
+			<select style={dropDownStyle} onChange={this.handleAccountSelected}>
 			{
 				this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
 					return (<option value={item[0]} key={item[0]}> {item[1]}-{item[0]} </option>);
@@ -34,10 +55,17 @@ class Header extends Component {
 			}			
 			</select>			
 		);
+		const citaBalance = (
+			<div style={citaBalanceDivStyle}>
+			<span>{this.props.wallet.get('citaBalance')} CITA</span>
+			</div>
+		)
 
 		return (
-			<div className="header">
+			<div style={divStyle} className="header">				
+				<h1 style={headerStyle}>C I T A D E L</h1>
 				{accountsDropDown}
+				{citaBalance}
 			</div>
 		)
 	}

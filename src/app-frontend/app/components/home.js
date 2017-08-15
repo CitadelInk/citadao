@@ -57,16 +57,25 @@ class Home extends Component {
 
 		const hasCitaSection = (
 			<div>
-				<button onClick={this.handleApproveClicked}>Approve Citadel Contract to spend CITA for you</button>
-				<br />
 				<input onChange={this.handleBioChange} value={this.props.wallet.get('bioInput')} />
 				<button onClick={this.handleSubmitBio}>Submit Bio</button>
 			</div>
 		);
 
+		const style = {
+				height: '10000px',
+				background:'#FFFFFF',
+				width:'100%',
+				margin:'0px auto',
+				position:'fixed',
+				top:'100px'
+		}
+
 		return (
-			<div className="App">
+			
+				<div className="App">
     			<Header /><br />
+				<div style={style}>
 				<p className="App-intro">
 					Address = {this.props.wallet.get('account')}<br />
 					My ETH Balance = {this.props.wallet.get('ethBalance')}<br />
@@ -75,6 +84,7 @@ class Home extends Component {
 					Total Supply = {this.props.wallet.get('tokenSupply')}<br />
 					CITA token owner = {this.props.wallet.get('tokenOwnerAccount')}<br />
 					CITA token address = {this.props.wallet.get('tokenAddress')}<br />
+					Token Citadel Comptroller = {this.props.wallet.get('tokenCitadelComptroller')}<br />
 					Citadel Comptroller = {this.props.wallet.get('citadelComptrollerAccount')}<br />
 					Citadel address = {this.props.wallet.get('citadelAddress')}<br />
 					Citadel wallet address (should match CITA token address) = {this.props.wallet.get('citadelWalletAddress')}<br />
@@ -87,6 +97,7 @@ class Home extends Component {
 				<button onClick={this.handleBuySubmit}>Send WEI to buy 1 CITA / {this.props.wallet.get('citaBuyPrice')} WEI</button><br />	
 				
 				{(this.props.wallet.get('citaBalance') !== 0) && hasCitaSection}
+				</div>
 			</div>
 		);
 	}
