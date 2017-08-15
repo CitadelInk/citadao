@@ -23,13 +23,8 @@ class BioRevisionInput extends Component {
 	 constructor(props) {
 		 super(props);
 		this.handleSubmitBio = this.handleSubmitBio.bind(this);
-		this.handleBioChange = this.handleBioChange.bind(this);
-	}
-
-	isOwner() {
-		return this.props.wallet.get('account') !== null &&
-			this.props.wallet.get('tokenOwnerAccount') !== null &&
-			this.props.wallet.get('account') === this.props.wallet.get('tokenOwnerAccount');
+		this.handleBioNameChange = this.handleBioNameChange.bind(this);
+		this.handleBioTextChange = this.handleBioTextChange.bind(this);
 	}
 
 	render() {
@@ -44,7 +39,8 @@ class BioRevisionInput extends Component {
 		return (
 			
 			<div style={style} className="BioRevisionInput">
-				<input onChange={this.handleBioChange} value={this.props.wallet.get('bioInput')} />
+				<input onChange={this.handleBioNameChange} value={this.props.wallet.get('bioNameInput')} /><br />
+				<textarea onChange={this.handleBioTextChange} value={this.props.wallet.get('bioTextInput')} rows="30" cols="100"/><br />
 				<button onClick={this.handleSubmitBio}>Submit Bio</button>			
 			</div>
 		);
@@ -54,8 +50,12 @@ class BioRevisionInput extends Component {
 		this.props.dispatch(submitBio());
 	}
 
-	handleBioChange(e) {
-		this.props.dispatch(setWalletData({bioInput : e.target.value}));
+	handleBioTextChange(e) {
+		this.props.dispatch(setWalletData({bioTextInput : e.target.value}));
+	}
+
+	handleBioNameChange(e) {
+		this.props.dispatch(setWalletData({bioNameInput : e.target.value}));
 	}
 }
 

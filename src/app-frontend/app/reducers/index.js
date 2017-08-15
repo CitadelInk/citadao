@@ -35,7 +35,8 @@ const wallet = (state = Map({
   citadelWalletAddress: null,
   bioRevisions: [],
   bioRevisionsByAccount: {},
-  bioInput: '',
+  bioNameInput: '',
+  bioTextInput: '',
   selectedBioRevision: null,
   selectedBioRevisionValue: null,
   tokenCitadelComptroller: ''

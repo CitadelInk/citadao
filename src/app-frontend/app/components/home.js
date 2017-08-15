@@ -22,14 +22,6 @@ const {
 class Home extends Component {
 	 constructor(props) {
 		 super(props);
-			// can't run this in mist as of yet as we are not deployed to a public network
-			// SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
-			if (typeof mist === "undefined") {
-				props.dispatch(initializeContract());
-			}
-
-			props.dispatch(initializeAccounts());
-
 			this.handleSubmit = this.handleSubmit.bind(this);
 			this.handleSubmitBio = this.handleSubmitBio.bind(this);
 			this.handleApproveClicked = this.handleApproveClicked.bind(this);
