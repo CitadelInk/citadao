@@ -13,6 +13,9 @@ contract Managed {
 }
 
 contract Citadel is Managed {
+
+    event BioUpdated(address indexed _from, bytes32 _value);
+
     address public wallet_address;
     uint256 public cost_name_update_in_cita;
     
@@ -62,6 +65,7 @@ contract Citadel is Managed {
             responseManifestHashes : newResponseArray
         });
         internalAuthorgs[msg.sender].selfBioSubmission.submissionRevisionMap[citadelManifestHash] = revision;
+        BioUpdated(msg.sender, citadelManifestHash);
     }
     
     function isAuthorgOfSubmission(address authorgAddress, bytes32 submissionHash) constant returns (bool) {
