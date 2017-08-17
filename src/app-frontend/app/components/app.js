@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Home from './home';
 import User from './user';
+import Header from './header';
+import Debug from './debug';
 import actions from '../actions';
 
 const {
 	initializeContract,
-	initializeAccounts,
+  initializeAccounts,
+  initializeTestSubmissions
 } = actions;
 
 class App extends Component {
@@ -19,6 +22,7 @@ class App extends Component {
         }
 
         props.dispatch(initializeAccounts());
+        props.dispatch(initializeTestSubmissions());
   }
 
   render() {
@@ -27,12 +31,16 @@ class App extends Component {
       case 'user':
         page = <User/>
         break;
+      case 'debug':
+        page = <Debug/>
+        break;
       default:
         page = <Home/>
         break;
     }	
 	return (
 	<div className="app">
+    		<Header />
         {page}
       </div>
 	)

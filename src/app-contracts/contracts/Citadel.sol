@@ -43,6 +43,8 @@ contract Citadel is Managed {
     }
     
     mapping(address => Authorg) internalAuthorgs;
+    mapping(bytes32 => address) submissionToAuthorg;
+    bytes32[] public allSubmissions;
     
     function spend(uint256 value) private {
         AbstractWallet(wallet_address).transferFrom(msg.sender, wallet_address, value);
@@ -55,9 +57,13 @@ contract Citadel is Managed {
     function getBioRevisions(address authorgAddress) constant returns (bytes32[] hashes) {
         return internalAuthorgs[authorgAddress].selfBioSubmission.submissionRevisionHashes;
     }
+
+    function getAllSubmissions() constant returns (bytes32[] hashes) {
+        return allSubmissions;
+    }
     
     function submitBioRevision(bytes32 citadelManifestHash) {
-        spend(50);
+        spend(5);
         var newResponseArray = new bytes32[](0);
         internalAuthorgs[msg.sender].selfBioSubmission.submissionRevisionHashes.push(citadelManifestHash);
         var revision = Revision({
@@ -86,7 +92,7 @@ contract Citadel is Managed {
     }
     
     function submitRevision(bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash) {
-        spend(50);
+        spend(5);
         submitRevision(msg.sender, subCitadelManifestHash, revCitadelManifestHash);
     }
     
@@ -101,7 +107,8 @@ contract Citadel is Managed {
         });
         internalAuthorgs[msg.sender].submissions[subCitadelManifestHash].submissionRevisionMap[revCitadelManifestHash] = revision;
         internalAuthorgs[msg.sender].submissions[subCitadelManifestHash].submissionCitadelManifestHash = subCitadelManifestHash;
-        
+        submissionToAuthorg[subCitadelManifestHash] = msg.sender;        
+        allSubmissions.push(subCitadelManifestHash);
     }
     
     function respondToBio(address originalAuthorgAddress, bytes32 originalSubmissionRevisionHash, bytes32 responseSubmissionHash, bytes32 responseRevisionHash) {

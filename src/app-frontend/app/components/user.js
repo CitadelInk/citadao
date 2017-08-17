@@ -19,7 +19,6 @@ class User extends Component {
       
     return (
       <div style={style} className="userpage">
-    			<Header /><br />
           <BioRevisionSelector /><br />
           <BioRevision /><br />
           {(this.props.ui.get('route') === "\/user\/" + this.props.wallet.get('account')) && 

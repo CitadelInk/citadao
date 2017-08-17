@@ -25,6 +25,7 @@ class Header extends Component {
 		super(props);
 		this.handleAccountSelected = this.handleAccountSelected.bind(this);
 		this.gotoAccountPageClicked = this.gotoAccountPageClicked.bind(this);
+		this.gotoDebugPageClicked = this.gotoDebugPageClicked.bind(this);
 	}
 
 	render() {
@@ -59,8 +60,11 @@ class Header extends Component {
 			</select>			
 		);
 		const gotoAccountPage = (
-			<span onClick={this.gotoAccountPageClicked}>gotoAccountPage</span>
-		)
+			<span onClick={this.gotoAccountPageClicked}>View This Account Page</span>
+		);
+		const gotoDebugPage = (
+			<span onClick={this.gotoDebugPageClicked}>View Debug Page</span>
+		);
 		const citaBalance = (
 			<div style={citaBalanceDivStyle}>
 			<span>{this.props.wallet.get('citaBalance')} CITA</span>
@@ -72,7 +76,7 @@ class Header extends Component {
 				<h1 style={headerStyle}>C I T A D E L</h1>
 				{accountsDropDown}
 				{citaBalance}
-				{gotoAccountPage}
+				{gotoAccountPage} - {gotoDebugPage}
 			</div>
 		)
 	}
@@ -84,6 +88,10 @@ class Header extends Component {
 
 	gotoAccountPageClicked(e) {
 		this.props.dispatch(gotoUserPage(this.props.wallet.get('account')));
+	}
+
+	gotoDebugPageClicked(e) {
+		this.props.dispatch(navigatePage({page:'debug', route:'\/debug'}));
 	}
 }
 

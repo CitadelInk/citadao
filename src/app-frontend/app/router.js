@@ -19,6 +19,7 @@ export default Router.extend({
     routes: {
         '': 'home',
         '/': 'home',
+        'debug' : 'debug',
         'user/:account': 'userpage'
     },
     home() {
@@ -26,5 +27,8 @@ export default Router.extend({
     },
     userpage(account) {
         this.store.dispatch(gotoUserPage(account));
+    },
+    debug() {
+        this.store.dispatch(navigatePage({page:'debug', route:'/'}));
     }
 });

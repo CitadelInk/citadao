@@ -11,7 +11,8 @@ const {
   SET_BUY_PRICE,
   SET_TOKEN_SUPPLY,
   SET_WALLET_DATA,
-  NAVIGATE_PAGE
+  NAVIGATE_PAGE,
+  SET_SUBMISSIONS
 } = actions;
 
 const wallet = (state = Map({
@@ -39,7 +40,8 @@ const wallet = (state = Map({
   bioTextInput: '',
   selectedBioRevision: null,
   selectedBioRevisionValue: null,
-  tokenCitadelComptroller: ''
+  tokenCitadelComptroller: '',
+  allSubmissionsTest: []
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:
@@ -65,6 +67,18 @@ const wallet = (state = Map({
   }
 };
 
+const submissions = (state = [], action) => {
+  console.log("action.type: " + action.type);
+  switch (action.type) {
+    case SET_SUBMISSIONS:
+      console.log("setting submissions. action.data=" + action.data)
+      return action.data;
+    default:
+      console.log("default")
+      return state;
+  }
+}
+
 const ui = (state = Map({page: 'home', route: '/'}), action) => {
   switch (action.type) {
     case NAVIGATE_PAGE:
@@ -76,7 +90,8 @@ const ui = (state = Map({page: 'home', route: '/'}), action) => {
 
 const rootReducer = combineReducers({
   wallet,
-  ui
+  ui,
+  submissions
 });
 
 export default rootReducer;

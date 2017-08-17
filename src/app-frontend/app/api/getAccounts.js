@@ -17,6 +17,22 @@ export const getAccounts = () => {
   });
 }
 
+// do this differently once we have submission cache/infinite scrolling
+export const getSubmissions = () => {
+  return new Promise((res, rej) =>{
+    appContracts.Citadel.deployed()
+    .then((instance) => {
+      Promise.all([
+        instance.getAllSubmissions()
+      ])
+      .then(([allSubmissionsTest]) => {
+        console.log("allSubmissionsTest: " + allSubmissionsTest);
+        res({allSubmissionsTest : allSubmissionsTest})
+      })
+    });
+  });
+}
+
 export const getAccountBioRevisions = (account) => {
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed()
@@ -72,4 +88,22 @@ export const getAccountBioRevision = (revisionHash) => {
       });
     });
   });
+}
+
+// once we add revisioning, will need to get specific revision (default likely most recent?)
+export const getSubmission = (submissionHash) => {
+  return new Promise((res, rej) => {
+    const bzzAddress = submissionHash.substring(2);
+    localWeb3.bzz.retrieve(bzzAddress, (error, submission) => {
+      console.log("retrieved! submission = " + submission);
+      const jsonSubmission = JSON.parse(submission)
+      localWeb3.bzz.retrieve(jsonSubmission.entries[0].hash, (error, entry) => {
+      console.log("retrieved! entry = " + entry);
+        var subJson = JSON.parse(entry)
+        res ({
+          submissionTitle: subJson.title, submissionText: subJson.text
+        })
+      })
+    })
+  })
 }

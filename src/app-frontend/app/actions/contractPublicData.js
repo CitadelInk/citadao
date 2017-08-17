@@ -10,10 +10,13 @@ import {
   updateBio,
   updateName,
   submitNameChange,
-  submitBuy
+  submitBuy,
+  post
 } from '../api/updatePublicData';
 import {
   getAccounts, 
+  getSubmission,
+  getSubmissions,
   getAccountBioData,
   getAccountBioRevisions,
   getAccountBioRevision,
@@ -33,13 +36,21 @@ export const setBuyPrice = () => (dispatch, getState) => {
 
 
 export const SET_WALLET_DATA = "SET_WALLET_DATA";
-
 export const setWalletData = (data) => {
   return {
     type: SET_WALLET_DATA,
     data: data
   };
 };
+
+export const SET_SUBMISSIONS = "SET_SUBMISSIONS";
+export const setSubmissions = (data) => {
+  console.log("setSubmissions data = " + data)
+  return {
+    type: SET_SUBMISSIONS,
+    data: data
+  }
+}
 
 export const initializeContract = () => (dispatch) => {
   return Promise.all([
@@ -71,8 +82,23 @@ export const initializeAccounts = () => dispatch => {
     })
   }).then((data) => {
     dispatch(setWalletData(data))
+  })  
+}
+
+export const initializeTestSubmissions = () => dispatch => {
+  return new Promise((res, rej) => {
+    getSubmissions().then((submissions) => {
+      var submissionPromises = submissions.allSubmissionsTest.map(sub => {
+        return getSubmission(sub)
+      })
+      return Promise.all(submissionPromises).then(values => {
+        var submissionsValues = values.map(result => {
+          return {title: result.submissionTitle, text: result.submissionText}
+        })
+        return submissionsValues;
+      }).then(submissionsValues => dispatch(setSubmissions(submissionsValues)))
+    })
   })
-  
 }
 
 export const setSelectedAccount = (account) => dispatch => {
@@ -106,6 +132,20 @@ export const submitBio = () => (dispatch, getState) => {
   var bioJson = {"name" : bioNameInput, "text" : bioTextInput}
   return updateBio(JSON.stringify(bioJson), account).then(function(tx_id) {
       alert("bio added to contract");
+    }).catch(function(e) {
+      alert("error - " + e);
+    });
+};
+
+
+export const submitPost = () => (dispatch, getState) => {
+  const {wallet} = getState();
+  const account = wallet.get('account');
+  const postTitleInput = wallet.get('postTitleInput');
+  const postTextInput = wallet.get('postTextInput')
+  var postJson = {"title" : postTitleInput, "text" : postTextInput}
+  return post(JSON.stringify(postJson), account).then(function(tx_id) {
+      alert("post added to contract");
     }).catch(function(e) {
       alert("error - " + e);
     });
@@ -161,11 +201,14 @@ export const handleApproveClicked = () => (dispatch, getState) => {
 export default {
   initializeContract,
   initializeAccounts,
+  initializeTestSubmissions,
   updateCitaBalance,
   setWalletData,
   SET_WALLET_DATA,
+  SET_SUBMISSIONS,
   setBuyPrice,
   submitBio,
+  submitPost,
   setName,
   handleSubmit,
   handleBuySubmit,
