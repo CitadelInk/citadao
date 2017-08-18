@@ -101,7 +101,7 @@ export const getSubmission = (submissionHash) => {
       console.log("retrieved! entry = " + entry);
         var subJson = JSON.parse(entry)
         res ({
-          submissionTitle: subJson.title, submissionText: subJson.text
+          submissionHash: submissionHash, submissionTitle: subJson.title, submissionText: subJson.text
         })
       })
     })

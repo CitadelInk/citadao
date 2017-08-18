@@ -41,12 +41,12 @@ class Header extends Component {
 			textAlign: 'center'
 		}
 		const dropDownStyle = {
-			position:'fixed',
+			position:'absolute',
 			top:'50px',
 			left:'10px'
 		}
 		const citaBalanceDivStyle = {
-			position:'fixed',
+			position:'absolute',
 			top:'60px',
 			right:'10px'
 		}

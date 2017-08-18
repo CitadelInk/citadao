@@ -93,7 +93,7 @@ export const initializeTestSubmissions = () => dispatch => {
       })
       return Promise.all(submissionPromises).then(values => {
         var submissionsValues = values.map(result => {
-          return {title: result.submissionTitle, text: result.submissionText}
+          return {hash: result.submissionHash, title: result.submissionTitle, text: result.submissionText}
         })
         return submissionsValues;
       }).then(submissionsValues => dispatch(setSubmissions(submissionsValues)))
