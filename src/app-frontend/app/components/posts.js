@@ -25,7 +25,7 @@ class Posts extends Component {
 		}
 
 		var posts = this.props.submissions.map(function(submission) {
-			return (<PostWidget key={submission.hash} submission={submission} />)
+			return (<PostWidget key={submission.submissionHash} submission={submission} />)
 		})
 		return (
 			

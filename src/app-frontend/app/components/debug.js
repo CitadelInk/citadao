@@ -13,11 +13,12 @@ const {
 	setWalletData,
 	setBuyPrice,
 	submitBio,
-	submitPost,
 	setName,
 	handleSubmit,
 	handleBuySubmit,
-	handleApproveClicked
+	handleApproveClicked,
+	addNewApprovedReaction,
+	submitPost
 } = actions;
 
 class Debug extends Component {
@@ -39,6 +40,9 @@ class Debug extends Component {
 			this.handlePostTitleChange = this.handlePostTitleChange.bind(this);
 			this.handlePostTextChange = this.handlePostTextChange.bind(this);
 			this.handleSubmitPost = this.handleSubmitPost.bind(this);
+
+			this.handleChangeNewReaction = this.handleChangeNewReaction.bind(this);
+			this.handleAddNewReaction = this.handleAddNewReaction.bind(this);
 	}
 
 	isOwner() {
@@ -51,7 +55,9 @@ class Debug extends Component {
 		const ownerSection = (
 			<div>
 				<input onChange={this.handleChangeBuyPrice} value={this.props.wallet.get('newBuyPrice')} />
-				<button onClick={this.handleSetBuyPrice}> Update Buy Price </button>
+				<button onClick={this.handleSetBuyPrice}> Update Buy Price </button><br />
+				<input onChange={this.handleChangeNewReaction} value={this.props.wallet.get('newReaction')} />
+				<button onClick={this.handleAddNewReaction}> Add New Reaction </button><br />
 			</div>
 		);
 
@@ -62,7 +68,7 @@ class Debug extends Component {
 				<textarea onChange={this.handleBioTextChange} value={this.props.wallet.get('bioTextInput')} rows="30" cols="100"/><br />
 				<button onClick={this.handleSubmitBio}>Submit Bio</button><br /><br />
 
-				SUBMIT NEW POST<br />
+				SUBMIT NEW BIO<br />
 				Post Title: <input onChange={this.handlePostTitleChange} value={this.props.wallet.get('postTitleInput')} /><br />
 				<textarea onChange={this.handlePostTextChange} value={this.props.wallet.get('postTextInput')} rows="30" cols="100"/><br />
 				<button onClick={this.handleSubmitPost}>Submit Post</button>
@@ -77,7 +83,7 @@ class Debug extends Component {
 				top:'100px'
 		}
 
-		
+		console.log("debug page - approved reactions: " + this.props.approvedReactions);
 
 		return (
 			
@@ -97,6 +103,9 @@ class Debug extends Component {
 					Citadel address = {this.props.wallet.get('citadelAddress')}<br />
 					Citadel wallet address (should match CITA token address) = {this.props.wallet.get('citadelWalletAddress')}<br />
 					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevisionValue')}<br />
+					Approved Reactions - {this.props.approvedReactions.map((value) => {
+						return (value.reactionHash + " - " + value.reactionValue + "  -  ")
+					})}
 				</p>
 				
 				{this.isOwner() && ownerSection}
@@ -138,6 +147,14 @@ class Debug extends Component {
 		this.props.dispatch(setBuyPrice());
 	}
 
+	handleChangeNewReaction(e) {
+		this.props.dispatch(setWalletData({newReaction : e.target.value}));
+	}
+
+	handleAddNewReaction(e) {
+		this.props.dispatch(addNewApprovedReaction());
+	}
+
 	handleBuySubmit(e) {
 		this.props.dispatch(handleBuySubmit());
 	}
@@ -170,9 +187,9 @@ class Debug extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet, approvedReactions } = state;
 
-  return {wallet};
+  return {wallet, approvedReactions};
 }
 
 export default connect(mapStateToProps)(Debug)

@@ -14,6 +14,19 @@ export const updateBuyPrice = (newBuyPrice, account) => {
     })
 };
 
+export const addApprovedReaction = (reaction, account) => {
+  return new Promise((res, rej) => {
+    localWeb3.bzz.put(reaction, (error, hash) => {
+      appContracts.Citadel.deployed()
+      .then((instance) => {
+        instance.addApprovedReaction.sendTransaction('0x' + hash, {from : account, gas : 200000}).then((tx_id) => {
+          res(tx_id);
+        }).catch(rej);
+      });
+    });
+  });
+}
+
 export const updateBio = (bioInput, account) => {
   return new Promise((res, rej) => {
     localWeb3.bzz.put(bioInput, (error, hash) => {
@@ -52,3 +65,15 @@ export const submitBuy = (eth, account, tokenOwnerAccount) => {
       });
     });
 };
+
+export const addReaction = (account, authorg, submissionHash, revisionHash, reaction) => {
+  return new Promise((res, rej) => {
+    appContracts.Citadel.deployed()
+    .then((instance) => {
+      console.log("authorg: " + authorg + " submissionHash: " + submissionHash + " revisionHash: " + revisionHash + " reaction: " + reaction)
+      instance.submitReaction.sendTransaction(authorg, submissionHash, revisionHash, reaction, {from : account, gas : 300000}).then((tx_id) => {
+        res(tx_id)
+      }).catch(rej);
+    });
+  });
+}

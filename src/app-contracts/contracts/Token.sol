@@ -89,8 +89,11 @@ contract MyAdvancedToken is Owned, Token {
         uint256 initialSupply,
         string tokenName,
         uint8 decimalUnits,
-        string tokenSymbol
-    ) Token (initialSupply, tokenName, decimalUnits, tokenSymbol) {}
+        string tokenSymbol,
+        uint256 initialBuyPrice
+    ) Token (initialSupply, tokenName, decimalUnits, tokenSymbol) {
+        buyPrice = initialBuyPrice;
+    }
 
     function setCitadelAddress(address comptroller) onlyOwner {
         citadelComptroller = comptroller;

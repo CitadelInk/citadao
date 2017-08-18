@@ -17,6 +17,40 @@ export const getAccounts = () => {
   });
 }
 
+export const getApprovedReactions = () => {
+  return new Promise((res, rej) =>{
+    appContracts.Citadel.deployed()
+    .then((instance) => {
+      Promise.all([
+        instance.getApprovedReactions()
+      ])
+      .then(([approvedReactionHashes]) => {
+        getReactionValues(approvedReactionHashes).then((approvedReactions) => {
+          console.log("approvedReactions: " + approvedReactions);
+          console.log("approvedReactions.reactions: " + (approvedReactions.reactions));
+          res({approvedReactions : approvedReactions.reactions});
+        })
+      })
+    });
+  });
+}
+
+export const getReactionValues = (approvedReactionHashes) => {
+  return new Promise((res, rej) => {
+    var promises = approvedReactionHashes.map(hash => {
+      return getReactionValue(hash)
+    })
+    Promise.all(promises).then(values => {
+      console.log("promises values: " + values)
+      var reactions = values.map(result => {
+        return {reactionHash : result.reactionHash, reactionValue : result.reactionValue};
+      })
+      console.log("reactions: " + reactions)
+      res({reactions : reactions});
+    })
+  })  
+}
+
 // do this differently once we have submission cache/infinite scrolling
 export const getSubmissions = () => {
   return new Promise((res, rej) =>{
@@ -75,6 +109,21 @@ export const getAccountName = (account) => {
   });
 }
 
+export const getReactionValue = (reactionHash) => {
+  return new Promise((res, rej) => {
+    const bzzAddress = reactionHash.substring(2);
+    localWeb3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
+      // prolly want to handle errors
+      const jsonBio = JSON.parse(reactionManifest)
+      localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
+        res({
+          reactionHash: reactionHash, reactionValue: reaction
+        });
+      });
+    });
+  });
+}
+
 export const getAccountBioRevision = (revisionHash) => {
   return new Promise((res, rej) => {
     const bzzAddress = revisionHash.substring(2);
@@ -91,18 +140,30 @@ export const getAccountBioRevision = (revisionHash) => {
 }
 
 // once we add revisioning, will need to get specific revision (default likely most recent?)
-export const getSubmission = (submissionHash) => {
+export const getSubmission = (submissionHash, reactions) => {
   return new Promise((res, rej) => {
     const bzzAddress = submissionHash.substring(2);
     localWeb3.bzz.retrieve(bzzAddress, (error, submission) => {
       console.log("retrieved! submission = " + submission);
       const jsonSubmission = JSON.parse(submission)
-      localWeb3.bzz.retrieve(jsonSubmission.entries[0].hash, (error, entry) => {
+      localWeb3.bzz.retrieve(jsonSubmission.entries[0].hash, (error, entry) => {     
+
       console.log("retrieved! entry = " + entry);
         var subJson = JSON.parse(entry)
-        res ({
-          submissionHash: submissionHash, submissionTitle: subJson.title, submissionText: subJson.text
-        })
+        appContracts.Citadel.deployed().then((instance) => {
+          var revisionReactionReactorPromisess = reactions.map(reaction => {
+            console.log("grab reaction: authorg: " + subJson.authorg + " - submissionHash: " + submissionHash + " - revisionHash: " + subJson.revisionHash + " - reaction: " + reaction.reactionHash);
+            return instance.getReactorsForAuthorgSubmissionRevisionReaction(subJson.authorg, submissionHash, submissionHash, reaction.reactionHash).then((reactors) => {
+              return {reactionHash : reaction.reactionHash, reactionValue : reaction.reactionValue, reactionReactors : reactors};
+            })
+          })
+          Promise.all(revisionReactionReactorPromisess).then((revisionReactionReactors) => {
+            console.log("revisionReactionReactors: " + revisionReactionReactors)
+            res ({
+              submissionAuthorg: subJson.authorg, submissionHash: submissionHash, revisionHash: submissionHash, submissionTitle: subJson.title, submissionText: subJson.text, revisionReactionReactors: revisionReactionReactors
+            })
+          })
+        })        
       })
     })
   })

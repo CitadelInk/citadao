@@ -12,7 +12,7 @@ class PostWidgetHeader extends Component {
 
 	render() {
 		const style = {
-				height: '40px',
+				height: '60px',
 				background:'#85C1E9',
 				width:'100%',
 				borderTopLeftRadius: '15px',
@@ -22,8 +22,9 @@ class PostWidgetHeader extends Component {
 		console.log("submission - " + this.props.submission)
 		return (			
 			<div style={style}>
- 				<span>{this.props.submission.hash} <br /> 
-				 {this.props.submission.title}<br /></span>
+ 				<span>submission hash - {this.props.submission.submissionHash} <br /> </span>
+ 				<span>revision hash - {this.props.submission.revisionHash} <br /> </span>
+ 				<span>authorg address - {this.props.submission.submissionAuthorg} <br /> </span>
 			</div>
 		);
 	}

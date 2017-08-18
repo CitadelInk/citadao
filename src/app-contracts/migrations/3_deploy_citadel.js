@@ -3,7 +3,7 @@ var Citadel = artifacts.require('./Citadel.sol')
 
 module.exports = function (deployer, done) {
   var citadel, token;
-  deployer.deploy(Citadel, MyAdvancedToken.address).then(function() {
+  deployer.deploy(Citadel, MyAdvancedToken.address, 1, 10).then(function() {
     return MyAdvancedToken.deployed();
   }).then(function(instance) {
     token = instance;

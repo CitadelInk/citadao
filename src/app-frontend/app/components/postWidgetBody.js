@@ -17,9 +17,9 @@ class PostWidgetBody extends Component {
 				width:'100%'
 		}
 			
-		console.log("submission - " + this.props.submission)
 		return (			
 			<div style={style}>
+				<center>{this.props.submission.title}</center><br />
 				<span>{this.props.submission.text}</span>
 			</div>
 		);

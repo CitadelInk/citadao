@@ -18,10 +18,14 @@ contract Citadel is Managed {
 
     address public wallet_address;
     uint256 public cost_name_update_in_cita;
+    uint256 public reaction_cost_in_cita;
+    uint256 public revision_cost_in_cita; 
     
-    function Citadel(address wallet) {
+    function Citadel(address wallet, uint256 reactionCost, uint256 revisionCost) {
         citadel_comptroller = msg.sender;
         wallet_address = wallet;
+        reaction_cost_in_cita = reactionCost;
+        revision_cost_in_cita = revisionCost;
     }
     
     struct Authorg {
@@ -40,11 +44,18 @@ contract Citadel is Managed {
     struct Revision {
         bytes32 citadelManifestHash;
         bytes32[] responseManifestHashes;
+        mapping(bytes32 => Reactor) reactionToReactorsMap;
+    }
+
+    struct Reactor {
+        address[] reactors;
     }
     
     mapping(address => Authorg) internalAuthorgs;
-    mapping(bytes32 => address) submissionToAuthorg;
+    mapping(bytes32 => address) public submissionToAuthorg; // hack - remove this
     bytes32[] public allSubmissions;
+    bytes32[] public approved_reactions;
+    mapping(bytes32 => bool) reaction_approved;
     
     function spend(uint256 value) private {
         AbstractWallet(wallet_address).transferFrom(msg.sender, wallet_address, value);
@@ -54,6 +65,11 @@ contract Citadel is Managed {
         wallet_address = newWalletAddress;
     }
 
+    function addApprovedReaction(bytes32 reaction) onlyComptroller {
+        reaction_approved[reaction] = true;
+        approved_reactions.push(reaction);
+    }
+
     function getBioRevisions(address authorgAddress) constant returns (bytes32[] hashes) {
         return internalAuthorgs[authorgAddress].selfBioSubmission.submissionRevisionHashes;
     }
@@ -61,6 +77,18 @@ contract Citadel is Managed {
     function getAllSubmissions() constant returns (bytes32[] hashes) {
         return allSubmissions;
     }
+
+    function getApprovedReactions() constant returns (bytes32[] hashes) {
+        return approved_reactions;
+    }
+
+    function getReactorsForAuthorgSubmissionRevisionReaction(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction) constant returns (address[]) {
+        if (reaction_approved[reaction] && isAuthorgOfSubmissionRevision(authorg, submission, revision)) {
+            return internalAuthorgs[authorg].submissions[submission].submissionRevisionMap[revision].reactionToReactorsMap[reaction].reactors;
+        } else {
+            return new address[](0);
+        }
+    }   
     
     function submitBioRevision(bytes32 citadelManifestHash) {
         spend(5);
@@ -110,9 +138,19 @@ contract Citadel is Managed {
         submissionToAuthorg[subCitadelManifestHash] = msg.sender;        
         allSubmissions.push(subCitadelManifestHash);
     }
+
+    function submitReaction(address authorgAddress, bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash, bytes32 reaction) {
+        spend(1);
+        if (reaction_approved[reaction]) {
+            Revision rev = internalAuthorgs[authorgAddress].submissions[subCitadelManifestHash].submissionRevisionMap[revCitadelManifestHash];
+            if (rev.citadelManifestHash == revCitadelManifestHash) {
+                rev.reactionToReactorsMap[reaction].reactors.push(msg.sender);
+            }
+        }
+    }
     
     function respondToBio(address originalAuthorgAddress, bytes32 originalSubmissionRevisionHash, bytes32 responseSubmissionHash, bytes32 responseRevisionHash) {
-        if(isAuthorgOfBio(originalAuthorgAddress, originalSubmissionRevisionHash)) {
+        if (isAuthorgOfBio(originalAuthorgAddress, originalSubmissionRevisionHash)) {
             spend(5);
             submitRevision(msg.sender, responseSubmissionHash, responseRevisionHash);
             internalAuthorgs[originalAuthorgAddress].selfBioSubmission.submissionRevisionMap[originalSubmissionRevisionHash].responseManifestHashes.push(responseSubmissionHash);
@@ -120,7 +158,7 @@ contract Citadel is Managed {
     }
     
     function respondToSubmission(address originalAuthorgAddress, bytes32 originalSubmissionHash, bytes32 originalSubmissionRevisionHash, bytes32 responseSubmissionHash, bytes32 responseRevisionHash) {
-        if(isAuthorgOfSubmissionRevision(originalAuthorgAddress, originalSubmissionHash, originalSubmissionRevisionHash)) {
+        if (isAuthorgOfSubmissionRevision(originalAuthorgAddress, originalSubmissionHash, originalSubmissionRevisionHash)) {
             spend(5);
             submitRevision(msg.sender, responseSubmissionHash, responseRevisionHash);
             var authorg = internalAuthorgs[originalAuthorgAddress];

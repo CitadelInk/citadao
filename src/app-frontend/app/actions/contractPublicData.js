@@ -6,7 +6,9 @@ import {
   getCitaBalance,
 } from '../api/getPublicData';
 import {
+  addReaction,
   updateBuyPrice,
+  addApprovedReaction,
   updateBio,
   updateName,
   submitNameChange,
@@ -21,19 +23,17 @@ import {
   getAccountBioRevisions,
   getAccountBioRevision,
   getAccountName,
-  getEthBalance
+  getEthBalance,
+  getApprovedReactions
 } from '../api/getAccounts';
 
-export const setBuyPrice = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const newBuyPrice = localWeb3.toBigNumber(wallet.get('newBuyPrice'));
-  const account = wallet.get('account');
-  console.log('account = ' + account + ' newBuyPrice = ' + newBuyPrice);
-  return updateBuyPrice(newBuyPrice, account).then((data) => {
-    return dispatch(setWalletData(data));
-  });
-};
-
+export const SET_APPROVED_REACTIONS = "SET_APPROVED_REACTIONS";
+export const setApprovedReactions = (data) => {
+  return {
+    type: SET_APPROVED_REACTIONS,
+    data: data
+  }
+}
 
 export const SET_WALLET_DATA = "SET_WALLET_DATA";
 export const setWalletData = (data) => {
@@ -45,18 +45,48 @@ export const setWalletData = (data) => {
 
 export const SET_SUBMISSIONS = "SET_SUBMISSIONS";
 export const setSubmissions = (data) => {
-  console.log("setSubmissions data = " + data)
   return {
     type: SET_SUBMISSIONS,
     data: data
   }
 }
 
+export const setBuyPrice = () => (dispatch, getState) => {
+  const {wallet} = getState();
+  const newBuyPrice = localWeb3.toBigNumber(wallet.get('newBuyPrice'));
+  const account = wallet.get('account');
+  console.log('account = ' + account + ' newBuyPrice = ' + newBuyPrice);
+  return updateBuyPrice(newBuyPrice, account).then((data) => {
+    return dispatch(setWalletData(data));
+  });
+};
+
+export const initializeApprovedReactions = () => (dispatch) => {
+  getApprovedReactions().then((reactions) => {
+    console.log("initializeApprovedReactions - approved reactions: " + reactions.approvedReactions);
+      dispatch(initializeTestSubmissions(reactions.approvedReactions));
+      return dispatch(setApprovedReactions(reactions.approvedReactions));
+  })
+}
+
+export const addNewApprovedReaction = () => (dispatch, getState) => {
+  const {wallet} = getState();
+  const reaction = wallet.get('newReaction');
+  const account = wallet.get('account');
+  return(addApprovedReaction(reaction, account)).then((data) => {
+    return dispatch(initializeApprovedReactions());
+  })
+}
+
+
 export const initializeContract = () => (dispatch) => {
   return Promise.all([
     getAdvancedTokenPublicData(),
     getCitadelPublicData()
-  ]).then(([token, citadel]) => dispatch(setWalletData({...token, ...citadel})));
+  ]).then(([token, citadel]) => {
+    dispatch(initializeApprovedReactions())
+    dispatch(setWalletData({...token, ...citadel}))
+  });
 };
 
 export const initializeAccounts = () => dispatch => {
@@ -85,15 +115,15 @@ export const initializeAccounts = () => dispatch => {
   })  
 }
 
-export const initializeTestSubmissions = () => dispatch => {
+export const initializeTestSubmissions = (reactions) => dispatch => {
   return new Promise((res, rej) => {
     getSubmissions().then((submissions) => {
       var submissionPromises = submissions.allSubmissionsTest.map(sub => {
-        return getSubmission(sub)
+        return getSubmission(sub, reactions)
       })
       return Promise.all(submissionPromises).then(values => {
         var submissionsValues = values.map(result => {
-          return {hash: result.submissionHash, title: result.submissionTitle, text: result.submissionText}
+          return {submissionAuthorg: result.submissionAuthorg, submissionHash: result.submissionHash, revisionHash: result.revisionHash, title: result.submissionTitle, text: result.submissionText, revisionReactionReactors: result.revisionReactionReactors}
         })
         return submissionsValues;
       }).then(submissionsValues => dispatch(setSubmissions(submissionsValues)))
@@ -142,14 +172,24 @@ export const submitPost = () => (dispatch, getState) => {
   const {wallet} = getState();
   const account = wallet.get('account');
   const postTitleInput = wallet.get('postTitleInput');
-  const postTextInput = wallet.get('postTextInput')
-  var postJson = {"title" : postTitleInput, "text" : postTextInput}
+  const postTextInput = wallet.get('postTextInput');
+  var postJson = {"authorg" : account, "title" : postTitleInput, "text" : postTextInput}
   return post(JSON.stringify(postJson), account).then(function(tx_id) {
       alert("post added to contract");
     }).catch(function(e) {
       alert("error - " + e);
     });
 };
+
+export const submitReaction = (authorg, submissionHash, revisionHash, reaction) => (dispatch, getState) => {
+  const {wallet} = getState();
+  const account = wallet.get('account');
+  return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(tx_id) {
+      alert("post added to contract");
+    }).catch(function(e) {
+      alert("error - " + e);
+    });
+}
 
 export const setName = () => (dispatch, getState) => {
   const {wallet} = getState();
@@ -206,6 +246,7 @@ export default {
   setWalletData,
   SET_WALLET_DATA,
   SET_SUBMISSIONS,
+  SET_APPROVED_REACTIONS,
   setBuyPrice,
   submitBio,
   submitPost,
@@ -214,5 +255,8 @@ export default {
   handleBuySubmit,
   handleApproveClicked,
   setSelectedAccount,
-  setSelectedBioRevision
+  setSelectedBioRevision,
+  submitReaction,
+  addNewApprovedReaction,
+  setApprovedReactions
 };

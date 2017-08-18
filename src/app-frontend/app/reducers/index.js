@@ -12,7 +12,8 @@ const {
   SET_TOKEN_SUPPLY,
   SET_WALLET_DATA,
   NAVIGATE_PAGE,
-  SET_SUBMISSIONS
+  SET_SUBMISSIONS,
+  SET_APPROVED_REACTIONS
 } = actions;
 
 const wallet = (state = Map({
@@ -29,6 +30,7 @@ const wallet = (state = Map({
   newBuyPrice: 0,
   citadelName: '',
   newName: '',
+  newReaction: '',
   tokenOwnerAccount: null,
   citadelComptrollerAccount: null,
   tokenAddress: null,
@@ -68,13 +70,19 @@ const wallet = (state = Map({
 };
 
 const submissions = (state = [], action) => {
-  console.log("action.type: " + action.type);
   switch (action.type) {
     case SET_SUBMISSIONS:
-      console.log("setting submissions. action.data=" + action.data)
       return action.data;
     default:
-      console.log("default")
+      return state;
+  }
+}
+
+const approvedReactions = (state = [], action) => {
+  switch (action.type) {
+    case SET_APPROVED_REACTIONS:
+      return action.data;
+    default:
       return state;
   }
 }
@@ -91,7 +99,8 @@ const ui = (state = Map({page: 'home', route: '/'}), action) => {
 const rootReducer = combineReducers({
   wallet,
   ui,
-  submissions
+  submissions,
+  approvedReactions
 });
 
 export default rootReducer;

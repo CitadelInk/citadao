@@ -22,7 +22,6 @@ class App extends Component {
         }
 
         props.dispatch(initializeAccounts());
-        props.dispatch(initializeTestSubmissions());
   }
 
   render() {
