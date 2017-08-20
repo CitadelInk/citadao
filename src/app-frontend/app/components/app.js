@@ -4,7 +4,9 @@ import Home from './home';
 import User from './user';
 import Header from './header';
 import Debug from './debug';
+import Post from './post';
 import actions from '../actions';
+import BuyMoreWidget from './buyMoreWidget'
 
 const {
 	initializeContract,
@@ -33,6 +35,9 @@ class App extends Component {
       case 'debug':
         page = <Debug/>
         break;
+      case 'post':
+        page = <Post/>
+        break;
       default:
         page = <Home/>
         break;
@@ -40,6 +45,7 @@ class App extends Component {
 	return (
 	<div className="app">
     		<Header />
+			{this.props.wallet.get("buyMoreActive") && <BuyMoreWidget />}
         {page}
       </div>
 	)
@@ -47,9 +53,9 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-  const { ui } = state;
+  const { ui, wallet } = state;
 
-  return {ui};
+  return {ui, wallet};
 };
 
 export default connect(mapStateToProps)(App);

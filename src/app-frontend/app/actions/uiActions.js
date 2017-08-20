@@ -25,12 +25,19 @@ export const getUserPageBios = (user) => dispatch => {
     ]).then(([bioRevisions]) => {
       var revisions = bioRevisions.bioRevisions;
       if(revisions.length > 0) {
-        console.log("bio revisionslength > 0")
         dispatch(setSelectedBioRevision(revisions[revisions.length - 1])); // most recent
       }
       return dispatch(setWalletData({...bioRevisions}))
   });
 } 
+
+export const setBuyMore = (active) => dispatch => {
+  return dispatch(
+    setWalletData({
+      buyMoreActive: active
+    })
+  );
+}
 
 export const navigatePage = (data) => {
   return {
@@ -43,5 +50,6 @@ export default {
   NAVIGATE_PAGE,
   navigatePage,
   gotoUserPage,
-  getUserPageBios
+  getUserPageBios,
+  setBuyMore
 };
