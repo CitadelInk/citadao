@@ -3,7 +3,8 @@ import qs from 'qs';
 import actions from './actions';
 const {
     navigatePage,
-    gotoUserPage
+    gotoUserPage,
+    gotoPost
 } = actions;
 
 
@@ -20,7 +21,8 @@ export default Router.extend({
         '': 'home',
         '/': 'home',
         'debug' : 'debug',
-        'user/:account': 'userpage'
+        'user/:account': 'userpage',
+        'post/:subHash/rev/:revHash' : 'post'
     },
     home() {
         this.store.dispatch(navigatePage({page:'home', route:'/'}));
@@ -30,5 +32,8 @@ export default Router.extend({
     },
     debug() {
         this.store.dispatch(navigatePage({page:'debug', route:'/'}));
+    },
+    post(subHash,revHash) {
+        this.store.dispatch(navigatePage({page:'post', route: '\/post\/' + subHash + '\/rev\/' + revHash}));
     }
 });

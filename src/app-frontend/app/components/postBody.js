@@ -2,30 +2,24 @@ import React, { Component } from 'react';
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import Posts from './posts';
 
 
-class Home extends Component {
+class PostBody extends Component {
 	 constructor(props) {
-		super(props);
+		 super(props);
 	}
 
 
 	render() {
 		const style = {
-				height: '100%',
-				background:'#FFFFFF',
-				width:'100%',
-				position: 'relative',
-				top:'100px'
+				background:'#F0F0F0',
+				width:'100%'
 		}
 			
-		console.log("submissions - " + this.props.submissions)
-		return (
-			
-			<div style={style} className="Home">
-			<Posts />	
-			
+		return (			
+			<div style={style}>
+				<center>{this.props.submission.title}</center><br />
+				<span>{this.props.submission.text}</span>
 			</div>
 		);
 	}
@@ -37,4 +31,4 @@ const mapStateToProps = state => {
   return {wallet, submissions };
 }
 
-export default connect(mapStateToProps)(Home)
+export default connect(mapStateToProps)(PostBody)

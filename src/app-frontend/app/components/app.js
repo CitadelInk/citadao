@@ -10,8 +10,7 @@ import BuyMoreWidget from './buyMoreWidget'
 
 const {
 	initializeContract,
-  initializeAccounts
-  
+  initializeAccounts  
 } = actions;
 
 class App extends Component {
@@ -36,8 +35,14 @@ class App extends Component {
         page = <Debug/>
         break;
       case 'post':
-        page = <Post/>
-        break;
+        var route = this.props.ui.get('route');
+        var splitRoute = route.split('\/'); 
+        console.log("split length: " + splitRoute.length);
+        if(splitRoute.length === 5) {
+          console.log("length 5")
+          page = <Post submissionHash={splitRoute[2]} revisionHash={splitRoute[4]} />;
+        }
+      break;
       default:
         page = <Home/>
         break;

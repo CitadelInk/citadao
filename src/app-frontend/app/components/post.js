@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import PostWidgetHeader from './postWidgetHeader'
-import PostWidgetBody from './postWidgetBody'
-import PostWidgetFooter from './postWidgetFooter'
+import PostHeader from './postHeader'
+import PostBody from './postBody'
+import PostFooter from './postFooter'
 
 class Post extends Component {
 	 constructor(props) {
@@ -14,29 +14,36 @@ class Post extends Component {
 
 	render() {
 		const style = {
-				height: '180px',
 				background:'#F0F0F0',
-				width:'100%',
-				borderRadius: '15px',
-				marginBottom: '15px'
+				position:'relative',	
+				width:'50%',
+				top: '100px'
 		}
 			
 		console.log("submission updated")
-		const submission = this.props.submission;
-		return (			
+		const submission = this.props.submissions.get(this.props.submissionHash);
+		var post = "loading...";
+		if (submission) {
+			post = (	
+				<div>			
+				<PostHeader submission={submission} />
+				<PostBody submission={submission} />
+				<PostFooter submission={submission} />
+				</div>
+			);
+		}
+		return(
 			<div style={style}>
-				<PostWidgetHeader submission={submission}/>
-				<PostWidgetBody submission={submission} />
-				<PostWidgetFooter submission={submission} />
+				{post}
 			</div>
 		);
 	}
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet, submissions } = state;
 
-  return {wallet };
+  return {wallet, submissions };
 }
 
 export default connect(mapStateToProps)(Post)

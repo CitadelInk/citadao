@@ -5,10 +5,16 @@ import { connect } from 'react-redux';
 import PostWidgetHeader from './postWidgetHeader'
 import PostWidgetBody from './postWidgetBody'
 import PostWidgetFooter from './postWidgetFooter'
+import actions from '../actions';
+
+const {
+	gotoPost
+} = actions;
 
 class PostWidget extends Component {
 	 constructor(props) {
 		 super(props);
+		  this.widgetClicked = this.widgetClicked.bind(this);
 	}
 
 
@@ -23,12 +29,17 @@ class PostWidget extends Component {
 			
 		const submission = this.props.submission;
 		return (			
-			<div style={style}>
+			<div onClick={this.widgetClicked} style={style}>
 				<PostWidgetHeader submission={submission}/>
 				<PostWidgetBody submission={submission} />
 				<PostWidgetFooter submission={submission} />
 			</div>
 		);
+	}
+
+	widgetClicked(e) {
+		this.props.dispatch(gotoPost(this.props.submission.submissionHash, this.props.submission.revisionHash));
+		e.stopPropagation();
 	}
 }
 

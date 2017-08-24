@@ -9,7 +9,8 @@ import {
 
 import {
   setWalletData,
-  setSelectedBioRevision
+  setSelectedBioRevision,
+  loadPost
 } from './contractPublicData'
 
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
@@ -17,6 +18,11 @@ export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 export const gotoUserPage  = (user) => dispatch =>  {
   dispatch(navigatePage({page:'user',route:'\/user\/' + user})); 
   return dispatch(getUserPageBios(user)) 
+}
+
+export const gotoPost = (subHash, revHash) => dispatch => {
+  dispatch(loadPost(subHash, revHash));
+  return dispatch(navigatePage({page:'post',route:'\/post\/' + subHash + '\/rev\/' + revHash}))
 }
 
 export const getUserPageBios = (user) => dispatch => {
@@ -51,5 +57,6 @@ export default {
   navigatePage,
   gotoUserPage,
   getUserPageBios,
-  setBuyMore
+  setBuyMore,
+  gotoPost
 };

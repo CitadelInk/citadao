@@ -89,9 +89,20 @@ export const setBuyPrice = () => (dispatch, getState) => {
 export const initializeApprovedReactions = () => (dispatch) => {
   getApprovedReactions().then((reactions) => {
     console.log("initializeApprovedReactions - approved reactions: " + reactions.approvedReactions);
-      dispatch(initializeTestTypedSubmissions(reactions.approvedReactions));
+      dispatch(initializeTestTypedSubmissions());
       return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
+}
+
+export const initializeNeededSubmissions = () => (dispatch, getState) => {
+  const {ui} = getState();
+  if(ui.get('page') === 'home') {
+    dispatch(initializeTestTypedSubmissions());
+  } else if (ui.get('page') === 'post') {
+    var route = ui.get('route');
+    var splitRoute = route.split('\/'); 
+    dispatch(loadPost(splitRoute[2], splitRoute[4]));
+  }
 }
 
 export const addNewApprovedReaction = () => (dispatch, getState) => {
@@ -107,10 +118,12 @@ export const addNewApprovedReaction = () => (dispatch, getState) => {
 export const initializeContract = () => (dispatch) => {
   return Promise.all([
     getAdvancedTokenPublicData(),
-    getCitadelPublicData()
-  ]).then(([token, citadel]) => {
-    dispatch(initializeApprovedReactions())
-    dispatch(setWalletData({...token, ...citadel}))
+    getCitadelPublicData(),
+    getApprovedReactions()
+  ]).then(([token, citadel, reactions]) => {
+    dispatch(setWalletData({...token, ...citadel}));
+    dispatch(setApprovedReactions(reactions.approvedReactions));
+    dispatch(initializeNeededSubmissions());
   });
 };
 
@@ -140,19 +153,26 @@ export const initializeAccounts = () => dispatch => {
   })  
 }
 
-export const initializeTestTypedSubmissions = (reactions) => dispatch => {
+
+
+export const loadPost = (submissionHash, revisionHash) => (dispatch, getState) => {
+  const {approvedReactions} = getState();
+  return getSubmission(submissionHash).then(result => {
+    dispatch(setSubmission({subHash: submissionHash, submissionAuthorg: result.submissionAuthorg, submissionHash: result.submissionHash, revisionHash: result.revisionHash, title: result.submissionTitle, text: result.submissionText, revisionReactionReactors: result.revisionReactionReactors}))
+    getAccountName(result.submissionAuthorg).then((name) => {
+      dispatch(setSubmissionAuthorgName(submissionHash, name.accountName));
+    })
+    getSubmissionReactions(submissionHash, result.submissionAuthorg, approvedReactions).then((reactions) => {
+      dispatch(setSubmissionReactions(submissionHash, reactions.revisionReactionReactors))
+    })
+  })
+}
+
+export const initializeTestTypedSubmissions = () => dispatch => {
   return new Promise((res, rej) => {
     getSubmissions().then((submissions) => {
       var submissionPromises = submissions.allSubmissionsTest.map(sub => {
-        return getSubmission(sub).then(result => {
-          dispatch(setSubmission({subHash: sub, submissionAuthorg: result.submissionAuthorg, submissionHash: result.submissionHash, revisionHash: result.revisionHash, title: result.submissionTitle, text: result.submissionText, revisionReactionReactors: result.revisionReactionReactors}))
-          getAccountName(result.submissionAuthorg).then((name) => {
-            dispatch(setSubmissionAuthorgName(sub, name.accountName));
-          })
-          getSubmissionReactions(sub, result.submissionAuthorg, reactions).then((reactions) => {
-            dispatch(setSubmissionReactions(sub, reactions.revisionReactionReactors))
-          })
-        })
+        return dispatch(loadPost(sub, sub));
       })
     })
   })
@@ -287,5 +307,6 @@ export default {
   setSelectedBioRevision,
   submitReaction,
   addNewApprovedReaction,
-  setApprovedReactions
+  setApprovedReactions,
+  loadPost
 };

@@ -11,7 +11,7 @@ const {
 } = actions;
 
 
-class PostWidgetHeader extends Component {
+class PostHeader extends Component {
 	 constructor(props) {
 		 super(props);
 		  this.authorgNameClicked = this.authorgNameClicked.bind(this);
@@ -51,4 +51,4 @@ const mapStateToProps = state => {
   return {wallet };
 }
 
-export default connect(mapStateToProps)(PostWidgetHeader)
+export default connect(mapStateToProps)(PostHeader)

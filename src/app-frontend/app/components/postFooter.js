@@ -9,7 +9,7 @@ const {
 } = actions;
 
 
-class PostWidgetFooter extends Component {
+class PostFooter extends Component {
 	 constructor(props) {
 		 super(props);
 		  this.reactionClicked = this.reactionClicked.bind(this);
@@ -25,7 +25,7 @@ class PostWidgetFooter extends Component {
 				borderBottomRightRadius: '15px'
 		}
 			
-		var reactions = "loading...";
+		var reactions = "loading"
 		
 		if(this.props.submission.revisionReactionReactors) {
 			reactions = this.props.submission.revisionReactionReactors.map(reaction => {
@@ -52,4 +52,4 @@ const mapStateToProps = state => {
   return {wallet, approvedReactions };
 }
 
-export default connect(mapStateToProps)(PostWidgetFooter)
+export default connect(mapStateToProps)(PostFooter)
