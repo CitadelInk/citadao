@@ -13,7 +13,8 @@ const {
   SET_WALLET_DATA,
   NAVIGATE_PAGE,
   SET_SUBMISSIONS,
-  SET_APPROVED_REACTIONS
+  SET_APPROVED_REACTIONS,
+  SET_BUY_MORE
 } = actions;
 
 const wallet = (state = Map({
@@ -25,7 +26,7 @@ const wallet = (state = Map({
   tokenSupply: 0,
   citaBalance: 0,
   ethBalance: 0,
-  citaBuyPrice: 0.0,
+  citaBuyPrice: 1.0,
   etherToSend: 0,
   newBuyPrice: 0,
   citadelName: '',
@@ -43,8 +44,10 @@ const wallet = (state = Map({
   selectedBioRevision: null,
   selectedBioRevisionValue: null,
   tokenCitadelComptroller: '',
-  allSubmissionsTest: []
+  allSubmissionsTest: [],
+  buyMoreActive: false
 }), action) => {
+  console.log("ACTION HAPPENING: action.type: " + action.type)
   switch (action.type) {
     case SET_TOKEN_ADRESS:
       return state.set("tokenAddress", action.data);
@@ -62,6 +65,9 @@ const wallet = (state = Map({
       return state.set("citadelComptrollerAccount", action.data);
     case SET_CITADEL_WALLET_ADRESS:
       return state.set("citadelWalletAddress", action.data);
+    case SET_BUY_MORE:
+      console.log("SET BUY MORE 2 - action.active: " + action.data);
+      return state.set("buyMoreActive", action.data)
     case SET_WALLET_DATA:
       return state.merge(action.data);
     default:

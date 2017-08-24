@@ -4,6 +4,7 @@ import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import actions from '../actions';
 import { List } from 'immutable';
+import BuyMoreWidget from './buyMoreWidget';
 
 const {
 	initializeContract,
@@ -17,7 +18,8 @@ const {
 	handleApproveClicked,
 	setSelectedAccount,
 	navigatePage,
-	gotoUserPage
+	gotoUserPage,
+	setBuyMore
 } = actions;
 
 class Header extends Component {
@@ -26,6 +28,8 @@ class Header extends Component {
 		this.handleAccountSelected = this.handleAccountSelected.bind(this);
 		this.gotoAccountPageClicked = this.gotoAccountPageClicked.bind(this);
 		this.gotoDebugPageClicked = this.gotoDebugPageClicked.bind(this);
+		this.handleBuyMoreClicked = this.handleBuyMoreClicked.bind(this);
+		this.handleClickDiv = this.handleClickDiv.bind(this);
 	}
 
 	render() {
@@ -65,20 +69,33 @@ class Header extends Component {
 		const gotoDebugPage = (
 			<span onClick={this.gotoDebugPageClicked}>View Debug Page</span>
 		);
+		
 		const citaBalance = (
 			<div style={citaBalanceDivStyle}>
-			<span>{this.props.wallet.get('citaBalance')} CITA</span>
+				<button onClick={this.handleBuyMoreClicked}>Buy More</button>
+			<span>{this.props.wallet.get('citaBalance')} CITA</span><br />
 			</div>
 		)
 
 		return (
-			<div style={divStyle} className="header">				
+			<div style={divStyle} className="header" onClick={this.handleClickDiv}>				
 				<h1 style={headerStyle}>C I T A D E L</h1>
 				{accountsDropDown}
 				{citaBalance}
 				{gotoAccountPage} - {gotoDebugPage}
 			</div>
 		)
+	}
+
+	handleClickDiv(e) {
+		console.log("div clicked");
+		this.props.dispatch(setBuyMoreExt(false));
+	}
+
+	handleBuyMoreClicked(e) {
+		console.log("button clicked");
+		this.props.dispatch(setBuyMore(true));
+		e.stopPropagation();
 	}
 
 	handleAccountSelected(e) {
