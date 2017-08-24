@@ -25,9 +25,13 @@ class PostWidgetFooter extends Component {
 				borderBottomRightRadius: '15px'
 		}
 			
-		const reactions = this.props.submission.revisionReactionReactors.map(reaction => {
-			return (<span key={reaction.reactionHash}><button value={reaction.reactionHash} onClick={this.reactionClicked}>{reaction.reactionValue} - {reaction.reactionReactors.length}</button></span>);
-		})
+		var reactions = "loading"
+		
+		if(this.props.submission.revisionReactionReactors) {
+			reactions = this.props.submission.revisionReactionReactors.map(reaction => {
+			  return (<span key={reaction.reactionHash}><button value={reaction.reactionHash} onClick={this.reactionClicked}>{reaction.reactionValue} - {reaction.reactionReactors.length}</button></span>);
+			})
+		} 
 		return (			
 			<div style={style}>
  				{reactions}

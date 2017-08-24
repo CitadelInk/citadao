@@ -24,7 +24,8 @@ import {
   getAccountBioRevision,
   getAccountName,
   getEthBalance,
-  getApprovedReactions
+  getApprovedReactions,
+  getSubmissionReactions
 } from '../api/getAccounts';
 
 export const SET_APPROVED_REACTIONS = "SET_APPROVED_REACTIONS";
@@ -64,6 +65,14 @@ export const setSubmissionAuthorgName = (subHash, name) => {
   return {
     type: SET_SUBMISSION_AUTHORG_NAME,
     data: {subHash : subHash, name: name}
+  }
+}
+
+export const SET_SUBMISSION_REACTIONS = "SET_SUBMISSION_REACTIONS";
+export const setSubmissionReactions = (subHash, reactions) => {
+  return {
+    type: SET_SUBMISSION_REACTIONS,
+    data: {subHash : subHash, reactions : reactions}
   }
 }
 
@@ -135,10 +144,13 @@ export const initializeTestTypedSubmissions = (reactions) => dispatch => {
   return new Promise((res, rej) => {
     getSubmissions().then((submissions) => {
       var submissionPromises = submissions.allSubmissionsTest.map(sub => {
-        return getSubmission(sub, reactions).then(result => {
-          dispatch(setSubmission({subHash: result.submissionHash, submissionAuthorg: result.submissionAuthorg, submissionHash: result.submissionHash, revisionHash: result.revisionHash, title: result.submissionTitle, text: result.submissionText, revisionReactionReactors: result.revisionReactionReactors}))
+        return getSubmission(sub).then(result => {
+          dispatch(setSubmission({subHash: sub, submissionAuthorg: result.submissionAuthorg, submissionHash: result.submissionHash, revisionHash: result.revisionHash, title: result.submissionTitle, text: result.submissionText, revisionReactionReactors: result.revisionReactionReactors}))
           getAccountName(result.submissionAuthorg).then((name) => {
-            dispatch(setSubmissionAuthorgName(result.submissionHash, name.accountName));
+            dispatch(setSubmissionAuthorgName(sub, name.accountName));
+          })
+          getSubmissionReactions(sub, result.submissionAuthorg, reactions).then((reactions) => {
+            dispatch(setSubmissionReactions(sub, reactions.revisionReactionReactors))
           })
         })
       })
@@ -263,6 +275,7 @@ export default {
   SET_APPROVED_REACTIONS,
   SET_SUBMISSION,
   SET_SUBMISSION_AUTHORG_NAME,
+  SET_SUBMISSION_REACTIONS,
   setBuyPrice,
   submitBio,
   submitPost,

@@ -16,7 +16,8 @@ const {
   SET_APPROVED_REACTIONS,
   SET_BUY_MORE,
   SET_SUBMISSION,
-  SET_SUBMISSION_AUTHORG_NAME
+  SET_SUBMISSION_AUTHORG_NAME,
+  SET_SUBMISSION_REACTIONS
 } = actions;
 
 const wallet = (state = Map({
@@ -82,6 +83,9 @@ const submissions = (state = new Map(), action) => {
     case SET_SUBMISSION_AUTHORG_NAME:
       var data = state.get(action.data.subHash);
       return state.set(action.data.subHash, { ...data, authorgName: action.data.name})
+    case SET_SUBMISSION_REACTIONS:
+      var data = state.get(action.data.subHash);
+      return state.set(action.data.subHash, { ...data, revisionReactionReactors : action.data.reactions})
     default:
       return state;
   }

@@ -140,31 +140,41 @@ export const getAccountBioRevision = (revisionHash) => {
 }
 
 // once we add revisioning, will need to get specific revision (default likely most recent?)
-export const getSubmission = (submissionHash, reactions) => {
+export const getSubmission = (submissionHash) => {
   return new Promise((res, rej) => {
     const bzzAddress = submissionHash.substring(2);
     localWeb3.bzz.retrieve(bzzAddress, (error, submission) => {
       console.log("retrieved! submission = " + submission);
       const jsonSubmission = JSON.parse(submission)
       localWeb3.bzz.retrieve(jsonSubmission.entries[0].hash, (error, entry) => {     
-
-      console.log("retrieved! entry = " + entry);
+        console.log("retrieved! entry = " + entry);
         var subJson = JSON.parse(entry)
-        appContracts.Citadel.deployed().then((instance) => {
-          var revisionReactionReactorPromisess = reactions.map(reaction => {
-            console.log("grab reaction: authorg: " + subJson.authorg + " - submissionHash: " + submissionHash + " - revisionHash: " + subJson.revisionHash + " - reaction: " + reaction.reactionHash);
-            return instance.getReactorsForAuthorgSubmissionRevisionReaction(subJson.authorg, submissionHash, submissionHash, reaction.reactionHash).then((reactors) => {
-              return {reactionHash : reaction.reactionHash, reactionValue : reaction.reactionValue, reactionReactors : reactors};
-            })
-          })
-          Promise.all(revisionReactionReactorPromisess).then((revisionReactionReactors) => {
-            console.log("revisionReactionReactors: " + revisionReactionReactors)
-            res ({
-              submissionAuthorg: subJson.authorg, submissionHash: submissionHash, revisionHash: submissionHash, submissionTitle: subJson.title, submissionText: subJson.text, revisionReactionReactors: revisionReactionReactors
-            })
-          })
-        })        
+        res ({
+          submissionAuthorg: subJson.authorg, 
+          submissionHash: submissionHash, 
+          revisionHash: submissionHash, 
+          submissionTitle: subJson.title, 
+          submissionText: subJson.text
+        }) 
       })
     })
   })
+}
+
+export const getSubmissionReactions = (submissionHash, authorgHash, reactions) => {
+  return new Promise((res, rej) => {
+    appContracts.Citadel.deployed().then((instance) => {
+      var revisionReactionReactorPromisess = reactions.map(reaction => {
+        return instance.getReactorsForAuthorgSubmissionRevisionReaction(authorgHash, submissionHash, submissionHash, reaction.reactionHash).then((reactors) => {
+          return {reactionHash : reaction.reactionHash, reactionValue : reaction.reactionValue, reactionReactors : reactors};
+        })
+      })
+      Promise.all(revisionReactionReactorPromisess).then((revisionReactionReactors) => {
+        console.log("revisionReactionReactors: " + revisionReactionReactors)
+        res ({
+          revisionReactionReactors: revisionReactionReactors
+        })
+      })
+    })
+  });
 }

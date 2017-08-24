@@ -4,9 +4,17 @@ import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 
 
+import actions from '../actions';
+
+const {
+	gotoUserPage
+} = actions;
+
+
 class PostWidgetHeader extends Component {
 	 constructor(props) {
 		 super(props);
+		  this.authorgNameClicked = this.authorgNameClicked.bind(this);
 	}
 
 
@@ -16,19 +24,23 @@ class PostWidgetHeader extends Component {
 				background:'#85C1E9',
 				width:'100%',
 				borderTopLeftRadius: '15px',
-				borderTopRightRadius: '15px'
+				borderTopRightRadius: '15px',
 		}
 			
 		console.log("submission - " + this.props.submission)
 		console.log("authorgName = " + this.props.submission.authorgName)
 		return (			
 			<div style={style}>
-				<span>authorg name - {this.props.submission.authorgName}</span><br />
- 				<span>submission hash - {this.props.submission.submissionHash}</span><br />
- 				<span>revision hash - {this.props.submission.revisionHash}</span><br />
- 				<span>authorg address - {this.props.submission.submissionAuthorg}</span><br />
-			</div>
+				<button value={this.props.submission.submissionAuthorg} onClick={this.authorgNameClicked}><span style={{fontSize:'14pt'}}>{this.props.submission.authorgName}</span> - <span style={{fontSize:'8pt'}}>{this.props.submission.submissionAuthorg}</span></button><br />
+ 				<span style={{fontSize:'8pt'}}>submission hash - {this.props.submission.submissionHash}</span><br />
+ 				<span style={{fontSize:'8pt'}}>revision hash - {this.props.submission.revisionHash}</span><br />
+ 			</div>
 		);
+	}
+
+	authorgNameClicked(e) {
+		console.log("name clicked: " + e.target.value);
+		this.props.dispatch(gotoUserPage(e.target.value));
 	}
 }
 

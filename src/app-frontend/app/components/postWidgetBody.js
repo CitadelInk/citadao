@@ -12,9 +12,10 @@ class PostWidgetBody extends Component {
 
 	render() {
 		const style = {
-				height: '100px',
+				height: '150px',
 				background:'#F0F0F0',
-				width:'100%'
+				width:'100%',
+				textOverflow: 'ellipsis'
 		}
 			
 		return (			
