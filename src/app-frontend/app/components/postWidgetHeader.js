@@ -20,6 +20,7 @@ class PostWidgetHeader extends Component {
 		}
 			
 		console.log("submission - " + this.props.submission)
+		console.log("authorgName = " + this.props.submission.authorgName)
 		return (			
 			<div style={style}>
 				<span>authorg name - {this.props.submission.authorgName}</span><br />

@@ -78,14 +78,10 @@ const wallet = (state = Map({
 const submissions = (state = new Map(), action) => {
   switch (action.type) {
     case SET_SUBMISSION:
-      console.log("set submission subHash: " + action.data.subHash);  
       return state.set(action.data.subHash, action.data);
     case SET_SUBMISSION_AUTHORG_NAME:
       var data = state.get(action.data.subHash);
-      data.authorgName = action.data.name;
-      console.log("set submission authorg name subHash: " + action.data.subHash + " authorgName: " + action.data.name);
-      console.log("data.authorgName: " + data.authorgName)
-      return state.set(action.data.subHash, data);
+      return state.set(action.data.subHash, { ...data, authorgName: action.data.name})
     default:
       return state;
   }
