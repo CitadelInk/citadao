@@ -51,6 +51,22 @@ export const setSubmissions = (data) => {
   }
 }
 
+export const SET_SUBMISSION = "SET_SUBMISSION";
+export const setSubmission = (data) => {
+  return {
+    type: SET_SUBMISSION,
+    data: data
+  }
+}
+
+export const SET_SUBMISSION_AUTHORG_NAME = "SET_SUBMISSION_AUTHORG_NAME";
+export const setSubmissionAuthorgName = (subHash, name) => {
+  return {
+    type: SET_SUBMISSION_AUTHORG_NAME,
+    data: {subHash : subHash, name: name}
+  }
+}
+
 export const setBuyPrice = () => (dispatch, getState) => {
   const {wallet} = getState();
   const newBuyPrice = localWeb3.toBigNumber(wallet.get('newBuyPrice'));
@@ -64,7 +80,7 @@ export const setBuyPrice = () => (dispatch, getState) => {
 export const initializeApprovedReactions = () => (dispatch) => {
   getApprovedReactions().then((reactions) => {
     console.log("initializeApprovedReactions - approved reactions: " + reactions.approvedReactions);
-      dispatch(initializeTestSubmissions(reactions.approvedReactions));
+      dispatch(initializeTestTypedSubmissions(reactions.approvedReactions));
       return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
 }
@@ -115,18 +131,17 @@ export const initializeAccounts = () => dispatch => {
   })  
 }
 
-export const initializeTestSubmissions = (reactions) => dispatch => {
+export const initializeTestTypedSubmissions = (reactions) => dispatch => {
   return new Promise((res, rej) => {
     getSubmissions().then((submissions) => {
       var submissionPromises = submissions.allSubmissionsTest.map(sub => {
-        return getSubmission(sub, reactions)
-      })
-      return Promise.all(submissionPromises).then(values => {
-        var submissionsValues = values.map(result => {
-          return {submissionAuthorg: result.submissionAuthorg, submissionHash: result.submissionHash, revisionHash: result.revisionHash, title: result.submissionTitle, text: result.submissionText, revisionReactionReactors: result.revisionReactionReactors}
+        return getSubmission(sub, reactions).then(result => {
+          dispatch(setSubmission({subHash: result.submissionHash, submissionAuthorg: result.submissionAuthorg, submissionHash: result.submissionHash, revisionHash: result.revisionHash, title: result.submissionTitle, text: result.submissionText, revisionReactionReactors: result.revisionReactionReactors}))
+          getAccountName(result.submissionAuthorg).then((name) => {
+            dispatch(setSubmissionAuthorgName(result.submissionHash, name.accountName));
+          })
         })
-        return submissionsValues;
-      }).then(submissionsValues => dispatch(setSubmissions(submissionsValues)))
+      })
     })
   })
 }
@@ -241,12 +256,13 @@ export const handleApproveClicked = () => (dispatch, getState) => {
 export default {
   initializeContract,
   initializeAccounts,
-  initializeTestSubmissions,
   updateCitaBalance,
   setWalletData,
   SET_WALLET_DATA,
   SET_SUBMISSIONS,
   SET_APPROVED_REACTIONS,
+  SET_SUBMISSION,
+  SET_SUBMISSION_AUTHORG_NAME,
   setBuyPrice,
   submitBio,
   submitPost,

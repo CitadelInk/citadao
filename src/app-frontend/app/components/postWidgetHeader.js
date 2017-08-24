@@ -22,18 +22,19 @@ class PostWidgetHeader extends Component {
 		console.log("submission - " + this.props.submission)
 		return (			
 			<div style={style}>
- 				<span>submission hash - {this.props.submission.submissionHash} <br /> </span>
- 				<span>revision hash - {this.props.submission.revisionHash} <br /> </span>
- 				<span>authorg address - {this.props.submission.submissionAuthorg} <br /> </span>
+				<span>authorg name - {this.props.submission.authorgName}</span><br />
+ 				<span>submission hash - {this.props.submission.submissionHash}</span><br />
+ 				<span>revision hash - {this.props.submission.revisionHash}</span><br />
+ 				<span>authorg address - {this.props.submission.submissionAuthorg}</span><br />
 			</div>
 		);
 	}
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet } = state;
 
-  return {wallet, submissions };
+  return {wallet };
 }
 
 export default connect(mapStateToProps)(PostWidgetHeader)

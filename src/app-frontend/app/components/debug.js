@@ -84,6 +84,7 @@ class Debug extends Component {
 		}
 
 		console.log("debug page - approved reactions: " + this.props.approvedReactions);
+		console.log("typedSubmissions = " + this.props.typedSubmissions);
 
 		return (
 			
@@ -105,7 +106,10 @@ class Debug extends Component {
 					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevisionValue')}<br />
 					Approved Reactions - {this.props.approvedReactions.map((value) => {
 						return (value.reactionHash + " - " + value.reactionValue + "  -  ")
-					})}
+					})}<br /><br />
+					Test Typed Submissions - {this.props.submissions.map((value,key) => {
+						return (key + " - " + value.test)
+					})}<br />
 				</p>
 				
 				{this.isOwner() && ownerSection}
@@ -187,9 +191,9 @@ class Debug extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, approvedReactions } = state;
+  const { wallet, approvedReactions, submissions } = state;
 
-  return {wallet, approvedReactions};
+  return {wallet, approvedReactions, submissions};
 }
 
 export default connect(mapStateToProps)(Debug)

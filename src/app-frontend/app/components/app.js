@@ -10,8 +10,8 @@ import BuyMoreWidget from './buyMoreWidget'
 
 const {
 	initializeContract,
-  initializeAccounts,
-  initializeTestSubmissions
+  initializeAccounts
+  
 } = actions;
 
 class App extends Component {

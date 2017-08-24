@@ -26,7 +26,7 @@ class PostWidgetFooter extends Component {
 		}
 			
 		const reactions = this.props.submission.revisionReactionReactors.map(reaction => {
-			return (<span><button value={reaction.reactionHash} onClick={this.reactionClicked}>{reaction.reactionValue} - {reaction.reactionReactors.length}</button></span>);
+			return (<span key={reaction.reactionHash}><button value={reaction.reactionHash} onClick={this.reactionClicked}>{reaction.reactionValue} - {reaction.reactionReactors.length}</button></span>);
 		})
 		return (			
 			<div style={style}>

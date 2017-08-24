@@ -14,7 +14,9 @@ const {
   NAVIGATE_PAGE,
   SET_SUBMISSIONS,
   SET_APPROVED_REACTIONS,
-  SET_BUY_MORE
+  SET_BUY_MORE,
+  SET_SUBMISSION,
+  SET_SUBMISSION_AUTHORG_NAME
 } = actions;
 
 const wallet = (state = Map({
@@ -47,7 +49,6 @@ const wallet = (state = Map({
   allSubmissionsTest: [],
   buyMoreActive: false
 }), action) => {
-  console.log("ACTION HAPPENING: action.type: " + action.type)
   switch (action.type) {
     case SET_TOKEN_ADRESS:
       return state.set("tokenAddress", action.data);
@@ -66,7 +67,6 @@ const wallet = (state = Map({
     case SET_CITADEL_WALLET_ADRESS:
       return state.set("citadelWalletAddress", action.data);
     case SET_BUY_MORE:
-      console.log("SET BUY MORE 2 - action.active: " + action.data);
       return state.set("buyMoreActive", action.data)
     case SET_WALLET_DATA:
       return state.merge(action.data);
@@ -75,14 +75,21 @@ const wallet = (state = Map({
   }
 };
 
-const submissions = (state = [], action) => {
+const submissions = (state = new Map(), action) => {
   switch (action.type) {
-    case SET_SUBMISSIONS:
-      return action.data;
+    case SET_SUBMISSION:
+      console.log("set submission subHash: " + action.data.subHash);  
+      return state.set(action.data.subHash, action.data);
+    case SET_SUBMISSION_AUTHORG_NAME:
+      var data = state.get(action.data.subHash);
+      data.authorgName = action.data.name;
+      console.log("set submission authorg name subHash: " + action.data.subHash + " authorgName: " + action.data.name);
+      console.log("data.authorgName: " + data.authorgName)
+      return state.set(action.data.subHash, data);
     default:
       return state;
   }
-}
+ }
 
 const approvedReactions = (state = [], action) => {
   switch (action.type) {

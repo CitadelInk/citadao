@@ -88,18 +88,15 @@ class Header extends Component {
 	}
 
 	handleClickDiv(e) {
-		console.log("div clicked");
 		this.props.dispatch(setBuyMore(false));
 	}
 
 	handleBuyMoreClicked(e) {
-		console.log("button clicked");
 		this.props.dispatch(setBuyMore(true));
 		e.stopPropagation();
 	}
 
 	handleAccountSelected(e) {
-		console.log("account selected - " + e.target.value)
 		this.props.dispatch(setSelectedAccount(e.target.value));
 	}
 

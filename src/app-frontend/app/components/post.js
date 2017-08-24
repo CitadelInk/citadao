@@ -21,6 +21,7 @@ class Post extends Component {
 				marginBottom: '15px'
 		}
 			
+		console.log("submission updated")
 		const submission = this.props.submission;
 		return (			
 			<div style={style}>
@@ -33,9 +34,9 @@ class Post extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet } = state;
 
-  return {wallet, submissions };
+  return {wallet };
 }
 
 export default connect(mapStateToProps)(Post)
