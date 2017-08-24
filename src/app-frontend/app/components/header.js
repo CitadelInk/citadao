@@ -89,7 +89,7 @@ class Header extends Component {
 
 	handleClickDiv(e) {
 		console.log("div clicked");
-		this.props.dispatch(setBuyMoreExt(false));
+		this.props.dispatch(setBuyMore(false));
 	}
 
 	handleBuyMoreClicked(e) {
