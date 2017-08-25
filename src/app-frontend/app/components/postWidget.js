@@ -20,7 +20,6 @@ class PostWidget extends Component {
 
 	render() {
 		const style = {
-				height: '180px',
 				background:'#F0F0F0',
 				width:'100%',
 				borderRadius: '15px',

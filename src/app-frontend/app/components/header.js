@@ -38,7 +38,8 @@ class Header extends Component {
 			background:'#F0F0F0',
 			width:'100%',
 			position:'fixed',
-			top:'0px'
+			top:'0px',
+			zIndex:'1000'
 		}
 		const headerStyle = {
 			fontFamily: 'sans-serif',

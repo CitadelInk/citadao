@@ -17,7 +17,8 @@ class Home extends Component {
 				background:'#FFFFFF',
 				width:'100%',
 				position: 'relative',
-				top:'100px'
+				top:'100px',
+				zIndex:'900'
 		}
 			
 		console.log("submissions - " + this.props.submissions)
