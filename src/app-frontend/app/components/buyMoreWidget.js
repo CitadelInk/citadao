@@ -24,10 +24,10 @@ class BuyMoreWidget extends Component {
 				background:'#F0F0F0',
 				width:'200px',
 				borderRadius: '15px',
-				position:'absolute',
+				position:'fixed',
 				right:'20px',
 				top:'120px',
-				zIndex: '1'
+				zIndex: '1100'
 		}
 			
 		const submission = this.props.submission;

@@ -220,7 +220,18 @@ export const submitPost = () => (dispatch, getState) => {
   const account = wallet.get('account');
   const postTitleInput = wallet.get('postTitleInput');
   const postTextInput = wallet.get('postTextInput');
-  var postJson = {"authorg" : account, "title" : postTitleInput, "text" : postTextInput}
+
+  var textInputSplit = postTextInput.split('\n');
+  console.log("sections: " + textInputSplit.length);
+  var trimmedTextInput = [];
+  textInputSplit.map(input => {
+    if(input.trim() != "") {
+      trimmedTextInput.push(input)
+    }
+  });
+  console.log("trimmed sections: " + trimmedTextInput.length);
+
+  var postJson = {"authorg" : account, "title" : postTitleInput, "text" : trimmedTextInput}
   return post(JSON.stringify(postJson), account).then(function(tx_id) {
       alert("post added to contract");
     }).catch(function(e) {
