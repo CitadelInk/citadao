@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import PostSection from './postSection';
 
 
-class PostBody extends Component {
-
+class ComposeBody extends Component {
 
 	constructor(props) {
 		super(props);
@@ -27,30 +26,38 @@ class PostBody extends Component {
 		this.setState({ width: window.innerWidth, height: window.innerHeight });
 	}
 
-
-
 	render() {
+
 		var stateHeight = parseInt(this.state.height);
 		var remainingHeight = stateHeight - 200;
 		const calcheight = remainingHeight + 'px';
-		console.log("calcheight: " + calcheight);
+		const inputHeight = (remainingHeight - 2) + 'px';
 		const style = {
-				background:'#F0F0F0',
-				height:calcheight,
-				top:'60px',
-				//bottom:'40px',
-				position:'absolute',
-				overflow:'scroll'
+			position:'absolute',
+			background:'#F0F0F0',
+			height:calcheight,
+			top:'60px',
+			bottom:'40px',			
+			padding: '10px',
+			width:'100%',
+			overflow:'scroll'
+		}
+
+		const textStyle = {
+			position:'absolute',
+			top:'0',
+			bottom:'0',
+			left:'0',
+			rigth:'0',
+			//padding:'1em',
+			minHeight:inputHeight,
+			width:'100%'
 		}
 			
-		console.log("submission text length: " + this.props.submission.text.length);
 
 		return (			
 			<div style={style}>
-				<center>{this.props.submission.title}</center><br />
-				{this.props.submission.text.map((section, i) => {
-					return (<PostSection section={section} sectionIndex={i} authorg={this.props.submission.submissionAuthorg} submissionHash={this.props.submission.submissionHash} revisionHash={this.props.submission.revisionHash}/>);	
-				})}
+				<textarea style={textStyle} onChange={this.handlePostTextChange} value={this.props.wallet.get('postTextInput')}/><br />
 			</div>
 		);
 	}
@@ -62,4 +69,4 @@ const mapStateToProps = state => {
   return {wallet, submissions };
 }
 
-export default connect(mapStateToProps)(PostBody)
+export default connect(mapStateToProps)(ComposeBody)

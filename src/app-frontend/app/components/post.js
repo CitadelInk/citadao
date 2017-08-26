@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import PostHeader from './postHeader'
-import PostBody from './postBody'
-import PostFooter from './postFooter'
+import PostHeader from './postHeader';
+import PostBody from './postBody';
+import PostFooter from './postFooter';
+import Compose from './compose';
 
 class Post extends Component {
 	 constructor(props) {
@@ -14,27 +15,29 @@ class Post extends Component {
 
 	render() {
 		const style = {
-				background:'#F0F0F0',
-				position:'relative',	
-				width:'50%',
-				top: '100px'
+				position:'absolute',
+				background:'#FFFFFF',
+				width:'33%',
+				height:'100%',
+				overflow:'hidden',
+				top:'0',
+				bottom:'0',
+				left:'0'
 		}
 			
 		console.log("submission updated")
-		const submission = this.props.submissions.get(this.props.submissionHash);
-		var post = "loading...";
-		if (submission) {
+		//const submission = this.props.submissions.get(this.props.submissionHash);
+		/*var post = (<div style={style}>	"loading..."</div>);
+		if (this.props.submission) {
 			post = (	
-				<div>			
-				<PostHeader submission={submission} />
-				<PostBody submission={submission} />
-				<PostFooter submission={submission} />
-				</div>
+				
 			);
-		}
+		}*/
 		return(
-			<div style={style}>
-				{post}
+			<div style={style}>			
+				<PostHeader submission={this.props.submission} />
+				<PostBody submission={this.props.submission} />
+				<PostFooter submission={this.props.submission} />
 			</div>
 		);
 	}

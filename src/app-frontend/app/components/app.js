@@ -4,7 +4,7 @@ import Home from './home';
 import User from './user';
 import Header from './header';
 import Debug from './debug';
-import Post from './post';
+import PostPage from './postPage';
 import actions from '../actions';
 import BuyMoreWidget from './buyMoreWidget'
 
@@ -40,7 +40,7 @@ class App extends Component {
         console.log("split length: " + splitRoute.length);
         if(splitRoute.length === 5) {
           console.log("length 5")
-          page = <Post submissionHash={splitRoute[2]} revisionHash={splitRoute[4]} />;
+          page = <PostPage submissionHash={splitRoute[2]} revisionHash={splitRoute[4]} />;
         }
       break;
       default:

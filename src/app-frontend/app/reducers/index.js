@@ -48,7 +48,8 @@ const wallet = (state = Map({
   selectedBioRevisionValue: null,
   tokenCitadelComptroller: '',
   allSubmissionsTest: [],
-  buyMoreActive: false
+  buyMoreActive: false,
+  postTextInput: ''
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:

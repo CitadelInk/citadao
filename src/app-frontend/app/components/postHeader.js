@@ -21,10 +21,12 @@ class PostHeader extends Component {
 	render() {
 		const style = {
 				height: '60px',
-				background:'#85C1E9',
-				width:'100%',
+				background:'#7FDBFF',
 				borderTopLeftRadius: '15px',
 				borderTopRightRadius: '15px',
+				width:'100%',
+				position:'absolute',
+				top:'0'
 		}
 			
 		console.log("submission - " + this.props.submission)

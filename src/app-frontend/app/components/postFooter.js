@@ -20,9 +20,12 @@ class PostFooter extends Component {
 		const style = {
 				height: '40px',  
 				background:'#707B7c',
-				width:'100%',
 				borderBottomLeftRadius: '15px',
-				borderBottomRightRadius: '15px'
+				borderBottomRightRadius: '15px',
+				width:'33%',
+				position:'fixed', //hack, right?
+				bottom:'0',
+				left:'0'
 		}
 			
 		var reactions = "loading"
