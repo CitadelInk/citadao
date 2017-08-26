@@ -18,7 +18,7 @@ class EmbededPostSectionFooter extends Component {
 
 	render() {
 		const style = {
-				height: '40px',  
+				height: '10px',  
 				background:'#707B7c',
 				width:'100%',
 				borderBottomLeftRadius: '15px',

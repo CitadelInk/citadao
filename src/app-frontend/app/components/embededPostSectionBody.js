@@ -13,7 +13,7 @@ class EmbededPostSectionBody extends Component {
 	render() {
 		const style = {
 			maxHeight: '10em',
-			lineHeight: '1em',
+			lineHeight: '.5em',
 			background:'#F0F0F0',
 			width:'100%',
 			overflow: 'hidden',
@@ -27,7 +27,7 @@ class EmbededPostSectionBody extends Component {
 			
 		return (			
 			<div style={style}>
-				{text}
+				<span style={{fontSize:'6pt'}}>{text[this.props.sectionIndex]}</span>
 			</div>
 		);
 	}

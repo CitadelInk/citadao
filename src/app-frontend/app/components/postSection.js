@@ -45,7 +45,7 @@ class PostSection extends Component {
 					{section}
 				</div>
 				<div style={innerStyle2}>
-					<PostSectionActions authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />
+					<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />
 				</div>
 			</div>
 		);

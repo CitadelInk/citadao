@@ -5,19 +5,25 @@ import { connect } from 'react-redux';
 import actions from '../actions';
 
 const {
-	setWalletData
+	setWalletData,
+	handleViewResponses
 } = actions;
 
 class PostSectionActions extends Component {
 	 constructor(props) {
-		 super(props);
-		  this.onSectionActionsButtonClicked = this.onSectionActionsButtonClicked.bind(this);
+		super(props);
+		this.onSectionActionsButtonClicked = this.onSectionActionsButtonClicked.bind(this);
+		this.onSectionViewReferencingPostsClicked = this.onSectionViewReferencingPostsClicked.bind(this);
 	}
 
 
 	render() {
-		return (			
-			<button onClick={this.onSectionActionsButtonClicked}>respond</button>
+		console.log("this.props.sectionResponses: " + this.props.sectionResponses);
+		return (	
+			<div>		
+			<button onClick={this.onSectionActionsButtonClicked}>respond</button><br />
+			<button onClick={this.onSectionViewReferencingPostsClicked}>View Responses - {this.props.sectionResponses.length}</button>
+			</div>
 		);
 	}
 
@@ -33,6 +39,14 @@ class PostSectionActions extends Component {
 		}
 		this.props.dispatch(setWalletData({postTextInput : currentTextInput + "\n" + JSON.stringify(referenceJson) + "\n"}))
 	}
+
+	onSectionViewReferencingPostsClicked(e) {
+		console.log("test 1")
+		var sectionResponses = this.props.sectionResponses;
+		console.log("sectionResponses: " + sectionResponses);
+		this.props.dispatch(handleViewResponses(sectionResponses))
+	}
+
 }
 
 const mapStateToProps = state => {

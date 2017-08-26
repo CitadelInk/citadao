@@ -25,7 +25,8 @@ import {
   getAccountName,
   getEthBalance,
   getApprovedReactions,
-  getSubmissionReactions
+  getSubmissionReactions,
+  getRevisionSectionResponses
 } from '../api/getAccounts';
 
 export const SET_APPROVED_REACTIONS = "SET_APPROVED_REACTIONS";
@@ -73,6 +74,15 @@ export const setSubmissionReactions = (subHash, reactions) => {
   return {
     type: SET_SUBMISSION_REACTIONS,
     data: {subHash : subHash, reactions : reactions}
+  }
+}
+
+export const SET_REVISION_SECTION_RESPONSES = "SET_REVISION_SECTION_RESPONSES";
+export const setRevisionSectionResponses = (revHash, sectionIndex, responses) => {
+  console.log("SET REVISION SECTION RESPONSES")
+  return {
+    type: SET_REVISION_SECTION_RESPONSES,
+    data: {revHash : revHash, sectionIndex : sectionIndex, responses : responses}
   }
 }
 
@@ -169,7 +179,14 @@ export const loadPost = (submissionHash, revisionHash, firstLevel = true) => (di
       }
     ))
     if (firstLevel && result.submissionText) {
-      result.submissionText.map((section) => {
+      result.submissionText.map((section, i) => {
+        getRevisionSectionResponses(result.revisionHash, i).then((responseRevisions) => {
+          console.log("response revisions: " + responseRevisions)
+          console.log("response revisions.responses: " + responseRevisions.responses)
+          if (responseRevisions.responses.length > 0) {
+            dispatch(setRevisionSectionResponses(result.revisionHash, i, responseRevisions.responses))
+          }
+        })
         try {
           var json = JSON.parse(section)
           if(json) {
@@ -254,8 +271,23 @@ export const submitPost = () => (dispatch, getState) => {
     }
   });
 
+  var references = [];
+  trimmedTextInput.map((section) => {
+    try {
+      var json = JSON.parse(section);
+      if (json) {
+        var reference = json.reference;
+        if (reference) {
+          references.push(reference)
+        }
+      }
+    } catch (e) {
+
+    }
+  })
+
   var postJson = {"authorg" : account, "title" : postTitleInput, "text" : trimmedTextInput}
-  return post(JSON.stringify(postJson), account).then(function(tx_id) {
+  return post(JSON.stringify(postJson), references, account).then(function(tx_id) {
       alert("post added to contract");
     }).catch(function(e) {
       alert("error - " + e);
@@ -318,6 +350,13 @@ export const handleApproveClicked = () => (dispatch, getState) => {
   });
 };
 
+export const handleViewResponses = (responses) => (dispatch) => {
+  responses.map((response) => {
+    dispatch(loadPost(response, response, false))
+  })
+  return dispatch(setWalletData({selectedResponses : responses}))
+}
+
 export default {
   initializeContract,
   initializeAccounts,
@@ -329,6 +368,7 @@ export default {
   SET_SUBMISSION,
   SET_SUBMISSION_AUTHORG_NAME,
   SET_SUBMISSION_REACTIONS,
+  SET_REVISION_SECTION_RESPONSES,
   setBuyPrice,
   submitBio,
   submitPost,
@@ -341,5 +381,6 @@ export default {
   submitReaction,
   addNewApprovedReaction,
   setApprovedReactions,
-  loadPost
+  loadPost,
+  handleViewResponses
 };

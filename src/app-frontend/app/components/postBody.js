@@ -50,7 +50,13 @@ class PostBody extends Component {
 			<div style={style}>
 				<center>{this.props.submission.title}</center><br />
 				{this.props.submission.text.map((section, i) => {
-					return (<PostSection section={section} sectionIndex={i} authorg={this.props.submission.submissionAuthorg} submissionHash={this.props.submission.submissionHash} revisionHash={this.props.submission.revisionHash}/>);	
+					var responses = [];
+					if (this.props.submission.revisionSectionResponses && this.props.submission.revisionSectionResponses.get(i)) {
+						console.log("gotem");
+						responses = this.props.submission.revisionSectionResponses.get(i);
+					}
+					console.log("post body responses: " + responses)
+					return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.submission.submissionAuthorg} submissionHash={this.props.submission.submissionHash} revisionHash={this.props.submission.revisionHash}/>);	
 				})}
 			</div>
 		);

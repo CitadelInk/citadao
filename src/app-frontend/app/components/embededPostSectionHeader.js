@@ -20,12 +20,13 @@ class EmbededPostSectionHeader extends Component {
 
 	render() {
 		const style = {
-				height: '60px',
+				height: '50px',
 				background:'#85C1E9',
 				width:'100%',
 				borderTopLeftRadius: '15px',
 				borderTopRightRadius: '15px',
-				textAlign:'left'
+				textAlign:'left',
+				lineHeight:'.5em'
 		}
 
 		var authorgName = "loading..."

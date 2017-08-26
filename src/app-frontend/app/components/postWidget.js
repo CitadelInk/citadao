@@ -27,11 +27,18 @@ class PostWidget extends Component {
 		}
 			
 		const submission = this.props.submission;
-		return (			
-			<div onClick={this.widgetClicked} style={style}>
+		var content = (<div>"loading"</div>);
+
+		if (submission && submission.text) {
+			content = (<div onClick={this.widgetClicked} style={style}>
 				<PostWidgetHeader submission={submission}/>
 				<PostWidgetBody submission={submission} />
 				<PostWidgetFooter submission={submission} />
+				</div>)
+		}
+		return (	
+			<div>		
+			{content}
 			</div>
 		);
 	}

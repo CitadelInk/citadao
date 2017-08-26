@@ -4,6 +4,7 @@ import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import Post from './post';
 import Compose from './compose';
+import Responses from './responses'
 
 class PostPage extends Component {
 	 constructor(props) {
@@ -30,9 +31,19 @@ class PostPage extends Component {
 				<Post submission={submission} />
 			);
 		}
+
+		var responses = "responses..."
+		if (this.props.wallet.get('selectedResponses')) {
+			var responseSubmissions = this.props.wallet.get('selectedResponses')
+			responses = (
+				<Responses responses={responseSubmissions} />
+			)
+		}
+
 		return(
 			<div style={style}>
 				{post}
+				{responses}
 				<Compose />
 			</div>
 		);

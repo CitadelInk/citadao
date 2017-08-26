@@ -39,14 +39,19 @@ export const updateBio = (bioInput, account) => {
   }); 
 };
 
-export const post = (postInput, account) => {
+export const post = (postInput, references, account) => {
   return new Promise((res, rej) => {
     localWeb3.bzz.put(postInput, (error, hash) => {
       appContracts.Citadel.deployed()
       .then((instance) => {
         //for now, submission and revision same thing
         instance.submitRevision.sendTransaction('0x' + hash, '0x' + hash, {from : account, gas : 300000}).then((tx_id) => {
-          res(tx_id)
+          var linkReferences = references.map((reference) => {
+            return instance.respondToSubmission.sendTransaction(reference.revisionHash, reference.sectionIndex, '0x' + hash, {from : account, gas : 300000});
+          })
+          return Promise.all(linkReferences).then((values) => {
+            res(tx_id)
+          })
         }).catch(rej);
       });
     });

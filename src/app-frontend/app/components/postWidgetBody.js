@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
+import PostSection from './postSection'
 
 
 class PostWidgetBody extends Component {
@@ -12,17 +13,32 @@ class PostWidgetBody extends Component {
 
 	render() {
 		const style = {
-			maxHeight: '10em',
+			maxHeight: '20em',
 			lineHeight: '1em',
 			background:'#F0F0F0',
 			width:'100%',
 			overflow: 'hidden'
 		}
 			
+		if(this.props.submission) {
+			console.log("this.props.submission: " + this.props.submission)
+			if (this.props.submission.text) {
+				console.log("this.props.submission.text: " + this.props.submission.text)
+			}
+		}
+
 		return (			
-			<div style={style}>
+				<div style={style}>
 				<center>{this.props.submission.title}</center><br />
-				<span>{this.props.submission.text}</span>
+				{this.props.submission.text.map((section, i) => {
+					var responses = [];
+					if (this.props.submission.revisionSectionResponses && this.props.submission.revisionSectionResponses.get(i)) {
+						console.log("gotem");
+						responses = this.props.submission.revisionSectionResponses.get(i);
+					}
+					console.log("post body responses: " + responses)
+					return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.submission.submissionAuthorg} submissionHash={this.props.submission.submissionHash} revisionHash={this.props.submission.revisionHash}/>);	
+				})}
 			</div>
 		);
 	}

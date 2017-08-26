@@ -17,7 +17,8 @@ const {
   SET_BUY_MORE,
   SET_SUBMISSION,
   SET_SUBMISSION_AUTHORG_NAME,
-  SET_SUBMISSION_REACTIONS
+  SET_SUBMISSION_REACTIONS,
+  SET_REVISION_SECTION_RESPONSES
 } = actions;
 
 const wallet = (state = Map({
@@ -49,7 +50,8 @@ const wallet = (state = Map({
   tokenCitadelComptroller: '',
   allSubmissionsTest: [],
   buyMoreActive: false,
-  postTextInput: ''
+  postTextInput: '',
+  selectedResponses: []
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:
@@ -77,7 +79,9 @@ const wallet = (state = Map({
   }
 };
 
-const submissions = (state = new Map(), action) => {
+const submissions = (state = new Map({
+  revisionSectionResponses : new Map()
+}), action) => {
   switch (action.type) {
     case SET_SUBMISSION:
       return state.set(action.data.subHash, action.data);
@@ -87,6 +91,20 @@ const submissions = (state = new Map(), action) => {
     case SET_SUBMISSION_REACTIONS:
       var data = state.get(action.data.subHash);
       return state.set(action.data.subHash, { ...data, revisionReactionReactors : action.data.reactions})
+    case SET_REVISION_SECTION_RESPONSES:
+      var data = state.get(action.data.revHash);
+      console.log("1 data: " + data);
+      var revisionSectionResponses = data.revisionSectionResponses;
+      console.log("2 revisionSectionResponses: " + revisionSectionResponses);
+      var sectionIndex = action.data.sectionIndex;
+      console.log("3 sectionIndex: " + sectionIndex);      
+      var sectionMap = new Map();
+      console.log("4 sectionMap: " + sectionMap);
+      var sectionMap2 = sectionMap.set(sectionIndex, action.data.responses);
+      console.log("4-2 sectionMap2: " + sectionMap2);
+      console.log("5 sectionMap[sectionIndex]" + sectionMap2.get(sectionIndex));
+
+      return state.set(action.data.revHash, { ...data, revisionSectionResponses : sectionMap2});
     default:
       return state;
   }

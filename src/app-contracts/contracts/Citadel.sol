@@ -44,6 +44,7 @@ contract Citadel is Managed {
     struct Revision {
         bytes32 citadelManifestHash;
         bytes32[] responseManifestHashes;
+        mapping(uint => bytes32[]) revisionSectionToReferences;
         mapping(bytes32 => Reactor) reactionToReactorsMap;
     }
 
@@ -53,6 +54,7 @@ contract Citadel is Managed {
     
     mapping(address => Authorg) internalAuthorgs;
     mapping(bytes32 => address) public submissionToAuthorg; // hack - remove this
+    mapping(bytes32 => bytes32) public revisionToSubmission;
     bytes32[] public allSubmissions;
     bytes32[] public approved_reactions;
     mapping(bytes32 => bool) reaction_approved;
@@ -125,6 +127,9 @@ contract Citadel is Managed {
     }
     
     function submitRevision(address senderAddr, bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash) private {
+
+        require(revisionToSubmission[revCitadelManifestHash] == 0);
+        require(submissionToAuthorg[subCitadelManifestHash] == 0 || submissionToAuthorg[subCitadelManifestHash] == msg.sender);
         internalAuthorgs[senderAddr].allAuthorgSubmissionHashes.push(subCitadelManifestHash);
         var newResponseArray = new bytes32[](0);
         var revisionArray = internalAuthorgs[msg.sender].submissions[subCitadelManifestHash].submissionRevisionHashes;
@@ -135,7 +140,8 @@ contract Citadel is Managed {
         });
         internalAuthorgs[msg.sender].submissions[subCitadelManifestHash].submissionRevisionMap[revCitadelManifestHash] = revision;
         internalAuthorgs[msg.sender].submissions[subCitadelManifestHash].submissionCitadelManifestHash = subCitadelManifestHash;
-        submissionToAuthorg[subCitadelManifestHash] = msg.sender;        
+        submissionToAuthorg[subCitadelManifestHash] = msg.sender;   
+        revisionToSubmission[revCitadelManifestHash] = subCitadelManifestHash;     
         allSubmissions.push(subCitadelManifestHash);
     }
 
@@ -157,14 +163,31 @@ contract Citadel is Managed {
         }
     }
     
-    function respondToSubmission(address originalAuthorgAddress, bytes32 originalSubmissionHash, bytes32 originalSubmissionRevisionHash, bytes32 responseSubmissionHash, bytes32 responseRevisionHash) {
-        if (isAuthorgOfSubmissionRevision(originalAuthorgAddress, originalSubmissionHash, originalSubmissionRevisionHash)) {
-            spend(5);
-            submitRevision(msg.sender, responseSubmissionHash, responseRevisionHash);
-            var authorg = internalAuthorgs[originalAuthorgAddress];
-            var submission = authorg.submissions[originalSubmissionHash];
-            var revision = submission.submissionRevisionMap[originalSubmissionRevisionHash];
-            revision.responseManifestHashes.push(responseRevisionHash);
-        }
+    function respondToSubmission(bytes32 originalSubmissionRevisionHash, uint respondingToOriginalRevisionSection, bytes32 responseRevisionHash) {
+        
+        var responseSubmissionHash = revisionToSubmission[responseRevisionHash];
+            
+        require (isAuthorgOfSubmissionRevision(msg.sender, responseSubmissionHash, responseRevisionHash));
+        spend(1);
+        var originalSubmissionHash = revisionToSubmission[originalSubmissionRevisionHash];
+        var originalAuthorgHash = submissionToAuthorg[originalSubmissionHash];
+        var originalAuthorg = internalAuthorgs[originalAuthorgHash];
+        var originalSubmission = originalAuthorg.submissions[originalSubmissionHash];
+        var originalRevision = originalSubmission.submissionRevisionMap[originalSubmissionRevisionHash];
+
+        //originalRevision.responseManifestHashes.push(responseRevisionHash);
+        originalRevision.revisionSectionToReferences[respondingToOriginalRevisionSection].push(responseRevisionHash);
+    }
+
+    function getReferencesForRevisionSection(bytes32 revisionHash, uint section) constant returns(bytes32[]) {
+        var submissionHash = revisionToSubmission[revisionHash];
+        var authorgHash = submissionToAuthorg[submissionHash];
+
+        var authorg = internalAuthorgs[authorgHash];
+        var submission = authorg.submissions[submissionHash];
+        var revision = submission.submissionRevisionMap[revisionHash];
+
+        return revision.revisionSectionToReferences[section];
+
     }
 }

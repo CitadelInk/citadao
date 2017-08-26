@@ -29,7 +29,7 @@ class EmbededPostSectionWidget extends Component {
 		return (	
 			<div onClick={this.widgetClicked} style={style}>
 				<EmbededPostSectionHeader submission={submission}/>
-				<EmbededPostSectionBody submission={submission} />
+				<EmbededPostSectionBody submission={submission}  sectionIndex={this.props.sectionIndex}/>
 				<EmbededPostSectionFooter submission={submission} />
 			</div>
 		);
