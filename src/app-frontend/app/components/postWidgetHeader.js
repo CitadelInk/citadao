@@ -27,8 +27,6 @@ class PostWidgetHeader extends Component {
 				borderTopRightRadius: '15px',
 		}
 			
-		console.log("submission - " + this.props.submission)
-		console.log("authorgName = " + this.props.submission.authorgName)
 		return (			
 			<div style={style}>
 				<button value={this.props.submission.submissionAuthorg} onClick={this.authorgNameClicked}><span style={{fontSize:'14pt'}}>{this.props.submission.authorgName}</span> - <span style={{fontSize:'8pt'}}>{this.props.submission.submissionAuthorg}</span></button><br />
@@ -39,7 +37,6 @@ class PostWidgetHeader extends Component {
 	}
 
 	authorgNameClicked(e) {
-		console.log("name clicked: " + e.target.value);
 		this.props.dispatch(gotoUserPage(e.target.value));
 		e.stopPropagation();
 	}

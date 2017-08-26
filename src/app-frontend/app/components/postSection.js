@@ -3,6 +3,7 @@ import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import PostSectionActions from './postSectionActions';
+import EmbededPostSectionWidgetContainer from './embededPostSectionWidgetContainer'
 
 class PostSection extends Component {
 	 constructor(props) {
@@ -24,10 +25,24 @@ class PostSection extends Component {
 			width:'100px'
 		}
 
+		var section = this.props.section;
+		
+		try {
+			var json = JSON.parse(section);
+			if(json) {
+				var reference = json.reference;
+				if (reference) {
+					section = <EmbededPostSectionWidgetContainer submissionHash={reference.submissionHash} revisionHash={reference.revisionHash} sectionIndex={reference.sectionIndex} />
+				}
+			}		
+		} catch(e) {
+
+		}
+
 		return (			
 			<div style={style}>
 				<div style={innerStyle1}>
-					{this.props.section}
+					{section}
 				</div>
 				<div style={innerStyle2}>
 					<PostSectionActions authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />

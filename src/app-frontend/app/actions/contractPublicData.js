@@ -80,7 +80,6 @@ export const setBuyPrice = () => (dispatch, getState) => {
   const {wallet} = getState();
   const newBuyPrice = localWeb3.toBigNumber(wallet.get('newBuyPrice'));
   const account = wallet.get('account');
-  console.log('account = ' + account + ' newBuyPrice = ' + newBuyPrice);
   return updateBuyPrice(newBuyPrice, account).then((data) => {
     return dispatch(setWalletData(data));
   });
@@ -88,8 +87,7 @@ export const setBuyPrice = () => (dispatch, getState) => {
 
 export const initializeApprovedReactions = () => (dispatch) => {
   getApprovedReactions().then((reactions) => {
-    console.log("initializeApprovedReactions - approved reactions: " + reactions.approvedReactions);
-      dispatch(initializeTestTypedSubmissions());
+    dispatch(initializeTestTypedSubmissions());
       return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
 }
@@ -155,10 +153,35 @@ export const initializeAccounts = () => dispatch => {
 
 
 
-export const loadPost = (submissionHash, revisionHash) => (dispatch, getState) => {
+export const loadPost = (submissionHash, revisionHash, firstLevel = true) => (dispatch, getState) => {
+  console.log("LOAD POST")
   const {approvedReactions} = getState();
   return getSubmission(submissionHash).then(result => {
-    dispatch(setSubmission({subHash: submissionHash, submissionAuthorg: result.submissionAuthorg, submissionHash: result.submissionHash, revisionHash: result.revisionHash, title: result.submissionTitle, text: result.submissionText, revisionReactionReactors: result.revisionReactionReactors}))
+    dispatch(setSubmission(
+      {
+        subHash: submissionHash, 
+        submissionAuthorg: result.submissionAuthorg, 
+        submissionHash: result.submissionHash, 
+        revisionHash: result.revisionHash, 
+        title: result.submissionTitle, 
+        text: result.submissionText, 
+        revisionReactionReactors: result.revisionReactionReactors
+      }
+    ))
+    if (firstLevel && result.submissionText) {
+      result.submissionText.map((section) => {
+        try {
+          var json = JSON.parse(section)
+          if(json) {
+            if(json.reference) {
+              dispatch(loadPost(json.reference.submissionHash, json.reference.revisionHash, false))
+            }
+          }
+        } catch (e) {
+
+        }
+      })       
+    }
     getAccountName(result.submissionAuthorg).then((name) => {
       dispatch(setSubmissionAuthorgName(submissionHash, name.accountName));
     })
@@ -221,15 +244,15 @@ export const submitPost = () => (dispatch, getState) => {
   const postTitleInput = wallet.get('postTitleInput');
   const postTextInput = wallet.get('postTextInput');
 
+  console.log("postTextInput: " + postTextInput);
+
   var textInputSplit = postTextInput.split('\n');
-  console.log("sections: " + textInputSplit.length);
   var trimmedTextInput = [];
   textInputSplit.map(input => {
     if(input.trim() != "") {
       trimmedTextInput.push(input)
     }
   });
-  console.log("trimmed sections: " + trimmedTextInput.length);
 
   var postJson = {"authorg" : account, "title" : postTitleInput, "text" : trimmedTextInput}
   return post(JSON.stringify(postJson), account).then(function(tx_id) {
@@ -269,7 +292,6 @@ export const handleBuySubmit = () => (dispatch, getState) => {
   const ethToSend = localWeb3.toBigNumber(wallet.get('etherToSend'));
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
-  console.log("from: " + account + " - to: " + tokenOwnerAccount);
   submitBuy(ethToSend, account, tokenOwnerAccount).then(() => {
     alert("Transaction successful - CITA bought");
     dispatch(updateCitaBalance(account));

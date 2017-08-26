@@ -10,7 +10,6 @@ export const getAdvancedTokenPublicData = () => {
           data.owner(),
           data.citadelComptroller()
       ]).then(([buyPrice, totalSupply, owner, comptroller]) => {
-        console.log("GOT BUY PRICE - " + buyPrice.toString())
         return {
           citaBuyPrice: parseFloat(buyPrice.toString()),
           tokenSupply: parseInt(totalSupply.toString()),

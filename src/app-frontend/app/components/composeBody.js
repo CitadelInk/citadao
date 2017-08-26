@@ -4,6 +4,11 @@ import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import PostSection from './postSection';
 
+import actions from '../actions'
+
+const {
+	setWalletData
+} = actions;
 
 class ComposeBody extends Component {
 
@@ -11,6 +16,7 @@ class ComposeBody extends Component {
 		super(props);
 		this.state = { width: '0', height: '0' };
 		this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+		this.handlePostTextChange = this.handlePostTextChange.bind(this);
 	}
 
 	componentDidMount() {
@@ -60,6 +66,10 @@ class ComposeBody extends Component {
 				<textarea style={textStyle} onChange={this.handlePostTextChange} value={this.props.wallet.get('postTextInput')}/><br />
 			</div>
 		);
+	}
+
+	handlePostTextChange(e) {
+		this.props.dispatch(setWalletData({postTextInput : e.target.value}))
 	}
 }
 

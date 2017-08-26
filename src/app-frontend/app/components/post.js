@@ -25,14 +25,6 @@ class Post extends Component {
 				left:'0'
 		}
 			
-		console.log("submission updated")
-		//const submission = this.props.submissions.get(this.props.submissionHash);
-		/*var post = (<div style={style}>	"loading..."</div>);
-		if (this.props.submission) {
-			post = (	
-				
-			);
-		}*/
 		return(
 			<div style={style}>			
 				<PostHeader submission={this.props.submission} />

@@ -23,7 +23,6 @@ class PostPage extends Component {
 				overflow:'hidden'
 		}
 			
-		console.log("submission updated")
 		const submission = this.props.submissions.get(this.props.submissionHash);
 		var post = "loading...";
 		if (submission) {

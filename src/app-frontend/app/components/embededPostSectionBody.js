@@ -4,7 +4,7 @@ import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 
 
-class PostWidgetContainer extends Component {
+class EmbededPostSectionBody extends Component {
 	 constructor(props) {
 		 super(props);
 	}
@@ -12,14 +12,22 @@ class PostWidgetContainer extends Component {
 
 	render() {
 		const style = {
-				height: '200px',
-				background:'#F0F0F0',
-				width:'100%'
+			maxHeight: '10em',
+			lineHeight: '1em',
+			background:'#F0F0F0',
+			width:'100%',
+			overflow: 'hidden',
+			textAlign:'left'
+		}
+
+		var text = "loading..."
+		if (this.props.submission) {
+			text = this.props.submission.text
 		}
 			
 		return (			
 			<div style={style}>
- 				<PostWidget submission={this.props.submission} />
+				{text}
 			</div>
 		);
 	}
@@ -31,4 +39,4 @@ const mapStateToProps = state => {
   return {wallet, submissions };
 }
 
-export default connect(mapStateToProps)(PostWidgetContainer)
+export default connect(mapStateToProps)(EmbededPostSectionBody)

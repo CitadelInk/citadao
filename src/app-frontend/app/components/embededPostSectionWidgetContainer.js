@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
+import EmbededPostSectionWidget from './embededPostSectionWidget'
 
-
-class PostWidgetContainer extends Component {
+class EmbededPostSectionWidgetContainer extends Component {
 	 constructor(props) {
 		 super(props);
 	}
@@ -12,14 +12,14 @@ class PostWidgetContainer extends Component {
 
 	render() {
 		const style = {
-				height: '200px',
 				background:'#F0F0F0',
-				width:'100%'
+				width:'100%',
+				textAlign:'center'
 		}
 			
 		return (			
 			<div style={style}>
- 				<PostWidget submission={this.props.submission} />
+ 				<EmbededPostSectionWidget  submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />
 			</div>
 		);
 	}
@@ -31,4 +31,4 @@ const mapStateToProps = state => {
   return {wallet, submissions };
 }
 
-export default connect(mapStateToProps)(PostWidgetContainer)
+export default connect(mapStateToProps)(EmbededPostSectionWidgetContainer)

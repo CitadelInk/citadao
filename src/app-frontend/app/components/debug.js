@@ -83,9 +83,6 @@ class Debug extends Component {
 				top:'100px'
 		}
 
-		console.log("debug page - approved reactions: " + this.props.approvedReactions);
-		console.log("typedSubmissions = " + this.props.typedSubmissions);
-
 		return (
 			
 				<div className="App">

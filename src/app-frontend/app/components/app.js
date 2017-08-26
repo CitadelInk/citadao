@@ -37,9 +37,7 @@ class App extends Component {
       case 'post':
         var route = this.props.ui.get('route');
         var splitRoute = route.split('\/'); 
-        console.log("split length: " + splitRoute.length);
         if(splitRoute.length === 5) {
-          console.log("length 5")
           page = <PostPage submissionHash={splitRoute[2]} revisionHash={splitRoute[4]} />;
         }
       break;

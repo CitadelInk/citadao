@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import actions from '../actions';
 
 const {
-	submitReaction
+	submitPost
 } = actions;
 
 

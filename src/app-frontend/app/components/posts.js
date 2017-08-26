@@ -23,7 +23,6 @@ class Posts extends Component {
 				top: '0',
 				bottom: '0',
 		}
-		console.log("Posts updated")
 		var posts = this.props.submissions.map(function(submission, key) {
 			return (<PostWidget key={submission.submissionHash} submission={submission} />)
 		})

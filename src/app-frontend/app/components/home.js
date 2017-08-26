@@ -21,7 +21,6 @@ class Home extends Component {
 				zIndex:'900'
 		}
 			
-		console.log("submissions - " + this.props.submissions)
 		return (
 			
 			<div style={style} className="Home">

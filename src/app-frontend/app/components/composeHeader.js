@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import actions from '../actions';
 
 const {
-	gotoUserPage
+	gotoUserPage,
+	setWalletData
 } = actions;
 
 

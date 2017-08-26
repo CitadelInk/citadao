@@ -31,7 +31,7 @@ class PostSectionActions extends Component {
 				"sectionIndex" : this.props.sectionIndex
 			}
 		}
-		this.props.dispatch(setWalletData({postTextInput : currentTextInput + JSON.stringify(referenceJson)}))
+		this.props.dispatch(setWalletData({postTextInput : currentTextInput + "\n" + JSON.stringify(referenceJson) + "\n"}))
 	}
 }
 

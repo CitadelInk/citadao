@@ -33,7 +33,6 @@ class PostBody extends Component {
 		var stateHeight = parseInt(this.state.height);
 		var remainingHeight = stateHeight - 200;
 		const calcheight = remainingHeight + 'px';
-		console.log("calcheight: " + calcheight);
 		const style = {
 				background:'#F0F0F0',
 				height:calcheight,
@@ -43,7 +42,9 @@ class PostBody extends Component {
 				overflow:'scroll'
 		}
 			
-		console.log("submission text length: " + this.props.submission.text.length);
+		if(this.props.submission) {
+			console.log("post: " + this.props.submission.text)
+		}
 
 		return (			
 			<div style={style}>
