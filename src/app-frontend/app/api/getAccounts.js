@@ -1,7 +1,18 @@
 import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 
-export const getEthBalance = (account) => localWeb3.fromWei(localWeb3.eth.getBalance(account), 'ether').toString();
+export const getEthBalance = (account) => {
+  return new Promise((res, rej) => {
+    localWeb3.eth.getBalance(account, localWeb3.eth.defaultBlock, (error, balance) => {
+      if (error) {
+        rej(error);
+      } else if (balance) {
+        var b = localWeb3.fromWei(balance, 'ether').toString();
+        res({b})
+      }
+    });
+  });
+}
 
 // could be cleaned
 

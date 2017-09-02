@@ -13,12 +13,15 @@ import Router from './router';
 
 const middleware = [ thunk ];
 
+appContracts.setProvider(localWeb3.currentProvider);
+
+
 const store = createStore(
   reducers,
   applyMiddleware(...middleware)
 );
 
-appContracts.setProvider(localWeb3.currentProvider);
+
 
 const router = new Router({store: store});
 router.history.start();
