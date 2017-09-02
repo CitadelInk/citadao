@@ -13,10 +13,7 @@ const {
 	setWalletData,
 	setBuyPrice,
 	submitBio,
-	setName,
-	handleSubmit,
 	handleBuySubmit,
-	handleApproveClicked
 } = actions;
 
 class BioRevisionInput extends Component {

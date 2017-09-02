@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import PostHeader from './postHeader';
 import PostBody from './postBody';
 import PostFooter from './postFooter';
-import Compose from './compose';
+import Compose from '.././compose';
 
 class Post extends Component {
 	 constructor(props) {

@@ -13,10 +13,7 @@ const {
 	setWalletData,
 	setBuyPrice,
 	submitBio,
-	setName,
-	handleSubmit,
 	handleBuySubmit,
-	handleApproveClicked,
 	addNewApprovedReaction,
 	submitPost
 } = actions;
@@ -24,8 +21,6 @@ const {
 class Debug extends Component {
 	 constructor(props) {
 		 super(props);
-			this.handleSubmit = this.handleSubmit.bind(this);
-			this.handleApproveClicked = this.handleApproveClicked.bind(this);
 			this.handleChange = this.handleChange.bind(this);	
 			this.handleEtherSendChange = this.handleEtherSendChange.bind(this);
 			this.handleChangeBuyPrice = this.handleChangeBuyPrice.bind(this);
@@ -91,15 +86,15 @@ class Debug extends Component {
 				<p className="App-intro">
 					Address = {this.props.wallet.get('account')}<br />
 					My ETH Balance = {this.props.wallet.get('ethBalance')}<br />
-					My CITA balance = {this.props.wallet.get('citaBalance')}<br />
-					CITA Buy Price = {this.props.wallet.get('citaBuyPrice')}<br />
+					My INK balance = {this.props.wallet.get('inkBalance')}<br />
+					INK Buy Price = {this.props.wallet.get('inkBuyPrice')}<br />
 					Total Supply = {this.props.wallet.get('tokenSupply')}<br />
-					CITA token owner = {this.props.wallet.get('tokenOwnerAccount')}<br />
-					CITA token address = {this.props.wallet.get('tokenAddress')}<br />
-					Token Citadel Comptroller = {this.props.wallet.get('tokenCitadelComptroller')}<br />
-					Citadel Comptroller = {this.props.wallet.get('citadelComptrollerAccount')}<br />
-					Citadel address = {this.props.wallet.get('citadelAddress')}<br />
-					Citadel wallet address (should match CITA token address) = {this.props.wallet.get('citadelWalletAddress')}<br />
+					INK token owner = {this.props.wallet.get('tokenOwnerAccount')}<br />
+					INK token address = {this.props.wallet.get('tokenAddress')}<br />
+					Token Citadel Comptroller = {this.props.wallet.get('tokenInkComptroller')}<br />
+					Ink Comptroller = {this.props.wallet.get('inkComptrollerAccount')}<br />
+					Ink address = {this.props.wallet.get('inkAddress')}<br />
+					Ink wallet address (should match INK token address) = {this.props.wallet.get('inkWalletAddress')}<br />
 					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevisionValue')}<br />
 					Approved Reactions - {this.props.approvedReactions.map((value) => {
 						return (value.reactionHash + " - " + value.reactionValue + "  -  ")
@@ -112,24 +107,14 @@ class Debug extends Component {
 				{this.isOwner() && ownerSection}
 
 				<input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} />
-				<button onClick={this.handleBuySubmit}>Send WEI to buy 1 CITA / {this.props.wallet.get('citaBuyPrice')} WEI</button><br />	
+				<button onClick={this.handleBuySubmit}>Send WEI to buy 1 CITA / {this.props.wallet.get('inkBuyPrice')} WEI</button><br />	
 				
-				{(this.props.wallet.get('citaBalance') !== 0) && hasCitaSection}
+				{(this.props.wallet.get('inkBalance') !== 0) && hasCitaSection}
 
 
 				</div>
 			</div>
 		);
-	}
-
-	
-
-	handleSubmit(e) {
-		this.props.dispatch(handleSubmit());
-	}
-
-	handleApproveClicked(e) {
-		this.props.dispatch(handleApproveClicked());
 	}
 
 	handleChange(e) {

@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import PostSectionActions from './postSectionActions';
-import EmbededPostSectionWidgetContainer from './embededPostSectionWidgetContainer'
+import EmbededPostSectionWidgetContainer from '../embededPostSectionWidgetContainer'
 
 class PostSection extends Component {
 	 constructor(props) {

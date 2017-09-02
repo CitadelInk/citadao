@@ -29,9 +29,9 @@ class PostWidgetHeader extends Component {
 			
 		return (			
 			<div style={style}>
-				<button value={this.props.submission.submissionAuthorg} onClick={this.authorgNameClicked}><span style={{fontSize:'14pt'}}>{this.props.submission.authorgName}</span> - <span style={{fontSize:'8pt'}}>{this.props.submission.submissionAuthorg}</span></button><br />
- 				<span style={{fontSize:'8pt'}}>submission hash - {this.props.submission.submissionHash}</span><br />
- 				<span style={{fontSize:'8pt'}}>revision hash - {this.props.submission.revisionHash}</span><br />
+				<button value={this.props.authorg} onClick={this.authorgNameClicked}><span style={{fontSize:'14pt'}}>{this.props.authorg}</span> - <span style={{fontSize:'8pt'}}>{this.props.authorg}</span></button><br />
+ 				<span style={{fontSize:'8pt'}}>submission hash - {this.props.submission}</span><br />
+ 				<span style={{fontSize:'8pt'}}>revision hash - {this.props.revision}</span><br />
  			</div>
 		);
 	}

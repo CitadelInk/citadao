@@ -2,9 +2,21 @@ import appContracts from 'app-contracts';
 import localWeb3 from "../helpers/web3Helper";
 import {
   getAdvancedTokenPublicData,
-  getCitadelPublicData,
-  getCitaBalance,
-} from '../api/getPublicData';
+  getInkBalance,
+} from '../api/getTokenData';
+
+import {
+  getInkPublicData,
+} from '../api/getInkData';
+
+import {
+  getAccountName
+} from '../api/getInkPostData';
+
+import {
+  initializeNeededPosts
+} from './getPostData'
+
 import {
   addReaction,
   updateBuyPrice,
@@ -17,17 +29,19 @@ import {
 } from '../api/updatePublicData';
 import {
   getAccounts, 
-  getSubmission,
-  getSubmissions,
+  getRevision,
   getAccountBioData,
   getAccountBioRevisions,
   getAccountBioRevision,
-  getAccountName,
   getEthBalance,
-  getApprovedReactions,
   getSubmissionReactions,
-  getRevisionSectionResponses
+  getRevisionSectionResponses,
+  getRevisionTime
 } from '../api/getAccounts';
+
+import {
+  getApprovedReactions
+} from '../api/getCitadelGeneralData';
 
 export const SET_APPROVED_REACTIONS = "SET_APPROVED_REACTIONS";
 export const setApprovedReactions = (data) => {
@@ -53,27 +67,27 @@ export const setSubmissions = (data) => {
   }
 }
 
-export const SET_SUBMISSION = "SET_SUBMISSION";
-export const setSubmission = (data) => {
+export const SET_REVISION_SWARM_DATA = "SET_REVISION_SWARM_DATA";
+export const setRevisionSwarmData = (data) => {
   return {
-    type: SET_SUBMISSION,
+    type: SET_REVISION_SWARM_DATA,
     data: data
   }
 }
 
-export const SET_SUBMISSION_AUTHORG_NAME = "SET_SUBMISSION_AUTHORG_NAME";
-export const setSubmissionAuthorgName = (subHash, name) => {
+export const SET_REVISION_AUTHORG_NAME = "SET_REVISION_AUTHORG_NAME";
+export const setRevisionAuthorgName = (subHash, name) => {
   return {
-    type: SET_SUBMISSION_AUTHORG_NAME,
-    data: {subHash : subHash, name: name}
+    type: SET_REVISION_AUTHORG_NAME,
+    data: {revHash : revHash, name: name}
   }
 }
 
-export const SET_SUBMISSION_REACTIONS = "SET_SUBMISSION_REACTIONS";
-export const setSubmissionReactions = (subHash, reactions) => {
+export const SET_REVISION_REACTIONS = "SET_REVISION_REACTIONS";
+export const setRevisionReactions = (revHash, reactions) => {
   return {
-    type: SET_SUBMISSION_REACTIONS,
-    data: {subHash : subHash, reactions : reactions}
+    type: SET_REVISION_REACTIONS,
+    data: {revHash : revHash, reactions : reactions}
   }
 }
 
@@ -86,6 +100,17 @@ export const setRevisionSectionResponses = (revHash, sectionIndex, responses) =>
   }
 }
 
+export const SET_REVISION_TIME = "SET_REVISION_TIME";
+export const setRevisionTime = (revHash, revisionTime) => {
+  console.log("SET REVISION TIME")
+  return {
+    type: SET_REVISION_TIME,
+    data: {revHash : revHash, revisionTime : revisionTime}
+  }
+}
+
+export const SET_SUBMISSION_REVISIONS = "SET_SUBMISSION_REVISIONS";
+
 export const setBuyPrice = () => (dispatch, getState) => {
   const {wallet} = getState();
   const newBuyPrice = localWeb3.toBigNumber(wallet.get('newBuyPrice'));
@@ -97,21 +122,10 @@ export const setBuyPrice = () => (dispatch, getState) => {
 
 export const initializeApprovedReactions = () => (dispatch) => {
   getApprovedReactions().then((reactions) => {
-    dispatch(initializeTestTypedSubmissions());
-      return dispatch(setApprovedReactions(reactions.approvedReactions));
+    return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
 }
 
-export const initializeNeededSubmissions = () => (dispatch, getState) => {
-  const {ui} = getState();
-  if(ui.get('page') === 'home') {
-    dispatch(initializeTestTypedSubmissions());
-  } else if (ui.get('page') === 'post') {
-    var route = ui.get('route');
-    var splitRoute = route.split('\/'); 
-    dispatch(loadPost(splitRoute[2], splitRoute[4]));
-  }
-}
 
 export const addNewApprovedReaction = () => (dispatch, getState) => {
   const {wallet} = getState();
@@ -126,12 +140,12 @@ export const addNewApprovedReaction = () => (dispatch, getState) => {
 export const initializeContract = () => (dispatch) => {
   return Promise.all([
     getAdvancedTokenPublicData(),
-    getCitadelPublicData(),
+    getInkPublicData(),
     getApprovedReactions()
-  ]).then(([token, citadel, reactions]) => {
-    dispatch(setWalletData({...token, ...citadel}));
+  ]).then(([token, ink, reactions]) => {
+    dispatch(setWalletData({...token, ...ink}));
     dispatch(setApprovedReactions(reactions.approvedReactions));
-    dispatch(initializeNeededSubmissions());
+    dispatch(initializeNeededPosts());
   });
 };
 
@@ -149,7 +163,7 @@ export const initializeAccounts = () => dispatch => {
         var account = accounts.accounts[0];
         Promise.all([
           getEthBalance(account),
-          getCitaBalance(account)
+          getInkBalance(account)
         ]).then(([ethBalance, citaBalance]) => {
           res({...accounts, accountNames, account, ethBalance, citaBalance}); 
         })
@@ -163,35 +177,24 @@ export const initializeAccounts = () => dispatch => {
 
 
 
-export const loadPost = (submissionHash, revisionHash, firstLevel = true) => (dispatch, getState) => {
+export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true) => (dispatch, getState) => {
   console.log("LOAD POST")
   const {approvedReactions} = getState();
-  return getSubmission(submissionHash).then(result => {
-    dispatch(setSubmission(
+  return getRevisionFromSwarm(revisionHash).then(result => {
+    dispatch(setRevisionSwarmData(authorgAddress, submissionHash, revisionHash, 
       {
-        subHash: submissionHash, 
-        submissionAuthorg: result.submissionAuthorg, 
-        submissionHash: result.submissionHash, 
-        revisionHash: result.revisionHash, 
-        title: result.submissionTitle, 
-        text: result.submissionText, 
-        revisionReactionReactors: result.revisionReactionReactors
+        revisionSwarmAuthorgHash: result.authorgHash, 
+        revisionSwarmTitle: result.title, 
+        revisionSwarmText: result.text, 
       }
     ))
-    if (firstLevel && result.submissionText) {
-      result.submissionText.map((section, i) => {
-        getRevisionSectionResponses(result.revisionHash, i).then((responseRevisions) => {
-          console.log("response revisions: " + responseRevisions)
-          console.log("response revisions.responses: " + responseRevisions.responses)
-          if (responseRevisions.responses.length > 0) {
-            dispatch(setRevisionSectionResponses(result.revisionHash, i, responseRevisions.responses))
-          }
-        })
+    if (firstLevel && result.revisionSwarmText) {
+      result.revisionSwarmText.map((section, i) => {        
         try {
           var json = JSON.parse(section)
           if(json) {
             if(json.reference) {
-              dispatch(loadPost(json.reference.submissionHash, json.reference.revisionHash, false))
+              dispatch(loadPost(json.reference.authorgAddress, json.reference.submissionHash, json.reference.revisionHash, -1, false))
             }
           }
         } catch (e) {
@@ -199,21 +202,14 @@ export const loadPost = (submissionHash, revisionHash, firstLevel = true) => (di
         }
       })       
     }
-    getAccountName(result.submissionAuthorg).then((name) => {
-      dispatch(setSubmissionAuthorgName(submissionHash, name.accountName));
+    getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
+      dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime))
     })
-    getSubmissionReactions(submissionHash, result.submissionAuthorg, approvedReactions).then((reactions) => {
-      dispatch(setSubmissionReactions(submissionHash, reactions.revisionReactionReactors))
+    getAccountName(authorgAddress, submissionHash, revisionHash).then((name) => {
+      dispatch(setRevisionAuthorgName(authorgAddress, submissionHash, revisionHash, name.accountName));
     })
-  })
-}
-
-export const initializeTestTypedSubmissions = () => dispatch => {
-  return new Promise((res, rej) => {
-    getSubmissions().then((submissions) => {
-      var submissionPromises = submissions.allSubmissionsTest.map(sub => {
-        return dispatch(loadPost(sub, sub));
-      })
+    getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
+      dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors))
     })
   })
 }
@@ -221,7 +217,7 @@ export const initializeTestTypedSubmissions = () => dispatch => {
 export const setSelectedAccount = (account) => dispatch => {
   return Promise.all([
         getEthBalance(account),
-        getCitaBalance(account),
+        getInkBalance(account),
         getAccountBioRevisions(account)
       ]) .then(([ethBalance, citaBalance, bioRevisions]) => {
     localWeb3.eth.defaultAccount = account
@@ -235,9 +231,9 @@ export const setSelectedBioRevision = (selectedRevision) => dispatch => {
   })
 };
 
-export const updateCitaBalance = (account) => dispatch => {
-  return getCitaBalance(account).then(citaBalance => {
-    return dispatch(setWalletData({citaBalance}));
+export const updateInkBalance = (account) => dispatch => {
+  return getInkBalance(account).then(inkBalance => {
+    return dispatch(setWalletData({inkBalance}));
   });
 };
 
@@ -304,47 +300,14 @@ export const submitReaction = (authorg, submissionHash, revisionHash, reaction) 
     });
 }
 
-export const setName = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  return updateName(wallet.get('account'))
-    .then(data => dispatch(setWalletData(data)));
-};
-
-export const handleSubmit = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const name = wallet.get('newName');
-  const account = wallet.get('account');
-  return submitNameChange(name, account)
-    .then(() => dispatch(setName()))
-    .then(() => updateCitaBalance(account));
-};
-
 export const handleBuySubmit = () => (dispatch, getState) => {
   const {wallet} = getState();
   const ethToSend = localWeb3.toBigNumber(wallet.get('etherToSend'));
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
   submitBuy(ethToSend, account, tokenOwnerAccount).then(() => {
-    alert("Transaction successful - CITA bought");
-    dispatch(updateCitaBalance(account));
-  }).catch(function(e) {
-    alert("error - " + e);
-  });
-};
-
-export const handleApproveClicked = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const name = wallet.get('newName');
-  const account = wallet.get('account');
-  const citadelAddress = wallet.get('citadelAddress');
-  const citaBalance = wallet.get('citaBalance');
-  appContracts.MyAdvancedToken.deployed()
-  .then((instance) => {
-    return instance.approve.sendTransaction(citadelAddress,
-      citaBalance,
-      {from : account});
-  }).then(function(tx_id) {
-    alert("Citadel Contract address approved as spender.");
+    alert("Transaction successful - Ink bought");
+    dispatch(updateInkBalance(account));
   }).catch(function(e) {
     alert("error - " + e);
   });
@@ -352,7 +315,7 @@ export const handleApproveClicked = () => (dispatch, getState) => {
 
 export const handleViewResponses = (responses) => (dispatch) => {
   responses.map((response) => {
-    dispatch(loadPost(response, response, false))
+    dispatch(loadPost(response, false))
   })
   return dispatch(setWalletData({selectedResponses : responses}))
 }
@@ -360,22 +323,19 @@ export const handleViewResponses = (responses) => (dispatch) => {
 export default {
   initializeContract,
   initializeAccounts,
-  updateCitaBalance,
+  updateInkBalance,
   setWalletData,
   SET_WALLET_DATA,
   SET_SUBMISSIONS,
   SET_APPROVED_REACTIONS,
-  SET_SUBMISSION,
-  SET_SUBMISSION_AUTHORG_NAME,
-  SET_SUBMISSION_REACTIONS,
+  SET_REVISION_SWARM_DATA,
+  SET_REVISION_AUTHORG_NAME,
+  SET_REVISION_REACTIONS,
   SET_REVISION_SECTION_RESPONSES,
   setBuyPrice,
   submitBio,
   submitPost,
-  setName,
-  handleSubmit,
   handleBuySubmit,
-  handleApproveClicked,
   setSelectedAccount,
   setSelectedBioRevision,
   submitReaction,

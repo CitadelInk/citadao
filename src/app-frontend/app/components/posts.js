@@ -23,8 +23,14 @@ class Posts extends Component {
 				top: '0',
 				bottom: '0',
 		}
-		var posts = this.props.submissions.map(function(submission, key) {
+		/*var posts = this.props.submissions.map(function(submission, key) {
 			return (<PostWidget key={submission.submissionHash} submission={submission} />)
+		})*/
+		console.log("postKeys length: " + this.props.postKeys.length);
+		var posts = this.props.postKeys.map(function(key) {
+			var key2 = key.authorgAddress + "-" + key.submissionHash + "-" + key.revisionHash;
+			console.log("key2: " + key2);
+			return (<PostWidget key={key2} authorg={key.authorgAddress} submission={key.submissionHash} revision={key.revisionHash} />)
 		})
 		return (
 			
@@ -38,9 +44,9 @@ class Posts extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet, postKeys, auths } = state;
 
-  return {wallet, submissions };
+  return {wallet, postKeys, auths };
 }
 
 export default connect(mapStateToProps)(Posts)

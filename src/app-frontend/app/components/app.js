@@ -4,9 +4,8 @@ import Home from './home';
 import User from './user';
 import Header from './header';
 import Debug from './debug';
-import PostPage from './postPage';
+import PostPage from './post/postPage';
 import actions from '../actions';
-import BuyMoreWidget from './buyMoreWidget'
 
 const {
 	initializeContract,
@@ -48,7 +47,6 @@ class App extends Component {
 	return (
 	<div className="app">
     		<Header />
-			{this.props.wallet.get("buyMoreActive") && <BuyMoreWidget />}
         {page}
       </div>
 	)

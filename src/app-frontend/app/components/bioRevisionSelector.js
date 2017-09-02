@@ -41,7 +41,6 @@ class BioRevisionSelector extends Component {
 	}
 
 	handleBioRevisionSelected(e) {
-		console.log("revision selected - " + e.target.value)
 		this.props.dispatch(setSelectedBioRevision(e.target.value));
 	}
 }

@@ -24,19 +24,19 @@ class BuyMoreWidget extends Component {
 				background:'#F0F0F0',
 				width:'200px',
 				borderRadius: '15px',
-				position:'fixed',
+				position:'absolute',
 				right:'20px',
-				top:'120px',
+				top:'20px',
 				zIndex: '1100'
 		}
 			
 		const submission = this.props.submission;
-		const approximateCita = this.props.wallet.get('etherToSend') / this.props.wallet.get('citaBuyPrice');
+		const approximateInk = this.props.wallet.get('etherToSend') / this.props.wallet.get('inkBuyPrice');
 		return (			
 			<div style={style}>
-				Price: {this.props.wallet.get('citaBuyPrice')} WEI = 1 CITA<br />
+				Price: {this.props.wallet.get('inkBuyPrice')} WEI = 1 INK<br />
 				WEI: <input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} size="10" /><br />
-				CITA &asymp; {approximateCita}<br />
+				INK &asymp; {approximateInk}<br />
 				<button onClick={this.handleBuySubmit}>Send WEI</button>	
 			</div>
 		);

@@ -12,10 +12,7 @@ const {
 	setWalletData,
 	setBuyPrice,
 	submitBio,
-	setName,
-	handleSubmit,
 	handleBuySubmit,
-	handleApproveClicked,
 	setSelectedAccount,
 	navigatePage,
 	gotoUserPage,
@@ -50,10 +47,10 @@ class Header extends Component {
 			top:'50px',
 			left:'10px'
 		}
-		const citaBalanceDivStyle = {
+		const inkBalanceDivStyle = {
 			position:'absolute',
 			top:'60px',
-			right:'10px'
+			right:'250px'
 		}
 		const accountsDropDown = (
 			<select style={dropDownStyle} onChange={this.handleAccountSelected}>
@@ -71,10 +68,9 @@ class Header extends Component {
 			<span onClick={this.gotoDebugPageClicked}>View Debug Page</span>
 		);
 		
-		const citaBalance = (
-			<div style={citaBalanceDivStyle}>
-				<button onClick={this.handleBuyMoreClicked}>Buy More</button>
-			<span>{this.props.wallet.get('citaBalance')} CITA</span><br />
+		const inkBalance = (
+			<div style={inkBalanceDivStyle}>
+			<span>{this.props.wallet.get('inkBalance')} INK</span><br />
 			</div>
 		)
 
@@ -82,8 +78,9 @@ class Header extends Component {
 			<div style={divStyle} className="header" onClick={this.handleClickDiv}>				
 				<h1 style={headerStyle}>C I T A D E L</h1>
 				{accountsDropDown}
-				{citaBalance}
-				{gotoAccountPage} - {gotoDebugPage}
+				{inkBalance}
+				{gotoAccountPage} - {gotoDebugPage}				
+				<BuyMoreWidget />
 			</div>
 		)
 	}

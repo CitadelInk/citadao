@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import actions from '../actions';
+import actions from '../../actions';
 
 const {
 	setWalletData,

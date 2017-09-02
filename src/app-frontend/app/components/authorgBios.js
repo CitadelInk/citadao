@@ -12,10 +12,7 @@ const {
 	setWalletData,
 	setBuyPrice,
 	submitBio,
-	setName,
-	handleSubmit,
-	handleBuySubmit,
-	handleApproveClicked
+	handleBuySubmit
 } = actions;
 
 class AuthorgBios extends Component {
@@ -26,9 +23,7 @@ class AuthorgBios extends Component {
 				//props.dispatch(initializeAccount(accountIndex, selectedBioRevisionIndex));
 			}
 
-			this.handleSubmit = this.handleSubmit.bind(this);
 			this.handleSubmitBio = this.handleSubmitBio.bind(this);
-			this.handleApproveClicked = this.handleApproveClicked.bind(this);
 			this.handleChange = this.handleChange.bind(this);	
 			this.handleBioChange = this.handleBioChange.bind(this);
 			this.handleEtherSendChange = this.handleEtherSendChange.bind(this);
@@ -53,11 +48,6 @@ class AuthorgBios extends Component {
 
 		const hasCitaSection = (
 			<div>
-				<button onClick={this.handleApproveClicked}>Approve Citadel Contract to spend CITA for you</button>
-				<br />
-				<input onChange={this.handleChange} value={this.props.wallet.get('newName')} />
-				<button onClick={this.handleSubmit}>{`Update Name - ${this.props.wallet.get('nameChangeCostInCita')} CITA`}</button>
-				<br />
 				<input onChange={this.handleBioChange} value={this.props.wallet.get('bioInput')} />
 				<button onClick={this.handleSubmitBio}>Submit Bio</button>
 			</div>
@@ -96,14 +86,6 @@ class AuthorgBios extends Component {
 
 	handleSubmitBio(e) {
 		this.props.dispatch(submitBio());
-	}
-
-	handleSubmit(e) {
-		this.props.dispatch(handleSubmit());
-	}
-
-	handleApproveClicked(e) {
-		this.props.dispatch(handleApproveClicked());
 	}
 
 	handleChange(e) {

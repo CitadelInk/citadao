@@ -26,7 +26,7 @@ contract Token {
     string public symbol;
     uint8 public decimals;
     uint256 public totalSupply;
-    address public citadelComptroller;
+    address public inkComptroller;
 
     /* This creates an array with all balances */
     mapping (address => uint256) public balanceOf;
@@ -61,7 +61,7 @@ contract Token {
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
         require (balanceOf[_from] >= _value);                 // Check if the sender has enough
         require (balanceOf[_to] + _value >= balanceOf[_to]);  // Check for overflows
-        require (msg.sender == _from || msg.sender == citadelComptroller);   // Check sender
+        require (msg.sender == _from || msg.sender == inkComptroller);   // Check sender
         balanceOf[_from] -= _value;                          // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         Transfer(_from, _to, _value);
@@ -95,8 +95,8 @@ contract MyAdvancedToken is Owned, Token {
         buyPrice = initialBuyPrice;
     }
 
-    function setCitadelAddress(address comptroller) onlyOwner {
-        citadelComptroller = comptroller;
+    function setInkAddress(address comptroller) onlyOwner {
+        inkComptroller = comptroller;
     }
 
     /* Send coins */
@@ -115,7 +115,7 @@ contract MyAdvancedToken is Owned, Token {
         require (!frozenAccount[_from]);                        // Check if frozen            
         require (balanceOf[_from] >= _value);                 // Check if the sender has enough
         require (balanceOf[_to] + _value > balanceOf[_to]);  // Check for overflows
-        require (msg.sender == _from || msg.sender == citadelComptroller);   // Check sender
+        require (msg.sender == _from || msg.sender == inkComptroller);   // Check sender
         balanceOf[_from] -= _value;                          // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         Transfer(_from, _to, _value);

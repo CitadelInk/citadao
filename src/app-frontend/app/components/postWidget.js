@@ -26,14 +26,16 @@ class PostWidget extends Component {
 				marginBottom: '15px'
 		}
 			
+		const authorg = this.props.authorg;
 		const submission = this.props.submission;
+		const revision = this.props.revision;
 		var content = (<div>"loading"</div>);
 
-		if (submission && submission.text) {
+		if (submission) {
 			content = (<div onClick={this.widgetClicked} style={style}>
-				<PostWidgetHeader submission={submission}/>
-				<PostWidgetBody submission={submission} />
-				<PostWidgetFooter submission={submission} />
+				<PostWidgetHeader authorg={authorg} submission={submission} revision={revision}/>
+				<PostWidgetBody  authorg={authorg} submission={submission} revision={revision}/>
+				<PostWidgetFooter  authorg={authorg} submission={submission} revision={revision}/>
 				</div>)
 		}
 		return (	

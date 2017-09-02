@@ -3,7 +3,6 @@ import {
   getAccountBioData,
   getAccountBioRevisions,
   getAccountBioRevision,
-  getAccountName,
   getEthBalance
 } from '../api/getAccounts';
 
@@ -20,9 +19,9 @@ export const gotoUserPage  = (user) => dispatch =>  {
   return dispatch(getUserPageBios(user)) 
 }
 
-export const gotoPost = (subHash, revHash) => dispatch => {
-  dispatch(loadPost(subHash, revHash));
-  return dispatch(navigatePage({page:'post',route:'\/post\/' + subHash + '\/rev\/' + revHash}))
+export const gotoPost = (revHash) => dispatch => {
+  dispatch(loadPost(revHash));
+  return dispatch(navigatePage({page:'post',route:'\/post\/' + revHash}))
 }
 
 export const getUserPageBios = (user) => dispatch => {
