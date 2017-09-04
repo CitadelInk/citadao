@@ -27,17 +27,18 @@ class EmbededPostSectionHeader extends Component {
 				lineHeight:'.5em'
 		}
 
-		var authorgName = "loading..."
-		var authorgHash = "loading..."
-		var submissionHash = "loading..."
-		var revisionHash = "loading..."
+		var authorgName = "loading...";
+		var authorgHash = this.props.authorg;
+		var submissionHash = this.props.submission;
+		var revisionHash = this.props.revision;
 
-		if(this.props.submission) {
-			authorgHash = this.props.submission.submissionAuthorg;
-			authorgName = this.props.submission.authorgName;
-			submissionHash = this.props.submission.submissionHash;
-			revisionHash = this.props.submission.revisionHash;
+		var auth = this.props.auths[this.props.authorg];
+		var text = ["loading"];
+		var title = "loading";
+		if (auth) {
+			authorgName = auth.name;			
 		}
+
 		return (			
 			<div style={style}>
 				<button value={authorgHash} onClick={this.authorgNameClicked}><span style={{fontSize:'10pt'}}>{authorgName}</span> - <span style={{fontSize:'8pt'}}>{authorgHash}</span></button><br />
@@ -54,9 +55,9 @@ class EmbededPostSectionHeader extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet, auths } = state;
 
-  return {wallet };
+  return {wallet, auths };
 }
 
 export default connect(mapStateToProps)(EmbededPostSectionHeader)
