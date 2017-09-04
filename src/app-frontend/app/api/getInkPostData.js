@@ -4,11 +4,9 @@ import appContracts from 'app-contracts'
 // do this differently once we have cache/infinite scrolling
 export const getTotalPostCount = () => {
   return new Promise((res, rej) =>{
-    console.log("get total post count");
     appContracts.Ink.deployed()
     .then((instance) => {
       instance.getTotalAuthSubRevKeyCount().then((count) => {
-        console.log("count: " + count);
         res({totalPostCount : count});
       });
     });
@@ -16,12 +14,9 @@ export const getTotalPostCount = () => {
 }
 
 export const getPostKey = (index) => {
-  console.log("getPostKey");
   return new Promise((res,rej) => {
     appContracts.Ink.deployed().then((instance) => {
-      console.log("instance found")
       instance.getAuthSubRevKey(index).then((results) => {
-        console.log("results")
         res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2]});
       })
     })
@@ -43,7 +38,6 @@ export const getAccountBioRevisions = (account) => {
 }
 
 export const getAccountName = (account) => {
-  console.log("getAccountName")
    return new Promise((res, rej) => {
     appContracts.Ink.deployed()
     .then((instance) => {
@@ -56,7 +50,6 @@ export const getAccountName = (account) => {
             const mostRecentBio = bioRevisions[bioRevisions.length - 1];
             getAccountBioRevision(mostRecentBio)
             .then((data) => {
-              console.log("result")
               res({
                 accountName : JSON.parse(data.selectedBioRevision.toString()).name
               })
@@ -138,24 +131,23 @@ export const getRevisionReactions = (revisionHash, authorgHash, reactions) => {
   });
 }
 
-export const getRevisionSectionResponses = (revisionHash, sectionIndex) => {
-  return new Promise((res, rej) => {
-    appContracts.Ink.deployed().then((instance) => {
-      instance.getReferencesForRevisionSection(revisionHash, sectionIndex).then((result) => {
-        console.log("result: " + result);
-        res ({responses : result})
-      })
-    })
-  })
-}
-
 export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
   return new Promise((res, rej) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
-        console.log("timestamp result: " + timestamp)
         res({timestamp : timestamp})
       })
     })
   })
 }
+
+export const getNumReferences = (authorgAddress, submissionHash, revisionHash) => {
+  return new Promise((res, rej) => {
+    appContracts.Ink.deployed().then((instance) => {
+      instance.getNumberReferencesForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash).then((count) => {
+        res({count : count})
+      })
+    })
+  })
+}
+

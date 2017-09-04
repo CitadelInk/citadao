@@ -20,7 +20,8 @@ const {
   SET_REVISION_SECTION_RESPONSES,
   SET_REVISION_TIME,
   ADD_POST_KEY,
-  SET_AUTHORG_CURRENT_NAME
+  SET_AUTHORG_CURRENT_NAME,
+  SET_AUTH_SUB_REV_REFERENCE_COUNT
 } = actions;
 
 const wallet = (state = Map({
@@ -77,10 +78,8 @@ const wallet = (state = Map({
 };
 
 const postKeys = (state = [], action) => {
-  console.log("check post keys - action.type: " + action.type + " key: " + ADD_POST_KEY);
   switch(action.type) {
     case ADD_POST_KEY:
-      console.log("add post key")
       return [...state, action.data];
     default:
       return state;
@@ -88,22 +87,25 @@ const postKeys = (state = [], action) => {
 }
 
 const revs = (state = {}, action) => {
-  console.log("revs");
   let revHash = action.data.revHash;
   switch (action.type) {
     case SET_REVISION_TIME:
-      console.log("SET REVISION TIME! - action.data.timestamp: " + action.data.timestamp);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           timestamp: action.data.timestamp
         })
       });
     case SET_REVISION_SWARM_DATA:
-      console.log("set rev text: " + action.data.swarmRevText);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           title: action.data.swarmRevTitle,
           text: action.data.swarmRevText
+        })
+      });
+    case SET_AUTH_SUB_REV_REFERENCE_COUNT:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          refCount: action.data.refCount
         })
       });
     default:
@@ -112,12 +114,11 @@ const revs = (state = {}, action) => {
 }
 
 const subs = (state = {}, action) => {
-  console.log("subs");
   switch (action.type) {
     case SET_REVISION_TIME:
+    case SET_AUTH_SUB_REV_REFERENCE_COUNT:
     case SET_REVISION_SWARM_DATA:
       let subHash = action.data.subHash;
-      console.log("subsHash: " + subHash);
       var stateSub = state[subHash];
       if (!stateSub) {
         stateSub = {};
@@ -133,7 +134,6 @@ const subs = (state = {}, action) => {
 }
 
 const auths = (state = {}, action) => {
-  console.log("auths - action.type=" + action.type);
   if (action.data) {
     let authAdd = action.data.authAdd;
     var stateAuth = state[authAdd];
@@ -142,6 +142,7 @@ const auths = (state = {}, action) => {
     }
     switch(action.type) {
       case SET_REVISION_TIME:
+      case SET_AUTH_SUB_REV_REFERENCE_COUNT:
       case SET_REVISION_SWARM_DATA:
         return {
           ...state,

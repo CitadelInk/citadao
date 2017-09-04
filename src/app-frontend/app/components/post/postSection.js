@@ -60,13 +60,11 @@ class PostSection extends Component {
 
 		var reference = false;
 		var section = this.props.section;
-		console.log("postSection section: " + section);
 		try {
 			var json = JSON.parse(section);
 			if(json) {
 				var reference = json.reference;
 				if (reference) {
-					console.log("reference: authorg: " + reference.authorg + " - submissionHas: " + reference.submissionHash + " - revisionHash: " + reference.revisionHash);
 					section = <Post style={postStyle} headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />
 					reference = true;
 				}
@@ -75,7 +73,6 @@ class PostSection extends Component {
 
 		}
 
-		console.log("section post: " + this.props.focusedPost);
 		var actions = (<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
 		if (reference || !this.props.focusedPost) {
 			actions = ''

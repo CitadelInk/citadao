@@ -65,7 +65,6 @@ class PostBody extends Component {
 		}
 		var body = "loading";
 
-		console.log("body focused post: " + this.props.focusedPost);
 		if (this.props.sectionIndex) {
 			body = <PostSection sectionResponses={responses} section={text} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
 		} else {
@@ -75,7 +74,6 @@ class PostBody extends Component {
 					console.log("gotem");
 					responses = this.props.submission.revisionSectionResponses.get(i);
 				}*/
-				console.log("post body responses: " + responses)
 				return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>);	
 			});
 		}

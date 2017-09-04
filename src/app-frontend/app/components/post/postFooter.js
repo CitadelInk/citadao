@@ -16,12 +16,24 @@ class PostFooter extends Component {
 
 	render() {			
 		var reactions = "loading"
+		var authorg = this.props.auths[this.props.authorg];
+		if (authorg) {
+			name = authorg.name;
+			var submissions = authorg.submissions;
+			if (submissions) {
+				var submission = submissions[this.props.submission];
+				if (submission) {
+					var revisions = submission.revisions;
+					if (revisions) {
+						var revision = revisions[this.props.revision];
+						if (revision) {
+							reactions = revision.refCount + " - mentions";
+						}
+					}					
+				}			
+			}		
+		}
 		
-		if(this.props.submission.revisionReactionReactors) {
-			reactions = this.props.submission.revisionReactionReactors.map(reaction => {
-			  return (<span key={reaction.reactionHash}><button value={reaction.reactionHash} onClick={this.reactionClicked}>{reaction.reactionValue} - {reaction.reactionReactors.length}</button></span>);
-			})
-		} 
 		return (			
 			<div style={this.props.footerStyle}>
  				{reactions}
@@ -37,9 +49,9 @@ class PostFooter extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, approvedReactions } = state;
+  const { wallet, approvedReactions, auths } = state;
 
-  return {wallet, approvedReactions };
+  return {wallet, approvedReactions, auths };
 }
 
 export default connect(mapStateToProps)(PostFooter)

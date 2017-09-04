@@ -17,7 +17,6 @@ class Post extends Component {
 
 
 	render() {	
-		console.log("focused post: " + this.props.focusedPost);		
 		return(
 			<div style={this.props.style} onClick={this.widgetClicked}>			
 				<PostHeader headerStyle={this.props.headerStyle} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} />

@@ -30,9 +30,10 @@ class PostHeader extends Component {
 					if (revisions) {
 						var revision = revisions[this.props.revision];
 						if (revision) {
-							console.log("timestamp: " + revision.timestamp);
-							var date = new Date(revision.timestamp * 1000);
-							time = date.toDateString();
+							if (revision.timestamp && revision.timestamp > 0) {
+								var date = new Date(revision.timestamp * 1000);
+								time = date.toDateString();
+							}
 						}
 					}					
 				}			

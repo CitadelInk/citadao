@@ -7,12 +7,12 @@ import {
   getAccountName,
   getRevisionReactions,
   getPostKey,
-  getTotalPostCount
+  getTotalPostCount,
+  getNumReferences
 } from '../api/getInkPostData'
 
 export const ADD_POST_KEY = "ADD_POST_KEY";
 export const addPostKey = (authorgAddress, submissionHash, revisionHash, index) => {
-  console.log("addPostKey: " + ADD_POST_KEY);
   return {
     type: ADD_POST_KEY,
     data: {authorgAddress, submissionHash, revisionHash}
@@ -43,6 +43,14 @@ export const setAuthorgCurrentName = (authAdd, name) => {
   }
 }
 
+export const SET_AUTH_SUB_REV_REFERENCE_COUNT = "SET_AUTH_SUB_REV_REFERENCE_COUNT";
+export const setAuthSubRevReferenceCount = (authAdd, subHash, revHash, count) => {
+  return {
+    type: SET_AUTH_SUB_REV_REFERENCE_COUNT,
+    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refCount:count}
+  }
+}
+
 export const SET_REVISION_AUTHORG_NAME = "SET_REVISION_AUTHORG_NAME";
 export const setRevisionAuthorgName = (authAdd, subHash, revHash, name) => {
   return {
@@ -61,7 +69,6 @@ export const setRevisionReactions = (authAdd, subHash, revHash, reactions) => {
 
 export const SET_REVISION_SECTION_RESPONSES = "SET_REVISION_SECTION_RESPONSES";
 export const setRevisionSectionResponses = (authAdd, subHash, revHash, sectionIndex, responses) => {
-  console.log("SET REVISION SECTION RESPONSES")
   return {
     type: SET_REVISION_SECTION_RESPONSES,
     data: {authAdd : authAdd, subHash : subHash, revHash : revHash, sectionIndex : sectionIndex, responses : responses}
@@ -70,7 +77,6 @@ export const setRevisionSectionResponses = (authAdd, subHash, revHash, sectionIn
 
 export const SET_REVISION_TIME = "SET_REVISION_TIME";
 export const setRevisionTime = (authAdd, subHash, revHash, revisionTime) => {
-  console.log("SET REVISION TIME - time: " + revisionTime);
   return {
     type: SET_REVISION_TIME,
     data: {authAdd : authAdd, subHash : subHash, revHash : revHash, timestamp : revisionTime}
@@ -80,13 +86,10 @@ export const setRevisionTime = (authAdd, subHash, revHash, revisionTime) => {
 export const SET_SUBMISSION_REVISIONS = "SET_SUBMISSION_REVISIONS";
 
 export const initializeNeededPosts = () => (dispatch, getState) => {
-  console.log("initialize needed posts");
   const {ui} = getState();
   if(ui.get('page') === 'home') {
-    console.log("are home");
     dispatch(initializeTestTypedRevisions());
   } else if (ui.get('page') === 'post') {
-    console.log("are post");
     var route = ui.get('route');
     var splitRoute = route.split('\/'); 
     if(splitRoute.length === 7) {
@@ -96,10 +99,8 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
 }
 
 export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true) => (dispatch, getState) => {
-  console.log("LOAD POST - authorgAddress: " + authorgAddress);
   const {approvedReactions} = getState();
   return getRevisionFromSwarm(revisionHash).then(result => {
-    console.log("result.text: " + result.text);
     dispatch(setRevisionSwarmData(authorgAddress, 
                                   submissionHash, 
                                   revisionHash, 
@@ -122,9 +123,11 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
     getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
       dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
     })
-    console.log("getAccountName authorgAddress: " + authorgAddress);
     getAccountName(authorgAddress).then((name) => {
       dispatch(setAuthorgCurrentName(authorgAddress, name.accountName));
+    })
+    getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
+      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
     })
     /*getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
       dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors))
@@ -133,14 +136,10 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
 }
 
 export const initializeTestTypedRevisions = () => dispatch => {
-  console.log("initialize test typed revisions");
   getTotalPostCount().then((result) => {
-    console.log("count: " + result.totalPostCount);
     for(var i = 0; i < 50 && i < result.totalPostCount; i++) {
       var index = result.totalPostCount - i - 1;
-      console.log("iterate - index: " + index);
       getPostKey(index).then((result) => {
-        console.log("post key found - authorg: " + result.authorgAddress + " - submissionHash: " + result.submissionHash + " - revisionHash: " + result.revisionHash);
         dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, index))
         dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, index))
       })
@@ -155,7 +154,6 @@ export const setSelectedBioRevision = (selectedRevision) => dispatch => {
 };
 
 export const handleViewResponses = (responses) => (dispatch) => {
-  console.log("handle view responses?")
   responses.map((response) => {
     dispatch(loadPost(response, false))
   })
@@ -171,6 +169,7 @@ export default {
   ADD_POST_KEY,
   SET_AUTHORG_CURRENT_NAME,
   SET_REVISION_TIME,
+  SET_AUTH_SUB_REV_REFERENCE_COUNT,
   loadPost,
   handleViewResponses
 };

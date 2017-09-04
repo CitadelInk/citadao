@@ -16,7 +16,6 @@ class PostSectionActions extends Component {
 
 
 	render() {
-		console.log("this.props.sectionResponses: " + this.props.sectionResponses);
 		return (	
 			<div>		
 			<button onClick={this.onSectionActionsButtonClicked}>respond</button>
@@ -39,9 +38,7 @@ class PostSectionActions extends Component {
 	}
 
 	onSectionViewReferencingPostsClicked(e) {
-		console.log("test 1")
 		var sectionResponses = this.props.sectionResponses;
-		console.log("sectionResponses: " + sectionResponses);
 		this.props.dispatch(handleViewResponses(sectionResponses))
 	}
 

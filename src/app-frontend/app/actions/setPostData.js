@@ -32,7 +32,6 @@ export const submitPost = () => (dispatch, getState) => {
   const postTitleInput = wallet.get('postTitleInput');
   const postTextInput = wallet.get('postTextInput');
 
-  console.log("postTextInput: " + postTextInput);
 
   var textInputSplit = postTextInput.split('\n');
   var trimmedTextInput = [];

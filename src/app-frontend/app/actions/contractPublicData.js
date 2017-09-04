@@ -98,12 +98,9 @@ export const initializeContract = () => (dispatch) => {
 };
 
 export const initializeAccounts = () => dispatch => {
-  console.log("initialize accounts");
   return new Promise((res, rej) => {
     getAccounts().then((accounts) => {
-      console.log("an account");
       var accountNamePromises = accounts.accounts.map(acct => {
-        console.log("acct: " + acct);
         return getAccountName(acct)
       })
       Promise.all(accountNamePromises).then(values => {
@@ -111,7 +108,6 @@ export const initializeAccounts = () => dispatch => {
         var accountNames = accountNamesResults.map(result => {
           return result.accountName
         })
-        console.log("more things");
         var account = accounts.accounts[0];
         Promise.all([
           getEthBalance(account),
