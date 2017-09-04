@@ -39,22 +39,38 @@ class PostBody extends Component {
 				position:'absolute',
 				overflow:'scroll'
 		}
-			
-		if(this.props.submission) {
-			console.log("post: " + this.props.submission.text)
+		
+		var authorg = this.props.auths[this.props.authorg];
+		var text = ["loading"];
+		var title = "loading";
+		if (authorg) {
+			var submissions = authorg.submissions;
+			if (submissions) {
+				var submission = submissions[this.props.submission];
+				if (submission) {
+					var revisions = submission.revisions;
+					if (revisions) {
+						var revision = revisions[this.props.revision];
+						if (revision) {
+							text = revision.text;
+							title = revision.title;
+						}
+					}					
+				}			
+			}			
 		}
 
 		return (			
 			<div style={style}>
-				<center>{this.props.submission.title}</center><br />
-				{this.props.submission.text.map((section, i) => {
+				<center>{title}</center><br />
+				{text.map((section, i) => {
 					var responses = [];
-					if (this.props.submission.revisionSectionResponses && this.props.submission.revisionSectionResponses.get(i)) {
+					/*if (this.props.submission.revisionSectionResponses && this.props.submission.revisionSectionResponses.get(i)) {
 						console.log("gotem");
 						responses = this.props.submission.revisionSectionResponses.get(i);
-					}
+					}*/
 					console.log("post body responses: " + responses)
-					return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.submission.submissionAuthorg} submissionHash={this.props.submission.submissionHash} revisionHash={this.props.submission.revisionHash}/>);	
+					return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision}/>);	
 				})}
 			</div>
 		);
@@ -62,9 +78,9 @@ class PostBody extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet, auths } = state;
 
-  return {wallet, submissions };
+  return {wallet, auths };
 }
 
 export default connect(mapStateToProps)(PostBody)

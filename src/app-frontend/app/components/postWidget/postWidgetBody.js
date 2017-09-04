@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import PostSection from './post/postSection'
+import PostSection from '../post/postSection'
 
 
 class PostWidgetBody extends Component {
@@ -25,11 +23,19 @@ class PostWidgetBody extends Component {
 		var title = "loading";
 		if (auth) {
 			var submissions = auth.submissions;
-			var submission = submissions[this.props.submission];
-			var revisions = submission.revisions;
-			var revision = revisions[this.props.revision];
-			text = revision.text;
-			title = revision.title;
+			if (submissions) {
+				var submission = submissions[this.props.submission];
+				if (submission) {
+					var revisions = submission.revisions;
+					if (revisions) {
+						var revision = revisions[this.props.revision];
+						if (revision) {
+							text = revision.text;
+							title = revision.title;
+						}
+					}					
+				}			
+			}			
 		}
 		return (			
 				<div style={style}>

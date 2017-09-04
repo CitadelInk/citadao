@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import PostWidgetHeader from './postWidgetHeader'
 import PostWidgetBody from './postWidgetBody'
 import PostWidgetFooter from './postWidgetFooter'
-import actions from '../actions';
+import actions from '../../actions';
 
 const {
 	gotoPost
@@ -46,7 +44,7 @@ class PostWidget extends Component {
 	}
 
 	widgetClicked(e) {
-		this.props.dispatch(gotoPost(this.props.submission.submissionHash, this.props.submission.revisionHash));
+		this.props.dispatch(gotoPost(this.props.authorg, this.props.submission, this.props.revision));
 		e.stopPropagation();
 	}
 }

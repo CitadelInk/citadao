@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import EmbededPostSectionWidget from './embededPostSectionWidget'
 
@@ -19,7 +17,7 @@ class EmbededPostSectionWidgetContainer extends Component {
 			
 		return (			
 			<div style={style}>
- 				<EmbededPostSectionWidget  submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />
+ 				<EmbededPostSectionWidget  authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />
 			</div>
 		);
 	}

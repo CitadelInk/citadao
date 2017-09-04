@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Home from './home';
-import User from './user';
-import Header from './header';
-import Debug from './debug';
-import PostPage from './post/postPage';
+import User from './debug/user';
+import Header from './header/header';
+import Debug from './debug/debug';
+import PostPage from './postPage';
 import actions from '../actions';
 
 const {
@@ -36,8 +36,8 @@ class App extends Component {
       case 'post':
         var route = this.props.ui.get('route');
         var splitRoute = route.split('\/'); 
-        if(splitRoute.length === 5) {
-          page = <PostPage submissionHash={splitRoute[2]} revisionHash={splitRoute[4]} />;
+        if(splitRoute.length === 7) {
+          page = <PostPage authorg={splitRoute[2]} submission={splitRoute[4]} revision={splitRoute[6]} />;
         }
       break;
       default:

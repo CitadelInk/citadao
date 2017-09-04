@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import PostWidget from './postWidget';
+import PostWidget from '../postWidget/postWidget';
 
 
 class Posts extends Component {

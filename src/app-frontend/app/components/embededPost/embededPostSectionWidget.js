@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import EmbededPostSectionHeader from './embededPostSectionHeader'
 import EmbededPostSectionBody from './embededPostSectionBody'
 import EmbededPostSectionFooter from './embededPostSectionFooter'
-import actions from '../actions';
+import actions from '../../actions';
 
 const {
 	gotoPost
@@ -25,14 +23,20 @@ class EmbededPostSectionWidget extends Component {
 				margin:'auto'
 		}
 			
-		const submission = this.props.submissions.get(this.props.submissionHash);
-		return (	
-			<div onClick={this.widgetClicked} style={style}>
-				<EmbededPostSectionHeader submission={submission}/>
-				<EmbededPostSectionBody submission={submission}  sectionIndex={this.props.sectionIndex}/>
-				<EmbededPostSectionFooter submission={submission} />
-			</div>
-		);
+		const authorg = this.props.authorg;
+		const submission = this.props.submissionHash;
+		const revision = this.props.revisionHash;
+		var content = (<div>"loading"</div>);
+
+		if (submission) {
+			content = (<div onClick={this.widgetClicked} style={style}>
+				<EmbededPostSectionHeader authorg={authorg} submission={submission} revision={revision}/>
+				<EmbededPostSectionBody  authorg={authorg} submission={submission} revision={revision} sectionIndex={this.props.sectionIndex} />
+				<EmbededPostSectionFooter  authorg={authorg} submission={submission} revision={revision}/>
+				</div>)
+		}
+
+		return content;
 	}
 
 	widgetClicked(e) {

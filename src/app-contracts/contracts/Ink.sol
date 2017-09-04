@@ -147,19 +147,20 @@ contract Ink is Managed {
         Authorg authorg = internalAuthorgs[sender];
 
         // never submitted revision to this submission before        
-        if (authorg.submissions[subCitadelManifestHash].revisions[revCitadelManifestHash].citadelManifestHash == 0) {
-            var newAuthorgs = new address[](0);
-            var newSubmissions = new bytes32[](0);
-            var newRevisions = new bytes32[](0);
-            var revision = Revision({
-                timestamp : block.timestamp,
-                citadelManifestHash : revCitadelManifestHash,
-                referenceKeyAuthorgs : newAuthorgs,
-                referenceKeySubmissions : newSubmissions,
-                referenceKeyRevisions : newRevisions
-            });
-            authorg.submissions[subCitadelManifestHash].revisions[revCitadelManifestHash] = revision;
-        } 
+        require (authorg.submissions[subCitadelManifestHash].revisions[revCitadelManifestHash].citadelManifestHash == 0);
+        
+        var newAuthorgs = new address[](0);
+        var newSubmissions = new bytes32[](0);
+        var newRevisions = new bytes32[](0);
+        var revision = Revision({
+            timestamp : block.timestamp,
+            citadelManifestHash : revCitadelManifestHash,
+            referenceKeyAuthorgs : newAuthorgs,
+            referenceKeySubmissions : newSubmissions,
+            referenceKeyRevisions : newRevisions
+        });
+        authorg.submissions[subCitadelManifestHash].revisions[revCitadelManifestHash] = revision;
+        
 
         authorg.submissions[subCitadelManifestHash].revisionHashes.push(revCitadelManifestHash);
         internalAuthorgs[sender].submissions[subCitadelManifestHash].citadelManifestHash = subCitadelManifestHash;

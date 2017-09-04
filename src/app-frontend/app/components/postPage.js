@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Post from './post';
-import Compose from '../compose';
-import Responses from '../responses'
+import Post from './panels/post';
+import Compose from './compose/compose';
+import Responses from './panels/responses'
 
 class PostPage extends Component {
 	 constructor(props) {
@@ -22,11 +22,14 @@ class PostPage extends Component {
 				overflow:'hidden'
 		}
 			
-		const submission = this.props.submissions.get(this.props.submissionHash);
+			
+		const authorg = this.props.authorg;
+		const submission = this.props.submission;
+		const revision = this.props.revision;
 		var post = "loading...";
 		if (submission) {
 			post = (			
-				<Post submission={submission} />
+				<Post authorg={authorg} submission={submission} revision={revision} />
 			);
 		}
 
@@ -49,9 +52,9 @@ class PostPage extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet, auths } = state;
 
-  return {wallet, submissions };
+  return {wallet, auths };
 }
 
 export default connect(mapStateToProps)(PostPage)

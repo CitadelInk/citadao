@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSectionActions from './postSectionActions';
-import EmbededPostSectionWidgetContainer from '../embededPostSectionWidgetContainer'
+import EmbededPostSectionWidgetContainer from '../embededPost/embededPostSectionWidgetContainer'
 
 class PostSection extends Component {
 	 constructor(props) {
@@ -24,13 +24,14 @@ class PostSection extends Component {
 		}
 
 		var section = this.props.section;
-		
+		console.log("postSection section: " + section);
 		try {
 			var json = JSON.parse(section);
 			if(json) {
 				var reference = json.reference;
 				if (reference) {
-					section = <EmbededPostSectionWidgetContainer submissionHash={reference.submissionHash} revisionHash={reference.revisionHash} sectionIndex={reference.sectionIndex} />
+					console.log("reference: authorg: " + reference.authorg + " - submissionHas: " + reference.submissionHash + " - revisionHash: " + reference.revisionHash);
+					section = <EmbededPostSectionWidgetContainer authorg={reference.authorg} submissionHash={reference.submissionHash} revisionHash={reference.revisionHash} sectionIndex={reference.sectionIndex} />
 				}
 			}		
 		} catch(e) {

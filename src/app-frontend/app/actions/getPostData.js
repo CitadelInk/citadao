@@ -29,7 +29,6 @@ export const setSubmissions = (data) => {
 
 export const SET_REVISION_SWARM_DATA = "SET_REVISION_SWARM_DATA";
 export const setRevisionSwarmData = (authAdd, subHash, revHash, swarmRevTitle, swarmRevText) => {
-  console.log("1 swarmRevText: " + swarmRevText);
   return {
     type: SET_REVISION_SWARM_DATA,
     data: {authAdd, subHash, revHash, swarmRevTitle, swarmRevText}

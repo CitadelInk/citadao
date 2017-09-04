@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Header from './header';
+import Header from '../header/header';
 import BioRevisionSelector from './bioRevisionSelector';
 import BioRevision from './bioRevision';
 import BioRevisionInput from './bioRevisionInput';

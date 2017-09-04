@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
-import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 
 
@@ -20,9 +18,24 @@ class EmbededPostSectionBody extends Component {
 			textAlign:'left'
 		}
 
-		var text = "loading..."
-		if (this.props.submission) {
-			text = this.props.submission.text
+		var auth = this.props.auths[this.props.authorg];
+		var text = ["loading"];
+		var title = "loading";
+		if (auth) {
+			var submissions = auth.submissions;
+			if (submissions) {
+				var submission = submissions[this.props.submission];
+				if (submission) {
+					var revisions = submission.revisions;
+					if (revisions) {
+						var revision = revisions[this.props.revision];
+						if (revision) {
+							text = revision.text;
+							title = revision.title;
+						}
+					}					
+				}			
+			}			
 		}
 			
 		return (			
@@ -34,9 +47,9 @@ class EmbededPostSectionBody extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet, auths } = state;
 
-  return {wallet, submissions };
+  return {wallet, auths };
 }
 
 export default connect(mapStateToProps)(EmbededPostSectionBody)

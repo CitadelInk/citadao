@@ -8,9 +8,12 @@ import {
 
 import {
   setWalletData,
-  setSelectedBioRevision,
+  setSelectedBioRevision
+} from './contractPublicData';
+
+import {
   loadPost
-} from './contractPublicData'
+} from './getPostData';
 
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
@@ -19,9 +22,10 @@ export const gotoUserPage  = (user) => dispatch =>  {
   return dispatch(getUserPageBios(user)) 
 }
 
-export const gotoPost = (revHash) => dispatch => {
-  dispatch(loadPost(revHash));
-  return dispatch(navigatePage({page:'post',route:'\/post\/' + revHash}))
+export const gotoPost = (authorg, subHash, revHash) => dispatch => {
+  console.log("gotoPost - authorg: " + authorg + " - subHash: " + subHash + " - revHash: " + revHash)
+  dispatch(loadPost(authorg, subHash, revHash));
+  return dispatch(navigatePage({page:'post',route:'post\/authorg\/' + authorg + '\/sub\/' + subHash + '\/rev\/' + revHash}))
 }
 
 export const getUserPageBios = (user) => dispatch => {

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PostHeader from './postHeader';
-import PostBody from './postBody';
-import PostFooter from './postFooter';
-import Compose from '.././compose';
+import PostHeader from '../post/postHeader';
+import PostBody from '../post/postBody';
+import PostFooter from '../post/postFooter';
+import Compose from '../compose/compose';
 
 class Post extends Component {
 	 constructor(props) {
@@ -25,9 +25,9 @@ class Post extends Component {
 			
 		return(
 			<div style={style}>			
-				<PostHeader submission={this.props.submission} />
-				<PostBody submission={this.props.submission} />
-				<PostFooter submission={this.props.submission} />
+				<PostHeader authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} />
+				<PostBody authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision}/>
+				<PostFooter authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision}/>
 			</div>
 		);
 	}

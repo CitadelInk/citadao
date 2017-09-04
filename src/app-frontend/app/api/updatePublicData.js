@@ -47,7 +47,7 @@ export const post = (postInput, references, account) => {
         //for now, submission and revision same thing
         instance.submitRevision.sendTransaction('0x' + hash, '0x' + hash, {from : account, gas : 400000}).then((tx_id) => {
           var linkReferences = references.map((reference) => {
-            return instance.respondToSubmission.sendTransaction(reference.authorgAddress, reference.submissionHash, reference.revisionHash, '0x' + hash, '0x' + hash, {from : account, gas : 400000});
+            return instance.respondToAuthorgSubmissionRevision.sendTransaction(reference.authorgAddress, reference.submissionHash, reference.revisionHash, '0x' + hash, '0x' + hash, {from : account, gas : 400000});
           })
           return Promise.all(linkReferences).then((values) => {
             res(tx_id)
