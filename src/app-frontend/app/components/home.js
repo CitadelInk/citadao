@@ -3,6 +3,8 @@ import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import Posts from './panels/posts';
+import EmptyLeft from './panels/emptyLeft';
+import EmptyRight from './panels/emptyRight';
 
 
 class Home extends Component {
@@ -13,19 +15,20 @@ class Home extends Component {
 
 	render() {
 		const style = {
-				height: '100%',
 				background:'#FFFFFF',
 				width:'100%',
 				position: 'relative',
 				top:'100px',
-				zIndex:'900'
+				zIndex:'900',
+				display:'flex'
 		}
 			
 		return (
 			
 			<div style={style} className="Home">
-			<Posts />	
-			
+				<EmptyLeft />
+				<Posts />	
+				<EmptyRight />		
 			</div>
 		);
 	}

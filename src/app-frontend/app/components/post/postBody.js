@@ -28,7 +28,7 @@ class PostBody extends Component {
 
 
 	render() {
-		var stateHeight = parseInt(this.state.height);
+		/*var stateHeight = parseInt(this.state.height);
 		var remainingHeight = stateHeight - 200;
 		const calcheight = remainingHeight + 'px';
 		const style = {
@@ -38,7 +38,7 @@ class PostBody extends Component {
 				//bottom:'40px',
 				position:'absolute',
 				overflow:'scroll'
-		}
+		}*/
 		
 		var authorg = this.props.auths[this.props.authorg];
 		var text = ["loading"];
@@ -60,18 +60,34 @@ class PostBody extends Component {
 			}			
 		}
 
+		if (this.props.sectionIndex) {
+			text = [text[this.props.sectionIndex]];
+		}
+		var body = "loading";
+
+		console.log("body focused post: " + this.props.focusedPost);
+		if (this.props.sectionIndex) {
+			body = <tr><td><PostSection sectionResponses={responses} section={text} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/></td></tr>
+		} else {
+			body = text.map((section, i) => {
+				var responses = [];
+				/*if (this.props.submission.revisionSectionResponses && this.props.submission.revisionSectionResponses.get(i)) {
+					console.log("gotem");
+					responses = this.props.submission.revisionSectionResponses.get(i);
+				}*/
+				console.log("post body responses: " + responses)
+				return (<tr><td><PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/></td></tr>);	
+			});
+		}
+
 		return (			
-			<div style={style}>
-				<center>{title}</center><br />
-				{text.map((section, i) => {
-					var responses = [];
-					/*if (this.props.submission.revisionSectionResponses && this.props.submission.revisionSectionResponses.get(i)) {
-						console.log("gotem");
-						responses = this.props.submission.revisionSectionResponses.get(i);
-					}*/
-					console.log("post body responses: " + responses)
-					return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision}/>);	
-				})}
+			<div style={this.props.bodyStyle}>
+				<center>{title}</center>
+				<table>
+					<tbody>
+						{body}
+					</tbody>
+				</table>
 			</div>
 		);
 	}

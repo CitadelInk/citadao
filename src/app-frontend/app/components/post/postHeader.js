@@ -9,27 +9,32 @@ const {
 
 class PostHeader extends Component {
 	 constructor(props) {
-		 super(props);
-		  this.authorgNameClicked = this.authorgNameClicked.bind(this);
+		super(props);
+		this.authorgNameClicked = this.authorgNameClicked.bind(this);
+		this.infoButtonClicked = this.infoButtonClicked.bind(this);
+		this.state = {showDetails : false};
 	}
 
 
 	render() {
-		const style = {
-				height: '60px',
-				background:'#7FDBFF',
-				borderTopLeftRadius: '15px',
-				borderTopRightRadius: '15px',
-				width:'100%',
-				position:'absolute',
-				top:'0'
+		var name = "loading...";
+		var authorg = this.props.auths[this.props.authorg];
+		if (authorg) {
+			name = authorg.name;
 		}
 			
 		return (			
-			<div style={style}>
-				<button value={this.props.submission.submissionAuthorg} onClick={this.authorgNameClicked}><span style={{fontSize:'14pt'}}>{this.props.submission.authorgName}</span> - <span style={{fontSize:'8pt'}}>{this.props.submission.submissionAuthorg}</span></button><br />
- 				<span style={{fontSize:'8pt'}}>submission hash - {this.props.submission.submissionHash}</span><br />
- 				<span style={{fontSize:'8pt'}}>revision hash - {this.props.submission.revisionHash}</span><br />
+			<div style={this.props.headerStyle}>
+				<span value={this.props.authorg} onClick={this.authorgNameClicked} style={{fontSize:'12pt', fontWeight:'bold', position:'absolute', left:'10'}}>{name}</span>
+				<span onClick={this.infoButtonClicked} style={{fontSize:'8pt', position:'absolute', right:'10'}}>info...</span>
+				<br />
+				{this.state.showDetails && 
+					<div>
+						<span style={{fontSize:'8pt'}}>{this.props.authorg}</span><br />
+						<span style={{fontSize:'8pt'}}>submission hash - {this.props.submission}</span><br />
+						<span style={{fontSize:'8pt'}}>revision hash - {this.props.revision}</span><br />
+					</div>
+				 }
  			</div>
 		);
 	}
@@ -38,12 +43,19 @@ class PostHeader extends Component {
 		this.props.dispatch(gotoUserPage(e.target.value));
 		e.stopPropagation();
 	}
+
+	infoButtonClicked(e) {
+		e.stopPropagation();
+		this.setState(previousState => {
+        return { showDetails: !previousState.showDetails };
+      });
+	}
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet, auths } = state;
 
-  return {wallet };
+  return {wallet, auths };
 }
 
 export default connect(mapStateToProps)(PostHeader)

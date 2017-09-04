@@ -14,18 +14,7 @@ class PostFooter extends Component {
 	}
 
 
-	render() {
-		const style = {
-				height: '40px',  
-				background:'#707B7c',
-				borderBottomLeftRadius: '15px',
-				borderBottomRightRadius: '15px',
-				width:'33%',
-				position:'fixed', //hack, right?
-				bottom:'0',
-				left:'0'
-		}
-			
+	render() {			
 		var reactions = "loading"
 		
 		if(this.props.submission.revisionReactionReactors) {
@@ -34,7 +23,7 @@ class PostFooter extends Component {
 			})
 		} 
 		return (			
-			<div style={style}>
+			<div style={this.props.footerStyle}>
  				{reactions}
 			</div>
 		);

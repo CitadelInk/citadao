@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PostWidget from '../postWidget/postWidget';
+import Post from '../post/post';
 
 
 class Responses extends Component {
@@ -11,26 +11,19 @@ class Responses extends Component {
 
 	render() {
 		const style = {
-				height: '100%',
+				position: 'relative',
+				//height: '100%',
 				background:'#FFFFFF',
-				width:'33%',				
-				margin: 'auto', 
-				position: 'absolute',
-				left:'0',
-				right: '0',
-				top: '0',
-				bottom: '0',
+				width:'33%',	
+				float:'left',
+				bottom:'0'
 		}
-		console.log("RESPONSES 1");
 		var instance = this;
 		var posts = this.props.responses.map(function(responseHash) {
-			console.log("RESPONSE 2")
 			var submission = instance.props.submissions.get(responseHash);
 			if (submission) {
-				console.log("RESPONSE 3")
-				return (<PostWidget key={submission.submissionHash} submission={submission} />)
+				return (<Post key={submission.submissionHash} submission={submission} />)
 			} else {
-				console.log("RESPONSE 4")
 				return ("loading...");
 			}
 		})

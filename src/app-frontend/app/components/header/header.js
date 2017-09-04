@@ -42,12 +42,12 @@ class Header extends Component {
 		}
 		const dropDownStyle = {
 			position:'absolute',
-			top:'50px',
+			top:'20px',
 			left:'10px'
 		}
 		const inkBalanceDivStyle = {
 			position:'absolute',
-			top:'60px',
+			top:'30px',
 			right:'250px'
 		}
 		const accountsDropDown = (

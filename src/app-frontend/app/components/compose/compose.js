@@ -15,10 +15,9 @@ class Compose extends Component {
 				position:'absolute',
 				background:'#FFFFFF',
 				width:'33%',
-				height:'100%',
 				overflow:'hidden',
 				right:'0',
-				top:'0',
+				top:'100px',
 				bottom:'0'
 		}
 

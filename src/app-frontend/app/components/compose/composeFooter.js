@@ -19,7 +19,7 @@ class ComposeFooter extends Component {
 				height: '40px',  
 				background:'#707B7c',
 				width:'100%',
-				position:'fixed', //hack, right?
+				position:'absolute',
 				bottom:'0'
 		}
 					

@@ -35,6 +35,14 @@ export const setRevisionSwarmData = (authAdd, subHash, revHash, swarmRevTitle, s
   }
 }
 
+export const SET_AUTHORG_CURRENT_NAME = "SET_AUTHORG_CURRENT_NAME";
+export const setAuthorgCurrentName = (authAdd, name) => {
+  return {
+    type: SET_AUTHORG_CURRENT_NAME,
+    data: {authAdd : authAdd, name : name}
+  }
+}
+
 export const SET_REVISION_AUTHORG_NAME = "SET_REVISION_AUTHORG_NAME";
 export const setRevisionAuthorgName = (authAdd, subHash, revHash, name) => {
   return {
@@ -75,16 +83,20 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
   console.log("initialize needed posts");
   const {ui} = getState();
   if(ui.get('page') === 'home') {
+    console.log("are home");
     dispatch(initializeTestTypedRevisions());
   } else if (ui.get('page') === 'post') {
+    console.log("are post");
     var route = ui.get('route');
     var splitRoute = route.split('\/'); 
-    dispatch(loadPost(splitRoute[2]));
+    if(splitRoute.length === 7) {
+     loadPost(splitRoute[2], splitRoute[4], splitRoute[6]);
+    }
   }
 }
 
 export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true) => (dispatch, getState) => {
-  console.log("LOAD POST")
+  console.log("LOAD POST - authorgAddress: " + authorgAddress);
   const {approvedReactions} = getState();
   return getRevisionFromSwarm(revisionHash).then(result => {
     console.log("result.text: " + result.text);
@@ -99,7 +111,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
           var json = JSON.parse(section)
           if(json) {
             if(json.reference) {
-              dispatch(loadPost(json.reference.authorgAddress, json.reference.submissionHash, json.reference.revisionHash, -1, false))
+              dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, -1, false))
             }
           }
         } catch (e) {
@@ -110,8 +122,9 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
     getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
       dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime))
     })
-    getAccountName(authorgAddress, submissionHash, revisionHash).then((name) => {
-      dispatch(setRevisionAuthorgName(authorgAddress, submissionHash, revisionHash, name.accountName));
+    console.log("getAccountName authorgAddress: " + authorgAddress);
+    getAccountName(authorgAddress).then((name) => {
+      dispatch(setAuthorgCurrentName(authorgAddress, name.accountName));
     })
     /*getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
       dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors))
@@ -142,6 +155,7 @@ export const setSelectedBioRevision = (selectedRevision) => dispatch => {
 };
 
 export const handleViewResponses = (responses) => (dispatch) => {
+  console.log("handle view responses?")
   responses.map((response) => {
     dispatch(loadPost(response, false))
   })
@@ -155,6 +169,7 @@ export default {
   SET_REVISION_REACTIONS,
   SET_REVISION_SECTION_RESPONSES,
   ADD_POST_KEY,
+  SET_AUTHORG_CURRENT_NAME,
   loadPost,
   handleViewResponses
 };

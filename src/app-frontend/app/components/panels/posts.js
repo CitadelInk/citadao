@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PostWidget from '../postWidget/postWidget';
+import PostWidgetContainer from '../postWidget/postWidgetContainer';
 
 
 class Posts extends Component {
@@ -13,29 +13,19 @@ class Posts extends Component {
 		const style = {
 				height: '100%',
 				background:'#FFFFFF',
-				width:'50%',				
-				margin: 'auto', 
-				position: 'absolute',
-				left:'0',
-				right: '0',
-				top: '0',
-				bottom: '0',
+				minWidth:'33%',
+				maxWidth:'34%',
+				float:'left'
 		}
-		/*var posts = this.props.submissions.map(function(submission, key) {
-			return (<PostWidget key={submission.submissionHash} submission={submission} />)
-		})*/
-		console.log("postKeys length: " + this.props.postKeys.length);
+			
 		var posts = this.props.postKeys.map(function(key) {
 			var key2 = key.authorgAddress + "-" + key.submissionHash + "-" + key.revisionHash;
-			console.log("key2: " + key2);
-			return (<PostWidget key={key2} authorg={key.authorgAddress} submission={key.submissionHash} revision={key.revisionHash} />)
+			return (<PostWidgetContainer key={key2} authorg={key.authorgAddress} submission={key.submissionHash} revision={key.revisionHash} />)
 		})
 		return (
 			
 			<div style={style} className="Posts">
-				<br />
-			{posts}
-			
+				{posts}			
 			</div>
 		);
 	}

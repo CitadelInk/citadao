@@ -19,7 +19,7 @@ class PostSectionActions extends Component {
 		console.log("this.props.sectionResponses: " + this.props.sectionResponses);
 		return (	
 			<div>		
-			<button onClick={this.onSectionActionsButtonClicked}>respond</button><br />
+			<button onClick={this.onSectionActionsButtonClicked}>respond</button>
 			<button onClick={this.onSectionViewReferencingPostsClicked}>View Responses - {this.props.sectionResponses.length}</button>
 			</div>
 		);

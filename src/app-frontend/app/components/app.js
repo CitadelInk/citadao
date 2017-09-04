@@ -4,7 +4,7 @@ import Home from './home';
 import User from './debug/user';
 import Header from './header/header';
 import Debug from './debug/debug';
-import PostPage from './postPage';
+import PostPage from './panels/postPage';
 import actions from '../actions';
 
 const {
@@ -45,10 +45,10 @@ class App extends Component {
         break;
     }	
 	return (
-	<div className="app">
+	<div style={{height:'100%'}} className="app">
     		<Header />
         {page}
-      </div>
+  </div>
 	)
   }
 }

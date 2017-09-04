@@ -19,7 +19,8 @@ const {
   SET_REVISION_REACTIONS,
   SET_REVISION_SECTION_RESPONSES,
   SET_REVISION_TIME,
-  ADD_POST_KEY
+  ADD_POST_KEY,
+  SET_AUTHORG_CURRENT_NAME
 } = actions;
 
 const wallet = (state = Map({
@@ -125,25 +126,35 @@ const subs = (state = {}, action) => {
 
 const auths = (state = {}, action) => {
   console.log("auths - action.type=" + action.type + " - set revision swarm data: " + SET_REVISION_SWARM_DATA);
-  switch(action.type) {
-    case SET_REVISION_SWARM_DATA:
+  if (action.data) {
     let authAdd = action.data.authAdd;
-    console.log("id: " + authAdd);
     var stateAuth = state[authAdd];
-    console.log("stateAuth 1: " + stateAuth);
     if (!stateAuth) {
       stateAuth = {};
+    
     }
-    console.log("stateAuth 2: " + stateAuth);
-    return {
-      ...state,
-      [authAdd]: {
-        ...stateAuth,
-        submissions : subs(stateAuth.submissions, action)
-      }
+    switch(action.type) {
+      case SET_REVISION_SWARM_DATA:
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            submissions : subs(stateAuth.submissions, action)
+          }
+        }
+      case SET_AUTHORG_CURRENT_NAME:
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            name : action.data.name
+          }
+        }
+      default:
+        return state;
     }
-    default:
-      return state;
+  } else {
+    return state;
   }
 }
 

@@ -67,7 +67,7 @@ export const setBuyPrice = () => (dispatch, getState) => {
     return dispatch(setWalletData(data));
   });
 };
-
+/*
 export const initializeApprovedReactions = () => (dispatch) => {
   getApprovedReactions().then((reactions) => {
     return dispatch(setApprovedReactions(reactions.approvedReactions));
@@ -83,24 +83,27 @@ export const addNewApprovedReaction = () => (dispatch, getState) => {
     return dispatch(initializeApprovedReactions());
   })
 }
-
+*/
 
 export const initializeContract = () => (dispatch) => {
   return Promise.all([
     getAdvancedTokenPublicData(),
     getInkPublicData(),
-    getApprovedReactions()
-  ]).then(([token, ink, reactions]) => {
+    //getApprovedReactions()
+  ]).then(([token, ink/*, reactions*/]) => {
     dispatch(setWalletData({...token, ...ink}));
-    dispatch(setApprovedReactions(reactions.approvedReactions));
+    //dispatch(setApprovedReactions(reactions.approvedReactions));
     dispatch(initializeNeededPosts());
   });
 };
 
 export const initializeAccounts = () => dispatch => {
+  console.log("initialize accounts");
   return new Promise((res, rej) => {
     getAccounts().then((accounts) => {
+      console.log("an account");
       var accountNamePromises = accounts.accounts.map(acct => {
+        console.log("acct: " + acct);
         return getAccountName(acct)
       })
       Promise.all(accountNamePromises).then(values => {
@@ -108,12 +111,13 @@ export const initializeAccounts = () => dispatch => {
         var accountNames = accountNamesResults.map(result => {
           return result.accountName
         })
+        console.log("more things");
         var account = accounts.accounts[0];
         Promise.all([
           getEthBalance(account),
           getInkBalance(account)
-        ]).then(([ethBalance, citaBalance]) => {
-          res({...accounts, accountNames, account, ethBalance, citaBalance}); 
+        ]).then(([ethBalance, inkBalance]) => {
+          res({...accounts, accountNames, account, ethBalance, inkBalance}); 
         })
       })
       
@@ -128,9 +132,9 @@ export const setSelectedAccount = (account) => dispatch => {
         getEthBalance(account),
         getInkBalance(account),
         getAccountBioRevisions(account)
-      ]) .then(([ethBalance, citaBalance, bioRevisions]) => {
+      ]) .then(([ethBalance, inkBalance, bioRevisions]) => {
     localWeb3.eth.defaultAccount = account
-    return dispatch(setWalletData({account, ...bioRevisions, ethBalance, citaBalance}))
+    return dispatch(setWalletData({account, ...bioRevisions, ethBalance, inkBalance}))
   })
 };
 
@@ -154,9 +158,10 @@ export const handleBuySubmit = () => (dispatch, getState) => {
 };
 
 export const handleViewResponses = (responses) => (dispatch) => {
-  responses.map((response) => {
-    dispatch(loadPost(response, false))
-  })
+  console.log("2 handle view responses")
+  //responses.map((response) => {
+    //dispatch(loadPost(response, false))
+  //})
   return dispatch(setWalletData({selectedResponses : responses}))
 }
 
@@ -170,7 +175,5 @@ export default {
   setBuyPrice,
   handleBuySubmit,
   setSelectedAccount,
-  addNewApprovedReaction,
-  setApprovedReactions,
   handleViewResponses
 };

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSectionActions from './postSectionActions';
-import EmbededPostSectionWidgetContainer from '../embededPost/embededPostSectionWidgetContainer'
+import Post from './post';
 
 class PostSection extends Component {
 	 constructor(props) {
@@ -12,17 +12,52 @@ class PostSection extends Component {
 	render() {
 		const style = {
 			background:'#F0F0F0',
-			display:'flex',
-			paddingBottom:'5px'
+			paddingBottom:'5px',
+			width:'100%',
+			position:'absolute'
 		}
 
-		const innerStyle1 = {
-			flexGrow:'1'
-		}
-		const innerStyle2 = {
-			width:'100px'
+		const postStyle = {
+				position:'absolute',
+				background:'#FFFFFF',
+				height:'200px',
+				width:'80%',
+				overflow:'hidden',
+				left:'10%'
 		}
 
+		const headerStyle = {
+			height:'40px',
+			background:'#7FDBFF',
+			borderTopLeftRadius: '15px',
+			borderTopRightRadius: '15px',
+			width:'100%',
+			position:'absolute',
+			top:'0'
+		}
+
+
+		const bodyStyle = {
+			background:'#FFFFFF',
+			position:'absolute',
+			overflow:'hidden',
+			width:'100%',
+			top:'40px'
+		}
+
+		const footerStyle = {
+			position:'absolute',
+			bottom:'0',
+			height: '20px',  
+			background:'#707B7c',
+			borderBottomLeftRadius: '15px',
+			borderBottomRightRadius: '15px',
+			width:'100%'
+		}
+
+			
+
+		var reference = false;
 		var section = this.props.section;
 		console.log("postSection section: " + section);
 		try {
@@ -31,21 +66,25 @@ class PostSection extends Component {
 				var reference = json.reference;
 				if (reference) {
 					console.log("reference: authorg: " + reference.authorg + " - submissionHas: " + reference.submissionHash + " - revisionHash: " + reference.revisionHash);
-					section = <EmbededPostSectionWidgetContainer authorg={reference.authorg} submissionHash={reference.submissionHash} revisionHash={reference.revisionHash} sectionIndex={reference.sectionIndex} />
+					section = <Post style={postStyle} headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />
+					reference = true;
 				}
 			}		
 		} catch(e) {
 
 		}
 
+		console.log("section post: " + this.props.focusedPost);
+		var actions = (<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
+		if (reference || !this.props.focusedPost) {
+			actions = ''
+		}
+
 		return (			
 			<div style={style}>
-				<div style={innerStyle1}>
-					{section}
-				</div>
-				<div style={innerStyle2}>
-					<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />
-				</div>
+				{section}
+				<br />
+				{actions}
 			</div>
 		);
 	}

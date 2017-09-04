@@ -43,6 +43,7 @@ export const getAccountBioRevisions = (account) => {
 }
 
 export const getAccountName = (account) => {
+  console.log("getAccountName")
    return new Promise((res, rej) => {
     appContracts.Ink.deployed()
     .then((instance) => {
@@ -55,6 +56,7 @@ export const getAccountName = (account) => {
             const mostRecentBio = bioRevisions[bioRevisions.length - 1];
             getAccountBioRevision(mostRecentBio)
             .then((data) => {
+              console.log("result")
               res({
                 accountName : JSON.parse(data.selectedBioRevision.toString()).name
               })
