@@ -70,10 +70,10 @@ export const setRevisionSectionResponses = (authAdd, subHash, revHash, sectionIn
 
 export const SET_REVISION_TIME = "SET_REVISION_TIME";
 export const setRevisionTime = (authAdd, subHash, revHash, revisionTime) => {
-  console.log("SET REVISION TIME")
+  console.log("SET REVISION TIME - time: " + revisionTime);
   return {
     type: SET_REVISION_TIME,
-    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, revisionTime : revisionTime}
+    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, timestamp : revisionTime}
   }
 }
 
@@ -120,7 +120,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
       })       
     }
     getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
-      dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime))
+      dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
     })
     console.log("getAccountName authorgAddress: " + authorgAddress);
     getAccountName(authorgAddress).then((name) => {
@@ -170,6 +170,7 @@ export default {
   SET_REVISION_SECTION_RESPONSES,
   ADD_POST_KEY,
   SET_AUTHORG_CURRENT_NAME,
+  SET_REVISION_TIME,
   loadPost,
   handleViewResponses
 };

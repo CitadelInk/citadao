@@ -18,14 +18,30 @@ class PostHeader extends Component {
 
 	render() {
 		var name = "loading...";
+		var time = "...";
 		var authorg = this.props.auths[this.props.authorg];
 		if (authorg) {
 			name = authorg.name;
+			var submissions = authorg.submissions;
+			if (submissions) {
+				var submission = submissions[this.props.submission];
+				if (submission) {
+					var revisions = submission.revisions;
+					if (revisions) {
+						var revision = revisions[this.props.revision];
+						if (revision) {
+							console.log("timestamp: " + revision.timestamp);
+							var date = new Date(revision.timestamp * 1000);
+							time = date.toDateString();
+						}
+					}					
+				}			
+			}		
 		}
 			
 		return (			
 			<div style={this.props.headerStyle}>
-				<span value={this.props.authorg} onClick={this.authorgNameClicked} style={{fontSize:'12pt', fontWeight:'bold', position:'absolute', left:'10'}}>{name}</span>
+				<span value={this.props.authorg} onClick={this.authorgNameClicked} style={{fontSize:'12pt', fontWeight:'bold', position:'absolute', left:'10'}}>{name} - {time}</span>
 				<span onClick={this.infoButtonClicked} style={{fontSize:'8pt', position:'absolute', right:'10'}}>info...</span>
 				<br />
 				{this.state.showDetails && 

@@ -89,9 +89,16 @@ const postKeys = (state = [], action) => {
 
 const revs = (state = {}, action) => {
   console.log("revs");
+  let revHash = action.data.revHash;
   switch (action.type) {
+    case SET_REVISION_TIME:
+      console.log("SET REVISION TIME! - action.data.timestamp: " + action.data.timestamp);
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          timestamp: action.data.timestamp
+        })
+      });
     case SET_REVISION_SWARM_DATA:
-      let revHash = action.data.revHash;
       console.log("set rev text: " + action.data.swarmRevText);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
@@ -107,6 +114,7 @@ const revs = (state = {}, action) => {
 const subs = (state = {}, action) => {
   console.log("subs");
   switch (action.type) {
+    case SET_REVISION_TIME:
     case SET_REVISION_SWARM_DATA:
       let subHash = action.data.subHash;
       console.log("subsHash: " + subHash);
@@ -125,15 +133,15 @@ const subs = (state = {}, action) => {
 }
 
 const auths = (state = {}, action) => {
-  console.log("auths - action.type=" + action.type + " - set revision swarm data: " + SET_REVISION_SWARM_DATA);
+  console.log("auths - action.type=" + action.type);
   if (action.data) {
     let authAdd = action.data.authAdd;
     var stateAuth = state[authAdd];
     if (!stateAuth) {
-      stateAuth = {};
-    
+      stateAuth = {};    
     }
     switch(action.type) {
+      case SET_REVISION_TIME:
       case SET_REVISION_SWARM_DATA:
         return {
           ...state,
@@ -158,72 +166,6 @@ const auths = (state = {}, action) => {
   }
 }
 
-/*const authSubRevs = (state = new Map(), action) => {
-  switch (action.type){
-    case SET_REVISION_SWARM_DATA:
-
-    default:
-      return state;
-}
-
-const authSubRevs = (state = new Map({
-  authorgAddresses : [],
-  authorgs: new Map({
-    submissionHashes : [],
-    submissions: new Map({
-      revisionHashes : [],
-      revisions : new Map()
-    })
-  })
-}), action) => {
-  switch (action.type) {
-    case SET_REVISION_SWARM_DATA:
-      console.log("set revision swarm data 1");
-      var revision = {title : action.data.swarmRevTitle, text : action.data.swarmRevText};
-      var authorg = state.get("authorgs").get(action.authAdd);
-      var submissions = authorg.submissions;
-      var submission = submissions.get(action.subHash);
-      var updatedSubmission = submission.revisions.set(action.data.revHash, revision);
-      var updatedSubmissions = submissions.set(action.data.subHash, updatedSubmission);
-      return state.set(action.data.authAdd, { ...authorg, submissions : updatedSubmissions});
-    default:
-      return state;
-  }
-}*/
-
-const revisions = (state = new Map({
-  revisionSectionResponses : new Map()
-}), action) => {
-  var data = state.get(action.data.revHash);
-  switch (action.type) {
-    case SET_REVISION_SWARM_DATA:
-      return state.set(action.data.revHash, action.data);
-    case SET_REVISION_AUTHORG_NAME:
-      return state.set(action.data.revHash, { ...data, authorgName: action.data.name})
-    case SET_REVISION_REACTIONS:
-      return state.set(action.data.revHash, { ...data, revisionReactionReactors : action.data.reactions})
-    case SET_REVISION_SECTION_RESPONSES:
-      var revisionSectionResponses = data.revisionSectionResponses;
-      var sectionIndex = action.data.sectionIndex;   
-      var sectionMap = new Map();
-      var sectionMap2 = sectionMap.set(sectionIndex, action.data.responses);
-      return state.set(action.data.revHash, { ...data, revisionSectionResponses : sectionMap2});
-    case SET_REVISION_TIMESTAMP:
-      return state.set(action.data.revHash, { ...data, timestamp : action.data.timestamp})
-    default:
-      return state;
-  }
- }
-
- const submissions = (state = new Map(), action) => {
-   switch (action.type) {
-     case SET_SUBMISSION_REVISIONS:
-      return state.set(action.data.revHash, action.data.submissions);
-    default:
-      return state;
-   }
- }
-
 const approvedReactions = (state = [], action) => {
   switch (action.type) {
     case SET_APPROVED_REACTIONS:
@@ -246,7 +188,6 @@ const rootReducer = combineReducers({
   wallet,
   ui,
   auths,
-  submissions,
   approvedReactions,
   postKeys
 });

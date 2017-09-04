@@ -21,34 +21,34 @@ class PostSection extends Component {
 		const postStyle = {
 				position:'relative',
 				background:'#FFFFFF',
-				height:'200px',
+				height:'100px',
 				width:'80%',
 				overflow:'hidden',
 				left:'10%'
 		}
 
 		const headerStyle = {
-			height:'40px',
 			background:'#7FDBFF',
 			borderTopLeftRadius: '15px',
 			borderTopRightRadius: '15px',
 			width:'100%',
-			position:'absolute',
+			position:'relative',
 			top:'0'
 		}
 
 
 		const bodyStyle = {
 			background:'#FFFFFF',
-			position:'absolute',
+			position:'relative',
 			overflow:'hidden',
 			width:'100%',
-			top:'40px'
+			top:'0px',
+			fontSize:'10px'
 		}
 
 		const footerStyle = {
 			position:'absolute',
-			bottom:'0',
+			bottom:'0px',
 			height: '20px',  
 			background:'#707B7c',
 			borderBottomLeftRadius: '15px',
@@ -92,9 +92,9 @@ class PostSection extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet } = state;
 
-  return {wallet, submissions };
+  return {wallet };
 }
 
 export default connect(mapStateToProps)(PostSection)

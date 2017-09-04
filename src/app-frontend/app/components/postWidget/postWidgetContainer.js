@@ -12,14 +12,15 @@ class PostWidgetContainer extends Component {
 	render() {
 		const style = {
 				height: '220px',
-				background:'#FFFFFF'
+				background:'#FFFFFF',
+				position:'relative'
 		}
 
 		const postStyle = {
-				position:'absolute',
+				position:'relative',
 				background:'#FFFFFF',
 				height:'200px',
-				width:'33%',
+				width:'100%',
 				overflow:'hidden'
 		}
 
@@ -28,18 +29,17 @@ class PostWidgetContainer extends Component {
 			borderTopLeftRadius: '15px',
 			borderTopRightRadius: '15px',
 			width:'100%',
-			position:'absolute',
-			top:'0px',
-			height:'40px'
+			position:'relative',
+			top:'0px'
 		}
 
 		const bodyStyle = {
 			background:'#FFFFFF',
 			position:'relative',
 			overflow:'hidden',
-			width:'100%',
-			top:'40px',
-			bottom:'20px'
+			width:'100%'
+			//top:'0px',
+			//bottom:'40px'
 		}
 
 		const footerStyle = {
@@ -56,16 +56,15 @@ class PostWidgetContainer extends Component {
 		return (			
 			<div style={style}>
  				<Post style={postStyle} headerStyle={headerStyle} footerStyle={footerStyle} bodyStyle={bodyStyle} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} focusedPost={false} />
-				<br />
 			</div>
 		);
 	}
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet } = state;
 
-  return {wallet, submissions };
+  return {wallet };
 }
 
 export default connect(mapStateToProps)(PostWidgetContainer)

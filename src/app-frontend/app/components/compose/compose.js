@@ -32,9 +32,9 @@ class Compose extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet } = state;
 
-  return {wallet, submissions };
+  return {wallet };
 }
 
 export default connect(mapStateToProps)(Compose)

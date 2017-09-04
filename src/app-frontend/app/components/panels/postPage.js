@@ -58,7 +58,7 @@ class PostPage extends Component {
 		const revision = this.props.revision;
 		var post = "loading...";
 		const postStyle = {
-				position:'relative',
+				position:'absolute',
 				background:'#FFFFFF',
 				width:'33%',
 				//height:'100%',
@@ -72,7 +72,6 @@ class PostPage extends Component {
 		}
 
 		const headerStyle = {
-			height:'60px',
 			background:'#7FDBFF',
 			borderTopLeftRadius: '15px',
 			borderTopRightRadius: '15px',
@@ -91,7 +90,7 @@ class PostPage extends Component {
 		}
 
 		const footerStyle = {
-			position:'relative',
+			position:'absolute',
 			bottom:'0',
 			height: '40px',  
 			background:'#707B7c',

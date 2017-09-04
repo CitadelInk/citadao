@@ -171,9 +171,9 @@ class Debug extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, approvedReactions, submissions } = state;
+  const { wallet, approvedReactions } = state;
 
-  return {wallet, approvedReactions, submissions};
+  return {wallet, approvedReactions };
 }
 
 export default connect(mapStateToProps)(Debug)
