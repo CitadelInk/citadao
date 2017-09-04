@@ -91,7 +91,7 @@ class PostPage extends Component {
 		}
 
 		const footerStyle = {
-			position:'absolute',
+			position:'relative',
 			bottom:'0',
 			height: '40px',  
 			background:'#707B7c',

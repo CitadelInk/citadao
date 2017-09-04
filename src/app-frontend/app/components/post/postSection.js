@@ -12,13 +12,14 @@ class PostSection extends Component {
 	render() {
 		const style = {
 			background:'#F0F0F0',
-			paddingBottom:'5px',
+			paddingBottom:'2px',
+			paddingTop:'2px',
 			width:'100%',
-			position:'absolute'
+			position:'relative'
 		}
 
 		const postStyle = {
-				position:'absolute',
+				position:'relative',
 				background:'#FFFFFF',
 				height:'200px',
 				width:'80%',
