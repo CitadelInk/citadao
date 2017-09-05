@@ -23,7 +23,7 @@ export const gotoUserPage  = (user) => dispatch =>  {
 }
 
 export const gotoPost = (authorg, subHash, revHash) => dispatch => {
-  dispatch(loadPost(authorg, subHash, revHash));
+  dispatch(loadPost(authorg, subHash, revHash, -1, true, true));
   return dispatch(navigatePage({page:'post',route:'post\/authorg\/' + authorg + '\/sub\/' + subHash + '\/rev\/' + revHash}))
 }
 

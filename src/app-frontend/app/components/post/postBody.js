@@ -27,19 +27,7 @@ class PostBody extends Component {
 
 
 
-	render() {
-		/*var stateHeight = parseInt(this.state.height);
-		var remainingHeight = stateHeight - 200;
-		const calcheight = remainingHeight + 'px';
-		const style = {
-				background:'#F0F0F0',
-				height:calcheight,
-				top:'60px',
-				//bottom:'40px',
-				position:'absolute',
-				overflow:'scroll'
-		}*/
-		
+	render() {		
 		var authorg = this.props.auths[this.props.authorg];
 		var text = ["loading"];
 		var title = "loading";
@@ -64,12 +52,12 @@ class PostBody extends Component {
 			text = [text[this.props.sectionIndex]];
 		}
 		var body = "loading";
+		var responses = [];
 
 		if (this.props.sectionIndex) {
-			body = <PostSection sectionResponses={responses} section={text} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
+			body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
 		} else {
 			body = text.map((section, i) => {
-				var responses = [];
 				/*if (this.props.submission.revisionSectionResponses && this.props.submission.revisionSectionResponses.get(i)) {
 					console.log("gotem");
 					responses = this.props.submission.revisionSectionResponses.get(i);

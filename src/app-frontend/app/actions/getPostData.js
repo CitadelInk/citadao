@@ -8,7 +8,8 @@ import {
   getRevisionReactions,
   getPostKey,
   getTotalPostCount,
-  getNumReferences
+  getNumReferences,
+  getReferenceKey
 } from '../api/getInkPostData'
 
 export const ADD_POST_KEY = "ADD_POST_KEY";
@@ -48,6 +49,14 @@ export const setAuthSubRevReferenceCount = (authAdd, subHash, revHash, count) =>
   return {
     type: SET_AUTH_SUB_REV_REFERENCE_COUNT,
     data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refCount:count}
+  }
+}
+
+export const SET_AUTH_SUB_REV_REF_KEY = "SET_AUTH_SUB_REV_REF_KEY";
+export const addAuthSubRevRefKey = (authAdd, subHash, revHash, refAuthAdd, refSubHash, refRevHash) => {
+  return {
+    type: SET_AUTH_SUB_REV_REF_KEY,
+    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refKey: {authorgAddress : refAuthAdd, submissionHash : refSubHash, revisionHash : refRevHash}}
   }
 }
 
@@ -93,12 +102,13 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
     var route = ui.get('route');
     var splitRoute = route.split('\/'); 
     if(splitRoute.length === 7) {
-     loadPost(splitRoute[2], splitRoute[4], splitRoute[6]);
+     loadPost(splitRoute[2], splitRoute[4], splitRoute[6], -1, true, true);
     }
   }
 }
 
-export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true) => (dispatch, getState) => {
+export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
+  console.log("LOAD POST - AUTHORG: " + authorgAddress + " - SUBMISSION: " + submissionHash + " - REVISION: " + revisionHash);
   const {approvedReactions} = getState();
   return getRevisionFromSwarm(revisionHash).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 
@@ -128,6 +138,14 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
     })
     getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
       dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
+      if (focusedPost) {
+        for(var i = 0; i < refs.count; i++) {
+          getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
+            dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash))
+            dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, -1, false));
+          })
+        }
+      }
     })
     /*getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
       dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors))
@@ -154,9 +172,9 @@ export const setSelectedBioRevision = (selectedRevision) => dispatch => {
 };
 
 export const handleViewResponses = (responses) => (dispatch) => {
-  responses.map((response) => {
+  /*responses.map((response) => {
     dispatch(loadPost(response, false))
-  })
+  })*/
   return dispatch(setWalletData({selectedResponses : responses}))
 }
 
@@ -170,6 +188,7 @@ export default {
   SET_AUTHORG_CURRENT_NAME,
   SET_REVISION_TIME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
+  SET_AUTH_SUB_REV_REF_KEY,
   loadPost,
   handleViewResponses
 };

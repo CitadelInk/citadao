@@ -21,7 +21,8 @@ const {
   SET_REVISION_TIME,
   ADD_POST_KEY,
   SET_AUTHORG_CURRENT_NAME,
-  SET_AUTH_SUB_REV_REFERENCE_COUNT
+  SET_AUTH_SUB_REV_REFERENCE_COUNT,
+  SET_AUTH_SUB_REV_REF_KEY
 } = actions;
 
 const wallet = (state = Map({
@@ -108,6 +109,17 @@ const revs = (state = {}, action) => {
           refCount: action.data.refCount
         })
       });
+    case SET_AUTH_SUB_REV_REF_KEY:
+      console.log("SET_AUTH_SUB_REV_REF_KEY - key: " + action.data.refKey);
+      let refKeys = state[revHash].refKeys;
+      if (!refKeys) {
+        refKeys = [];
+      }
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          refKeys: [...refKeys, action.data.refKey]
+        })
+      });
     default:
       return state;
   }
@@ -115,6 +127,7 @@ const revs = (state = {}, action) => {
 
 const subs = (state = {}, action) => {
   switch (action.type) {
+    case SET_AUTH_SUB_REV_REF_KEY:
     case SET_REVISION_TIME:
     case SET_AUTH_SUB_REV_REFERENCE_COUNT:
     case SET_REVISION_SWARM_DATA:
@@ -141,6 +154,7 @@ const auths = (state = {}, action) => {
       stateAuth = {};    
     }
     switch(action.type) {
+      case SET_AUTH_SUB_REV_REF_KEY:
       case SET_REVISION_TIME:
       case SET_AUTH_SUB_REV_REFERENCE_COUNT:
       case SET_REVISION_SWARM_DATA:

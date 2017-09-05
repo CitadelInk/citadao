@@ -22,12 +22,20 @@ class Home extends Component {
 				zIndex:'900',
 				display:'flex'
 		}
+
+		const postsStyle = {
+			position:'relative',
+			minWidth:'33%',
+			maxWidth:'34%',
+		}
 			
 		return (
 			
 			<div style={style} className="Home">
 				<EmptyLeft />
-				<Posts />	
+				<div style={postsStyle}>
+				<Posts postKeys={this.props.postKeys}/>	
+				</div>
 				<EmptyRight />		
 			</div>
 		);
@@ -35,9 +43,9 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet, postKeys } = state;
 
-  return {wallet };
+  return {wallet, postKeys };
 }
 
 export default connect(mapStateToProps)(Home)

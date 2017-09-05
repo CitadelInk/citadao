@@ -11,15 +11,15 @@ class Posts extends Component {
 
 	render() {
 		const style = {
-				height: '100%',
-				background:'#FFFFFF',
-				minWidth:'33%',
-				maxWidth:'34%',
-				float:'left'
+			position:'relative',
+			background:'#FFFFFF',
+			float:'left',
+			width:'100%'
 		}
 			
 		var posts = this.props.postKeys.map(function(key) {
 			var key2 = key.authorgAddress + "-" + key.submissionHash + "-" + key.revisionHash;
+			console.log("key2: " + key2);
 			return (<PostWidgetContainer key={key2} authorg={key.authorgAddress} submission={key.submissionHash} revision={key.revisionHash} />)
 		})
 		return (
@@ -32,9 +32,9 @@ class Posts extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, postKeys, auths } = state;
+  const { wallet, auths } = state;
 
-  return {wallet, postKeys, auths };
+  return {wallet, auths };
 }
 
 export default connect(mapStateToProps)(Posts)

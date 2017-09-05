@@ -11,18 +11,16 @@ class Compose extends Component {
 
 
 	render() {
-		const style = {
-				position:'absolute',
+		/*const style = {
+				position:'relative',
 				background:'#FFFFFF',
-				width:'33%',
+				width:'100%',
 				overflow:'hidden',
-				right:'0',
-				top:'100px',
-				bottom:'0'
-		}
+				float:'left'
+		}*/
 
 		return(
-			<div style={style}>
+			<div/* style={style}*/>
 				<ComposeHeader />
 				<ComposeBody />
 				<ComposeFooter />
