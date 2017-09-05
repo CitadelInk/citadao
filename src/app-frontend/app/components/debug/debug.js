@@ -97,9 +97,6 @@ class Debug extends Component {
 					Approved Reactions - {this.props.approvedReactions.map((value) => {
 						return (value.reactionHash + " - " + value.reactionValue + "  -  ")
 					})}<br /><br />
-					Test Typed Submissions - {this.props.submissions.map((value,key) => {
-						return (key + " - " + value.test)
-					})}<br />
 				</p>
 				
 				{this.isOwner() && ownerSection}
