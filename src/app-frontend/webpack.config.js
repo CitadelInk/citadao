@@ -1,5 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 
 module.exports = {
   entry: {
@@ -11,10 +13,10 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, './public'),
 
     // necessary for HMR to know where to load the hot update chunks
-    publicPath: '/static/'
+    publicPath: ''
   },
   module: {
     rules: [
@@ -48,5 +50,11 @@ module.exports = {
 
     // enable HMR on the server
     hot: true
-  }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+        template: './index.html'
+    }),
+    new webpack.HotModuleReplacementPlugin()
+  ]
 }
