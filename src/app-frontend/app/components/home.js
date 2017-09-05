@@ -23,7 +23,7 @@ class Home extends Component {
 		return (
 			
 			<div style={style} className="Home">
-			{/* <Posts />	 */}
+			<Posts />	
 			
 			</div>
 		);
