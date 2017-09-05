@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import actions from '../actions';
@@ -98,7 +97,7 @@ class Header extends Component {
 	}
 
 	handleAccountSelected(e) {
-		this.props.dispatch(setSelectedAccount(e.target.value));
+		this.props.dispatch(setSelectedAccount(e.target.value, this.props.network.web3));
 	}
 
 	gotoAccountPageClicked(e) {

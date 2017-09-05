@@ -1,5 +1,5 @@
 import appContracts from 'app-contracts';
-import localWeb3 from "../helpers/web3Helper";
+
 import {
   getAdvancedTokenPublicData,
   getCitadelPublicData,
@@ -87,8 +87,8 @@ export const setRevisionSectionResponses = (revHash, sectionIndex, responses) =>
 }
 
 export const setBuyPrice = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const newBuyPrice = localWeb3.toBigNumber(wallet.get('newBuyPrice'));
+  const {wallet, network} = getState();
+  const newBuyPrice = network.web3.toBigNumber(wallet.get('newBuyPrice'));
   const account = wallet.get('account');
   return updateBuyPrice(newBuyPrice, account).then((data) => {
     return dispatch(setWalletData(data));
@@ -135,9 +135,9 @@ export const initializeContract = () => (dispatch) => {
   });
 };
 
-export const initializeAccounts = () => dispatch => {
+export const initializeAccounts = (web3) => dispatch => {
   return new Promise((res, rej) => {
-    getAccounts().then((accounts) => {
+    getAccounts(web3).then((accounts) => {
       var accountNamePromises = accounts.accounts.map(acct => {
         return getAccountName(acct)
       })
@@ -148,7 +148,7 @@ export const initializeAccounts = () => dispatch => {
         })
         var account = accounts.accounts[0];
         Promise.all([
-          getEthBalance(account),
+          getEthBalance(account, web3),
           getCitaBalance(account)
         ]).then(([ethBalance, citaBalance]) => {
           res({...accounts, accountNames, account, ethBalance, citaBalance}); 
@@ -218,13 +218,13 @@ export const initializeTestTypedSubmissions = () => dispatch => {
   })
 }
 
-export const setSelectedAccount = (account) => dispatch => {
+export const setSelectedAccount = (account, web3) => dispatch => {
   return Promise.all([
         getEthBalance(account),
         getCitaBalance(account),
         getAccountBioRevisions(account)
       ]) .then(([ethBalance, citaBalance, bioRevisions]) => {
-    localWeb3.eth.defaultAccount = account
+    web3.eth.defaultAccount = account
     return dispatch(setWalletData({account, ...bioRevisions, ethBalance, citaBalance}))
   })
 };
@@ -320,8 +320,8 @@ export const handleSubmit = () => (dispatch, getState) => {
 };
 
 export const handleBuySubmit = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const ethToSend = localWeb3.toBigNumber(wallet.get('etherToSend'));
+  const {wallet, network} = getState();
+  const ethToSend = network.web3.toBigNumber(wallet.get('etherToSend'));
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
   submitBuy(ethToSend, account, tokenOwnerAccount).then(() => {

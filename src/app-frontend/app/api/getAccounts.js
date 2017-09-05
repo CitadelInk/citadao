@@ -1,13 +1,12 @@
-import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 
-export const getEthBalance = (account) => {
+export const getEthBalance = (account, web3) => {
   return new Promise((res, rej) => {
-    localWeb3.eth.getBalance(account, localWeb3.eth.defaultBlock, (error, balance) => {
+    web3.eth.getBalance(account, web3.eth.defaultBlock, (error, balance) => {
       if (error) {
         rej(error);
       } else if (balance) {
-        var b = localWeb3.fromWei(balance, 'ether').toString();
+        var b = web3.fromWei(balance, 'ether').toString();
         res({b})
       }
     });
@@ -16,9 +15,9 @@ export const getEthBalance = (account) => {
 
 // could be cleaned
 
-export const getAccounts = () => {
+export const getAccounts = (web3) => {
   return new Promise((res, rej) => {
-    localWeb3.eth.getAccounts((error, accounts) => {
+    web3.eth.getAccounts((error, accounts) => {
       if (error) {
         rej(error);
       } else if (accounts) {
@@ -120,13 +119,13 @@ export const getAccountName = (account) => {
   });
 }
 
-export const getReactionValue = (reactionHash) => {
+export const getReactionValue = (reactionHash, web3) => {
   return new Promise((res, rej) => {
     const bzzAddress = reactionHash.substring(2);
-    localWeb3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
+    web3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
       // prolly want to handle errors
       const jsonBio = JSON.parse(reactionManifest)
-      localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
+      web3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
         res({
           reactionHash: reactionHash, reactionValue: reaction
         });
@@ -135,13 +134,13 @@ export const getReactionValue = (reactionHash) => {
   });
 }
 
-export const getAccountBioRevision = (revisionHash) => {
+export const getAccountBioRevision = (revisionHash, web3) => {
   return new Promise((res, rej) => {
     const bzzAddress = revisionHash.substring(2);
-    localWeb3.bzz.retrieve(bzzAddress, (error, bio) => {
+    web3.bzz.retrieve(bzzAddress, (error, bio) => {
       // prolly want to handle errors
       const jsonBio = JSON.parse(bio)
-      localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
+      web3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
         res({
           selectedBioRevision: bioText
         });
@@ -151,13 +150,13 @@ export const getAccountBioRevision = (revisionHash) => {
 }
 
 // once we add revisioning, will need to get specific revision (default likely most recent?)
-export const getSubmission = (submissionHash) => {
+export const getSubmission = (submissionHash, web3) => {
   return new Promise((res, rej) => {
     const bzzAddress = submissionHash.substring(2);
-    localWeb3.bzz.retrieve(bzzAddress, (error, submission) => {
+    web3.bzz.retrieve(bzzAddress, (error, submission) => {
       console.log("retrieved! submission = " + submission);
       const jsonSubmission = JSON.parse(submission)
-      localWeb3.bzz.retrieve(jsonSubmission.entries[0].hash, (error, entry) => {     
+      web3.bzz.retrieve(jsonSubmission.entries[0].hash, (error, entry) => {     
         console.log("retrieved! entry = " + entry);
         var subJson = JSON.parse(entry)
         res ({

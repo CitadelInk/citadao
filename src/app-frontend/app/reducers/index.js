@@ -18,8 +18,25 @@ const {
   SET_SUBMISSION,
   SET_SUBMISSION_AUTHORG_NAME,
   SET_SUBMISSION_REACTIONS,
-  SET_REVISION_SECTION_RESPONSES
+  SET_REVISION_SECTION_RESPONSES,
+  WEB_SETUP_COMPLETE
 } = actions;
+
+const network = (state = Map({
+  web3: undefined,
+  isConnected: false
+}), action) => {
+  switch (action.type) {
+    case WEB_SETUP_COMPLETE:
+      return {
+        ...state,
+        web3: action.data,
+        isConnected: true
+      };
+    default:
+      return state;
+  }
+};
 
 const wallet = (state = Map({
   accounts: List([]),
@@ -132,7 +149,8 @@ const rootReducer = combineReducers({
   wallet,
   ui,
   submissions,
-  approvedReactions
+  approvedReactions,
+  network
 });
 
 export default rootReducer;
