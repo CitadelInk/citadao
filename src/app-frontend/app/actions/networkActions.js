@@ -34,7 +34,7 @@ export function setupWeb3() {
   
       dispatch({
         type: WEB_SETUP_COMPLETE,
-        payload: web3Provider
+        data: web3Provider
       });
 
         // can't run this in mist as of yet as we are not deployed to a public network

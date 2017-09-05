@@ -27,7 +27,7 @@ export const getAccounts = (web3) => {
   });
 }
 
-export const getApprovedReactions = () => {
+export const getApprovedReactions = (web3) => {
   return new Promise((res, rej) =>{
     appContracts.Citadel.deployed()
     .then((instance) => {
@@ -35,7 +35,7 @@ export const getApprovedReactions = () => {
         instance.getApprovedReactions()
       ])
       .then(([approvedReactionHashes]) => {
-        getReactionValues(approvedReactionHashes).then((approvedReactions) => {
+        getReactionValues(approvedReactionHashes, web3).then((approvedReactions) => {
           console.log("approvedReactions: " + approvedReactions);
           console.log("approvedReactions.reactions: " + (approvedReactions.reactions));
           res({approvedReactions : approvedReactions.reactions});
@@ -45,10 +45,10 @@ export const getApprovedReactions = () => {
   });
 }
 
-export const getReactionValues = (approvedReactionHashes) => {
+export const getReactionValues = (approvedReactionHashes, web3) => {
   return new Promise((res, rej) => {
     var promises = approvedReactionHashes.map(hash => {
-      return getReactionValue(hash)
+      return getReactionValue(hash, web3)
     })
     Promise.all(promises).then(values => {
       console.log("promises values: " + values)
@@ -91,7 +91,7 @@ export const getAccountBioRevisions = (account) => {
   });
 }
 
-export const getAccountName = (account) => {
+export const getAccountName = (account, web3) => {
    return new Promise((res, rej) => {
     appContracts.Citadel.deployed()
     .then((instance) => {
@@ -102,7 +102,7 @@ export const getAccountName = (account) => {
         if(bioRevisions !== null) {
           if (bioRevisions.length > 0) {
             const mostRecentBio = bioRevisions[bioRevisions.length - 1];
-            getAccountBioRevision(mostRecentBio)
+            getAccountBioRevision(mostRecentBio, web3)
             .then((data) => {
               res({
                 accountName : JSON.parse(data.selectedBioRevision.toString()).name
