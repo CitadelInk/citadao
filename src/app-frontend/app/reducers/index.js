@@ -2,10 +2,8 @@ import { combineReducers } from 'redux';
 import { Map, List } from 'immutable';
 import actions from '../actions';
 const {
-  SET_CITADEL_WALLET_ADRESS,
-  SET_CITADEL_COMPTROLLER_ACCOUNT,
-  SET_NAME_CHANGE_COST_IN_CITA,
-  SET_CITADEL_ADRESS,
+  SET_INK_WALLET_ADRESS,
+  SET_INK_COMPTROLLER_ACCOUNT,
   SET_TOKEN_ADRESS,
   SET_TOKEN_OWNER_ACCONT,
   SET_BUY_PRICE,
@@ -13,12 +11,18 @@ const {
   SET_WALLET_DATA,
   NAVIGATE_PAGE,
   SET_SUBMISSIONS,
+  SET_SUBMISSION_REVISIONS,
   SET_APPROVED_REACTIONS,
   SET_BUY_MORE,
-  SET_SUBMISSION,
-  SET_SUBMISSION_AUTHORG_NAME,
-  SET_SUBMISSION_REACTIONS,
-  SET_REVISION_SECTION_RESPONSES
+  SET_REVISION_SWARM_DATA,
+  SET_REVISION_AUTHORG_NAME,
+  SET_REVISION_REACTIONS,
+  SET_REVISION_SECTION_RESPONSES,
+  SET_REVISION_TIME,
+  ADD_POST_KEY,
+  SET_AUTHORG_CURRENT_NAME,
+  SET_AUTH_SUB_REV_REFERENCE_COUNT,
+  SET_AUTH_SUB_REV_REF_KEY
 } = actions;
 
 const wallet = (state = Map({
@@ -28,19 +32,18 @@ const wallet = (state = Map({
   account: null,
   accounts: List([]),
   tokenSupply: 0,
-  citaBalance: 0,
+  inkBalance: 0,
   ethBalance: 0,
-  citaBuyPrice: 1.0,
+  inkBuyPrice: 1.0,
   etherToSend: 0,
   newBuyPrice: 0,
-  citadelName: '',
   newName: '',
   newReaction: '',
   tokenOwnerAccount: null,
-  citadelComptrollerAccount: null,
+  inkComptrollerAccount: null,
   tokenAddress: null,
-  citadelAddress: null,
-  citadelWalletAddress: null,
+  inkAddress: null,
+  inkWalletAddress: null,
   bioRevisions: [],
   bioRevisionsByAccount: {},
   bioNameInput: '',
@@ -59,17 +62,13 @@ const wallet = (state = Map({
     case SET_TOKEN_OWNER_ACCONT:
       return state.set("tokenOwnerAccount", action.data);
     case SET_BUY_PRICE:
-      return state.set("citaBuyPrice", action.data);
+      return state.set("inkBuyPrice", action.data);
     case SET_TOKEN_SUPPLY:
       return state.set("tokenSupply", action.data);
-    case SET_CITADEL_ADRESS:
-      return state.set("citadelAddress", action.data);
-    case SET_NAME_CHANGE_COST_IN_CITA:
-      return state.set("nameChangeCostInCita", action.data);
-    case SET_CITADEL_COMPTROLLER_ACCOUNT:
-      return state.set("citadelComptrollerAccount", action.data);
-    case SET_CITADEL_WALLET_ADRESS:
-      return state.set("citadelWalletAddress", action.data);
+    case SET_INK_COMPTROLLER_ACCOUNT:
+      return state.set("inkComptrollerAccount", action.data);
+    case SET_INK_WALLET_ADRESS:
+      return state.set("inkWalletAddress", action.data);
     case SET_BUY_MORE:
       return state.set("buyMoreActive", action.data)
     case SET_WALLET_DATA:
@@ -79,36 +78,108 @@ const wallet = (state = Map({
   }
 };
 
-const submissions = (state = new Map({
-  revisionSectionResponses : new Map()
-}), action) => {
-  switch (action.type) {
-    case SET_SUBMISSION:
-      return state.set(action.data.subHash, action.data);
-    case SET_SUBMISSION_AUTHORG_NAME:
-      var data = state.get(action.data.subHash);
-      return state.set(action.data.subHash, { ...data, authorgName: action.data.name})
-    case SET_SUBMISSION_REACTIONS:
-      var data = state.get(action.data.subHash);
-      return state.set(action.data.subHash, { ...data, revisionReactionReactors : action.data.reactions})
-    case SET_REVISION_SECTION_RESPONSES:
-      var data = state.get(action.data.revHash);
-      console.log("1 data: " + data);
-      var revisionSectionResponses = data.revisionSectionResponses;
-      console.log("2 revisionSectionResponses: " + revisionSectionResponses);
-      var sectionIndex = action.data.sectionIndex;
-      console.log("3 sectionIndex: " + sectionIndex);      
-      var sectionMap = new Map();
-      console.log("4 sectionMap: " + sectionMap);
-      var sectionMap2 = sectionMap.set(sectionIndex, action.data.responses);
-      console.log("4-2 sectionMap2: " + sectionMap2);
-      console.log("5 sectionMap[sectionIndex]" + sectionMap2.get(sectionIndex));
-
-      return state.set(action.data.revHash, { ...data, revisionSectionResponses : sectionMap2});
+const postKeys = (state = [], action) => {
+  switch(action.type) {
+    case ADD_POST_KEY:
+      return [...state, action.data];
     default:
       return state;
   }
- }
+}
+
+const revs = (state = {}, action) => {
+  let revHash = action.data.revHash;
+  switch (action.type) {
+    case SET_REVISION_TIME:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          timestamp: action.data.timestamp
+        })
+      });
+    case SET_REVISION_SWARM_DATA:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          title: action.data.swarmRevTitle,
+          text: action.data.swarmRevText
+        })
+      });
+    case SET_AUTH_SUB_REV_REFERENCE_COUNT:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          refCount: action.data.refCount
+        })
+      });
+    case SET_AUTH_SUB_REV_REF_KEY:
+      console.log("SET_AUTH_SUB_REV_REF_KEY - key: " + action.data.refKey);
+      let refKeys = state[revHash].refKeys;
+      if (!refKeys) {
+        refKeys = [];
+      }
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          refKeys: [...refKeys, action.data.refKey]
+        })
+      });
+    default:
+      return state;
+  }
+}
+
+const subs = (state = {}, action) => {
+  switch (action.type) {
+    case SET_AUTH_SUB_REV_REF_KEY:
+    case SET_REVISION_TIME:
+    case SET_AUTH_SUB_REV_REFERENCE_COUNT:
+    case SET_REVISION_SWARM_DATA:
+      let subHash = action.data.subHash;
+      var stateSub = state[subHash];
+      if (!stateSub) {
+        stateSub = {};
+      }
+      return {
+      ...state,
+      [subHash]: {
+        ...stateSub,
+        revisions : revs(stateSub.revisions, action)
+      }
+    }
+  }
+}
+
+const auths = (state = {}, action) => {
+  if (action.data) {
+    let authAdd = action.data.authAdd;
+    var stateAuth = state[authAdd];
+    if (!stateAuth) {
+      stateAuth = {};    
+    }
+    switch(action.type) {
+      case SET_AUTH_SUB_REV_REF_KEY:
+      case SET_REVISION_TIME:
+      case SET_AUTH_SUB_REV_REFERENCE_COUNT:
+      case SET_REVISION_SWARM_DATA:
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            submissions : subs(stateAuth.submissions, action)
+          }
+        }
+      case SET_AUTHORG_CURRENT_NAME:
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            name : action.data.name
+          }
+        }
+      default:
+        return state;
+    }
+  } else {
+    return state;
+  }
+}
 
 const approvedReactions = (state = [], action) => {
   switch (action.type) {
@@ -131,8 +202,9 @@ const ui = (state = Map({page: 'home', route: '/'}), action) => {
 const rootReducer = combineReducers({
   wallet,
   ui,
-  submissions,
-  approvedReactions
+  auths,
+  approvedReactions,
+  postKeys
 });
 
 export default rootReducer;

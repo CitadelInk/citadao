@@ -3,15 +3,17 @@ import {
   getAccountBioData,
   getAccountBioRevisions,
   getAccountBioRevision,
-  getAccountName,
   getEthBalance
 } from '../api/getAccounts';
 
 import {
   setWalletData,
-  setSelectedBioRevision,
+  setSelectedBioRevision
+} from './contractPublicData';
+
+import {
   loadPost
-} from './contractPublicData'
+} from './getPostData';
 
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
@@ -20,9 +22,9 @@ export const gotoUserPage  = (user) => dispatch =>  {
   return dispatch(getUserPageBios(user)) 
 }
 
-export const gotoPost = (subHash, revHash) => dispatch => {
-  dispatch(loadPost(subHash, revHash));
-  return dispatch(navigatePage({page:'post',route:'\/post\/' + subHash + '\/rev\/' + revHash}))
+export const gotoPost = (authorg, subHash, revHash) => dispatch => {
+  dispatch(loadPost(authorg, subHash, revHash, -1, true, true));
+  return dispatch(navigatePage({page:'post',route:'post\/authorg\/' + authorg + '\/sub\/' + subHash + '\/rev\/' + revHash}))
 }
 
 export const getUserPageBios = (user) => dispatch => {
