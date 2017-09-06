@@ -5,30 +5,33 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from './reducers';
 import { AppContainer } from 'react-hot-loader';
-import appContracts from 'app-contracts';
 import App from './components/app';
 import Header from './components/header';
-import localWeb3 from "./helpers/web3Helper"
 import Router from './router';
-
-const middleware = [ thunk ];
-
-appContracts.setProvider(localWeb3.currentProvider);
+import actions from './actions';
 
 
-const store = createStore(
-  reducers,
-  applyMiddleware(...middleware)
-);
+window.addEventListener('load', () => { 
+  const middleware = [ thunk ];
 
+  const {
+    setupWeb3 
+  } = actions;
 
+  const store = createStore(
+    reducers,
+    applyMiddleware(...middleware)
+  );
 
-const router = new Router({store: store});
-router.history.start();
-
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
+  store.dispatch(setupWeb3());
+  
+  const router = new Router({store: store});
+  router.history.start();
+  
+  ReactDOM.render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById('root')
+  );  
+})

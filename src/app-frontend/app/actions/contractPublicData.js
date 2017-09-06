@@ -1,5 +1,5 @@
 import appContracts from 'app-contracts';
-import localWeb3 from "../helpers/web3Helper";
+
 import {
   getAdvancedTokenPublicData,
   getCitadelPublicData,
@@ -87,16 +87,17 @@ export const setRevisionSectionResponses = (revHash, sectionIndex, responses) =>
 }
 
 export const setBuyPrice = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const newBuyPrice = localWeb3.toBigNumber(wallet.get('newBuyPrice'));
+  const {wallet, network} = getState();
+  const newBuyPrice = network.web3.toBigNumber(wallet.get('newBuyPrice'));
   const account = wallet.get('account');
-  return updateBuyPrice(newBuyPrice, account).then((data) => {
+  return updateBuyPrice(newBuyPrice, account, network.web3).then((data) => {
     return dispatch(setWalletData(data));
   });
 };
 
-export const initializeApprovedReactions = () => (dispatch) => {
-  getApprovedReactions().then((reactions) => {
+export const initializeApprovedReactions = () => (dispatch, getState) => {
+  const {network} = getState();
+  getApprovedReactions(network.web3).then((reactions) => {
     dispatch(initializeTestTypedSubmissions());
       return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
@@ -114,10 +115,10 @@ export const initializeNeededSubmissions = () => (dispatch, getState) => {
 }
 
 export const addNewApprovedReaction = () => (dispatch, getState) => {
-  const {wallet} = getState();
+  const {wallet, network} = getState();
   const reaction = wallet.get('newReaction');
   const account = wallet.get('account');
-  return(addApprovedReaction(reaction, account)).then((data) => {
+  return(addApprovedReaction(reaction, account, network.web3)).then((data) => {
     return dispatch(initializeApprovedReactions());
   })
 }
@@ -135,11 +136,11 @@ export const initializeContract = () => (dispatch) => {
   });
 };
 
-export const initializeAccounts = () => dispatch => {
+export const initializeAccounts = (web3) => dispatch => {
   return new Promise((res, rej) => {
-    getAccounts().then((accounts) => {
+    getAccounts(web3).then((accounts) => {
       var accountNamePromises = accounts.accounts.map(acct => {
-        return getAccountName(acct)
+        return getAccountName(acct, web3)
       })
       Promise.all(accountNamePromises).then(values => {
         var accountNamesResults = values;
@@ -148,7 +149,7 @@ export const initializeAccounts = () => dispatch => {
         })
         var account = accounts.accounts[0];
         Promise.all([
-          getEthBalance(account),
+          getEthBalance(account, web3),
           getCitaBalance(account)
         ]).then(([ethBalance, citaBalance]) => {
           res({...accounts, accountNames, account, ethBalance, citaBalance}); 
@@ -165,8 +166,8 @@ export const initializeAccounts = () => dispatch => {
 
 export const loadPost = (submissionHash, revisionHash, firstLevel = true) => (dispatch, getState) => {
   console.log("LOAD POST")
-  const {approvedReactions} = getState();
-  return getSubmission(submissionHash).then(result => {
+  const {approvedReactions, network} = getState();
+  return getSubmission(submissionHash, network.web3).then(result => {
     dispatch(setSubmission(
       {
         subHash: submissionHash, 
@@ -199,7 +200,7 @@ export const loadPost = (submissionHash, revisionHash, firstLevel = true) => (di
         }
       })       
     }
-    getAccountName(result.submissionAuthorg).then((name) => {
+    getAccountName(result.submissionAuthorg, network.web3).then((name) => {
       dispatch(setSubmissionAuthorgName(submissionHash, name.accountName));
     })
     getSubmissionReactions(submissionHash, result.submissionAuthorg, approvedReactions).then((reactions) => {
@@ -218,19 +219,21 @@ export const initializeTestTypedSubmissions = () => dispatch => {
   })
 }
 
-export const setSelectedAccount = (account) => dispatch => {
+export const setSelectedAccount = (account) => (dispatch, getState) => {
+  const {network} = getState();
   return Promise.all([
-        getEthBalance(account),
+        getEthBalance(account, network.web3),
         getCitaBalance(account),
         getAccountBioRevisions(account)
       ]) .then(([ethBalance, citaBalance, bioRevisions]) => {
-    localWeb3.eth.defaultAccount = account
+    network.web3.eth.defaultAccount = account
     return dispatch(setWalletData({account, ...bioRevisions, ethBalance, citaBalance}))
   })
 };
 
-export const setSelectedBioRevision = (selectedRevision) => dispatch => {
-  return getAccountBioRevision(selectedRevision).then((revision) => {
+export const setSelectedBioRevision = (selectedRevision) => (dispatch, getState) => {
+  const {network} = getState();
+  return getAccountBioRevision(selectedRevision, network.web3).then((revision) => {
     return dispatch(setWalletData({selectedBioRevision : selectedRevision, selectedBioRevisionValue : revision}))
   })
 };
@@ -242,12 +245,12 @@ export const updateCitaBalance = (account) => dispatch => {
 };
 
 export const submitBio = () => (dispatch, getState) => {
-  const {wallet} = getState();
+  const {wallet, network} = getState();
   const account = wallet.get('account');
   const bioNameInput = wallet.get('bioNameInput');
   const bioTextInput = wallet.get('bioTextInput')
   var bioJson = {"name" : bioNameInput, "text" : bioTextInput}
-  return updateBio(JSON.stringify(bioJson), account).then(function(tx_id) {
+  return updateBio(JSON.stringify(bioJson), account, network.web3).then(function(tx_id) {
       alert("bio added to contract");
     }).catch(function(e) {
       alert("error - " + e);
@@ -256,7 +259,7 @@ export const submitBio = () => (dispatch, getState) => {
 
 
 export const submitPost = () => (dispatch, getState) => {
-  const {wallet} = getState();
+  const {wallet, network} = getState();
   const account = wallet.get('account');
   const postTitleInput = wallet.get('postTitleInput');
   const postTextInput = wallet.get('postTextInput');
@@ -287,7 +290,7 @@ export const submitPost = () => (dispatch, getState) => {
   })
 
   var postJson = {"authorg" : account, "title" : postTitleInput, "text" : trimmedTextInput}
-  return post(JSON.stringify(postJson), references, account).then(function(tx_id) {
+  return post(JSON.stringify(postJson), references, account, network.web3).then(function(tx_id) {
       alert("post added to contract");
     }).catch(function(e) {
       alert("error - " + e);
@@ -320,8 +323,8 @@ export const handleSubmit = () => (dispatch, getState) => {
 };
 
 export const handleBuySubmit = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const ethToSend = localWeb3.toBigNumber(wallet.get('etherToSend'));
+  const {wallet, network} = getState();
+  const ethToSend = network.web3.toBigNumber(wallet.get('etherToSend'));
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
   submitBuy(ethToSend, account, tokenOwnerAccount).then(() => {

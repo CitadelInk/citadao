@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import actions from '../actions';
@@ -111,9 +110,9 @@ class Header extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet, network } = state;
 
-  return {wallet};
+  return {wallet, network};
 }
 
 export default connect(mapStateToProps)(Header)

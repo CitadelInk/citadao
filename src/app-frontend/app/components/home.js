@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import Posts from './posts';
