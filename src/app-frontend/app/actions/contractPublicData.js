@@ -116,7 +116,7 @@ export const initializeAccounts = (web3) => dispatch => {
           getEthBalance(account, web3),
           getInkBalance(account)
         ]).then(([ethBalance, inkBalance]) => {
-
+          res({...accounts, accountNames, account, ethBalance, inkBalance}); 
         })
       })
       
