@@ -1,9 +1,8 @@
 import appContracts from 'app-contracts';
-import localWeb3 from "../helpers/web3Helper";
 
-export const updateBuyPrice = (newBuyPrice, account) => {
+export const updateBuyPrice = (newBuyPrice, account, web3) => {
   return appContracts.MyAdvancedToken.deployed()
-    .then((instance) => instance.setPrices.sendTransaction(localWeb3.toBigNumber('0'), newBuyPrice, {from : account})).then(function(tx_id) {
+    .then((instance) => instance.setPrices.sendTransaction(web3.toBigNumber('0'), newBuyPrice, {from : account})).then(function(tx_id) {
       return appContracts.MyAdvancedToken.deployed()
         .then((data) => data.buyPrice())
         .then((p) => parseFloat(p.toString()))
@@ -13,9 +12,9 @@ export const updateBuyPrice = (newBuyPrice, account) => {
     })
 };
 
-export const addApprovedReaction = (reaction, account) => {
+export const addApprovedReaction = (reaction, account, web3) => {
   return new Promise((res, rej) => {
-    localWeb3.bzz.put(reaction, (error, hash) => {
+    web3.bzz.put(reaction, (error, hash) => {
       appContracts.Citadel.deployed()
       .then((instance) => {
         instance.addApprovedReaction.sendTransaction('0x' + hash, {from : account, gas : 200000}).then((tx_id) => {
@@ -26,9 +25,9 @@ export const addApprovedReaction = (reaction, account) => {
   });
 }
 
-export const updateBio = (bioInput, account) => {
+export const updateBio = (bioInput, account, web3) => {
   return new Promise((res, rej) => {
-    localWeb3.bzz.put(bioInput, (error, hash) => {
+    web3.bzz.put(bioInput, (error, hash) => {
       appContracts.Ink.deployed()
       .then((instance) => {
         instance.submitBioRevision.sendTransaction('0x' + hash, {from : account, gas : 200000}).then((tx_id) => {
@@ -39,9 +38,9 @@ export const updateBio = (bioInput, account) => {
   }); 
 };
 
-export const post = (postInput, references, account) => {
+export const post = (postInput, references, account, web3) => {
   return new Promise((res, rej) => {
-    localWeb3.bzz.put(postInput, (error, hash) => {
+    web3.bzz.put(postInput, (error, hash) => {
       appContracts.Ink.deployed()
       .then((instance) => {
         //for now, submission and revision same thing

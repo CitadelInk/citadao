@@ -22,8 +22,26 @@ const {
   ADD_POST_KEY,
   SET_AUTHORG_CURRENT_NAME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
-  SET_AUTH_SUB_REV_REF_KEY
+  SET_AUTH_SUB_REV_REF_KEY,
+  WEB_SETUP_COMPLETE
 } = actions;
+
+const network = (state = Map({
+  web3: undefined,
+  isConnected: false
+}), action) => {
+  switch (action.type) {
+    case WEB_SETUP_COMPLETE:
+      return {
+        ...state,
+        web3: action.data,
+        isConnected: true
+      };
+    default:
+      return state;
+  }
+};
+
 
 const wallet = (state = Map({
   accounts: List([]),
@@ -204,7 +222,8 @@ const rootReducer = combineReducers({
   ui,
   auths,
   approvedReactions,
-  postKeys
+  postKeys,
+  network
 });
 
 export default rootReducer;

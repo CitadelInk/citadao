@@ -1,5 +1,5 @@
 import appContracts from 'app-contracts';
-import localWeb3 from "../helpers/web3Helper";
+
 import {
   getAdvancedTokenPublicData,
   getInkBalance,
@@ -60,26 +60,29 @@ export const setWalletData = (data) => {
 };
 
 export const setBuyPrice = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const newBuyPrice = localWeb3.toBigNumber(wallet.get('newBuyPrice'));
+  const {wallet, network} = getState();
+  const newBuyPrice = network.web3.toBigNumber(wallet.get('newBuyPrice'));
   const account = wallet.get('account');
-  return updateBuyPrice(newBuyPrice, account).then((data) => {
+  return updateBuyPrice(newBuyPrice, account, network.web3).then((data) => {
     return dispatch(setWalletData(data));
   });
 };
+
 /*
-export const initializeApprovedReactions = () => (dispatch) => {
-  getApprovedReactions().then((reactions) => {
-    return dispatch(setApprovedReactions(reactions.approvedReactions));
+export const initializeApprovedReactions = () => (dispatch, getState) => {
+  const {network} = getState();
+  getApprovedReactions(network.web3).then((reactions) => {
+    dispatch(initializeTestTypedSubmissions());
+      return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
 }
 
 
 export const addNewApprovedReaction = () => (dispatch, getState) => {
-  const {wallet} = getState();
+  const {wallet, network} = getState();
   const reaction = wallet.get('newReaction');
   const account = wallet.get('account');
-  return(addApprovedReaction(reaction, account)).then((data) => {
+  return(addApprovedReaction(reaction, account, network.web3)).then((data) => {
     return dispatch(initializeApprovedReactions());
   })
 }
@@ -97,11 +100,11 @@ export const initializeContract = () => (dispatch) => {
   });
 };
 
-export const initializeAccounts = () => dispatch => {
+export const initializeAccounts = (web3) => dispatch => {
   return new Promise((res, rej) => {
-    getAccounts().then((accounts) => {
+    getAccounts(web3).then((accounts) => {
       var accountNamePromises = accounts.accounts.map(acct => {
-        return getAccountName(acct)
+        return getAccountName(acct, web3)
       })
       Promise.all(accountNamePromises).then(values => {
         var accountNamesResults = values;
@@ -110,10 +113,10 @@ export const initializeAccounts = () => dispatch => {
         })
         var account = accounts.accounts[0];
         Promise.all([
-          getEthBalance(account),
+          getEthBalance(account, web3),
           getInkBalance(account)
         ]).then(([ethBalance, inkBalance]) => {
-          res({...accounts, accountNames, account, ethBalance, inkBalance}); 
+
         })
       })
       
@@ -125,7 +128,7 @@ export const initializeAccounts = () => dispatch => {
 
 export const setSelectedAccount = (account) => dispatch => {
   return Promise.all([
-        getEthBalance(account),
+        getEthBalance(account, web3),
         getInkBalance(account),
         getAccountBioRevisions(account)
       ]) .then(([ethBalance, inkBalance, bioRevisions]) => {
@@ -141,8 +144,8 @@ export const updateInkBalance = (account) => dispatch => {
 };
 
 export const handleBuySubmit = () => (dispatch, getState) => {
-  const {wallet} = getState();
-  const ethToSend = localWeb3.toBigNumber(wallet.get('etherToSend'));
+  const {wallet, network} = getState();
+  const ethToSend = network.web3.toBigNumber(wallet.get('etherToSend'));
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
   submitBuy(ethToSend, account, tokenOwnerAccount).then(() => {

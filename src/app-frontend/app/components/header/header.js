@@ -106,9 +106,9 @@ class Header extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet, network } = state;
 
-  return {wallet};
+  return {wallet, network};
 }
 
 export default connect(mapStateToProps)(Header)
