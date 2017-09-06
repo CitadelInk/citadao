@@ -1,7 +1,6 @@
-import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 
-export const getApprovedReactions = () => {
+export const getApprovedReactions = (web3) => {
   return new Promise((res, rej) =>{
     appContracts.Citadel.deployed()
     .then((instance) => {
@@ -9,7 +8,7 @@ export const getApprovedReactions = () => {
         instance.getApprovedReactions()
       ])
       .then(([approvedReactionHashes]) => {
-        getReactionValues(approvedReactionHashes).then((approvedReactions) => {
+        getReactionValues(approvedReactionHashes, web3).then((approvedReactions) => {
           res({approvedReactions : approvedReactions.reactions});
         })
       })
@@ -17,10 +16,10 @@ export const getApprovedReactions = () => {
   });
 }
 
-export const getReactionValues = (approvedReactionHashes) => {
+export const getReactionValues = (approvedReactionHashes, web3) => {
   return new Promise((res, rej) => {
     var promises = approvedReactionHashes.map(hash => {
-      return getReactionValue(hash)
+      return getReactionValue(hash, web3)
     })
     Promise.all(promises).then(values => {
       var reactions = values.map(result => {
@@ -31,13 +30,13 @@ export const getReactionValues = (approvedReactionHashes) => {
   })  
 }
 
-export const getReactionValue = (reactionHash) => {
+export const getReactionValue = (reactionHash, web3) => {
   return new Promise((res, rej) => {
     const bzzAddress = reactionHash.substring(2);
-    localWeb3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
+    web3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
       // prolly want to handle errors
       const jsonBio = JSON.parse(reactionManifest)
-      localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
+      web3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
         res({
           reactionHash: reactionHash, reactionValue: reaction
         });

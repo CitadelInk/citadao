@@ -19,7 +19,6 @@ class Posts extends Component {
 			
 		var posts = this.props.postKeys.map(function(key) {
 			var key2 = key.authorgAddress + "-" + key.submissionHash + "-" + key.revisionHash;
-			console.log("key2: " + key2);
 			return (<PostWidgetContainer key={key2} authorg={key.authorgAddress} submission={key.submissionHash} revision={key.revisionHash} />)
 		})
 		return (

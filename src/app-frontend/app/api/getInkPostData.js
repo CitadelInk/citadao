@@ -1,4 +1,3 @@
-import localWeb3 from "../helpers/web3Helper"
 import appContracts from 'app-contracts'
 
 // do this differently once we have cache/infinite scrolling
@@ -37,7 +36,7 @@ export const getAccountBioRevisions = (account) => {
   });
 }
 
-export const getAccountName = (account) => {
+export const getAccountName = (account, web3) => {
    return new Promise((res, rej) => {
     appContracts.Ink.deployed()
     .then((instance) => {
@@ -48,7 +47,7 @@ export const getAccountName = (account) => {
         if(bioRevisions !== null) {
           if (bioRevisions.length > 0) {
             const mostRecentBio = bioRevisions[bioRevisions.length - 1];
-            getAccountBioRevision(mostRecentBio)
+            getAccountBioRevision(mostRecentBio, web3)
             .then((data) => {
               res({
                 accountName : JSON.parse(data.selectedBioRevision.toString()).name
@@ -65,13 +64,13 @@ export const getAccountName = (account) => {
   });
 }
 
-export const getReactionValue = (reactionHash) => {
+export const getReactionValue = (reactionHash, web3) => {
   return new Promise((res, rej) => {
     const bzzAddress = reactionHash.substring(2);
-    localWeb3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
+    web3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
       // prolly want to handle errors
       const jsonBio = JSON.parse(reactionManifest)
-      localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
+      web3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
         res({
           reactionHash: reactionHash, reactionValue: reaction
         });
@@ -80,13 +79,13 @@ export const getReactionValue = (reactionHash) => {
   });
 }
 
-export const getAccountBioRevision = (revisionHash) => {
+export const getAccountBioRevision = (revisionHash, web3) => {
   return new Promise((res, rej) => {
     const bzzAddress = revisionHash.substring(2);
-    localWeb3.bzz.retrieve(bzzAddress, (error, bio) => {
+    web3.bzz.retrieve(bzzAddress, (error, bio) => {
       // prolly want to handle errors
       const jsonBio = JSON.parse(bio)
-      localWeb3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
+      web3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
         res({
           selectedBioRevision: bioText
         });
@@ -96,12 +95,12 @@ export const getAccountBioRevision = (revisionHash) => {
 }
 
 // once we add revisioning, will need to get specific revision (default likely most recent?)
-export const getRevisionFromSwarm = (revisionHash) => {
+export const getRevisionFromSwarm = (revisionHash, web3) => {
   return new Promise((res, rej) => {
     const bzzAddress = revisionHash.substring(2);
-    localWeb3.bzz.retrieve(bzzAddress, (error, revision) => {
+    web3.bzz.retrieve(bzzAddress, (error, revision) => {
       const manifest = JSON.parse(revision)
-      localWeb3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {     
+      web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {     
         var revJson = JSON.parse(rev)
         res ({
           revisionSwarmHash: revisionHash, 

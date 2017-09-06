@@ -68,11 +68,9 @@ export const setBuyPrice = () => (dispatch, getState) => {
   });
 };
 
-/*
 export const initializeApprovedReactions = () => (dispatch, getState) => {
   const {network} = getState();
   getApprovedReactions(network.web3).then((reactions) => {
-    dispatch(initializeTestTypedSubmissions());
       return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
 }
@@ -86,16 +84,16 @@ export const addNewApprovedReaction = () => (dispatch, getState) => {
     return dispatch(initializeApprovedReactions());
   })
 }
-*/
 
-export const initializeContract = () => (dispatch) => {
+export const initializeContract = () => (dispatch, getState) => {
+  const {network} = getState();
   return Promise.all([
     getAdvancedTokenPublicData(),
     getInkPublicData(),
-    //getApprovedReactions()
-  ]).then(([token, ink/*, reactions*/]) => {
+    getApprovedReactions(network.web3)
+  ]).then(([token, ink, reactions]) => {
     dispatch(setWalletData({...token, ...ink}));
-    //dispatch(setApprovedReactions(reactions.approvedReactions));
+    dispatch(setApprovedReactions(reactions.approvedReactions));
     dispatch(initializeNeededPosts());
   });
 };

@@ -109,8 +109,8 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
 
 export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   console.log("LOAD POST - AUTHORG: " + authorgAddress + " - SUBMISSION: " + submissionHash + " - REVISION: " + revisionHash);
-  const {approvedReactions} = getState();
-  return getRevisionFromSwarm(revisionHash).then(result => {
+  const {approvedReactions, network} = getState();
+  return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 
                                   submissionHash, 
                                   revisionHash, 
@@ -133,7 +133,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
     getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
       dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
     })
-    getAccountName(authorgAddress).then((name) => {
+    getAccountName(authorgAddress, network.web3).then((name) => {
       dispatch(setAuthorgCurrentName(authorgAddress, name.accountName));
     })
     getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
@@ -165,8 +165,9 @@ export const initializeTestTypedRevisions = () => dispatch => {
   })
 }
 
-export const setSelectedBioRevision = (selectedRevision) => dispatch => {
-  return getAccountBioRevision(selectedRevision).then((revision) => {
+export const setSelectedBioRevision = (selectedRevision) => (dispatch, getState) => {
+  const {network} = getState();
+  return getAccountBioRevision(selectedRevision, network.web3).then((revision) => {
     return dispatch(setWalletData({selectedBioRevision : selectedRevision, selectedBioRevisionValue : revision}))
   })
 };

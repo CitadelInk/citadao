@@ -1,5 +1,4 @@
 import appContracts from 'app-contracts';
-import localWeb3 from "../helpers/web3Helper";
 
 export const getInkPublicData = () => {
   return appContracts.Ink.deployed()
