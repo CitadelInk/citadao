@@ -6,7 +6,6 @@ import { Provider } from 'react-redux';
 import reducers from './reducers';
 import { AppContainer } from 'react-hot-loader';
 import App from './components/app';
-import Header from './components/header';
 import Router from './router';
 import actions from './actions';
 

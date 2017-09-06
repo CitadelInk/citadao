@@ -28,7 +28,7 @@ export const addApprovedReaction = (reaction, account, web3) => {
 export const updateBio = (bioInput, account, web3) => {
   return new Promise((res, rej) => {
     web3.bzz.put(bioInput, (error, hash) => {
-      appContracts.Citadel.deployed()
+      appContracts.Ink.deployed()
       .then((instance) => {
         instance.submitBioRevision.sendTransaction('0x' + hash, {from : account, gas : 200000}).then((tx_id) => {
           res(tx_id)
@@ -41,12 +41,12 @@ export const updateBio = (bioInput, account, web3) => {
 export const post = (postInput, references, account, web3) => {
   return new Promise((res, rej) => {
     web3.bzz.put(postInput, (error, hash) => {
-      appContracts.Citadel.deployed()
+      appContracts.Ink.deployed()
       .then((instance) => {
         //for now, submission and revision same thing
-        instance.submitRevision.sendTransaction('0x' + hash, '0x' + hash, {from : account, gas : 300000}).then((tx_id) => {
+        instance.submitRevision.sendTransaction('0x' + hash, '0x' + hash, {from : account, gas : 400000}).then((tx_id) => {
           var linkReferences = references.map((reference) => {
-            return instance.respondToSubmission.sendTransaction(reference.revisionHash, reference.sectionIndex, '0x' + hash, {from : account, gas : 300000});
+            return instance.respondToAuthorgSubmissionRevision.sendTransaction(reference.authorg, reference.submissionHash, reference.revisionHash, '0x' + hash, '0x' + hash, {from : account, gas : 400000});
           })
           return Promise.all(linkReferences).then((values) => {
             res(tx_id)

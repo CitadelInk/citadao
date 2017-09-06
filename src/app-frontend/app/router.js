@@ -22,7 +22,7 @@ export default Router.extend({
         '/': 'home',
         'debug' : 'debug',
         'user/:account': 'userpage',
-        'post/:subHash/rev/:revHash' : 'post'
+        'post/authorg/:authorg/sub/:subHash/rev/:revHash' : 'post'
     },
     home() {
         this.store.dispatch(navigatePage({page:'home', route:'/'}));
@@ -33,7 +33,7 @@ export default Router.extend({
     debug() {
         this.store.dispatch(navigatePage({page:'debug', route:'/'}));
     },
-    post(subHash,revHash) {
-        this.store.dispatch(navigatePage({page:'post', route: '\/post\/' + subHash + '\/rev\/' + revHash}));
+    post(authorg, subHash, revHash) {
+        this.store.dispatch(gotoPost(authorg, subHash, revHash));
     }
 });

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
-import Posts from './posts';
+import Posts from './panels/posts';
+import EmptyLeft from './panels/emptyLeft';
+import EmptyRight from './panels/emptyRight';
 
 
 class Home extends Component {
@@ -12,28 +14,37 @@ class Home extends Component {
 
 	render() {
 		const style = {
-				height: '100%',
 				background:'#FFFFFF',
 				width:'100%',
 				position: 'relative',
 				top:'100px',
-				zIndex:'900'
+				zIndex:'900',
+				display:'flex'
+		}
+
+		const postsStyle = {
+			position:'relative',
+			minWidth:'33%',
+			maxWidth:'34%',
 		}
 			
 		return (
 			
 			<div style={style} className="Home">
-			<Posts />	
-			
+				<EmptyLeft />
+				<div style={postsStyle}>
+				<Posts postKeys={this.props.postKeys}/>	
+				</div>
+				<EmptyRight />		
 			</div>
 		);
 	}
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet, postKeys } = state;
 
-  return {wallet, submissions };
+  return {wallet, postKeys };
 }
 
 export default connect(mapStateToProps)(Home)
