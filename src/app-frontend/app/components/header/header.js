@@ -29,55 +29,83 @@ class Header extends Component {
 
 	render() {
 		const divStyle = {
-			height: '100px',
+			height: '60px',
 			background:'#F0F0F0',
 			width:'100%',
 			position:'fixed',
+			left:'0px',
+			right:'0px',
 			top:'0px',
 			zIndex:'1000'
 		}
 		const headerStyle = {
 			fontFamily: 'sans-serif',
-			textAlign: 'center'
+			textAlign: 'center',
+			fontSize:'24pt',
+			width:'100%',
+			margin:'auto',
+			position:'relative'
 		}
 		const dropDownStyle = {
 			position:'absolute',
-			top:'20px',
-			left:'10px'
+			top:'2px',
+			left:'5px'
 		}
 		const inkBalanceDivStyle = {
 			position:'absolute',
-			top:'30px',
-			right:'250px'
+			top:'22px',
+			left:'5px'
 		}
-		const accountsDropDown = (
-			<select style={dropDownStyle} onChange={this.handleAccountSelected}>
-			{
-				this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
-					return (<option value={item[0]} key={item[0]}> {item[1]} - {item[0]} </option>);
-				})
-			}			
-			</select>			
-		);
+
+		const debugStyle = {
+			position:'absolute',
+			top:'42px',
+			left:'5px'
+		}
+
+		var accountsDropDown = "";
+		if(this.props.wallet.get('accounts').size > 1) {
+			accountsDropDown = (
+				<select onChange={this.handleAccountSelected}>
+				{
+					this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
+						return (<option value={item[0]} key={item[0]}> {item[1]} - {item[0]} </option>);
+					})
+				}			
+				</select>	
+			);
+		}	
+
+		if(this.props.wallet.get('accounts').size == 1) {
+			accountsDropDown = this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
+				return (<b> {item[1]} - {item[0]} </b>);
+			})
+		}
+
 		const gotoAccountPage = (
-			<span onClick={this.gotoAccountPageClicked}>View This Account Page</span>
+			<span onClick={this.gotoAccountPageClicked}><u>View This Account Page</u></span>
 		);
 		const gotoDebugPage = (
-			<span onClick={this.gotoDebugPageClicked}>View Debug Page</span>
+			<span onClick={this.gotoDebugPageClicked}><u>View Debug Page</u></span>
 		);
 		
 		const inkBalance = (
 			<div style={inkBalanceDivStyle}>
-			<span>{this.props.wallet.get('inkBalance')} INK</span><br />
+			<span>Balance: <b>{this.props.wallet.get('inkBalance')} INK</b></span><br />
 			</div>
 		)
+	
 
 		return (
 			<div style={divStyle} className="header" onClick={this.handleClickDiv}>				
-				<h1 style={headerStyle}>C I T A D E L</h1>
-				{accountsDropDown}
+				<div style={headerStyle}>C I T A D E L</div>
+				<div style={dropDownStyle}>
+				Account: {accountsDropDown}
+				</div>
 				{inkBalance}
-				{gotoAccountPage} - {gotoDebugPage}				
+				<div style={debugStyle}>
+				{gotoAccountPage} - {gotoDebugPage}		
+				</div>		
 				<BuyMoreWidget />
 			</div>
 		)

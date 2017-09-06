@@ -18,7 +18,6 @@ class EmptyRight extends Component {
 
 		return(
 			<div style={style}>
-				right
 			</div>
 		);
 	}

@@ -128,7 +128,6 @@ const revs = (state = {}, action) => {
         })
       });
     case SET_AUTH_SUB_REV_REF_KEY:
-      console.log("SET_AUTH_SUB_REV_REF_KEY - key: " + action.data.refKey);
       let refKeys = state[revHash].refKeys;
       if (!refKeys) {
         refKeys = [];
@@ -138,6 +137,13 @@ const revs = (state = {}, action) => {
           refKeys: [...refKeys, action.data.refKey]
         })
       });
+    case SET_REVISION_REACTIONS:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          reactions: action.data.reactions,
+          reactionCount: action.data.reactionCount
+        })
+      });
     default:
       return state;
   }
@@ -145,6 +151,7 @@ const revs = (state = {}, action) => {
 
 const subs = (state = {}, action) => {
   switch (action.type) {
+    case SET_REVISION_REACTIONS:
     case SET_AUTH_SUB_REV_REF_KEY:
     case SET_REVISION_TIME:
     case SET_AUTH_SUB_REV_REFERENCE_COUNT:
@@ -172,6 +179,7 @@ const auths = (state = {}, action) => {
       stateAuth = {};    
     }
     switch(action.type) {
+      case SET_REVISION_REACTIONS:
       case SET_AUTH_SUB_REV_REF_KEY:
       case SET_REVISION_TIME:
       case SET_AUTH_SUB_REV_REFERENCE_COUNT:
@@ -199,10 +207,10 @@ const auths = (state = {}, action) => {
   }
 }
 
-const approvedReactions = (state = [], action) => {
+const approvedReactions = (state = Map(), action) => {  
   switch (action.type) {
     case SET_APPROVED_REACTIONS:
-      return action.data;
+      return action.data.reactions;
     default:
       return state;
   }

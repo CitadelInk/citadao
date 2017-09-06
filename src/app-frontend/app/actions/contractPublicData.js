@@ -44,10 +44,10 @@ import {
 } from '../api/getCitadelGeneralData';
 
 export const SET_APPROVED_REACTIONS = "SET_APPROVED_REACTIONS";
-export const setApprovedReactions = (data) => {
+export const setApprovedReactions = (reactions) => {
   return {
     type: SET_APPROVED_REACTIONS,
-    data: data
+    data: {reactions : reactions}
   }
 }
 

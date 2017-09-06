@@ -40,6 +40,11 @@ contract Citadel {
         return approved_reactions;
     }
 
+    function addApprovedReaction(bytes32 reaction) {
+        reaction_approved[reaction] = true;
+        approved_reactions.push(reaction);
+    }
+
     function getReactionForAuthorgSubmissionRevision(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction, uint index) constant returns (address, uint) {
         if (reaction_approved[reaction]/* && isAuthorgOfRevision(authorg, revision)*/) {
             var reactor = authorgExtensionMap[authorg].submissions[submission].revisions[revision].reactionToReactors[reaction][index];

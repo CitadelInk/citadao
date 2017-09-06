@@ -22,8 +22,9 @@ export const getReactionValues = (approvedReactionHashes, web3) => {
       return getReactionValue(hash, web3)
     })
     Promise.all(promises).then(values => {
-      var reactions = values.map(result => {
-        return {reactionHash : result.reactionHash, reactionValue : result.reactionValue};
+      var reactions = new Map();
+      values.map(result => {
+        reactions.set(result.reactionHash, result.reactionValue);
       })
       res({reactions : reactions});
     })

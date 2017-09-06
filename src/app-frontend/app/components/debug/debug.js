@@ -76,6 +76,8 @@ class Debug extends Component {
 				top:'100px'
 		}
 
+		var approvedReactions = this.props.approvedReactions;
+
 		return (
 			
 				<div className="App">
@@ -94,8 +96,8 @@ class Debug extends Component {
 					Ink address = {this.props.wallet.get('inkAddress')}<br />
 					Ink wallet address (should match INK token address) = {this.props.wallet.get('inkWalletAddress')}<br />
 					Selected Bio Revision Value - {this.props.wallet.get('selectedBioRevisionValue')}<br />
-					Approved Reactions - {this.props.approvedReactions.map((value) => {
-						return (value.reactionHash + " - " + value.reactionValue + "  -  ")
+					Approved Reactions - {Array.from(approvedReactions.keys()).forEach(function(value) {
+						return (value + " - " + approvedReactions.get(value) + "  -  ")
 					})}<br /><br />
 				</p>
 				

@@ -15,7 +15,9 @@ class PostFooter extends Component {
 
 
 	render() {			
-		var reactions = "loading"
+		var mentions = "loading";
+		var reactionButtons = ("");
+
 		var authorg = this.props.auths[this.props.authorg];
 		if (authorg) {
 			name = authorg.name;
@@ -27,23 +29,41 @@ class PostFooter extends Component {
 					if (revisions) {
 						var revision = revisions[this.props.revision];
 						if (revision) {
-							reactions = revision.refCount + " - mentions";
+							mentions = revision.refCount + " - mentions";
+						}
+						if (revision.reactions) {
+							mentions += " / " + revision.reactionCount + " - reactions";
+							
+							if (this.props.focusedPost) {
+								reactionButtons = revision.reactions.map(reaction => {
+									console.log("reaction: " + reaction);
+									console.log("reaction.reactionHash: " + reaction.reactionHash);
+									console.log("reaction.reactionReactors: " + reaction.reactionReactors);
+									console.log("this.props.approvedReactions: " + this.props.approvedReactions);
+									console.log("this.props.approvedReactions[reaction.reactionHash]: " + this.props.approvedReactions.get(reaction.reactionHash));
+									return (<button onClick={this.reactionClicked} value={reaction.reactionHash}>{this.props.approvedReactions.get(reaction.reactionHash)} - {reaction.reactionReactors + ""}</button>)
+								})
+							}
 						}
 					}					
 				}			
 			}		
 		}
+
+		
 		
 		return (			
 			<div style={this.props.footerStyle}>
- 				{reactions}
+				<center>
+ 				{mentions}
+				 </center>
+				 {reactionButtons}
 			</div>
 		);
 	}
 
 	reactionClicked(e) {
-		const sub = this.props.submission;
-		this.props.dispatch(submitReaction(sub.submissionAuthorg, sub.submissionHash, sub.revisionHash, e.target.value));
+		this.props.dispatch(submitReaction(this.props.authorg, this.props.submission, this.props.revision, e.target.value));
 		e.stopPropagation();
 	}
 }

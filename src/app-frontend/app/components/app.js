@@ -31,7 +31,7 @@ class App extends Component {
         case 'post':
           var route = this.props.ui.get('route');
           var splitRoute = route.split('\/'); 
-          if(splitRoute.length === 5) {
+          if(splitRoute.length === 7) {
             page = <PostPage authorg={splitRoute[2]} submission={splitRoute[4]} revision={splitRoute[6]} />;
           }
         break;
@@ -43,7 +43,6 @@ class App extends Component {
       return (
         <div className="app">
             <Header />
-            {this.props.wallet.get("buyMoreActive") && <BuyMoreWidget />}
             {page}
         </div>
       )

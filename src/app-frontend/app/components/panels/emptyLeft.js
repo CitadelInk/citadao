@@ -17,7 +17,6 @@ class EmptyLeft extends Component {
 			
 		return(
 			<div style={style}>
-				left
 			</div>
 		);
 	}

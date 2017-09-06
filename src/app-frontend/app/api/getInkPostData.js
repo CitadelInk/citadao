@@ -113,23 +113,6 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
   })
 }
 
-export const getRevisionReactions = (revisionHash, authorgHash, reactions) => {
-  return new Promise((res, rej) => {
-    appContracts.Ink.deployed().then((instance) => {
-      var revisionReactionReactorPromisess = reactions.map(reaction => {
-        return instance.getReactorsForAuthorgRevisionReaction(authorgHash, revisionHash, reaction.reactionHash).then((reactors) => {
-          return {reactionHash : reaction.reactionHash, reactionValue : reaction.reactionValue, reactionReactors : reactors};
-        })
-      })
-      Promise.all(revisionReactionReactorPromisess).then((revisionReactionReactors) => {
-        res ({
-          revisionReactionReactors: revisionReactionReactors
-        })
-      })
-    })
-  });
-}
-
 export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
   return new Promise((res, rej) => {
     appContracts.Ink.deployed().then((instance) => {

@@ -37,23 +37,24 @@ class ComposeBody extends Component {
 		const style = {
 			position:'absolute',
 			background:'#F0F0F0',
-			maxHeight:calcheight,
+			//maxHeight:calcheight,
 			top:'60px',
-			bottom:'40px',			
-			padding: '10px',
+			bottom:'25px',			
+			//padding: '10px',
 			width:'100%',
 			overflow:'scroll'
 		}
 
 		const textStyle = {
-			position:'absolute',
-			top:'1',
-			bottom:'1',
-			left:'0',
-			rigth:'0',
-			//padding:'1em',
-			minHeight:inputHeight,
-			width:'98%'
+			position:'relative',
+			width:'100%',
+			padding:'12px 20px',
+			boxSizing:'border-box',
+			border:'2px solid #ccc',
+			borderRadius:'4px',
+			resize:'none'
+			//minHeight:inputHeight,
+			//width:'98%'
 		}
 			
 
