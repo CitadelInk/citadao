@@ -16,16 +16,24 @@ class ComposeFooter extends Component {
 
 	render() {
 		const style = {
-				height: '40px',  
+				height: '25px',  
 				background:'#707B7c',
 				width:'100%',
 				position:'absolute',
 				bottom:'0'
 		}
 					
+		const buttonStyle = {
+			position:'relative',
+			top:'2px',
+			width:'80%',
+			height:'20px'
+		}
 		return (			
 			<div style={style}>
- 				<button onClick={this.handleSubmitPost}>Submit Post</button>
+				<center>
+ 				<button style={buttonStyle} onClick={this.handleSubmitPost}>Submit Post</button>
+				 </center>
 			</div>
 		);
 	}

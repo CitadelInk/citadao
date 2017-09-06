@@ -71,7 +71,6 @@ export const setBuyPrice = () => (dispatch, getState) => {
 export const initializeApprovedReactions = () => (dispatch, getState) => {
   const {network} = getState();
   getApprovedReactions(network.web3).then((reactions) => {
-    console.log("approved reactions: " + reactions.approvedReactions);
       return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
 }
@@ -94,7 +93,6 @@ export const initializeContract = () => (dispatch, getState) => {
     getApprovedReactions(network.web3)
   ]).then(([token, ink, reactions]) => {
     dispatch(setWalletData({...token, ...ink}));
-    console.log("approved reactions: " + reactions.approvedReactions);
     dispatch(setApprovedReactions(reactions.approvedReactions));
     dispatch(initializeNeededPosts());
   });

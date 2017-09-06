@@ -111,9 +111,7 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
 }
 
 export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
-  console.log("LOAD POST - AUTHORG: " + authorgAddress + " - SUBMISSION: " + submissionHash + " - REVISION: " + revisionHash);
   const {approvedReactions, network} = getState();
-  console.log("approved reactions: " + approvedReactions);
   return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 
                                   submissionHash, 

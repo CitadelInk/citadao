@@ -58,10 +58,6 @@ class PostBody extends Component {
 			body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
 		} else {
 			body = text.map((section, i) => {
-				/*if (this.props.submission.revisionSectionResponses && this.props.submission.revisionSectionResponses.get(i)) {
-					console.log("gotem");
-					responses = this.props.submission.revisionSectionResponses.get(i);
-				}*/
 				return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>);	
 			});
 		}
@@ -69,8 +65,7 @@ class PostBody extends Component {
 		return (			
 			<div style={this.props.bodyStyle}>
 				<center>{title}</center>
-
-						{body}
+				<div>{body}</div>
 			</div>
 		);
 	}

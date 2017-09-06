@@ -18,13 +18,13 @@ class BuyMoreWidget extends Component {
 
 	render() {
 		const style = {
-				height: '120px',
+				height: '60px',
 				background:'#F0F0F0',
 				width:'200px',
 				borderRadius: '15px',
 				position:'absolute',
-				right:'20px',
-				top:'20px',
+				right:'10px',
+				top:'0px',
 				zIndex: '1100'
 		}
 			
@@ -32,10 +32,9 @@ class BuyMoreWidget extends Component {
 		const approximateInk = this.props.wallet.get('etherToSend') / this.props.wallet.get('inkBuyPrice');
 		return (			
 			<div style={style}>
-				Price: {this.props.wallet.get('inkBuyPrice')} WEI = 1 INK<br />
-				WEI: <input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} size="10" /><br />
-				INK &asymp; {approximateInk}<br />
-				<button onClick={this.handleBuySubmit}>Send WEI</button>	
+				<span style={{fontSize:'10pt'}}>- Buy INK - Price: {this.props.wallet.get('inkBuyPrice')} WEI = 1 INK</span><br />
+				<span style={{fontSize:'10pt'}}>WEI: <input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} size="10" /> INK &asymp; {approximateInk}</span><br />
+				<button style={{width:'180px'}} onClick={this.handleBuySubmit}>Send WEI</button>	
 			</div>
 		);
 	}

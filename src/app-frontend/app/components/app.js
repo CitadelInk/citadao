@@ -43,7 +43,6 @@ class App extends Component {
       return (
         <div className="app">
             <Header />
-            {this.props.wallet.get("buyMoreActive") && <BuyMoreWidget />}
             {page}
         </div>
       )

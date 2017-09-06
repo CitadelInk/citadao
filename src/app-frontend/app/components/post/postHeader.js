@@ -40,14 +40,25 @@ class PostHeader extends Component {
 			}		
 		}
 			
+		const nameStyle = {
+			fontSize:'14pt', 
+			position:'relative', 
+			fontWeight:'bold',
+			left:'10'
+		}
+
+		const timeStyle = {
+			fontSize:'14pt'
+		}
+
 		return (			
 			<div style={this.props.headerStyle}>
-				<span value={this.props.authorg} onClick={this.authorgNameClicked} style={{fontSize:'12pt', fontWeight:'bold', position:'absolute', left:'10'}}>{name} - {time}</span>
+				<span value={this.props.authorg} onClick={this.authorgNameClicked} style={nameStyle}>{name}</span><span style={timeStyle}>&nbsp;&nbsp;&nbsp;&nbsp; - {time}</span>
 				<span onClick={this.infoButtonClicked} style={{fontSize:'8pt', position:'absolute', right:'10'}}>info...</span>
 				<br />
 				{this.state.showDetails && 
 					<div>
-						<span style={{fontSize:'8pt'}}>{this.props.authorg}</span><br />
+						<span style={{fontSize:'8pt'}}>authorg address - {this.props.authorg}</span><br />
 						<span style={{fontSize:'8pt'}}>submission hash - {this.props.submission}</span><br />
 						<span style={{fontSize:'8pt'}}>revision hash - {this.props.revision}</span><br />
 					</div>
