@@ -9,6 +9,7 @@ export const getApprovedReactions = (web3) => {
       ])
       .then(([approvedReactionHashes]) => {
         getReactionValues(approvedReactionHashes, web3).then((approvedReactions) => {
+          console.log("get reaction values: " + approvedReactions.reactions);
           res({approvedReactions : approvedReactions.reactions});
         })
       })
@@ -22,9 +23,12 @@ export const getReactionValues = (approvedReactionHashes, web3) => {
       return getReactionValue(hash, web3)
     })
     Promise.all(promises).then(values => {
-      var reactions = values.map(result => {
-        return {reactionHash : result.reactionHash, reactionValue : result.reactionValue};
+      var reactions = new Map();
+      values.map(result => {
+        console.log("SET MAP - reactionHash = " + result.reactionHash + " - reactionValue: " + result.reactionValue);
+        reactions.set(result.reactionHash, result.reactionValue);
       })
+      console.log("MAPPY SIZE: " + reactions.size);
       res({reactions : reactions});
     })
   })  

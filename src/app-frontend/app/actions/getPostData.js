@@ -5,12 +5,15 @@ import {
   getRevisionFromSwarm,
   getRevisionTime,
   getAccountName,
-  getRevisionReactions,
   getPostKey,
   getTotalPostCount,
   getNumReferences,
   getReferenceKey
 } from '../api/getInkPostData'
+
+import {
+  getRevisionReactions
+} from '../api/getCitadelPostData'
 
 export const ADD_POST_KEY = "ADD_POST_KEY";
 export const addPostKey = (authorgAddress, submissionHash, revisionHash, index) => {
@@ -69,10 +72,10 @@ export const setRevisionAuthorgName = (authAdd, subHash, revHash, name) => {
 }
 
 export const SET_REVISION_REACTIONS = "SET_REVISION_REACTIONS";
-export const setRevisionReactions = (authAdd, subHash, revHash, reactions) => {
+export const setRevisionReactions = (authAdd, subHash, revHash, reactions, count) => {
   return {
     type: SET_REVISION_REACTIONS,
-    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, reactions : reactions}
+    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, reactions : reactions, reactionCount : count}
   }
 }
 
@@ -110,6 +113,7 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
 export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   console.log("LOAD POST - AUTHORG: " + authorgAddress + " - SUBMISSION: " + submissionHash + " - REVISION: " + revisionHash);
   const {approvedReactions, network} = getState();
+  console.log("approved reactions: " + approvedReactions);
   return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 
                                   submissionHash, 
@@ -147,9 +151,9 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
         }
       }
     })
-    /*getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
-      dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors))
-    })*/
+    getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
+      dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
+    })
   })
 }
 
