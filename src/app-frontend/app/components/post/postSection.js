@@ -15,7 +15,6 @@ class PostSection extends Component {
 			paddingBottom:'2px',
 			paddingTop:'2px',
 			width:'100%',
-			minHeight:'100px',
 			position:'relative'
 		}
 

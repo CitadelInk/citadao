@@ -15,11 +15,25 @@ class PostSectionActions extends Component {
 	}
 
 
+
 	render() {
+		const actionsStyle = {
+			minHeight:'18px'
+		}
+		const responseStyle = {
+			float:'right',
+			fontSize:'8pt'
+		}
+
+		const mentionsStyle = {
+			float:'left',
+			fontSize:'8pt'
+		}
+		
 		return (	
-			<div>		
-			<button onClick={this.onSectionActionsButtonClicked}>respond</button>
-			<button onClick={this.onSectionViewReferencingPostsClicked}>View Responses - {this.props.sectionResponses.length}</button>
+			<div style={actionsStyle}>		
+			<span style={responseStyle} onClick={this.onSectionActionsButtonClicked}>respond</span>
+			<span style={mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>
 			</div>
 		);
 	}

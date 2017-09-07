@@ -17,16 +17,33 @@ class ComposeHeader extends Component {
 
 	render() {
 		const style = {
-				height: '60px',
+				height: '50px',
 				background:'#7FDBFF',
 				width:'100%',
 				position:'absolute',
 				top:'0'
 		}
+
+		const titleStyle = {
+			position:'relative',
+			top:'15px'			
+		}
+
+		const inputStyle = {
+			position:'relative',
+			width:'90%',
+			padding:'4px 6px',
+			boxSizing:'border-box',
+			border:'2px solid #ccc',
+			borderRadius:'4px',
+			resize:'none',
+			height:'80%',
+			top:'6px'
+		}
 			
 		return (			
 			<div style={style}>
-				Title: <input onChange={this.handlePostTitleChange} value={this.props.wallet.get('postTitleInput')} />
+				<span style={titleStyle}>Title: </span><input style={inputStyle} onChange={this.handlePostTitleChange} value={this.props.wallet.get('postTitleInput')} />
  			</div>
 		);
 	}

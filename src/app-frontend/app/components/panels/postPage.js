@@ -29,7 +29,7 @@ class PostPage extends Component {
 				background:'#FFFFFF',
 				position:'absolute',
 				width:'100%',
-				top:'100px',
+				top:'60px',
 				bottom:'0px',
 				zIndex:'900',
 				display:'flex'
@@ -58,7 +58,6 @@ class PostPage extends Component {
 				minWidth:'33%',
 				maxWidth:'34%',
 				overflow:'hidden',
-				//top:'100px',
 				bottom:'0px',
 				float:'left'
 		}
@@ -69,20 +68,14 @@ class PostPage extends Component {
 			borderTopRightRadius: '15px',
 			width:'100%',
 			position:'relative',
-			top:'0'
+			top:'0px'
 		}
-
-		var stateHeight = parseInt(this.state.height);
-		var remainingHeight = stateHeight - 200;
-		const calcheight = remainingHeight + 'px';
-		const inputHeight = (remainingHeight - 2) + 'px';
 
 		const bodyStyle = {
 			background:'#FFFFFF',
 			position:'relative',
-			overflow:'scroll',
-			width:'100%',
-			height:calcheight
+			overflow:'auto',
+			width:'100%'
 		}
 
 		const footerStyle = {

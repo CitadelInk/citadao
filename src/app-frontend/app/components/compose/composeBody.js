@@ -38,7 +38,7 @@ class ComposeBody extends Component {
 			position:'absolute',
 			background:'#F0F0F0',
 			//maxHeight:calcheight,
-			top:'60px',
+			top:'50px',
 			bottom:'25px',			
 			//padding: '10px',
 			width:'100%',
@@ -48,13 +48,12 @@ class ComposeBody extends Component {
 		const textStyle = {
 			position:'relative',
 			width:'100%',
-			padding:'12px 20px',
+			padding:'4px 6px',
 			boxSizing:'border-box',
 			border:'2px solid #ccc',
 			borderRadius:'4px',
-			resize:'none'
-			//minHeight:inputHeight,
-			//width:'98%'
+			resize:'none',
+			height:'100%'
 		}
 			
 
