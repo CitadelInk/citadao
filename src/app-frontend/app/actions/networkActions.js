@@ -19,6 +19,8 @@ export function setupWeb3() {
         web3Provider = new Web3(web3.currentProvider);
       }
       else {
+        console.log('using own web3 instance');
+        console.log(config)
         const provider = new Web3.providers.HttpProvider(`http://${config.Server}:8545`)
         web3Provider = new Web3(provider);
       }
