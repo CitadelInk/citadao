@@ -31,7 +31,7 @@ export function setupWeb3() {
       
 
       console.log('web3 provider:', web3Provider.currentProvider !== undefined);
-  
+      console.log('web3 provider:', web3Provider);
       dispatch({
         type: WEB_SETUP_COMPLETE,
         data: web3Provider
