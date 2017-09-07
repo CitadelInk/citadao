@@ -7,6 +7,7 @@ import Debug from './debug/debug';
 import PostPage from './panels/postPage';
 import actions from '../actions';
 import BuyMoreWidget from './header/buyMoreWidget'
+import Landing from './landing';
 
 const {
 	initializeContract,
@@ -21,6 +22,7 @@ class App extends Component {
   render() {
     let page;
     if (this.props.network.isConnected) {
+      var header = (<Header />);
       switch (this.props.ui.get('page')) {
         case 'user':
           page = <User/>
@@ -35,6 +37,9 @@ class App extends Component {
             page = <PostPage authorg={splitRoute[2]} submission={splitRoute[4]} revision={splitRoute[6]} />;
           }
         break;
+        case 'landing':
+          header = ("");
+          page = <Landing />
         default:
           page = <Home/>
           break;
@@ -42,9 +47,13 @@ class App extends Component {
 
       return (
         <div className="app">
-            <Header />
+            {header}
             {page}
         </div>
+      )
+    } else {
+      return (
+        <Landing />
       )
     }
 

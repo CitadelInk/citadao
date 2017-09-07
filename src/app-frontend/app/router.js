@@ -20,6 +20,7 @@ export default Router.extend({
     routes: {
         '': 'home',
         '/': 'home',
+        'landing':'landing',
         'debug' : 'debug',
         'user/:account': 'userpage',
         'post/authorg/:authorg/sub/:subHash/rev/:revHash' : 'post'
@@ -31,7 +32,10 @@ export default Router.extend({
         this.store.dispatch(gotoUserPage(account));
     },
     debug() {
-        this.store.dispatch(navigatePage({page:'debug', route:'/'}));
+        this.store.dispatch(navigatePage({page:'debug', route:'/debug'}));
+    },
+    landing() {
+        this.store.dispatch(navigatePage({page:'landing',route:'/landing'}));
     },
     post(authorg, subHash, revHash) {
         this.store.dispatch(gotoPost(authorg, subHash, revHash));
