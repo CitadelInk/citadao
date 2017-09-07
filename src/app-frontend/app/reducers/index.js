@@ -19,6 +19,7 @@ const {
   SET_REVISION_REACTIONS,
   SET_REVISION_SECTION_RESPONSES,
   SET_REVISION_TIME,
+  SET_REFERENCE,
   ADD_POST_KEY,
   SET_AUTHORG_CURRENT_NAME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
@@ -144,6 +145,22 @@ const revs = (state = {}, action) => {
           reactionCount: action.data.reactionCount
         })
       });
+    case SET_REFERENCE:
+      var sectionRefKeyMap = state[revHash].sectionRefKeyMap;
+      if (!sectionRefKeyMap) {
+        sectionRefKeyMap = new Map();
+      }
+      var existingReferences = [];
+      if (sectionRefKeyMap.get(action.data.index)) {
+        existingReferences = sectionRefKeyMap.get(action.data.index);
+      }
+      existingReferences.push(action.data.refKey);
+      var sectionMap = sectionRefKeyMap.set(action.data.index, existingReferences);
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          sectionRefKeyMap: sectionMap
+        })
+      });
     default:
       return state;
   }
@@ -156,6 +173,7 @@ const subs = (state = {}, action) => {
     case SET_REVISION_TIME:
     case SET_AUTH_SUB_REV_REFERENCE_COUNT:
     case SET_REVISION_SWARM_DATA:
+    case SET_REFERENCE:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
       if (!stateSub) {
@@ -184,6 +202,7 @@ const auths = (state = {}, action) => {
       case SET_REVISION_TIME:
       case SET_AUTH_SUB_REV_REFERENCE_COUNT:
       case SET_REVISION_SWARM_DATA:
+      case SET_REFERENCE:
         return {
           ...state,
           [authAdd]: {

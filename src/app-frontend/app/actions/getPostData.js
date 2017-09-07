@@ -39,6 +39,14 @@ export const setRevisionSwarmData = (authAdd, subHash, revHash, swarmRevTitle, s
   }
 }
 
+export const SET_REFERENCE = "SET_REFERENCE";
+export const setReference = (authAdd, subHash, revHash, refAuthAdd, refSubHash, refRevHash, index) => {
+  return {
+    type: SET_REFERENCE,
+    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, index : index, refKey: {authorgAddress : refAuthAdd, submissionHash : refSubHash, revisionHash : refRevHash}}
+  }
+}
+
 export const SET_AUTHORG_CURRENT_NAME = "SET_AUTHORG_CURRENT_NAME";
 export const setAuthorgCurrentName = (authAdd, name) => {
   return {
@@ -118,13 +126,16 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
                                   revisionHash, 
                                   result.revisionSwarmTitle, 
                                   result.revisionSwarmText))
-    if (firstLevel && result.revisionSwarmText) {
+   if(result.revisionSwarmText) {
       result.revisionSwarmText.map((section, i) => {        
         try {
-          var json = JSON.parse(section)
+          var json = JSON.parse(section);
           if(json) {
             if(json.reference) {
-              dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, -1, false))
+              dispatch(setReference(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, authorgAddress, submissionHash, revisionHash, json.reference.sectionIndex));
+              if (firstLevel) {
+                dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, -1, false));
+              }
             }
           }
         } catch (e) {
@@ -192,6 +203,7 @@ export default {
   SET_REVISION_TIME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
+  SET_REFERENCE,
   loadPost,
   handleViewResponses
 };

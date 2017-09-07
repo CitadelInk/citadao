@@ -36,11 +36,6 @@ class PostFooter extends Component {
 							
 							if (this.props.focusedPost) {
 								reactionButtons = revision.reactions.map(reaction => {
-									console.log("reaction: " + reaction);
-									console.log("reaction.reactionHash: " + reaction.reactionHash);
-									console.log("reaction.reactionReactors: " + reaction.reactionReactors);
-									console.log("this.props.approvedReactions: " + this.props.approvedReactions);
-									console.log("this.props.approvedReactions[reaction.reactionHash]: " + this.props.approvedReactions.get(reaction.reactionHash));
 									return (<button onClick={this.reactionClicked} value={reaction.reactionHash}>{this.props.approvedReactions.get(reaction.reactionHash)} - {reaction.reactionReactors + ""}</button>)
 								})
 							}

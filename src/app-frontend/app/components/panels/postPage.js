@@ -120,7 +120,6 @@ class PostPage extends Component {
 						if (revisionData) {
 							if (revisionData.refKeys) {
 								keys = revisionData.refKeys;
-								console.log("ref keys found - length: " + keys.length);
 							}
 						}
 					}					
@@ -130,8 +129,6 @@ class PostPage extends Component {
 
 		var responses = "responses...";
 		if (keys.length > 0) {
-			console.log("keys[0].authorgAddress" + keys[0].authorgAddress + " - subHash: " + keys[0].submissionHash);		
-			//responses = (<br />)
 			responses = (			
 				<Posts postKeys={keys} />
 			)
@@ -140,7 +137,7 @@ class PostPage extends Component {
 
 		return(
 			<div style={style}>
-				{post}s
+				{post}
 				<div style={responsesStyle}>
 					{responses}
 				</div>

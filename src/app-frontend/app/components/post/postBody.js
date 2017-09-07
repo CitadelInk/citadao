@@ -31,6 +31,7 @@ class PostBody extends Component {
 		var authorg = this.props.auths[this.props.authorg];
 		var text = ["loading"];
 		var title = "loading";
+		var responseMap;
 		if (authorg) {
 			var submissions = authorg.submissions;
 			if (submissions) {
@@ -42,6 +43,9 @@ class PostBody extends Component {
 						if (revision) {
 							text = revision.text;
 							title = revision.title;
+							if (revision.sectionRefKeyMap) {
+								responseMap = revision.sectionRefKeyMap;
+							}
 						}
 					}					
 				}			
@@ -53,11 +57,13 @@ class PostBody extends Component {
 		}
 		var body = "loading";
 		var responses = [];
-
+		if (responseMap) {
+			responses = responseMap.get(i);
+		}
 		if (this.props.sectionIndex) {
 			body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
 		} else {
-			body = text.map((section, i) => {
+			body = text.map((section, i) => {				
 				return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>);	
 			});
 		}
