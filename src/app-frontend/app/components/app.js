@@ -21,8 +21,9 @@ class App extends Component {
 
   render() {
     let page;
+    let header;
     if (this.props.network.isConnected) {
-      var header = (<Header />);
+      header = (<Header />);
       switch (this.props.ui.get('page')) {
         case 'user':
           page = <User/>
@@ -36,31 +37,24 @@ class App extends Component {
           if(splitRoute.length === 7) {
             page = <PostPage authorg={splitRoute[2]} submission={splitRoute[4]} revision={splitRoute[6]} />;
           }
-        break;
+          break;
         case 'landing':
           header = ("");
           page = <Landing />
+          break;
         default:
           page = <Home/>
           break;
       }	
-
-      return (
-        <div className="app">
-            {header}
-            {page}
-        </div>
-      )
     } else {
-      return (
-        <Landing />
-      )
+      page = <Landing />;
     }
 
     return (
-      <div>
-        Connecting.....
-      </div>
+      <div className="app">
+            {header}
+            {page}
+        </div>
     );
   }
 }

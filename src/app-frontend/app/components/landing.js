@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Scroll from 'react-scroll';
- 
+
+import actions from '../actions';
+
+const {
+	navigatePage
+} = actions;
+
+
 var Link       = Scroll.Link;
 var Element    = Scroll.Element;
 var Events     = Scroll.Events;
@@ -15,7 +22,8 @@ var durationFn = function(deltaTop) {
 class Landing extends Component {
 	constructor(props) {
 	   super(props);
-   }	
+	   this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+   	}	
 	
 	 componentDidMount() {
 	
@@ -51,6 +59,11 @@ class Landing extends Component {
 	 handleSetActive(to) {
 	   console.log(to);
 	 }
+
+	tryCitadelClicked(e) {
+		this.props.dispatch(navigatePage({page:'home', route:'/'}));
+	}
+
 	 render() {
 		var bodyStyle = {
 			margin: '0 !important',
@@ -99,6 +112,15 @@ class Landing extends Component {
 			textDecoration:'none'
 		}
 
+		var alphaStyle = {
+			float:'right',
+			display:'block',
+			color:'white',
+			textAlign:'center',
+			padding:'16px',
+			textDecoration:'none'
+		}
+
 		var inkPStyle = {
 			maxWidth:'400px',
 			fontSize:'20pt',
@@ -134,6 +156,8 @@ class Landing extends Component {
 						<li style={liStyle}><Link activeClass="active" className="test2" to="test2" spy={true} smooth={true} duration={500}>Citadel</Link></li>
 						<li style={liStyle}><Link activeClass="active" className="test3" to="test3" spy={true} smooth={true} duration={500} >Test 3</Link></li>
 						<li style={liStyle}><Link activeClass="active" className="test4" to="test4" spy={true} smooth={true} duration={500}>Test 4</Link></li>
+						<li style={alphaStyle}><span onClick={this.tryCitadelClicked}>Try Citadel Alpha Now!</span></li>
+					
 					</ul>
 					</div>
 				</div>

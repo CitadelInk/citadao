@@ -25,13 +25,14 @@ export function setupWeb3() {
         web3Provider = new Web3(provider);
       }
 
-      if(!web3Provider) return;
+      if(!web3Provider || !web3Provider.currentProvider.isConnected()) return;
       
       appContracts.setProvider(web3Provider.currentProvider);
       
 
       console.log('web3 provider:', web3Provider.currentProvider !== undefined);
       console.log('web3 provider:', web3Provider);
+      console.log('web3 connected: ', web3Provider.currentProvider.isConnected())
       dispatch({
         type: WEB_SETUP_COMPLETE,
         data: web3Provider

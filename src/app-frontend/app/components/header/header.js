@@ -23,6 +23,7 @@ class Header extends Component {
 		this.handleAccountSelected = this.handleAccountSelected.bind(this);
 		this.gotoAccountPageClicked = this.gotoAccountPageClicked.bind(this);
 		this.gotoDebugPageClicked = this.gotoDebugPageClicked.bind(this);
+		this.gotoLandingPageClicked = this.gotoLandingPageClicked.bind(this);
 		this.handleBuyMoreClicked = this.handleBuyMoreClicked.bind(this);
 		this.handleClickDiv = this.handleClickDiv.bind(this);
 	}
@@ -83,10 +84,13 @@ class Header extends Component {
 		}
 
 		const gotoAccountPage = (
-			<span onClick={this.gotoAccountPageClicked}><u>View This Account Page</u></span>
+			<span onClick={this.gotoAccountPageClicked}><u>View This Account</u></span>
 		);
 		const gotoDebugPage = (
 			<span onClick={this.gotoDebugPageClicked}><u>View Debug Page</u></span>
+		);
+		const gotoLandingPage = (
+			<span onClick={this.gotoLandingPageClicked}><u>Landing Page</u></span>
 		);
 		
 		const inkBalance = (
@@ -97,15 +101,15 @@ class Header extends Component {
 	
 
 		return (
-			<div style={divStyle} className="header" onClick={this.handleClickDiv}>				
-				<div style={headerStyle}>C I T A D E L</div>
+			<div style={divStyle} className="header" onClick={this.handleClickDiv}>			
+				<div style={headerStyle}>C I T A D E L</div>		
 				<div style={dropDownStyle}>
 				Account: {accountsDropDown}
 				</div>
 				{inkBalance}
 				<div style={debugStyle}>
-				{gotoAccountPage} - {gotoDebugPage}		
-				</div>		
+				{gotoAccountPage} - {gotoDebugPage}	- {gotoLandingPage}	
+				</div>
 				<BuyMoreWidget />
 			</div>
 		)
@@ -130,6 +134,9 @@ class Header extends Component {
 
 	gotoDebugPageClicked(e) {
 		this.props.dispatch(navigatePage({page:'debug', route:'\/debug'}));
+	}
+	gotoLandingPageClicked(e) {
+		this.props.dispatch(navigatePage({page:'landing', route:'\/landing'}));
 	}
 }
 
