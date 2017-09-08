@@ -6,6 +6,7 @@ services:
 branches:
   only:
     - master
+script: cd src/app-frontend && yarn install && yarn build
 env:
   global:
   - DOCKER_IMAGE_NAME=aspiering/frontend
