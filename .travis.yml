@@ -16,9 +16,9 @@ env:
   - secure: q/ffHfzWWaeRAgCtdGxRI9ypaQAy3kTB4LmEFdLoMYnv+jUD/9lzCcfihALBS7peT+2q2DoUfrQ+jkx8PQ51nLLdqNB4j8E/G94d3+ToofMKZ/jR8EB273zJby2q0pdT3hgN7Po06987TZn4Oi9JwBo23aSh4m32aflOlXGw+b7TViFsaNpxipqZPRUXBsKiZKQQHDw459Ft187RGSVy8M7Mq2lqeFvg4U1IlJPJO1fBzX1PoK7kLyqThVqFEYm2iWmca7wyDO21+Fl3l+xLOzL+YbLp4oul0BsvPKkrq94eCV5mBtLwHxWwg52cVyqR38u0U1wbvIZsmkqLwsMikz3b/PsYkzZ5OT+eQtkfhewfKSOy3mNVldWKD5vzGcasDpMSs0nQkCIuSvPo0vUchhGk6euiX0yBP5NkIpsFOXMqorqk+nt2JOekF0EZBZO9K4UAV85O0ZjnHan8TO1OO8jpgt29+c5HQm2b6ClNlaEZRv0dMCkonNJgiio9TNk07pFpmZJlBtyq7AVDUcaCj8q05zqu6F8x/pEKge6yEeOA0HFL0sxh0XaR0VnQqeyzGyMqH9Gn4C0UA0by5/RdKdWhAjYOrPnXE0gHSJhxzlz6/G4gERszFhRdQWZnjoM/Jo75bptOy+CpZjl5qsiSh5W++2c250Uu5zTtC+gCJGE=
 notifications:
     slack: citadao:UWnLglAmQzx84RH67yRvaDQd
-# after_success:
-# - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
-# - docker build -f Dockerfile -t $DOCKER_IMAGE_NAME .
-# - if [ ! -z "$TRAVIS_TAG" ]; then docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_IMAGE_NAME:$TRAVIS_TAG;
-#   fi
-# - docker push $DOCKER_IMAGE_NAME
+after_success:
+  - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
+  - docker build -f Dockerfile -t $DOCKER_IMAGE_NAME .
+  - if [ ! -z "$TRAVIS_TAG" ]; then docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_IMAGE_NAME:$TRAVIS_TAG;
+    fi
+  - docker push $DOCKER_IMAGE_NAME
