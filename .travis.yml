@@ -1,0 +1,24 @@
+language: node_js
+node_js:
+- '7'
+services:
+- docker
+branches:
+  only:
+    - production
+script: yarn devsetup && cd src/app-frontend && yarn install && yarn build
+env:
+  global:
+  - DOCKER_IMAGE_NAME=aspiering/frontend
+  - COMMIT=${TRAVIS_COMMIT::8}
+  - secure: k6/1wVJHYgxoG2NZnwNfufFicoiQ3tudmldS/MpTO/2lgvDMpgQ3s4CE8SPkfbRr2IIrORPUCZnHjG1vf4GpbMfj4wZppLQUZW2NH9WvBR17r8nAVk40GoCnX4jJ/chT7PF9K1cGtMw7QeDIXPCy82JckXInUKhYOG5ruFLqQigL75lynNUeORpUZoDtDwQrEF5xrcE6XXBR6fSB8r6gOOMcImSXRidCIz2ayv6N5/423bm0bic5wDbMouT4YSEBf5kO0/39GMBLIKg0WzLGMGhwh+HVtlCAIMbDMu0N+1KtE5AQ81aF6x/sz4UCSTZh5uqBoJxlTEjkr0hH88YeTWGw+eY++WTmDM0aYTwvPV8qnsqb7T4ybvltIPueHcml2Cfj5EB9zYlP4UJ0vMWXIxYDI1mOS0vOXO4HCzWqDeW8LzJJUnAkeSQf3j/j5uLCadNHzUPqArN2hr17uJ9Ti/UmQeX1LzzBTN7L2BMx4IFLhJGlQlgpEYA0dYALVGhxnK8ajZKISd/82hVET1SUC0LVzxlbuLn5J56FT/DqisskuME6RI7ApUQxnRhqxTCnn+Kv46CPv5G/Fv+PdZ0IxKYn0grBGO7g7rrm2DX90KGCkXtEgfSPirq4qtYVcvDz8FJXx178CA29gE3a3AzDVKYMMVZo3ZRveaLIa/kebpw=
+  - secure: CKO54/rbvLgwybgR0YIr5vw+lfdBipcKphoso6UzG82DwEK8G6vyv2YcnfvkuzBr8HHOqhLexU5FXD9P9T62dY+dWTpW1nCvdsRMQwXorgRySSdX07dlnI270xn/IDLUmkOSZC22mJsttcZZMooRF4YeIRvNvBmNFg4+IlCXgIpAWXsM6hDz9/MtV0ei45vBXTeBLMaSVC6Cj+hs7xEQWnmV6OvGZf9adBloyQsa48liZeSV5zJptwc4niYjPeDQ9QpRRlZAV7QlOiuZ2VFHWIL2s7bShwFQthNdIHJkgetzqg2t1rNUtFOOzHfzwT/02qyyCRD5YKwNnzFhb1fbJWy126UBwJmEKzXUcr28uO/PGtbriG0ws5UapPYxCU9XLwwt3JeNzUrqW8O7pDEe9HWQaPiHNgbY5uJjanqIGc5JL1tQVV6ELSobUSbVVioj7MInLhH9+3pP1LPAGUzXL0dCp0do4DuUqBIvlrlk7RSqxAaDiLxoUq1LMpu1hHvbuFCvkMolKxfDB0CrwtDfrbkcBeNXekRq+O9ihN6xGOu0S9IWSFyV8NLZkzuXKOkt1JhGVGPLgIp5UOa0E3vICUQGloOqyaGLHY9izcLKr35x2rDKynoGtTktQlxRrz1O+Q+NVu8L2928jT66kfoSf8l/jZjLz2v6xGlUWjQLyfA=
+  - secure: q/ffHfzWWaeRAgCtdGxRI9ypaQAy3kTB4LmEFdLoMYnv+jUD/9lzCcfihALBS7peT+2q2DoUfrQ+jkx8PQ51nLLdqNB4j8E/G94d3+ToofMKZ/jR8EB273zJby2q0pdT3hgN7Po06987TZn4Oi9JwBo23aSh4m32aflOlXGw+b7TViFsaNpxipqZPRUXBsKiZKQQHDw459Ft187RGSVy8M7Mq2lqeFvg4U1IlJPJO1fBzX1PoK7kLyqThVqFEYm2iWmca7wyDO21+Fl3l+xLOzL+YbLp4oul0BsvPKkrq94eCV5mBtLwHxWwg52cVyqR38u0U1wbvIZsmkqLwsMikz3b/PsYkzZ5OT+eQtkfhewfKSOy3mNVldWKD5vzGcasDpMSs0nQkCIuSvPo0vUchhGk6euiX0yBP5NkIpsFOXMqorqk+nt2JOekF0EZBZO9K4UAV85O0ZjnHan8TO1OO8jpgt29+c5HQm2b6ClNlaEZRv0dMCkonNJgiio9TNk07pFpmZJlBtyq7AVDUcaCj8q05zqu6F8x/pEKge6yEeOA0HFL0sxh0XaR0VnQqeyzGyMqH9Gn4C0UA0by5/RdKdWhAjYOrPnXE0gHSJhxzlz6/G4gERszFhRdQWZnjoM/Jo75bptOy+CpZjl5qsiSh5W++2c250Uu5zTtC+gCJGE=
+notifications:
+    slack: citadao:UWnLglAmQzx84RH67yRvaDQd
+# after_success:
+# - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
+# - docker build -f Dockerfile -t $DOCKER_IMAGE_NAME .
+# - if [ ! -z "$TRAVIS_TAG" ]; then docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_IMAGE_NAME:$TRAVIS_TAG;
+#   fi
+# - docker push $DOCKER_IMAGE_NAME
