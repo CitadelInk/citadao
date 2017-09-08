@@ -18,8 +18,8 @@
     "truffle-contract": "^2.0.4"
   },
   "scripts": {
-    "install": "cross-os installInternal",
-    "installInternal": {
+    "compile": "cross-os compileInternal",
+    "compileInternal": {
       "darwin": "yarn run truffle compile",
       "win32": "truffle.cmd compile",
       "linux": "yarn run truffle compile"
