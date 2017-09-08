@@ -5,7 +5,7 @@ services:
 - docker
 branches:
   only:
-    - master
+    - production
 script: yarn devsetup && cd src/app-frontend && yarn install && yarn build
 env:
   global:
