@@ -1,8 +1,6 @@
 import {
   getAccounts, 
   getAccountBioData,
-  getAccountBioRevisions,
-  getAccountBioRevision,
   getEthBalance
 } from '../api/getAccounts';
 
@@ -14,6 +12,13 @@ import {
 import {
   loadPost
 } from './getPostData';
+
+import {
+  getAccountName,
+  getAccountBioRevisions,
+  getAccountBioRevision,
+} from '../api/getInkPostData';
+
 
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
