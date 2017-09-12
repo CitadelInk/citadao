@@ -172,9 +172,7 @@ export const giveEther = (amount) => (dispatch, getState) => {
   
   network.web3.eth.sendTransaction({from:tokenOwner, to:account, value: ethamount}, function(err, transactionHash) {
     if (!err)
-      console.log(transactionHash);
-    else
-      console.log(err);
+      console.log(transactionHash); // "0x7f9fade1c0d57a7af66ab4ead7c2eb7b11a91385"
   });
 };
 
