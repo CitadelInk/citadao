@@ -43,6 +43,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-latest": "^6.22.0",
     "babel-preset-react": "^6.24.1",
+    "extract-text-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^2.26.0",
     "json-loader": "^0.5.7",
     "react-hot-loader": "^3.0.0-beta.6",

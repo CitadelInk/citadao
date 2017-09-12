@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import actions from '../../actions'
+import actions from '../../actions';
+import styles from './styles-1.css';
 
 const {
 	setWalletData,
@@ -16,18 +17,7 @@ class BuyMoreWidget extends Component {
 	}
 
 
-	render() {
-		const style = {
-				height: '60px',
-				background:'#F0F0F0',
-				width:'200px',
-				borderRadius: '15px',
-				position:'absolute',
-				right:'10px',
-				top:'0px',
-				zIndex: '1100'
-		}
-			
+	render() {			
 		const submission = this.props.submission;
 		const approximateInk = this.props.wallet.get('etherToSend') / this.props.wallet.get('inkBuyPrice');
 		return (			
