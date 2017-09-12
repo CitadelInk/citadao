@@ -3828,18 +3828,9 @@ truffle-contract@^1.0.3:
     truffle-contract-schema "0.0.5"
     web3 "^0.16.0"
 
-truffle-contract@^2.0.3:
+truffle-contract@^2.0.3, truffle-contract@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/truffle-contract/-/truffle-contract-2.0.5.tgz#3394df90ffa927d106ae3b36b33c6debf9117491"
-  dependencies:
-    ethjs-abi "0.1.8"
-    truffle-blockchain-utils "^0.0.3"
-    truffle-contract-schema "^0.0.5"
-    web3 "^0.20.1"
-
-truffle-contract@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/truffle-contract/-/truffle-contract-2.0.4.tgz#c23c4eaf66397927bab8751b674149c3f8b933eb"
   dependencies:
     ethjs-abi "0.1.8"
     truffle-blockchain-utils "^0.0.3"
