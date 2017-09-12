@@ -14,12 +14,12 @@
     "ethereumjs-testrpc": "git+https://git@github.com/wackoisgod/testrpc.git",
     "fs-extra-promise": "^1.0.1",
     "is-port-reachable": "^2.0.0",
-    "truffle": "^3.4.6",
-    "truffle-contract": "^2.0.4"
+    "truffle": "^3.4.9",
+    "truffle-contract": "^2.0.5"
   },
   "scripts": {
-    "install": "cross-os installInternal",
-    "installInternal": {
+    "compile": "cross-os compileInternal",
+    "compileInternal": {
       "darwin": "yarn run truffle compile",
       "win32": "truffle.cmd compile",
       "linux": "yarn run truffle compile"

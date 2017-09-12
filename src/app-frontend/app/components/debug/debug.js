@@ -13,7 +13,8 @@ const {
 	submitBio,
 	handleBuySubmit,
 	addNewApprovedReaction,
-	submitPost
+	submitPost,
+	giveEther
 } = actions;
 
 class Debug extends Component {
@@ -36,6 +37,7 @@ class Debug extends Component {
 
 			this.handleChangeNewReaction = this.handleChangeNewReaction.bind(this);
 			this.handleAddNewReaction = this.handleAddNewReaction.bind(this);
+			this.handleGiveEther = this.handleGiveEther.bind(this);
 	}
 
 	isOwner() {
@@ -45,6 +47,13 @@ class Debug extends Component {
 	}
 
 	render() {
+
+		const ethDebug = (
+			<div>
+				<button onClick={this.handleGiveEther}> Give 5 ether </button><br />
+			</div>
+		);
+
 		const ownerSection = (
 			<div>
 				<input onChange={this.handleChangeBuyPrice} value={this.props.wallet.get('newBuyPrice')} />
@@ -100,7 +109,8 @@ class Debug extends Component {
 						return (value + " - " + approvedReactions.get(value) + "  -  ")
 					})}<br /><br />
 				</p>
-				
+				{ethDebug}
+
 				{this.isOwner() && ownerSection}
 
 				<input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} />
@@ -166,6 +176,10 @@ class Debug extends Component {
 
 	handleSubmitPost(e) {
 		this.props.dispatch(submitPost());
+	}
+
+	handleGiveEther(e) {
+		this.props.dispatch(giveEther(5));
 	}
 }
 

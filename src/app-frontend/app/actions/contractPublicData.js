@@ -6,11 +6,13 @@ import {
 } from '../api/getTokenData';
 
 import {
-  getInkPublicData,
+  getInkPublicData
 } from '../api/getInkData';
 
 import {
-  getAccountName
+  getAccountName,
+  getAccountBioRevisions,
+  getAccountBioRevision,
 } from '../api/getInkPostData';
 
 import {
@@ -31,8 +33,6 @@ import {
   getAccounts, 
   getRevision,
   getAccountBioData,
-  getAccountBioRevisions,
-  getAccountBioRevision,
   getEthBalance,
   getSubmissionReactions,
   getRevisionSectionResponses,
@@ -124,13 +124,14 @@ export const initializeAccounts = (web3) => dispatch => {
   })  
 }
 
-export const setSelectedAccount = (account) => dispatch => {
+export const setSelectedAccount = (account) => (dispatch, getState) => {
+  const {network} = getState();
   return Promise.all([
-        getEthBalance(account, web3),
+        getEthBalance(account, network.web3),
         getInkBalance(account),
         getAccountBioRevisions(account)
       ]) .then(([ethBalance, inkBalance, bioRevisions]) => {
-    localWeb3.eth.defaultAccount = account
+      network.web3.eth.defaultAccount = account
     return dispatch(setWalletData({account, ...bioRevisions, ethBalance, inkBalance}))
   })
 };
@@ -162,6 +163,21 @@ export const handleViewResponses = (responses) => (dispatch) => {
   return dispatch(setWalletData({selectedResponses : responses}))
 }
 
+export const giveEther = (amount) => (dispatch, getState) => {
+  const {wallet, network} = getState();
+  var ethamount =  network.web3.toWei(amount, 'ether')
+  console.log(ethamount);
+  const account = wallet.get('account');
+  const tokenOwner = wallet.get('tokenOwnerAccount');
+  
+  network.web3.eth.sendTransaction({from:tokenOwner, to:account, value: ethamount}, function(err, transactionHash) {
+    if (!err)
+      console.log(transactionHash);
+    else
+      console.log(err);
+  });
+};
+
 export default {
   initializeContract,
   initializeAccounts,
@@ -172,5 +188,6 @@ export default {
   setBuyPrice,
   handleBuySubmit,
   setSelectedAccount,
-  handleViewResponses
+  handleViewResponses,
+  giveEther
 };
