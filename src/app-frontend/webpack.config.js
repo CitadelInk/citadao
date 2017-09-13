@@ -1,7 +1,7 @@
-const path = require('path')
-const webpack = require('webpack')
+const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -37,9 +37,33 @@ module.exports = {
                 }
             }
         ]
+      },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [
+                {
+                    loader: 'css-loader',
+                    query: {
+                        modules: true,
+                        localIdentName: '[name]__[local]__[hash:base64:5]',
+                        context: './'
+                    }
+                }
+            ]
+        })
       }
     ]
   },
+  plugins: [
+    new ExtractTextPlugin('styles.css'),
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      inject: 'body',
+    })
+  ],
   devServer: {
     port: 8080,
 
@@ -50,12 +74,5 @@ module.exports = {
 
     // enable HMR on the server
     hot: true
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-        template: './index.html',
-        hash: true
-    }),
-    new webpack.HotModuleReplacementPlugin()
-  ]
+  }
 }

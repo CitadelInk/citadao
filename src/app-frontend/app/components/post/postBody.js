@@ -28,6 +28,12 @@ class PostBody extends Component {
 
 
 	render() {		
+
+		const titleSpan = {
+			font:'arial',
+			fontFamily:'sans-serif'
+		}
+		
 		var authorg = this.props.auths[this.props.authorg];
 		var text = ["loading"];
 		var title = "loading";
@@ -70,7 +76,7 @@ class PostBody extends Component {
 
 		return (			
 			<div style={this.props.bodyStyle}>
-				<center>{title}</center>
+				<center><span style={titleSpan}>{title}</span></center>
 				<div>{body}</div>
 			</div>
 		);

@@ -44,11 +44,15 @@ class PostHeader extends Component {
 			fontSize:'14pt', 
 			position:'relative', 
 			fontWeight:'bold',
-			left:'10'
+			left:'10',
+			font:'arial',
+			fontFamily:'sans-serif'
 		}
 
 		const timeStyle = {
-			fontSize:'14pt'
+			fontSize:'14pt',
+			font:'arial',
+			fontFamily:'sans-serif'
 		}
 
 		return (			

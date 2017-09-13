@@ -1,0 +1,11 @@
+.buyMoreWidget{
+	height: 60px;
+	backgroundColor: #F0F0F0;
+	width:200px;
+	borderRadius: 15px;
+	position:absolute;
+	right:10px;
+	top:0px;
+	zIndex: 1100;
+}
+		
