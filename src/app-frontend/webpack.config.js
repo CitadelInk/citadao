@@ -1,8 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
-var combineLoaders = require('webpack-combine-loaders');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -19,14 +18,6 @@ module.exports = {
     // necessary for HMR to know where to load the hot update chunks
     publicPath: ''
   },
-  plugins: [
-    new ExtractTextPlugin('styles-1.css'),
-    new webpack.HotModuleReplacementPlugin(),
-    new HtmlWebpackPlugin({
-      template: 'index.template.ejs',
-      inject: 'body',
-    })
-  ],
   module: {
     rules: [
       { 
@@ -46,27 +37,33 @@ module.exports = {
                 }
             }
         ]
+      },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [
+                {
+                    loader: 'css-loader',
+                    query: {
+                        modules: true,
+                        localIdentName: '[name]__[local]__[hash:base64:5]',
+                        context: './'
+                    }
+                }
+            ]
+        })
       }
-    ],
-    loaders: [{
-      test: /\.js$/,
-      loaders: ['react-hot', 'babel'],
-      include: path.join(__dirname, 'src')
-    }, {
-      test: /\.css$/,
-      loader: combineLoaders([
-        {
-          loader: 'style-loader'
-        }, {
-          loader: 'css-loader',
-          query: {
-            modules: true,
-            localIdentName: '[name]__[local]___[hash:base64:5]'
-          }
-        }
-      ])
-    }]
+    ]
   },
+  plugins: [
+    new ExtractTextPlugin('styles.css'),
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      inject: 'body',
+    })
+  ],
   devServer: {
     port: 8080,
 
@@ -77,12 +74,5 @@ module.exports = {
 
     // enable HMR on the server
     hot: true
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-        template: './index.html',
-        hash: true
-    }),
-    new webpack.HotModuleReplacementPlugin()
-  ]
+  }
 }
