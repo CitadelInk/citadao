@@ -11,11 +11,13 @@ class PostSection extends Component {
 
 	render() {
 		const style = {
-			background:'#F0F0F0',
+			background:'#FFFFFF',
 			paddingBottom:'2px',
 			paddingTop:'2px',
 			width:'100%',
-			position:'relative'
+			position:'relative',
+			font:'arial',
+			fontFamily:'sans-serif'
 		}
 
 		const postStyle = {
