@@ -170,12 +170,33 @@ export const giveEther = (amount) => (dispatch, getState) => {
   const account = wallet.get('account');
   const tokenOwner = wallet.get('tokenOwnerAccount');
   
-  network.web3.eth.sendTransaction({from:tokenOwner, to:account, value: ethamount}, function(err, transactionHash) {
-    if (!err)
-      console.log(transactionHash);
-    else
-      console.log(err);
-  });
+  // network.web3.eth.sendTransaction({from:tokenOwner, to:account, value: ethamount}, function(err, transactionHash) {
+  //   if (!err)
+  //     console.log(transactionHash);
+  //   else
+  //     console.log(err);
+  // });
+
+  var xhr = new XMLHttpRequest();
+  var url = network.web3.currentProvider.host;
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader("Content-type", "application/json");
+  xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log(xhr);
+      }
+  };
+
+
+  var xx = {
+    "jsonrpc":"2.0",
+    "method":"eth_sendTransaction",
+    "params": [{"from":tokenOwner, "to":account, "value": 5e18}], 
+    "id":1};
+
+  var data = JSON.stringify(xx);
+  console.log(data);
+  xhr.send(data);
 };
 
 export default {
