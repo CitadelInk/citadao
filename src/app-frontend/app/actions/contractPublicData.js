@@ -169,16 +169,13 @@ export const giveEther = (amount) => (dispatch, getState) => {
   console.log(ethamount);
   const account = wallet.get('account');
   const tokenOwner = wallet.get('tokenOwnerAccount');
-  
-  // network.web3.eth.sendTransaction({from:tokenOwner, to:account, value: ethamount}, function(err, transactionHash) {
-  //   if (!err)
-  //     console.log(transactionHash);
-  //   else
-  //     console.log(err);
-  // });
 
   var xhr = new XMLHttpRequest();
   var url = network.web3.currentProvider.host;
+  // hacky bullshit!!!
+  if (url == undefined) {
+    url = window.location.href.replace("8080", "8545")
+  }
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-type", "application/json");
   xhr.onreadystatechange = function () {
