@@ -63,13 +63,17 @@ class PostBody extends Component {
 		}
 		var body = "loading";
 		var responses = [];
-		if (responseMap) {
-			responses = responseMap.get(i);
-		}
+		
 		if (this.props.sectionIndex) {
+			if (responseMap) {
+				responses = responseMap.get(this.props.sectionIndex);
+			}
 			body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
-		} else {
-			body = text.map((section, i) => {				
+		} else {			
+			body = text.map((section, i) => {		
+				if (responseMap) {
+					responses = responseMap.get(i);
+				}		
 				return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>);	
 			});
 		}
