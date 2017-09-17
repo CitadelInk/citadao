@@ -33,30 +33,22 @@ export const submitPost = () => (dispatch, getState) => {
   const postTextInput = wallet.get('postTextInput');
 
 
-  var textInputSplit = postTextInput.split('\n');
-  var trimmedTextInput = [];
-  textInputSplit.map(input => {
-    if(input.trim() != "") {
-      trimmedTextInput.push(input)
-    }
-  });
-
   var references = [];
-  trimmedTextInput.map((section) => {
+  postTextInput.document.nodes.map((section) => {
     try {
-      var json = JSON.parse(section);
+      var json = JSON.parse(section.text());
       if (json) {
         var reference = json.reference;
         if (reference) {
-          references.push(reference)
+          references.push(reference);
         }
       }
     } catch (e) {
-
+      console.error("error when posting: " + e);
     }
   })
 
-  var postJson = {"authorg" : account, "title" : postTitleInput, "text" : trimmedTextInput}
+  var postJson = {"authorg" : account, "title" : postTitleInput, "text" : postTextInput}
   return post(JSON.stringify(postJson), references, account, network.web3).then(function(tx_id) {
       alert("post added to contract");
     }).catch(function(e) {

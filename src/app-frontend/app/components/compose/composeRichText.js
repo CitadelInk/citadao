@@ -1,15 +1,19 @@
 
-import { Editor } from 'slate-react'
-import { State } from 'slate'
-
-import React from 'react'
+import { Editor } from 'slate-react';
+import { State } from 'slate';
+import React from 'react';
+import { connect } from 'react-redux';
 import initialState from './state.json';
-
 import styles from './composeRichText.css';
-
 import classNames from 'classnames/bind';
+import actions from '../../actions';
+
+const {
+	setWalletData
+} = actions;
 
 let cx = classNames.bind(styles);
+
 /**
  * Define the default node type.
  */
@@ -113,7 +117,14 @@ class ComposeRichText extends React.Component {
    */
 
   onChange({ state }) {
-    this.setState({ state })
+	console.log("state: " + state);
+	//console.log("state document nodes: " + state.document.nodes.size);
+	state.document.nodes.forEach(function(element) {
+		//console.log("element text: " + element.text);
+	})
+	//console.log("state document node text: " + state.document.nodes[1].text);
+	this.setState({ state });
+	this.props.dispatch(setWalletData({postTextInput : state}));
   }
 
   /**
@@ -279,7 +290,7 @@ class ComposeRichText extends React.Component {
 
     return (
       <span className={styles.button} onMouseDown={onMouseDown} data-active={isActive}>
-        <span className={styles.materialIcons}>{icon}</span>
+        <span className="material-icons">{icon}</span>
       </span>
     )
   }
@@ -298,7 +309,7 @@ class ComposeRichText extends React.Component {
 
     return (
       <span className={styles.button} onMouseDown={onMouseDown} data-active={isActive}>
-        <span className={styles.materialIcons}>{icon}</span>
+        <span className="material-icons">{icon}</span>
       </span>
     )
   }
@@ -326,8 +337,10 @@ class ComposeRichText extends React.Component {
 
 }
 
-/**
- * Export.
- */
-
-export default ComposeRichText
+const mapStateToProps = state => {
+	const { wallet } = state;
+  
+	return {wallet };
+}
+  
+export default connect(mapStateToProps)(ComposeRichText)

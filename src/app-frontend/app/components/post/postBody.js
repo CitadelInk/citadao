@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSection from './postSection';
+import {State} from 'slate';
 
 
 class PostBody extends Component {
@@ -63,19 +64,37 @@ class PostBody extends Component {
 		}
 		var body = "loading";
 		var responses = [];
-		
+
+		var state = State.fromJSON(text);
+		//console.log("state: " + state);
+
+		//console.log("got to post body! - text: " + text);
 		if (this.props.sectionIndex) {
 			if (responseMap) {
 				responses = responseMap.get(this.props.sectionIndex);
 			}
 			body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
 		} else {			
-			body = text.map((section, i) => {		
-				if (responseMap) {
-					responses = responseMap.get(i);
-				}		
-				return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>);	
-			});
+			if (state.document && state.document.nodes) {
+				body = state.document.nodes.map((section, i) => {		
+					if (responseMap) {
+						responses = responseMap.get(i);
+					}		
+					//console.log("section: " + section.kind + " - i: " + i);
+					var instance = this;
+					console.log("section: " + section);
+					/*var node = null;
+					section.nodes.forEach(function(section2) {
+						//console.log("also: " + section2);
+						//console.log("section now: " + section2.kind);
+						//console.log("nodey: " + section2.text);
+						node = section2
+					});*/
+					//console.log("node: " + node);
+					return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={instance.props.focusedPost}/>);	
+					
+				});
+			}
 		}
 
 		return (			

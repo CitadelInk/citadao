@@ -72,7 +72,7 @@ const wallet = (state = Map({
   tokenCitadelComptroller: '',
   allSubmissionsTest: [],
   buyMoreActive: false,
-  postTextInput: '',
+  postTextInput: null,
   selectedResponses: []
 }), action) => {
   switch (action.type) {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
+import { Block } from 'slate';
 
 const {
 	setWalletData,
@@ -48,7 +49,9 @@ class PostSectionActions extends Component {
 				"sectionIndex" : this.props.sectionIndex
 			}
 		}
-		this.props.dispatch(setWalletData({postTextInput : currentTextInput + "\n" + JSON.stringify(referenceJson) + "\n"}))
+		var referenceString = JSON.stringify(referenceJson);
+		var input = {...input, document: {...input.document, nodes:{...input.document.nodes, new Block()}}}
+		this.props.dispatch(setWalletData({postTextInput : currentTextInput + "\n" + referenceString + "\n"}))
 	}
 
 	onSectionViewReferencingPostsClicked(e) {
