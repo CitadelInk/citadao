@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "ampersand-router": "^5.0.0",
+    "classnames": "^2.2.5",
     "compression": "^1.6.2",
     "compression-webpack-plugin": "^0.3.2",
     "cross-os": "^1.1.2",
@@ -33,6 +34,8 @@
     "react-scroll": "^1.5.4",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
+    "slate": "^0.24.1",
+    "slate-react": "^0.1.1",
     "truffle-contract": "^2.0.5"
   },
   "devDependencies": {

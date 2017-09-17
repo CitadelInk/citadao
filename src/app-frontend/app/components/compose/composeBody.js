@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import actions from '../../actions'
+import actions from '../../actions';
+import ComposeRichText from './composeRichText';
 
 const {
 	setWalletData
@@ -59,11 +60,11 @@ class ComposeBody extends Component {
 
 		return (			
 			<div style={style}>
-				<textarea style={textStyle} onChange={this.handlePostTextChange} value={this.props.wallet.get('postTextInput')}/><br />
+				<ComposeRichText />
 			</div>
 		);
 	}
-
+//<textarea style={textStyle} onChange={this.handlePostTextChange} value={this.props.wallet.get('postTextInput')}/><br />
 	handlePostTextChange(e) {
 		this.props.dispatch(setWalletData({postTextInput : e.target.value}))
 	}
