@@ -70,10 +70,6 @@ class ComposeRichText extends React.Component {
 
    constructor(props) {
 	   super(props);
-	   /*this.state = {
-		state: State.fromJSON(initialState),
-	  } */
-	  this.props.dispatch(setWalletData({postTextInput : State.fromJSON(initialState)}));
 	  this.hasMark = this.hasMark.bind(this);
 	  this.hasBlock = this.hasBlock.bind(this);
 	  this.onChange = this.onChange.bind(this);
@@ -85,6 +81,10 @@ class ComposeRichText extends React.Component {
 	  this.renderBlockButton = this.renderBlockButton.bind(this);
 	  this.renderEditor = this.renderEditor.bind(this);
 	  this.getState = this.getState.bind(this);
+   }
+
+   componentWillMount() {
+	this.props.dispatch(setWalletData({postTextInput : State.fromJSON(initialState)}));
    }
  
 
@@ -123,13 +123,6 @@ class ComposeRichText extends React.Component {
    */
 
   onChange({ state }) {
-	console.log("state: " + state);
-	//console.log("state document nodes: " + state.document.nodes.size);
-	state.document.nodes.forEach(function(element) {
-		//console.log("element text: " + element.text);
-	})
-	//console.log("state document node text: " + state.document.nodes[1].text);
-	//this.setState({ state });
 	this.props.dispatch(setWalletData({postTextInput : state}));
   }
 
@@ -343,7 +336,6 @@ class ComposeRichText extends React.Component {
 
   getState() {
 	  var input = this.props.wallet.get('postTextInput');
-	  console.log("getState(): " + input);
 	  return input;
   }
 

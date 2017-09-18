@@ -64,7 +64,7 @@ class ComposeBody extends Component {
 			</div>
 		);
 	}
-//<textarea style={textStyle} onChange={this.handlePostTextChange} value={this.props.wallet.get('postTextInput')}/><br />
+	
 	handlePostTextChange(e) {
 		this.props.dispatch(setWalletData({postTextInput : e.target.value}))
 	}
