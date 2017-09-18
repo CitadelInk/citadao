@@ -59,41 +59,44 @@ class PostBody extends Component {
 			}			
 		}
 
-		if (this.props.sectionIndex) {
-			text = [text[this.props.sectionIndex]];
-		}
-		var body = "loading";
-		var responses = [];
 
 		var state = State.fromJSON(text);
-		//console.log("state: " + state);
-
-		//console.log("got to post body! - text: " + text);
-		if (this.props.sectionIndex) {
-			if (responseMap) {
-				responses = responseMap.get(this.props.sectionIndex);
-			}
-			body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
-		} else {			
-			if (state.document && state.document.nodes) {
-				body = state.document.nodes.map((section, i) => {		
+		
+		var body = "loading";
+		var responses = [];
+		if(revision) {
+			if (this.props.sectionIndex) {
+				console.log("text 1: " + text);
+				console.log("state: " + state);
+				if (this.props.sectionIndex) {
+					console.log("section index: " + this.props.sectionIndex);
+					console.log("node count: " + state.document.nodes.size);
+					var nodeArray = Array.from(state.document.nodes);
+					text = nodeArray[this.props.sectionIndex];
+				}
+				console.log("text 2: " + text);
+				if (text) {
 					if (responseMap) {
-						responses = responseMap.get(i);
-					}		
-					//console.log("section: " + section.kind + " - i: " + i);
-					var instance = this;
-					//console.log("section: " + section);
-					/*var node = null;
-					section.nodes.forEach(function(section2) {
-						//console.log("also: " + section2);
-						//console.log("section now: " + section2.kind);
-						//console.log("nodey: " + section2.text);
-						node = section2
-					});*/
-					//console.log("node: " + node);
-					return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={instance.props.focusedPost}/>);	
-					
-				});
+						responses = responseMap.get(this.props.sectionIndex);
+					}
+					if (!responses) {
+						responses = [];
+					}
+					console.log("body = post");
+					body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
+				}
+			} else {			
+				if (state.document && state.document.nodes) {
+					body = state.document.nodes.map((section, i) => {		
+						if (responseMap) {
+							responses = responseMap.get(i);
+						}		
+						
+						var instance = this;
+						return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={instance.props.focusedPost}/>);	
+						
+					});
+				}
 			}
 		}
 

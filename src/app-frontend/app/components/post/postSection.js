@@ -114,17 +114,19 @@ class PostSection extends Component {
 				nodes: nodesList
 			})
 		});
-		var section = (<Editor readonly state={state} schema={schema} />);
+		var section = (<div className={styles.editor}><Editor readonly state={state} schema={schema} /></div>);
 		try {
-			console.log("state.text:" + state.text());
-			var json = JSON.parse(state.text);
-			if(json) {
-				var reference = json.reference;
-				if (reference) {
-					section = <Post style={postStyle} headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />
-					reference = true;
-				}
-			}		
+			if(state.document && state.document.text) {
+				var json = JSON.parse(state.document.text);
+				if(json) {
+					var reference = json.reference;
+					if (reference) {
+						
+						section = <Post style={postStyle} headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />
+						reference = true;
+					}
+				}	
+			}
 		} catch(e) {
 			//console.error("error while checking reference")
 		}
@@ -135,7 +137,7 @@ class PostSection extends Component {
 		}
 
 		return (			
-			<div className={styles.editor}>
+			<div>
 				{section}
 				{actions}<br/>
 			</div>

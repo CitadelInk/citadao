@@ -30,11 +30,13 @@ class PostSectionActions extends Component {
 			float:'left',
 			fontSize:'8pt'
 		}
-		
+		var mentions = (<span> </span>);
+		if(this.props.sectionResponses) {
+			mentions = (<span style={mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>)
+		}
 		return (	
 			<div style={actionsStyle}>		
 			<span style={responseStyle} onClick={this.onSectionActionsButtonClicked}>respond</span>
-			<span style={mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>
 			</div>
 		);
 	}

@@ -129,9 +129,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
                                   result.revisionSwarmText))
    var document = State.fromJSON(result.revisionSwarmText)
    if(document) {
-     console.log("revision swarm text: " + document);
-     document.document.nodes.forEach(function(section) {        
-        console.log("swarm text section: " + section)
+     document.document.nodes.forEach(function(section) {    
         try {
           var json = JSON.parse(section.text);
           if(json) {

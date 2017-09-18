@@ -36,7 +36,7 @@ export const submitPost = () => (dispatch, getState) => {
   var references = [];
   postTextInput.document.nodes.map((section) => {
     try {
-      var json = JSON.parse(section.text());
+      var json = JSON.parse(section.text);
       if (json) {
         var reference = json.reference;
         if (reference) {
