@@ -4,16 +4,18 @@
 	position: absolute;
 	top:60px;
 	bottom:0px;
-	zIndex:900;
+	z-index:900;
 	display:flex;
-	overflowX:hidden;
+	overflow-x:hidden;
+	overflow-y:hidden;
 	margin:2px;
 }
 
 .responses {
 	position:relative;
-	width:30%;
-	overflow:scroll;
+	width:33%;
+	overflow-y:scroll;
+	overflow-x:hidden;
 	height:100%;
 	float:right;
 	right:0;
@@ -22,7 +24,8 @@
 .postContainer {
 	position:relative;
 	width:33%;
-	overflow:hidden;
+	overflow-y:scroll;
+	overflow-x:hidden;
 	bottom:0px;
 	float:left;
 	top:10px;
@@ -37,7 +40,8 @@
 .compose {
 	position:relative;
 	bottom:0px;
-	overflow:hidden;
+	overflow-y:scroll;
+	overflow-x:hidden;
 	width:34%;
 	float:left;
 }
