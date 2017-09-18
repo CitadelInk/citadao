@@ -70,9 +70,10 @@ class ComposeRichText extends React.Component {
 
    constructor(props) {
 	   super(props);
-	   this.state = {
+	   /*this.state = {
 		state: State.fromJSON(initialState),
-	  } 
+	  } */
+	  this.props.dispatch(setWalletData({postTextInput : State.fromJSON(initialState)}));
 	  this.hasMark = this.hasMark.bind(this);
 	  this.hasBlock = this.hasBlock.bind(this);
 	  this.onChange = this.onChange.bind(this);
@@ -83,6 +84,7 @@ class ComposeRichText extends React.Component {
 	  this.renderMarkButton = this.renderMarkButton.bind(this);
 	  this.renderBlockButton = this.renderBlockButton.bind(this);
 	  this.renderEditor = this.renderEditor.bind(this);
+	  this.getState = this.getState.bind(this);
    }
  
 
@@ -94,7 +96,7 @@ class ComposeRichText extends React.Component {
    */
 
   hasMark(type) {
-    const { state } = this.state
+    const state = this.getState();
     return state.activeMarks.some(mark => mark.type == type)
   }
 
@@ -106,8 +108,12 @@ class ComposeRichText extends React.Component {
    */
 
   hasBlock(type) {
-    const { state } = this.state
-    return state.blocks.some(node => node.type == type)
+	const state = this.getState();
+	if (state) {
+		return state.blocks.some(node => node.type == type)
+	} else {
+
+	}
   }
 
   /**
@@ -123,7 +129,7 @@ class ComposeRichText extends React.Component {
 		//console.log("element text: " + element.text);
 	})
 	//console.log("state document node text: " + state.document.nodes[1].text);
-	this.setState({ state });
+	//this.setState({ state });
 	this.props.dispatch(setWalletData({postTextInput : state}));
   }
 
@@ -171,7 +177,7 @@ class ComposeRichText extends React.Component {
 
   onClickMark(e, type) {
     e.preventDefault()
-    const { state } = this.state
+    const state = this.getState();
     const change = state.change().toggleMark(type)
     this.onChange(change)
   }
@@ -324,7 +330,7 @@ class ComposeRichText extends React.Component {
     return (
       <div className={styles.editor}>
         <Editor
-          state={this.state.state}
+          state={this.getState()}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
           schema={schema}
@@ -333,6 +339,12 @@ class ComposeRichText extends React.Component {
         />
       </div>
     )
+  }
+
+  getState() {
+	  var input = this.props.wallet.get('postTextInput');
+	  console.log("getState(): " + input);
+	  return input;
   }
 
 }

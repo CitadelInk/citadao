@@ -116,6 +116,7 @@ class PostSection extends Component {
 		});
 		var section = (<Editor readonly state={state} schema={schema} />);
 		try {
+			console.log("state.text:" + state.text());
 			var json = JSON.parse(state.text);
 			if(json) {
 				var reference = json.reference;
@@ -125,7 +126,7 @@ class PostSection extends Component {
 				}
 			}		
 		} catch(e) {
-			console.error("error while checking reference")
+			//console.error("error while checking reference")
 		}
 
 		var actions = (<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);

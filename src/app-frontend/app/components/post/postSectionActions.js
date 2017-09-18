@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
-import { Block } from 'slate';
+import { Block, State, Text } from 'slate';
 
 const {
 	setWalletData,
@@ -41,17 +41,29 @@ class PostSectionActions extends Component {
 
 	onSectionActionsButtonClicked(e) {
 		var currentTextInput = this.props.wallet.get('postTextInput');
-		var referenceJson = {"reference" : 
-			{
-				"authorg" : this.props.authorg,
-				"submissionHash" : this.props.submissionHash,
-				"revisionHash" : this.props.revisionHash,
-				"sectionIndex" : this.props.sectionIndex
+		if (currentTextInput) {
+			
+			var currentJson = currentTextInput.toJSON();
+			var referenceJson = {"reference" : 
+				{
+					"authorg" : this.props.authorg,
+					"submissionHash" : this.props.submissionHash,
+					"revisionHash" : this.props.revisionHash,
+					"sectionIndex" : this.props.sectionIndex
+				}
+			}
+			var referenceString = JSON.stringify(referenceJson);
+
+			if(State.isState(currentTextInput)) {
+				var block = Block.create({
+					type:'string',
+					nodes: [ Text.createFromString(referenceString) ]
+				});
+				var state2 = currentTextInput.change().insertBlock(block).apply();
+				this.props.dispatch(setWalletData({postTextInput : state2}));
 			}
 		}
-		var referenceString = JSON.stringify(referenceJson);
-		var input = {...input, document: {...input.document, nodes:{...input.document.nodes, new Block()}}}
-		this.props.dispatch(setWalletData({postTextInput : currentTextInput + "\n" + referenceString + "\n"}))
+		e.stopPropagation();
 	}
 
 	onSectionViewReferencingPostsClicked(e) {

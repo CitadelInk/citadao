@@ -1,6 +1,9 @@
 import { combineReducers } from 'redux';
 import { Map, List } from 'immutable';
 import actions from '../actions';
+import initialState from '../components/compose/state.json';
+import {State} from 'slate';
+
 const {
   SET_INK_WALLET_ADRESS,
   SET_INK_COMPTROLLER_ACCOUNT,
@@ -72,7 +75,7 @@ const wallet = (state = Map({
   tokenCitadelComptroller: '',
   allSubmissionsTest: [],
   buyMoreActive: false,
-  postTextInput: null,
+  postTextInput: State.fromJSON(initialState),
   selectedResponses: []
 }), action) => {
   switch (action.type) {

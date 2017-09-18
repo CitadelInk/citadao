@@ -82,7 +82,7 @@ class PostBody extends Component {
 					}		
 					//console.log("section: " + section.kind + " - i: " + i);
 					var instance = this;
-					console.log("section: " + section);
+					//console.log("section: " + section);
 					/*var node = null;
 					section.nodes.forEach(function(section2) {
 						//console.log("also: " + section2);
