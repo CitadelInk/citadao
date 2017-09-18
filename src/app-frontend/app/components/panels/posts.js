@@ -13,8 +13,9 @@ class Posts extends Component {
 		const style = {
 			position:'relative',
 			background:'#FFFFFF',
-			float:'left',
-			width:'100%'
+			//float:'left',
+			width:'100%',
+			margin:'auto'
 		}
 			
 		var posts = this.props.postKeys.map(function(key) {
@@ -24,7 +25,7 @@ class Posts extends Component {
 		return (
 			
 			<div style={style} className="Posts">
-				{posts}			
+				{posts}		
 			</div>
 		);
 	}

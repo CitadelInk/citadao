@@ -30,33 +30,15 @@ class ComposeBody extends Component {
 	}
 
 	render() {
-
-		var stateHeight = parseInt(this.state.height);
-		var remainingHeight = stateHeight - 200;
-		const calcheight = remainingHeight + 'px';
-		const inputHeight = (remainingHeight - 2) + 'px';
 		const style = {
-			position:'absolute',
-			background:'#F0F0F0',
+			position:'relative',
 			//maxHeight:calcheight,
-			top:'50px',
-			bottom:'25px',			
+			top:'15px',
+			bottom:'0px',			
 			//padding: '10px',
-			width:'100%',
+			//width:'100%',
 			overflow:'scroll'
 		}
-
-		const textStyle = {
-			position:'relative',
-			width:'100%',
-			padding:'4px 6px',
-			boxSizing:'border-box',
-			border:'2px solid #ccc',
-			borderRadius:'4px',
-			resize:'none',
-			height:'100%'
-		}
-			
 
 		return (			
 			<div style={style}>
