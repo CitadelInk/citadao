@@ -151,6 +151,13 @@ input:focus {
   background: #fff;
 }
 
+.editorContainer {
+  position:relative;
+	overflow-y:scroll;
+  overflow-x:hidden;
+  top:60px;
+}
+
 .editor > * > * + * {
   margin-top: 1em;
 }
@@ -177,6 +184,9 @@ input:focus {
   margin: 0 -20px;
   border-bottom: 2px solid #eee;
   margin-bottom: 20px;
+  position:fixed;
+  z-index:2000;
+  background-color:#FFFFFF;
 }
 
 .hoverMenu {
@@ -239,9 +249,8 @@ input:focus {
 }
 
 .raisedButton {
-  width:50px;
+  width:120px;
   position:relative;
-  right:20px;
-  float:right;
-  
+  left:120px;
+  float:right;  
 }
