@@ -7,6 +7,7 @@ import { State, Document } from 'slate';
 import initialState from './state.json';
 import { List } from 'immutable';
 import styles from './postSection.css';
+import { Card } from 'material-ui';
 
 
 /**
@@ -58,8 +59,8 @@ class PostSection extends Component {
 	render() {
 		const style = {
 			background:'#FFFFFF',
-			paddingBottom:'2px',
-			paddingTop:'2px',
+			paddingBottom:'1px',
+			paddingTop:'1px',
 			width:'100%',
 			position:'relative',
 			font:'arial',
@@ -69,10 +70,11 @@ class PostSection extends Component {
 		const postStyle = {
 				position:'relative',
 				background:'#FFFFFF',
-				height:'100px',
+				maxHeight:'150px',
 				width:'80%',
 				overflow:'hidden',
-				left:'10%'
+				left:'10%',
+				zIndex:'10000'
 		}
 
 		const headerStyle = {
@@ -98,9 +100,6 @@ class PostSection extends Component {
 			position:'absolute',
 			bottom:'0px',
 			height: '20px',  
-			background:'#707B7c',
-			borderBottomLeftRadius: '15px',
-			borderBottomRightRadius: '15px',
 			width:'100%'
 		}
 
@@ -122,7 +121,7 @@ class PostSection extends Component {
 					var reference = json.reference;
 					if (reference) {
 						
-						section = <Post style={postStyle} headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />
+						section = (<Post headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />)
 						reference = true;
 					}
 				}	
@@ -137,7 +136,7 @@ class PostSection extends Component {
 		}
 
 		return (			
-			<div>
+			<div style={postStyle}>
 				{section}
 				{actions}<br/>
 			</div>

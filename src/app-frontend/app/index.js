@@ -8,6 +8,7 @@ import { AppContainer } from 'react-hot-loader';
 import App from './components/app';
 import Router from './router';
 import actions from './actions';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 
 window.addEventListener('load', () => { 
@@ -29,7 +30,9 @@ window.addEventListener('load', () => {
   
   ReactDOM.render(
     <Provider store={store}>
-      <App />
+      <MuiThemeProvider>
+        <App />
+      </MuiThemeProvider>
     </Provider>,
     document.getElementById('root')
   );  

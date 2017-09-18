@@ -8,7 +8,12 @@ textarea {
 }
 
 body {
-  margin: 0;
+  margin: 0;	
+  background-color:#B0E0E6;
+}
+
+.div {
+  background-color:#B0E0E6;
 }
 
 p {
@@ -71,6 +76,14 @@ input {
 input:focus {
   outline: 0;
   border-color: blue;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.time {
+  
 }
 
 /**
@@ -236,12 +249,4 @@ input:focus {
   padding: 12px;
   background-color: #EBEBEB;
   display: inline-block;
-}
-
-.raisedButton {
-  width:50px;
-  position:relative;
-  right:20px;
-  float:right;
-  
 }

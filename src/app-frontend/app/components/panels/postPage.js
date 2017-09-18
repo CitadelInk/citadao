@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Post from '../post/post';
 import Compose from '../compose/compose';
-import Posts from './posts'
+import Posts from './posts';
+import styles from './postPage.css';
+import { Card } from 'material-ui'
 
 class PostPage extends Component {
 	 constructor(props) {
@@ -25,48 +27,17 @@ class PostPage extends Component {
 	}
 
 	render() {
-		const style = {
-				background:'#FFFFFF',
-				position:'absolute',
-				width:'100%',
-				top:'60px',
-				bottom:'0px',
-				zIndex:'900',
-				display:'flex'
-		}		
-			
-		const responsesStyle = {
-			position:'relative',
-			//top:'100px',
-			minWidth:'33%',
-			maxWidth:'34%',
-			float:'left'
-		}
 
-		const composeStyle = {
-			position:'relative',
-			//top:'100px',
-			minWidth:'33%',
-			maxWidth:'34%',
-			float:'right'
-		}
-			
-		
 		const postStyle = {
 				position:'relative',
 				background:'#FFFFFF',
 				minWidth:'33%',
 				maxWidth:'34%',
 				overflow:'hidden',
-				bottom:'0px',
-				float:'left'
+				bottom:'0px'
 		}
 
 		const headerStyle = {
-			background:'#7FDBFF',
-			borderTopLeftRadius: '15px',
-			borderTopRightRadius: '15px',
-			width:'100%',
 			position:'relative',
 			top:'0px'
 		}
@@ -74,18 +45,13 @@ class PostPage extends Component {
 		const bodyStyle = {
 			background:'#FFFFFF',
 			position:'relative',
-			overflow:'auto',
-			width:'100%'
+			overflow:'auto'
 		}
 
 		const footerStyle = {
-			position:'absolute',
+			position:'relative',
 			bottom:'0',
-			height: '40px',  
-			background:'#707B7c',
-			borderBottomLeftRadius: '15px',
-			borderBottomRightRadius: '15px',
-			width:'100%'
+			height: '40px'
 		}
 
 		const authorg = this.props.authorg;
@@ -95,14 +61,18 @@ class PostPage extends Component {
 
 		if (submission) {
 			post = (			
-				<Post 	style={postStyle} 
-						headerStyle={headerStyle} 
-						bodyStyle={bodyStyle} 
-						footerStyle={footerStyle} 
-						authorg={authorg} 
-						submission={submission} 
-						revision={revision} 
-						focusedPost={true} />
+				<div className={styles.post}>
+					<Card>
+						<Post 
+							headerStyle={headerStyle} 
+							bodyStyle={bodyStyle} 
+							footerStyle={footerStyle} 
+							authorg={authorg} 
+							submission={submission} 
+							revision={revision} 
+							focusedPost={true} />
+					</Card>
+				</div>
 			);
 		}
 
@@ -127,7 +97,7 @@ class PostPage extends Component {
 			}		
 		}
 
-		var responses = "responses...";
+		var responses = "no responses... yet!";
 		if (keys.length > 0) {
 			responses = (			
 				<Posts postKeys={keys} />
@@ -136,13 +106,15 @@ class PostPage extends Component {
 		
 
 		return(
-			<div style={style}>
-				{post}
-				<div style={responsesStyle}>
-					{responses}
-				</div>
-				<div style={composeStyle}>
+			<div className={styles.page}>
+				<div className={styles.compose}>
 				<Compose />
+				</div>
+				<div className={styles.postContainer}>
+						{post}
+				</div>
+				<div className={styles.responses}>
+						{responses}
 				</div>
 			</div>
 		);

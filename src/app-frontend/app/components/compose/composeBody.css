@@ -1,0 +1,21 @@
+.composeHeader{
+	height: 20px;
+	width:100%;
+	background-color: #FFFFFF;
+}
+
+.text{
+	height:5px;
+	font-size:10pt;
+}
+		
+.input{
+	height:30px;
+	max-width:100px;
+}
+
+.button{
+	position:relative;
+	top:10px;
+	right:5px;
+}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Post from '../post/post';
+import { Card } from 'material-ui';
 
 
 class PostWidgetContainer extends Component {
@@ -11,23 +12,22 @@ class PostWidgetContainer extends Component {
 
 	render() {
 		const style = {
-				maxHeight: '220px',
+				maxHeight: '280px',
 				background:'#FFFFFF',
-				position:'relative'
+				position:'relative',
+				width:'90%',
+				margin:'10px'
 		}
 
 		const postStyle = {
 				position:'relative',
 				background:'#FFFFFF',
-				maxHeight:'200px',
 				width:'100%',
-				overflow:'hidden'
+				overflow:'hidden',
+				maxHeight: '280px',
 		}
 
 		const headerStyle = {
-			background:'#7FDBFF',
-			borderTopLeftRadius: '15px',
-			borderTopRightRadius: '15px',
 			width:'100%',
 			position:'relative',
 			top:'0px'
@@ -37,25 +37,23 @@ class PostWidgetContainer extends Component {
 			background:'#FFFFFF',
 			position:'relative',
 			overflow:'hidden',
-			width:'100%'
-			//top:'0px',
-			//bottom:'40px'
+			width:'90%',
+			maxHeight:'170px'
 		}
 
 		const footerStyle = {
-			position:'absolute',
-			bottom:'0px',
-			height: '20px',  
-			background:'#707B7c',
-			borderBottomLeftRadius: '15px',
-			borderBottomRightRadius: '15px',
+			position:'relative',
+			bottom:'5px',
+			height: '40px',  
 			width:'100%'
 		}
 
 			
 		return (			
 			<div style={style}>
+				<Card>
  				<Post style={postStyle} headerStyle={headerStyle} footerStyle={footerStyle} bodyStyle={bodyStyle} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} focusedPost={false} />
+				</Card>
 			</div>
 		);
 	}
