@@ -1,12 +1,12 @@
 .page {
 	background:#FFFFFF;
 	width:100%;
-	position: absolute;
+	position: fixed;
 	top:60px;
 	bottom:0px;
-	zIndex:900;
+	z-index:900;
 	display:flex;
-	overflowX:hidden;
+	overflow-x:hidden;
 }
 
 .empty {
@@ -20,7 +20,8 @@
 .posts {
 	position:relative;
 	width:33%;
-	overflow:scroll;
+	overflow-y:scroll;
+	overflow-x:hidden;
 	bottom:0px;
 	float:right;
 }
@@ -28,7 +29,8 @@
 .compose {
 	position:relative;
 	bottom:0px;
-	overflow:hidden;
+	overflow-y:scroll;
+	overflow-x:hidden;
 	width:34%;
 	float:left;
 }
