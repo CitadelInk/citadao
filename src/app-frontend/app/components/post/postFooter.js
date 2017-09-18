@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
+import { CardText } from 'material-ui';
 
 const {
 	submitReaction
@@ -50,7 +51,8 @@ class PostFooter extends Component {
 		return (			
 			<div style={this.props.footerStyle}>
 				<center>
- 				{mentions}
+					<br/>   
+ 					{mentions}
 				 </center>
 				 {reactionButtons}
 			</div>

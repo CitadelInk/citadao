@@ -4,6 +4,7 @@ import Post from '../post/post';
 import Compose from '../compose/compose';
 import Posts from './posts';
 import styles from './postPage.css';
+import { Card } from 'material-ui'
 
 class PostPage extends Component {
 	 constructor(props) {
@@ -33,15 +34,10 @@ class PostPage extends Component {
 				minWidth:'33%',
 				maxWidth:'34%',
 				overflow:'hidden',
-				bottom:'0px',
-				float:'left'
+				bottom:'0px'
 		}
 
 		const headerStyle = {
-			background:'#7FDBFF',
-			borderTopLeftRadius: '15px',
-			borderTopRightRadius: '15px',
-			width:'100%',
 			position:'relative',
 			top:'0px'
 		}
@@ -49,18 +45,13 @@ class PostPage extends Component {
 		const bodyStyle = {
 			background:'#FFFFFF',
 			position:'relative',
-			overflow:'auto',
-			width:'100%'
+			overflow:'auto'
 		}
 
 		const footerStyle = {
-			position:'absolute',
+			position:'relative',
 			bottom:'0',
-			height: '40px',  
-			background:'#707B7c',
-			borderBottomLeftRadius: '15px',
-			borderBottomRightRadius: '15px',
-			width:'100%'
+			height: '40px'
 		}
 
 		const authorg = this.props.authorg;
@@ -71,14 +62,16 @@ class PostPage extends Component {
 		if (submission) {
 			post = (			
 				<div className={styles.post}>
-				<Post 
-					headerStyle={headerStyle} 
-					bodyStyle={bodyStyle} 
-					footerStyle={footerStyle} 
-					authorg={authorg} 
-					submission={submission} 
-					revision={revision} 
-					focusedPost={true} />
+					<Card>
+						<Post 
+							headerStyle={headerStyle} 
+							bodyStyle={bodyStyle} 
+							footerStyle={footerStyle} 
+							authorg={authorg} 
+							submission={submission} 
+							revision={revision} 
+							focusedPost={true} />
+					</Card>
 				</div>
 			);
 		}
@@ -118,14 +111,10 @@ class PostPage extends Component {
 				<Compose />
 				</div>
 				<div className={styles.postContainer}>
-					<center>
 						{post}
-					</center>
 				</div>
 				<div className={styles.responses}>
-					<center>
 						{responses}
-					</center>
 				</div>
 			</div>
 		);

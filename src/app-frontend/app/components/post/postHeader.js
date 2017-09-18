@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
+import { CardHeader } from 'material-ui';
+import styles from './postHeader.css';
 
 const {
 	gotoUserPage
@@ -19,11 +21,9 @@ class PostHeader extends Component {
 	render() {
 		var name = "loading...";
 		var time = "...";
-		console.log("this.props.authorg: " + this.props.authorg);
 		var authorg = this.props.auths[this.props.authorg];
 		if (authorg && authorg.name) {
 			name = authorg.name;
-			console.log("found name: " + name);
 			var submissions = authorg.submissions;
 			if (submissions) {
 				var submission = submissions[this.props.submission];
@@ -41,27 +41,12 @@ class PostHeader extends Component {
 				}			
 			}		
 		}
-			
-		const nameStyle = {
-			fontSize:'14pt', 
-			position:'relative', 
-			fontWeight:'bold',
-			left:'10',
-			font:'arial',
-			fontFamily:'sans-serif'
-		}
-
-		const timeStyle = {
-			fontSize:'14pt',
-			font:'arial',
-			fontFamily:'sans-serif'
-		}
 
 		return (			
-			<div style={this.props.headerStyle}>
-				<span value={this.props.authorg} onClick={this.authorgNameClicked} style={nameStyle}>{name}</span><span style={timeStyle}>&nbsp;&nbsp;&nbsp;&nbsp; - {time}</span>
-				<span onClick={this.infoButtonClicked} style={{fontSize:'8pt', position:'absolute', right:'10'}}>info...</span>
-				<br />
+			<div className={styles.div}>
+				<span className={styles.name}>{name}</span><br/>
+				<span className={styles.time}>{time}</span>
+				<span onClick={this.infoButtonClicked} style={{fontSize:'8pt', position:'relative', top:'5px', right:'200px'}}>info...</span>
 				{this.state.showDetails && 
 					<div>
 						<span style={{fontSize:'8pt'}}>authorg address - {this.props.authorg}</span><br />

@@ -7,26 +7,31 @@
 	zIndex:900;
 	display:flex;
 	overflowX:hidden;
+	margin:2px;
 }
 
 .responses {
 	position:relative;
-	width:33%;
+	width:30%;
 	overflow:scroll;
 	height:100%;
 	float:right;
 	right:0;
+	margin:auto;
 }
 .postContainer {
 	position:relative;
 	width:33%;
 	overflow:hidden;
 	bottom:0px;
-	float:right;
+	float:left;
+	top:10px;
 }
 
 .post {
 	width:90%;
+	margin:auto;
+	top:10px;
 }
 
 .compose {
