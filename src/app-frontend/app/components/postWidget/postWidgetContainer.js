@@ -13,7 +13,8 @@ class PostWidgetContainer extends Component {
 		const style = {
 				maxHeight: '220px',
 				background:'#FFFFFF',
-				position:'relative'
+				position:'relative',
+				width:'90%'
 		}
 
 		const postStyle = {

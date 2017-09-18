@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import ComposeHeader from './composeHeader'
-import ComposeBody from './composeBody'
-import ComposeFooter from './composeFooter'
+import styles from './compose.css';
+import ComposeRichText from './composeRichText';
 
 class Compose extends Component {
 	 constructor(props) {
@@ -11,19 +10,9 @@ class Compose extends Component {
 
 
 	render() {
-		/*const style = {
-				position:'relative',
-				background:'#FFFFFF',
-				width:'100%',
-				overflow:'hidden',
-				float:'left'
-		}*/
-
 		return(
-			<div/* style={style}*/>
-				<ComposeHeader />
-				<ComposeBody />
-				<ComposeFooter />
+			<div className={styles.compose}>
+				<ComposeRichText />
 			</div>
 		);
 	}

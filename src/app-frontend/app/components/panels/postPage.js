@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Post from '../post/post';
 import Compose from '../compose/compose';
-import Posts from './posts'
+import Posts from './posts';
+import styles from './postPage.css';
 
 class PostPage extends Component {
 	 constructor(props) {
@@ -25,33 +26,7 @@ class PostPage extends Component {
 	}
 
 	render() {
-		const style = {
-				background:'#FFFFFF',
-				position:'absolute',
-				width:'100%',
-				top:'60px',
-				bottom:'0px',
-				zIndex:'900',
-				display:'flex'
-		}		
-			
-		const responsesStyle = {
-			position:'relative',
-			//top:'100px',
-			minWidth:'33%',
-			maxWidth:'34%',
-			float:'left'
-		}
 
-		const composeStyle = {
-			position:'relative',
-			//top:'100px',
-			minWidth:'33%',
-			maxWidth:'34%',
-			float:'right'
-		}
-			
-		
 		const postStyle = {
 				position:'relative',
 				background:'#FFFFFF',
@@ -95,14 +70,16 @@ class PostPage extends Component {
 
 		if (submission) {
 			post = (			
-				<Post 	style={postStyle} 
-						headerStyle={headerStyle} 
-						bodyStyle={bodyStyle} 
-						footerStyle={footerStyle} 
-						authorg={authorg} 
-						submission={submission} 
-						revision={revision} 
-						focusedPost={true} />
+				<div className={styles.post}>
+				<Post 
+					headerStyle={headerStyle} 
+					bodyStyle={bodyStyle} 
+					footerStyle={footerStyle} 
+					authorg={authorg} 
+					submission={submission} 
+					revision={revision} 
+					focusedPost={true} />
+				</div>
 			);
 		}
 
@@ -127,7 +104,7 @@ class PostPage extends Component {
 			}		
 		}
 
-		var responses = "responses...";
+		var responses = "no responses... yet!";
 		if (keys.length > 0) {
 			responses = (			
 				<Posts postKeys={keys} />
@@ -136,13 +113,19 @@ class PostPage extends Component {
 		
 
 		return(
-			<div style={style}>
-				{post}
-				<div style={responsesStyle}>
-					{responses}
-				</div>
-				<div style={composeStyle}>
+			<div className={styles.page}>
+				<div className={styles.compose}>
 				<Compose />
+				</div>
+				<div className={styles.postContainer}>
+					<center>
+						{post}
+					</center>
+				</div>
+				<div className={styles.responses}>
+					<center>
+						{responses}
+					</center>
 				</div>
 			</div>
 		);

@@ -1,0 +1,39 @@
+.page {
+	background:#FFFFFF;
+	width:100%;
+	position: absolute;
+	top:60px;
+	bottom:0px;
+	zIndex:900;
+	display:flex;
+	overflowX:hidden;
+}
+
+.responses {
+	position:relative;
+	width:33%;
+	overflow:scroll;
+	height:100%;
+	float:right;
+	right:0;
+}
+.postContainer {
+	position:relative;
+	width:33%;
+	overflow:hidden;
+	bottom:0px;
+	float:right;
+}
+
+.post {
+	width:90%;
+}
+
+.compose {
+	position:relative;
+	bottom:0px;
+	overflow:hidden;
+	width:34%;
+	float:left;
+}
+		

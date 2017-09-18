@@ -7,9 +7,11 @@ import initialState from './state.json';
 import styles from './composeRichText.css';
 import classNames from 'classnames/bind';
 import actions from '../../actions';
+import { RaisedButton } from 'material-ui';
 
 const {
-	setWalletData
+	setWalletData,
+	submitPost
 } = actions;
 
 let cx = classNames.bind(styles);
@@ -81,6 +83,8 @@ class ComposeRichText extends React.Component {
 	  this.renderBlockButton = this.renderBlockButton.bind(this);
 	  this.renderEditor = this.renderEditor.bind(this);
 	  this.getState = this.getState.bind(this);
+	  this.renderSubmitPostButton = this.renderSubmitPostButton.bind(this);
+	  this.handleSubmitPost = this.handleSubmitPost.bind(this);
    }
 
    componentWillMount() {
@@ -184,7 +188,7 @@ class ComposeRichText extends React.Component {
 
   onClickBlock(e, type) {
     e.preventDefault()
-    const { state } = this.state
+    const state = this.getState();
     const change = state.change()
     const { document } = state
 
@@ -271,9 +275,19 @@ class ComposeRichText extends React.Component {
         {this.renderBlockButton('block-quote', 'format_quote')}
         {this.renderBlockButton('numbered-list', 'format_list_numbered')}
         {this.renderBlockButton('bulleted-list', 'format_list_bulleted')}
+		{this.renderSubmitPostButton()}
       </div>
     )
   }
+
+  renderSubmitPostButton() {
+	return (<RaisedButton primary className={styles.raisedButton} onClick={this.handleSubmitPost}>Submit Post</RaisedButton>);
+  }
+
+
+	handleSubmitPost(e) {
+		this.props.dispatch(submitPost());
+	}
 
   /**
    * Render a mark-toggling toolbar button.

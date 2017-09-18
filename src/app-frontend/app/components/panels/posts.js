@@ -13,7 +13,7 @@ class Posts extends Component {
 		const style = {
 			position:'relative',
 			background:'#FFFFFF',
-			float:'left',
+			//float:'left',
 			width:'100%'
 		}
 			
@@ -24,7 +24,9 @@ class Posts extends Component {
 		return (
 			
 			<div style={style} className="Posts">
-				{posts}			
+				<center>
+				{posts}	
+				</center>		
 			</div>
 		);
 	}
