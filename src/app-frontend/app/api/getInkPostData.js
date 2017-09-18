@@ -137,10 +137,6 @@ export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, in
   return new Promise((res, rej) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getReferenceForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash, index).then((refKey) => {
-        console.log("refKey: " + refKey);
-        console.log("refKey[0]: " + refKey[0]);
-        console.log("refKey[1]: " + refKey[1]);
-        console.log("refKey[2]: " + refKey[2]);
         res({refAuthAdd : refKey[0], refSubHash : refKey[1], refRevHash : refKey[2]})
       })
     })
