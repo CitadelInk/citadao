@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
+import { Block, State, Text } from 'slate';
 
 const {
 	setWalletData,
@@ -29,26 +30,42 @@ class PostSectionActions extends Component {
 			float:'left',
 			fontSize:'8pt'
 		}
-		
+		var mentions = (<span> </span>);
+		if(this.props.sectionResponses) {
+			mentions = (<span style={mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>)
+		}
 		return (	
 			<div style={actionsStyle}>		
 			<span style={responseStyle} onClick={this.onSectionActionsButtonClicked}>respond</span>
-			<span style={mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>
 			</div>
 		);
 	}
 
 	onSectionActionsButtonClicked(e) {
 		var currentTextInput = this.props.wallet.get('postTextInput');
-		var referenceJson = {"reference" : 
-			{
-				"authorg" : this.props.authorg,
-				"submissionHash" : this.props.submissionHash,
-				"revisionHash" : this.props.revisionHash,
-				"sectionIndex" : this.props.sectionIndex
+		if (currentTextInput) {
+			
+			var currentJson = currentTextInput.toJSON();
+			var referenceJson = {"reference" : 
+				{
+					"authorg" : this.props.authorg,
+					"submissionHash" : this.props.submissionHash,
+					"revisionHash" : this.props.revisionHash,
+					"sectionIndex" : this.props.sectionIndex
+				}
+			}
+			var referenceString = JSON.stringify(referenceJson);
+
+			if(State.isState(currentTextInput)) {
+				var block = Block.create({
+					type:'string',
+					nodes: [ Text.createFromString(referenceString) ]
+				});
+				var state2 = currentTextInput.change().insertBlock(block).apply();
+				this.props.dispatch(setWalletData({postTextInput : state2}));
 			}
 		}
-		this.props.dispatch(setWalletData({postTextInput : currentTextInput + "\n" + JSON.stringify(referenceJson) + "\n"}))
+		e.stopPropagation();
 	}
 
 	onSectionViewReferencingPostsClicked(e) {

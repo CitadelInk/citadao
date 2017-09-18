@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSection from './postSection';
+import {State} from 'slate';
 
 
 class PostBody extends Component {
@@ -58,24 +59,45 @@ class PostBody extends Component {
 			}			
 		}
 
-		if (this.props.sectionIndex) {
-			text = [text[this.props.sectionIndex]];
-		}
+
+		var state = State.fromJSON(text);
+		
 		var body = "loading";
 		var responses = [];
-		
-		if (this.props.sectionIndex) {
-			if (responseMap) {
-				responses = responseMap.get(this.props.sectionIndex);
+		if(revision) {
+			if (this.props.sectionIndex) {
+				console.log("text 1: " + text);
+				console.log("state: " + state);
+				if (this.props.sectionIndex) {
+					console.log("section index: " + this.props.sectionIndex);
+					console.log("node count: " + state.document.nodes.size);
+					var nodeArray = Array.from(state.document.nodes);
+					text = nodeArray[this.props.sectionIndex];
+				}
+				console.log("text 2: " + text);
+				if (text) {
+					if (responseMap) {
+						responses = responseMap.get(this.props.sectionIndex);
+					}
+					if (!responses) {
+						responses = [];
+					}
+					console.log("body = post");
+					body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
+				}
+			} else {			
+				if (state.document && state.document.nodes) {
+					body = state.document.nodes.map((section, i) => {		
+						if (responseMap) {
+							responses = responseMap.get(i);
+						}		
+						
+						var instance = this;
+						return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={instance.props.focusedPost}/>);	
+						
+					});
+				}
 			}
-			body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
-		} else {			
-			body = text.map((section, i) => {		
-				if (responseMap) {
-					responses = responseMap.get(i);
-				}		
-				return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>);	
-			});
 		}
 
 		return (			

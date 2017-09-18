@@ -19,9 +19,11 @@ class PostHeader extends Component {
 	render() {
 		var name = "loading...";
 		var time = "...";
+		console.log("this.props.authorg: " + this.props.authorg);
 		var authorg = this.props.auths[this.props.authorg];
-		if (authorg) {
+		if (authorg && authorg.name) {
 			name = authorg.name;
+			console.log("found name: " + name);
 			var submissions = authorg.submissions;
 			if (submissions) {
 				var submission = submissions[this.props.submission];

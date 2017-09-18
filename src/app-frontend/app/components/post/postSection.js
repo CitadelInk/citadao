@@ -2,6 +2,52 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSectionActions from './postSectionActions';
 import Post from './post';
+import { Editor } from 'slate-react';
+import { State, Document } from 'slate';
+import initialState from './state.json';
+import { List } from 'immutable';
+import styles from './postSection.css';
+
+
+/**
+ * Define the default node type.
+ */
+
+const DEFAULT_NODE = 'paragraph'
+
+/**
+ * Define a schema.
+ *
+ * @type {Object}
+ */
+
+const schema = {
+  nodes: {
+    'block-quote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
+    'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
+    'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
+    'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
+    'list-item': props => <li {...props.attributes}>{props.children}</li>,
+    'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
+  },
+  marks: {
+    bold: {
+      fontWeight: 'bold'
+    },
+    code: {
+      fontFamily: 'monospace',
+      backgroundColor: '#eee',
+      padding: '3px',
+      borderRadius: '4px'
+    },
+    italic: {
+      fontStyle: 'italic'
+    },
+    underlined: {
+      textDecoration: 'underline'
+    }
+  }
+}
 
 class PostSection extends Component {
 	 constructor(props) {
@@ -61,18 +107,28 @@ class PostSection extends Component {
 			
 
 		var reference = false;
-		var section = this.props.section;
-		try {
-			var json = JSON.parse(section);
-			if(json) {
-				var reference = json.reference;
-				if (reference) {
-					section = <Post style={postStyle} headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />
-					reference = true;
-				}
-			}		
-		} catch(e) {
 
+		var nodesList = List([this.props.section])
+		var state = new State({
+			document: new Document({
+				nodes: nodesList
+			})
+		});
+		var section = (<div className={styles.editor}><Editor readonly state={state} schema={schema} /></div>);
+		try {
+			if(state.document && state.document.text) {
+				var json = JSON.parse(state.document.text);
+				if(json) {
+					var reference = json.reference;
+					if (reference) {
+						
+						section = <Post style={postStyle} headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />
+						reference = true;
+					}
+				}	
+			}
+		} catch(e) {
+			//console.error("error while checking reference")
 		}
 
 		var actions = (<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
@@ -81,10 +137,9 @@ class PostSection extends Component {
 		}
 
 		return (			
-			<div style={style}>
-				<span>{section}</span>
-				<br />
-				{actions}
+			<div>
+				{section}
+				{actions}<br/>
 			</div>
 		);
 	}

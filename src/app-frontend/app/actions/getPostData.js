@@ -1,5 +1,6 @@
 import appContracts from 'app-contracts';
 import localWeb3 from "../helpers/web3Helper";
+import { State } from 'slate';
 
 import {
   getRevisionFromSwarm,
@@ -126,10 +127,11 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
                                   revisionHash, 
                                   result.revisionSwarmTitle, 
                                   result.revisionSwarmText))
-   if(result.revisionSwarmText) {
-      result.revisionSwarmText.map((section, i) => {        
+   var document = State.fromJSON(result.revisionSwarmText)
+   if(document) {
+     document.document.nodes.forEach(function(section) {    
         try {
-          var json = JSON.parse(section);
+          var json = JSON.parse(section.text);
           if(json) {
             if(json.reference) {
               dispatch(setReference(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, authorgAddress, submissionHash, revisionHash, json.reference.sectionIndex));
