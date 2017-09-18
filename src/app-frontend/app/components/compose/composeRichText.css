@@ -237,3 +237,11 @@ input:focus {
   background-color: #EBEBEB;
   display: inline-block;
 }
+
+.raisedButton {
+  width:50px;
+  position:relative;
+  right:20px;
+  float:right;
+  
+}

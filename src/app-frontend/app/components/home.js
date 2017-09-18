@@ -5,7 +5,7 @@ import Posts from './panels/posts';
 import EmptyLeft from './panels/emptyLeft';
 import EmptyRight from './panels/emptyRight';
 import Compose from './compose/compose';
-
+import styles from './home.css';
 
 class Home extends Component {
 	 constructor(props) {
@@ -14,50 +14,17 @@ class Home extends Component {
 
 
 	render() {
-		const style = {
-				background:'#FFFFFF',
-				width:'100%',
-				position: 'absolute',
-				top:'60px',
-				bottom:'0px',
-				zIndex:'900',
-				display:'flex',
-				overflowX:'hidden'
-		}
-
-		const emptyStyle = {
-			position:'relative',
-			width:'33%',
-			overflow:'scroll',
-			height:'100%'
-		}
-
-		const postsStyle = {
-			position:'relative',
-			width:'33%',
-			overflow:'scroll',
-			bottom:'0px'
-		}
-
-		const composeStyle = {
-			position:'relative',
-			bottom:'0px',
-			overflow:'hidden',
-			width:'33%',
-			float:'right'
-		}
-			
 		return (
 			
-			<div style={style} className="Home">
-				<div style={emptyStyle}>
-				<EmptyLeft />
-				</div>
-				<div style={postsStyle}>
-				<Posts postKeys={this.props.postKeys}/>	
-				</div>
-				<div  style={composeStyle}>
+			<div className={styles.page}>
+				<div className={styles.compose}>
 				<Compose />		
+				</div>
+				<div className={styles.posts}>
+				<Posts postKeys={this.props.postKeys}/>	
+				</div>				
+				<div className={styles.empty}>
+				<EmptyRight />
 				</div>
 			</div>
 		);

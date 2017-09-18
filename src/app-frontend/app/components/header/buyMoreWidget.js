@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
 import styles from './buyMoreWidget.css';
+import { RaisedButton } from 'material-ui';
 
 const {
 	setWalletData,
@@ -23,9 +24,11 @@ class BuyMoreWidget extends Component {
 		console.log(styles)
 		return (			
 			<div className={styles.buyMoreWidget}>
-				<span style={{fontSize:'10pt'}}>- Buy INK - Price: {this.props.wallet.get('inkBuyPrice')} WEI = 1 INK</span><br />
-				<span style={{fontSize:'10pt'}}>WEI: <input onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')} size="10" /> INK &asymp; {approximateInk}</span><br />
-				<button style={{width:'180px'}} onClick={this.handleBuySubmit}>Send WEI</button>	
+				<div className={styles.text}>
+				<span>- Buy INK - Price: {this.props.wallet.get('inkBuyPrice')} WEI = 1 INK</span><br />
+				<span>WEI: <input className={styles.input} onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')}/> &asymp; {approximateInk} INK </span>
+				</div>
+				<RaisedButton primary className={styles.button} onClick={this.handleBuySubmit}>Send WEI</RaisedButton>	
 			</div>
 		);
 	}

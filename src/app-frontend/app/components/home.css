@@ -1,0 +1,35 @@
+.page {
+	background:#FFFFFF;
+	width:100%;
+	position: absolute;
+	top:60px;
+	bottom:0px;
+	zIndex:900;
+	display:flex;
+	overflowX:hidden;
+}
+
+.empty {
+	position:relative;
+	width:33%;
+	overflow:hidden;
+	height:100%;
+	float:right;
+	right:0;
+}
+.posts {
+	position:relative;
+	width:33%;
+	overflow:scroll;
+	bottom:0px;
+	float:right;
+}
+
+.compose {
+	position:relative;
+	bottom:0px;
+	overflow:hidden;
+	width:34%;
+	float:left;
+}
+		
