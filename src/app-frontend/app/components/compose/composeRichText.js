@@ -265,17 +265,21 @@ class ComposeRichText extends React.Component {
 		toolbarMenu:true
 	})
     return (
-      <div className={classNames}>
-        {this.renderMarkButton('bold', 'format_bold')}
-        {this.renderMarkButton('italic', 'format_italic')}
-        {this.renderMarkButton('underlined', 'format_underlined')}
-        {this.renderMarkButton('code', 'code')}
-        {this.renderBlockButton('heading-one', 'looks_one')}
-        {this.renderBlockButton('heading-two', 'looks_two')}
-        {this.renderBlockButton('block-quote', 'format_quote')}
-        {this.renderBlockButton('numbered-list', 'format_list_numbered')}
-        {this.renderBlockButton('bulleted-list', 'format_list_bulleted')}
-		{this.renderSubmitPostButton()}
+      <div className={styles.toolbarContainer}>
+		  <div className={classNames}>
+			{this.renderMarkButton('bold', 'format_bold')}
+			{this.renderMarkButton('italic', 'format_italic')}
+			{this.renderMarkButton('underlined', 'format_underlined')}
+			{this.renderMarkButton('code', 'code')}
+			{this.renderBlockButton('heading-one', 'looks_one')}
+			{this.renderBlockButton('heading-two', 'looks_two')}
+			{this.renderBlockButton('block-quote', 'format_quote')}
+			{this.renderBlockButton('numbered-list', 'format_list_numbered')}
+			{this.renderBlockButton('bulleted-list', 'format_list_bulleted')}
+		</div>
+		<div className={styles.postButton}>
+			{this.renderSubmitPostButton()}
+		</div>
       </div>
     )
   }
@@ -341,7 +345,7 @@ class ComposeRichText extends React.Component {
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
           schema={schema}
-          placeholder={'Enter some rich text...'}
+          placeholder={'Compose post...'}
           spellCheck
         />
       </div>
