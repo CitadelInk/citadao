@@ -147,10 +147,10 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
     }		
   }
 
-  console.log("already loaded: " + alreadyLoaded);
 
   if (!alreadyLoaded) {
-  return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
+    console.log("loading post for first time. revisionHash: " + revisionHash);
+    return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 
                                   submissionHash, 
                                   revisionHash, 
