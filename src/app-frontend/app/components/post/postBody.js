@@ -66,15 +66,10 @@ class PostBody extends Component {
 		var responses = [];
 		if(revision) {
 			if (this.props.sectionIndex) {
-				console.log("text 1: " + text);
-				console.log("state: " + state);
 				if (this.props.sectionIndex) {
-					console.log("section index: " + this.props.sectionIndex);
-					console.log("node count: " + state.document.nodes.size);
 					var nodeArray = Array.from(state.document.nodes);
 					text = nodeArray[this.props.sectionIndex];
 				}
-				console.log("text 2: " + text);
 				if (text) {
 					if (responseMap) {
 						responses = responseMap.get(this.props.sectionIndex);
@@ -82,7 +77,6 @@ class PostBody extends Component {
 					if (!responses) {
 						responses = [];
 					}
-					console.log("body = post");
 					body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
 				}
 			} else {			
