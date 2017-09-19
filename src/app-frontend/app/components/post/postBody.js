@@ -47,7 +47,7 @@ class PostBody extends Component {
 					var revisions = submission.revisions;
 					if (revisions) {
 						var revision = revisions[this.props.revision];
-						if (revision) {
+						if (revision.finishedLoading) {
 							text = revision.text;
 							title = revision.title;
 							if (revision.sectionRefKeyMap) {
