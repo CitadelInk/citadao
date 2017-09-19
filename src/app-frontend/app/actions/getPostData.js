@@ -119,8 +119,37 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
   }
 }
 
+
 export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
-  const {approvedReactions, network} = getState();
+  const {approvedReactions, network, auths} = getState();
+  var alreadyLoaded = false;
+  var nameLoaded = false;
+  var authorgData =auths[authorgAddress];
+  var keys = [];
+  if (authorgData) {
+    if (authorgData.name) {
+      nameLoaded = true;
+    }
+    var submissionsData = authorgData.submissions;
+    if (submissionsData) {
+      var submissionData = submissionsData[submissionHash];
+      if (submissionData) {
+        var revisionsData = submissionData.revisions;
+        if (revisionsData) {
+          var revisionData = revisionsData[revisionHash];
+          if (revisionData) {
+            if (!focusedPost) { // ok to reload focusedPost again to get the new goodies
+              alreadyLoaded = true;
+            } 
+          }
+        }					
+      }			
+    }		
+  }
+
+  console.log("already loaded: " + alreadyLoaded);
+
+  if (!alreadyLoaded) {
   return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 
                                   submissionHash, 
@@ -129,43 +158,46 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
                                   result.revisionSwarmText))
    var document = State.fromJSON(result.revisionSwarmText)
    if(document) {
-     document.document.nodes.forEach(function(section) {    
-        try {
-          var json = JSON.parse(section.text);
-          if(json) {
-            if(json.reference) {
-              dispatch(setReference(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, authorgAddress, submissionHash, revisionHash, json.reference.sectionIndex));
-              if (firstLevel) {
-                dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, -1, false));
+      document.document.nodes.forEach(function(section) {    
+          try {
+            var json = JSON.parse(section.text);
+            if(json) {
+              if(json.reference) {
+                dispatch(setReference(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, authorgAddress, submissionHash, revisionHash, json.reference.sectionIndex));
+                if (firstLevel) {
+                  dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, -1, false));
+                }
               }
             }
-          }
-        } catch (e) {
+          } catch (e) {
 
-        }
-      })       
-    }
-    getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
-      dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
-    })
-    getAccountName(authorgAddress, network.web3).then((name) => {
-      dispatch(setAuthorgCurrentName(authorgAddress, name.accountName));
-    })
-    getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
-      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
-      if (focusedPost) {
-        for(var i = 0; i < refs.count; i++) {
-          getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
-            dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash))
-            dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, -1, false));
-          })
-        }
+          }
+        })       
       }
+      getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
+        dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
+      })
+      if (!nameLoaded) {
+        getAccountName(authorgAddress, network.web3).then((name) => {
+          dispatch(setAuthorgCurrentName(authorgAddress, name.accountName));
+        })
+      }
+      getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
+        dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
+        if (focusedPost) {
+          for(var i = 0; i < refs.count; i++) {
+            getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
+              dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash))
+              dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, -1, false));
+            })
+          }
+        }
+      })
+      getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
+        dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
+      })
     })
-    getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
-      dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
-    })
-  })
+  }
 }
 
 export const initializeTestTypedRevisions = () => dispatch => {
