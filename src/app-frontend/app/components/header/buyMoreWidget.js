@@ -21,7 +21,7 @@ class BuyMoreWidget extends Component {
 	render() {			
 		const submission = this.props.submission;
 		const approximateInk = this.props.wallet.get('etherToSend') / this.props.wallet.get('inkBuyPrice');
-		console.log(styles)
+		
 		return (			
 			<div className={styles.buyMoreWidget}>
 				<div className={styles.text}>
