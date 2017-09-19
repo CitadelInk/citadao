@@ -153,7 +153,7 @@ input:focus {
 
 .editorContainer {
   position:relative;
-	overflow-y:scroll;
+	overflow-y:visible;
   overflow-x:hidden;
   top:60px;
 }
@@ -180,13 +180,7 @@ input:focus {
 }
 
 .toolbarMenu {
-  padding: 1px 0 17px 18px;
-  margin: 0 -20px;
-  border-bottom: 2px solid #eee;
-  margin-bottom: 20px;
-  position:fixed;
-  z-index:2000;
-  background-color:#FFFFFF;
+  float:left;
 }
 
 .hoverMenu {
@@ -250,7 +244,19 @@ input:focus {
 
 .raisedButton {
   width:120px;
-  position:relative;
-  left:120px;
-  float:right;  
+}
+
+.postButton {
+  float:right;
+  padding:0 0 10px;
+}
+
+.toolbarContainer {
+  margin: 0 -20px;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 20px;
+  position:fixed;
+  background-color: #FFFFFF;
+  flex:1;
+  width:33%;
 }
