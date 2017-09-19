@@ -6,10 +6,7 @@ module.exports = function (deployer, done, accounts) {
   reactions.forEach(function(entry) {
     Citadel.deployed().then(function(instance)  {
       web3.bzz.put(entry, (error, hash) => {
-        console.log("error: " + error + " - hash: " + hash);
-        instance.addApprovedReaction.sendTransaction('0x' + hash, {from : accounts[0], gas : 200000}).then((tx_id) => {
-          done();
-        });
+        instance.addApprovedReaction.sendTransaction('0x' + hash, {from : accounts[0], gas : 200000});
       });
     });
   });  
