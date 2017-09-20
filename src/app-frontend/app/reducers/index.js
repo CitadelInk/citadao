@@ -27,7 +27,9 @@ const {
   SET_AUTHORG_CURRENT_NAME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
-  WEB_SETUP_COMPLETE
+  WEB_SETUP_COMPLETE,
+  SET_LOAD_STARTED,
+  SET_NAME_LOAD_STARTED
 } = actions;
 
 const network = (state = Map({
@@ -122,7 +124,8 @@ const revs = (state = {}, action) => {
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           title: action.data.swarmRevTitle,
-          text: action.data.swarmRevText
+          text: action.data.swarmRevText,
+          finishedLoading: true
         })
       });
     case SET_AUTH_SUB_REV_REFERENCE_COUNT:
@@ -146,6 +149,12 @@ const revs = (state = {}, action) => {
         [revHash]: Object.assign({}, state[revHash], {
           reactions: action.data.reactions,
           reactionCount: action.data.reactionCount
+        })
+      });
+    case SET_LOAD_STARTED:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          loadStarted: true
         })
       });
     case SET_REFERENCE:
@@ -176,6 +185,7 @@ const subs = (state = {}, action) => {
     case SET_REVISION_TIME:
     case SET_AUTH_SUB_REV_REFERENCE_COUNT:
     case SET_REVISION_SWARM_DATA:
+    case SET_LOAD_STARTED:
     case SET_REFERENCE:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
@@ -205,12 +215,22 @@ const auths = (state = {}, action) => {
       case SET_REVISION_TIME:
       case SET_AUTH_SUB_REV_REFERENCE_COUNT:
       case SET_REVISION_SWARM_DATA:
+      case SET_LOAD_STARTED:
       case SET_REFERENCE:
         return {
           ...state,
           [authAdd]: {
             ...stateAuth,
             submissions : subs(stateAuth.submissions, action)
+          }
+        }
+      case SET_NAME_LOAD_STARTED:
+        console.log("SET NAME LOAD STARTED");
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            nameLoadStarted: true
           }
         }
       case SET_AUTHORG_CURRENT_NAME:
