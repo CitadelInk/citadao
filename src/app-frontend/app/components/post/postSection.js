@@ -113,6 +113,7 @@ class PostSection extends Component {
 				nodes: nodesList
 			})
 		});
+		var showActions = true;
 		var section = (<div className={styles.editor}><Editor readonly state={state} schema={schema} /></div>);
 		try {
 			if(state.document && state.document.text) {
@@ -125,20 +126,27 @@ class PostSection extends Component {
 						reference = true;
 					}
 				}	
+			} else {
+				showActions = false;
 			}
 		} catch(e) {
 			//console.error("error while checking reference")
 		}
 
 		var actions = (<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
+		
 		if (reference || !this.props.focusedPost) {
-			actions = ''
+			showActions = false;
 		}
+
+		//console.log("showActions: " + showActions + " - text: " + text + " - actions: " + actions);
 
 		return (			
 			<div style={postStyle}>
 				{section}
-				{actions}<br/>
+				{showActions && 
+					actions
+				}
 			</div>
 		);
 	}
