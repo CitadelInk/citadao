@@ -33,14 +33,26 @@ export const submitPost = () => (dispatch, getState) => {
   const postTextInput = wallet.get('postTextInput');
 
 
-  var references = [];
+  var referenceKeyAuthorgs = [];
+  var referenceKeySubmissions = [];
+  var referenceKeyRevisions = [];
   postTextInput.document.nodes.map((section) => {
     try {
       var json = JSON.parse(section.text);
       if (json) {
         var reference = json.reference;
         if (reference) {
-          references.push(reference);
+
+          var refKey = {authorg:reference.authorg, subHash:reference.submissionHash, revHash:reference.revisionHash}
+          if(referenceKeyAuthorgs.indexOf(reference.authorg) < 0 ) {
+            if(referenceKeySubmissions.indexOf(reference.submissionHash) < 0 ) {
+              if(referenceKeyRevisions.indexOf(reference.revisionHash) < 0 ) {
+                referenceKeyAuthorgs.push(reference.authorg);
+                referenceKeySubmissions.push(reference.submissionHash);
+                referenceKeyRevisions.push(reference.revisionHash);
+              }
+            }
+          }
         }
       }
     } catch (e) {
@@ -49,7 +61,7 @@ export const submitPost = () => (dispatch, getState) => {
   })
 
   var postJson = {"authorg" : account, "title" : postTitleInput, "text" : postTextInput}
-  return post(JSON.stringify(postJson), references, account, network.web3).then(function(tx_id) {
+  return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3).then(function(tx_id) {
       alert("post added to contract");
     }).catch(function(e) {
       alert("error - " + e);

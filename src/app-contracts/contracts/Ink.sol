@@ -137,6 +137,16 @@ contract Ink is Managed {
         spend(submit_submission_cost_in_ink);
         submitRevision(msg.sender, subCitadelManifestHash, subCitadelManifestHash);
     }
+
+    function submitRevisionWithReferences(bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash, address[] refKeyAuthorgs, bytes32[] refKeySubmissions, bytes32[] refKeyRevisions) {
+        submitRevision(subCitadelManifestHash, revCitadelManifestHash);
+        require(refKeyAuthorgs.length == refKeySubmissions.length);
+        require(refKeyAuthorgs.length == refKeyRevisions.length);
+
+        for (uint i = 0; i < refKeyAuthorgs.length; i++) {
+            respondToAuthorgSubmissionRevision(refKeyAuthorgs[i], refKeySubmissions[i], refKeyRevisions[i], subCitadelManifestHash, revCitadelManifestHash);
+        }
+    }
     
     function submitRevision(bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash) {
         spend(submit_revision_cost_in_ink);
