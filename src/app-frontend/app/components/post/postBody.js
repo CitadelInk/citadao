@@ -96,7 +96,6 @@ class PostBody extends Component {
 
 		return (			
 			<div style={this.props.bodyStyle}>
-				<center><span style={titleSpan}>{title}</span></center>
 				<div>{body}</div>
 			</div>
 		);
