@@ -115,14 +115,16 @@ class PostSection extends Component {
 		});
 		var showActions = true;
 		var section = (<div className={styles.editor}><Editor readonly state={state} schema={schema} /></div>);
+		var text = "";
 		try {
 			if(state.document && state.document.text) {
+				text = state.document.text;
 				var json = JSON.parse(state.document.text);
 				if(json) {
 					var reference = json.reference;
 					if (reference) {
 						
-						section = (<Post headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} />)
+						section = (<div style={postStyle}><Post headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} /></div>)
 						reference = true;
 					}
 				}	
@@ -142,7 +144,7 @@ class PostSection extends Component {
 		//console.log("showActions: " + showActions + " - text: " + text + " - actions: " + actions);
 
 		return (			
-			<div style={postStyle}>
+			<div>
 				{section}
 				{showActions && 
 					actions

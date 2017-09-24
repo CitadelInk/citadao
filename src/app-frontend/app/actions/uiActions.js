@@ -10,7 +10,8 @@ import {
 } from './contractPublicData';
 
 import {
-  loadPost
+  loadPost,
+  initializeTestTypedRevisions
 } from './getPostData';
 
 import {
@@ -30,6 +31,11 @@ export const gotoUserPage  = (user) => dispatch =>  {
 export const gotoPost = (authorg, subHash, revHash) => dispatch => {
   dispatch(loadPost(authorg, subHash, revHash, -1, true, true));
   return dispatch(navigatePage({page:'post',route:'post\/authorg\/' + authorg + '\/sub\/' + subHash + '\/rev\/' + revHash}))
+}
+
+export const gotoHomePage = () => dispatch => {
+  dispatch(initializeTestTypedRevisions());
+  return dispatch(navigatePage({page:'home', route:'\/'}));
 }
 
 export const getUserPageBios = (user) => dispatch => {
@@ -65,5 +71,6 @@ export default {
   gotoUserPage,
   getUserPageBios,
   setBuyMore,
-  gotoPost
+  gotoPost,
+  gotoHomePage
 };

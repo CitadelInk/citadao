@@ -14,7 +14,8 @@ const {
 	setSelectedAccount,
 	navigatePage,
 	gotoUserPage,
-	setBuyMore
+	setBuyMore,
+	gotoHomePage
 } = actions;
 
 class Header extends Component {
@@ -26,6 +27,7 @@ class Header extends Component {
 		this.gotoLandingPageClicked = this.gotoLandingPageClicked.bind(this);
 		this.handleBuyMoreClicked = this.handleBuyMoreClicked.bind(this);
 		this.handleClickDiv = this.handleClickDiv.bind(this);
+		this.handleHomeClicked = this.handleHomeClicked.bind(this);
 	}
 
 	render() {
@@ -102,7 +104,7 @@ class Header extends Component {
 
 		return (
 			<div style={divStyle} className="header" onClick={this.handleClickDiv}>			
-				<div style={headerStyle}>C I T A D E L</div>		
+				<div style={headerStyle} onClick={this.handleHomeClicked}>C I T A D E L</div>		
 				<div style={dropDownStyle}>
 				Account: {accountsDropDown}
 				</div>
@@ -113,6 +115,10 @@ class Header extends Component {
 				<BuyMoreWidget />
 			</div>
 		)
+	}
+
+	handleHomeClicked(e) {
+		this.props.dispatch(gotoHomePage());
 	}
 
 	handleClickDiv(e) {
