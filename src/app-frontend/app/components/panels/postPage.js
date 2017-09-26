@@ -4,7 +4,7 @@ import Post from '../post/post';
 import Compose from '../compose/compose';
 import Posts from './posts';
 import styles from './postPage.css';
-import { Card } from 'material-ui'
+import { Card } from 'material-ui';
 
 class PostPage extends Component {
 	 constructor(props) {
@@ -27,33 +27,6 @@ class PostPage extends Component {
 	}
 
 	render() {
-
-		const postStyle = {
-				position:'relative',
-				background:'#FFFFFF',
-				minWidth:'33%',
-				maxWidth:'34%',
-				overflow:'hidden',
-				bottom:'0px'
-		}
-
-		const headerStyle = {
-			position:'relative',
-			top:'0px'
-		}
-
-		const bodyStyle = {
-			background:'#FFFFFF',
-			position:'relative',
-			overflow:'auto'
-		}
-
-		const footerStyle = {
-			position:'relative',
-			bottom:'0',
-			height: '40px'
-		}
-
 		const authorg = this.props.authorg;
 		const submission = this.props.submission;
 		const revision = this.props.revision;
@@ -64,9 +37,6 @@ class PostPage extends Component {
 				<div className={styles.post}>
 					<Card>
 						<Post 
-							headerStyle={headerStyle} 
-							bodyStyle={bodyStyle} 
-							footerStyle={footerStyle} 
 							authorg={authorg} 
 							submission={submission} 
 							revision={revision} 

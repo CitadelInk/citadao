@@ -57,15 +57,6 @@ class PostSection extends Component {
 
 
 	render() {
-		const style = {
-			background:'#FFFFFF',
-			paddingBottom:'1px',
-			paddingTop:'1px',
-			width:'100%',
-			position:'relative',
-			font:'arial',
-			fontFamily:'sans-serif'
-		}
 
 		const postStyle = {
 				position:'relative',
@@ -144,7 +135,7 @@ class PostSection extends Component {
 		//console.log("showActions: " + showActions + " - text: " + text + " - actions: " + actions);
 
 		return (			
-			<div>
+			<div className={styles.sectionDiv}>
 				{section}
 				{showActions && 
 					actions

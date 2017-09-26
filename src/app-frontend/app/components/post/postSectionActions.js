@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
 import { Block, State, Text } from 'slate';
+import styles from './postSectionActions.css';
 
 const {
 	setWalletData,
@@ -18,25 +19,14 @@ class PostSectionActions extends Component {
 
 
 	render() {
-		const actionsStyle = {
-			minHeight:'18px'
-		}
-		const responseStyle = {
-			float:'right',
-			fontSize:'8pt'
-		}
 
-		const mentionsStyle = {
-			float:'left',
-			fontSize:'8pt'
-		}
 		var mentions = (<span> </span>);
 		if(this.props.sectionResponses) {
-			mentions = (<span style={mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>)
+			mentions = (<span className={styles.mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>)
 		}
 		return (	
-			<div style={actionsStyle}>		
-			<span style={responseStyle} onClick={this.onSectionActionsButtonClicked}>respond</span>
+			<div className={styles.actionsStyle}>		
+			<span className={styles.responseStyle} onClick={this.onSectionActionsButtonClicked}>respond</span>
 			</div>
 		);
 	}

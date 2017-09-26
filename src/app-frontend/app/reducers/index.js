@@ -158,7 +158,10 @@ const revs = (state = {}, action) => {
         })
       });
     case SET_REFERENCE:
-      var sectionRefKeyMap = state[revHash].sectionRefKeyMap;
+      var sectionRefKeyMap;
+      if(state[revHash]){ 
+        sectionRefKeyMap = state[revHash].sectionRefKeyMap;
+      }
       if (!sectionRefKeyMap) {
         sectionRefKeyMap = new Map();
       }
