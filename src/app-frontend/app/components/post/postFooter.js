@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
 import { CardText } from 'material-ui';
+import { RaisedButton } from 'material-ui';
 
 const {
 	submitReaction
 } = actions;
+
+import styles from './postFooter.css';
 
 
 class PostFooter extends Component {
@@ -15,7 +18,14 @@ class PostFooter extends Component {
 	}
 
 
-	render() {			
+	render() {	
+		var footerStyle = styles.unfocusedFooter;
+		if (this.props.focusedPost) {
+			footerStyle = styles.focusedFooter;
+		}
+
+		var buttonStyle = styles.button;
+
 		var mentions = "loading";
 		var reactionButtons = ("");
 
@@ -37,7 +47,8 @@ class PostFooter extends Component {
 							
 							if (this.props.focusedPost) {
 								reactionButtons = revision.reactions.map(reaction => {
-									return (<button onClick={this.reactionClicked} value={reaction.reactionHash}>{this.props.approvedReactions.get(reaction.reactionHash)} - {reaction.reactionReactors + ""}</button>)
+									var buttonText = this.props.approvedReactions.get(reaction.reactionHash) + " - " + reaction.reactionReactors;
+									return (<RaisedButton secondary className={buttonStyle} labelPosition="before" label={buttonText} onClick={this.reactionClicked} value={reaction.reactionHash} />)
 								})
 							}
 						}
@@ -49,12 +60,9 @@ class PostFooter extends Component {
 		
 		
 		return (			
-			<div style={this.props.footerStyle}>
-				<center>
-					<br/>   
- 					{mentions}
-				 </center>
-				 {reactionButtons}
+			<div className={footerStyle}>
+ 				<div className={styles.mentions}>{mentions}</div>
+				<div className={styles.buttonContainer}>{reactionButtons}</div>
 			</div>
 		);
 	}

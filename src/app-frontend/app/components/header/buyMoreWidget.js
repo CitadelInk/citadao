@@ -28,7 +28,7 @@ class BuyMoreWidget extends Component {
 				<span>- Buy INK - Price: {this.props.wallet.get('inkBuyPrice')} WEI = 1 INK</span><br />
 				<span>WEI: <input className={styles.input} onChange={this.handleEtherSendChange} value={this.props.wallet.get('etherToSend')}/> &asymp; {approximateInk} INK </span>
 				</div>
-				<RaisedButton primary className={styles.button} onClick={this.handleBuySubmit}>Send WEI</RaisedButton>	
+				<RaisedButton primary className={styles.button} onClick={this.handleBuySubmit} label="Send WEI" />	
 			</div>
 		);
 	}

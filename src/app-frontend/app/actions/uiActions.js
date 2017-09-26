@@ -28,8 +28,7 @@ export const gotoUserPage  = (user) => dispatch =>  {
   return dispatch(getUserPageBios(user)) 
 }
 
-export const gotoPost = (authorg, subHash, revHash) => dispatch => {
-  dispatch(loadPost(authorg, subHash, revHash, -1, true, true));
+export const gotoPost = (authorg, subHash, revHash) => (dispatch) => {
   return dispatch(navigatePage({page:'post',route:'post\/authorg\/' + authorg + '\/sub\/' + subHash + '\/rev\/' + revHash}))
 }
 
