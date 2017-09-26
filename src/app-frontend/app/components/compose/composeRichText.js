@@ -244,7 +244,7 @@ class ComposeRichText extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className={styles.richTextContainer}>
         {this.renderToolbar()}
         {this.renderEditor()}
       </div>
@@ -285,7 +285,7 @@ class ComposeRichText extends React.Component {
   }
 
   renderSubmitPostButton() {
-	return (<RaisedButton primary className={styles.raisedButton} onClick={this.handleSubmitPost}>Submit Post</RaisedButton>);
+	return (<RaisedButton primary className={styles.raisedButton} onClick={this.handleSubmitPost} label="Submit Post"/>);
   }
 
 

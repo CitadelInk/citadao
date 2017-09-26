@@ -1,0 +1,17 @@
+.unfocusedBody {
+	background:#FFFFFF;
+	position:relative;
+	width:90%;
+	overflow:hidden;
+	max-height:170px;
+	margin:auto;
+}
+
+.focusedBody {
+	background:#FFFFFF;
+	position:relative;
+	width:90%;
+	overflow:show;
+	margin:auto;
+}
+			

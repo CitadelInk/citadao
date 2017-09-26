@@ -129,7 +129,7 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
     var route = ui.get('route');
     var splitRoute = route.split('\/'); 
     if(splitRoute.length === 7) {
-     loadPost(splitRoute[2], splitRoute[4], splitRoute[6], -1, true, true);
+      dispatch(loadPost(splitRoute[2], splitRoute[4], splitRoute[6], -1, true, true));
     }
   }
 }
@@ -182,7 +182,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
               }
             }
           } catch (e) {
-
+            //console.error("error while loading: " + e);
           }
         })       
       }      

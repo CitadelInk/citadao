@@ -8,8 +8,19 @@ import { AppContainer } from 'react-hot-loader';
 import App from './components/app';
 import Router from './router';
 import actions from './actions';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { green300, white } from 'material-ui/styles/colors';
+
+const muiTheme = getMuiTheme({
+  raisedButton: {
+    secondaryColor: green300,
+    secondaryTextColor: white,
+    primaryTextColor: white,
+    textColor: white,
+  }
+});
 
 window.addEventListener('load', () => { 
   const middleware = [ thunk ];
@@ -30,7 +41,7 @@ window.addEventListener('load', () => {
   
   ReactDOM.render(
     <Provider store={store}>
-      <MuiThemeProvider>
+      <MuiThemeProvider muiTheme={muiTheme}>
         <App />
       </MuiThemeProvider>
     </Provider>,

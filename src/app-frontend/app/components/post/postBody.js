@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSection from './postSection';
 import {State} from 'slate';
+import styles from './postBody.css';
+import classNames from 'classnames/bind';
+let cx = classNames.bind(styles);
 
 
 class PostBody extends Component {
@@ -29,15 +32,13 @@ class PostBody extends Component {
 
 
 	render() {		
-
-		const titleSpan = {
-			font:'arial',
-			fontFamily:'sans-serif'
+		var bodyClassName = styles.unfocusedBody;
+		if (this.props.focusedPost) {
+			bodyClassName = styles.focusedBody;
 		}
-		
+
 		var authorg = this.props.auths[this.props.authorg];
 		var text = ["loading"];
-		var title = "loading";
 		var responseMap;
 		if (authorg) {
 			var submissions = authorg.submissions;
@@ -49,7 +50,6 @@ class PostBody extends Component {
 						var revision = revisions[this.props.revision];
 						if (revision.finishedLoading) {
 							text = revision.text;
-							title = revision.title;
 							if (revision.sectionRefKeyMap) {
 								responseMap = revision.sectionRefKeyMap;
 							}
@@ -95,9 +95,7 @@ class PostBody extends Component {
 		}
 
 		return (			
-			<div style={this.props.bodyStyle}>
-				<div>{body}</div>
-			</div>
+			<div className={bodyClassName}>{body}</div>
 		);
 	}
 }
