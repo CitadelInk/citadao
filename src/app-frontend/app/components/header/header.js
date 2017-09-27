@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import actions from '../../actions';
 import { List } from 'immutable';
 import BuyMoreWidget from './buyMoreWidget';
+import { Link, push } from 'redux-little-router';
 
 const {
 	initializeContract,
@@ -15,7 +16,8 @@ const {
 	navigatePage,
 	gotoUserPage,
 	setBuyMore,
-	gotoHomePage
+	gotoHomePage,
+	redirect
 } = actions;
 
 class Header extends Component {
@@ -86,13 +88,16 @@ class Header extends Component {
 		}
 
 		const gotoAccountPage = (
-			<span onClick={this.gotoAccountPageClicked}><u>View This Account</u></span>
+			<span><Link 
+				href = {"/user/" + this.props.wallet.get('account')}
+				onClick = {this.handleAccountSelected}
+			><u>View This Account</u></Link></span>
 		);
 		const gotoDebugPage = (
-			<span onClick={this.gotoDebugPageClicked}><u>View Debug Page</u></span>
+			<span><Link href="/debug"><u>View Debug Page</u></Link></span>
 		);
 		const gotoLandingPage = (
-			<span onClick={this.gotoLandingPageClicked}><u>Landing Page</u></span>
+			<span><Link href="/landing"><u>Landing Page</u></Link></span>
 		);
 		
 		const inkBalance = (
@@ -100,8 +105,7 @@ class Header extends Component {
 			<span>Balance: <b>{this.props.wallet.get('inkBalance')} INK</b></span><br />
 			</div>
 		)
-	
-
+		
 		return (
 			<div style={divStyle} className="header" onClick={this.handleClickDiv}>			
 				<div style={headerStyle} onClick={this.handleHomeClicked}>C I T A D E L</div>		
@@ -118,7 +122,7 @@ class Header extends Component {
 	}
 
 	handleHomeClicked(e) {
-		this.props.dispatch(gotoHomePage());
+		this.props.dispatch(push('/'));
 	}
 
 	handleClickDiv(e) {
@@ -147,9 +151,10 @@ class Header extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, network } = state;
+  const { router } = state;
+  const { wallet, network } = state.core;
 
-  return {wallet, network};
+  return {wallet, network, router};
 }
 
 export default connect(mapStateToProps)(Header)

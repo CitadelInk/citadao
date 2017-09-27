@@ -360,9 +360,9 @@ class ComposeRichText extends React.Component {
 }
 
 const mapStateToProps = state => {
-	const { wallet } = state;
+	const { wallet } = state.core;
   
-	return {wallet };
+	return { wallet };
 }
   
 export default connect(mapStateToProps)(ComposeRichText)

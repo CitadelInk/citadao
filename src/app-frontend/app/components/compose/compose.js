@@ -4,7 +4,7 @@ import styles from './compose.css';
 import ComposeRichText from './composeRichText';
 
 class Compose extends Component {
-	 constructor(props) {
+	constructor(props) {
 		 super(props);
 	}
 
@@ -19,7 +19,7 @@ class Compose extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet } = state.core;
 
   return {wallet };
 }

@@ -8,6 +8,7 @@ import PostPage from './panels/postPage';
 import actions from '../actions';
 import BuyMoreWidget from './header/buyMoreWidget'
 import Landing from './landing';
+import { Fragment } from 'redux-little-router';
 
 const {
 	initializeContract,
@@ -22,47 +23,58 @@ class App extends Component {
   render() {
     let page;
     let header;
-    if (this.props.network.isConnected) {
-      header = (<Header />);
-      switch (this.props.ui.get('page')) {
-        case 'user':
-          page = <User/>
-          break;
-        case 'debug':
-          page = <Debug/>
-          break;
-        case 'post':
-          var route = this.props.ui.get('route');
-          var splitRoute = route.split('\/'); 
-          if(splitRoute.length === 7) {
-            page = <PostPage authorg={splitRoute[2]} submission={splitRoute[4]} revision={splitRoute[6]} />;
-          }
-          break;
-        case 'landing':
-          header = ("");
-          page = <Landing />
-          break;
-        default:
-          page = <Home/>
-          break;
-      }	
+    if (this.props.network.isConnected) {    
+      return (
+        <Fragment forRoute="/">
+          <div className="app">
+            <Fragment forRoute="/">
+              <div>
+                <Header />         
+                <Home/>
+              </div>
+            </Fragment>   
+            <Fragment forRoute="/debug">
+              <div>
+                <Header />      
+                <Debug/>
+              </div>
+            </Fragment>
+            <Fragment forRoute="/user/:account">
+              <div>
+                <Header />         
+                <User/>
+              </div>
+            </Fragment>
+            <Fragment forRoute="/post/authorg/:authorg/sub/:subHash/rev/:revHash">
+              <div>
+                <Header />
+                <PostPage />          
+              </div>
+            </Fragment>
+            <Fragment forRoute="/landing">
+              <Landing />
+            </Fragment>
+          </div>
+        </Fragment>
+      );
+      
     } else {
-      page = <Landing />;
+      return (
+        <div className="app">         
+          <Landing />
+        </div>
+      );
     }
 
-    return (
-      <div className="app">
-            {header}
-            {page}
-        </div>
-    );
+    
   }
 }
 
 const mapStateToProps = state => {
-  const { ui, wallet, network } = state;
+  const { router } = state;
+  const { ui, wallet, network } = state.core;
 
-  return {ui, wallet, network};
+  return {ui, wallet, network, router};
 };
 
 export default connect(mapStateToProps)(App);

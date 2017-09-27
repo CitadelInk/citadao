@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import Post from '../post/post';
 import { Card } from 'material-ui';
 import actions from '../../actions';
+import { push } from 'redux-little-router';
+
 const {
 	gotoPost
 } = actions;
@@ -29,13 +31,15 @@ class PostWidgetContainer extends Component {
 
 	
 	widgetClicked(e) {
-		this.props.dispatch(gotoPost(this.props.authorg, this.props.submission, this.props.revision));
+		this.props.dispatch(
+			push("/post/authorg/" + this.props.authorg + "/sub/" + this.props.submission + "/rev/" + this.props.revision)
+		);
 		e.stopPropagation();
 	}
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet } = state.core;
 
   return {wallet };
 }

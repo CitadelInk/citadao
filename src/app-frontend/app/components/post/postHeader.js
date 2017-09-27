@@ -72,7 +72,7 @@ class PostHeader extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, auths } = state;
+  const { wallet, auths } = state.core;
 
   return {wallet, auths };
 }

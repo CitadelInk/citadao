@@ -122,21 +122,20 @@ export const setRevisionTime = (authAdd, subHash, revHash, revisionTime) => {
 export const SET_SUBMISSION_REVISIONS = "SET_SUBMISSION_REVISIONS";
 
 export const initializeNeededPosts = () => (dispatch, getState) => {
-  const {ui} = getState();
-  if(ui.get('page') === 'home') {
+  const {ui} = getState().core;
+  const {router} = getState();
+  if(router.result.title === 'Home') {
     dispatch(initializeTestTypedRevisions());
-  } else if (ui.get('page') === 'post') {
-    var route = ui.get('route');
-    var splitRoute = route.split('\/'); 
-    if(splitRoute.length === 7) {
-      dispatch(loadPost(splitRoute[2], splitRoute[4], splitRoute[6], -1, true, true));
+  } else if (router.result.title === 'Post') {
+    if (Object.keys(router.params).length == 3) {
+      dispatch(loadPost(router.params["authorg"], router.params["subHash"], router.params["revHash"], -1, true, true));
     }
   }
 }
 
 
 export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
-  const {approvedReactions, network, auths} = getState();
+  const {approvedReactions, network, auths} = getState().core;
   var alreadyLoaded = false;
   var authorgData = auths[authorgAddress];
   var keys = [];
@@ -209,7 +208,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
 }
 
 export const getName = (authorgAddress) => (dispatch, getState) => {
-  const {auths, network} = getState();
+  const {auths, network} = getState().core;
   var nameLoadStarted = false;
   var authorgData = auths [authorgAddress];
   if (authorgData) {
@@ -238,7 +237,7 @@ export const initializeTestTypedRevisions = () => dispatch => {
 }
 
 export const setSelectedBioRevision = (selectedRevision) => (dispatch, getState) => {
-  const {network} = getState();
+  const {network} = getState().core;
   return getAccountBioRevision(selectedRevision, network.web3).then((revision) => {
     return dispatch(setWalletData({selectedBioRevision : selectedRevision, selectedBioRevisionValue : revision}))
   })

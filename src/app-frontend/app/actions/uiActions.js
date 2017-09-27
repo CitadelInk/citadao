@@ -24,7 +24,6 @@ import {
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
 export const gotoUserPage  = (user) => dispatch =>  {
-  dispatch(navigatePage({page:'user',route:'\/user\/' + user})); 
   return dispatch(getUserPageBios(user)) 
 }
 
