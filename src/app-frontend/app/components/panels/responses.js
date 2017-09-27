@@ -39,7 +39,7 @@ class Responses extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { wallet } = state.core;
 
   return {wallet };
 }

@@ -89,8 +89,7 @@ class Debug extends Component {
 
 		return (
 			
-				<div className="App">
-    			<Header /><br />
+			<div className="App">
 				<div style={style}>
 				<p className="App-intro">
 					Address = {this.props.wallet.get('account')}<br />
@@ -184,7 +183,7 @@ class Debug extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, approvedReactions } = state;
+  const { wallet, approvedReactions } = state.core;
 
   return {wallet, approvedReactions };
 }

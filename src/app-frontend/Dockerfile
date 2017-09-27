@@ -8,4 +8,4 @@ ADD ./public .
 
 EXPOSE 8080
 
-ENTRYPOINT ["hs", "-p 8080"]
+ENTRYPOINT ["node", "server.js"]

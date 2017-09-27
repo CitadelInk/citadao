@@ -23,7 +23,7 @@ class Post extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, submissions } = state;
+  const { wallet, submissions } = state.core;
 
   return {wallet, submissions };
 }

@@ -21,7 +21,7 @@ class User extends Component {
       <div style={style} className="userpage">
           <BioRevisionSelector /><br />
           <BioRevision /><br />
-          {(this.props.ui.get('route') === "\/user\/" + this.props.wallet.get('account')) && 
+          {(this.props.router.params["account"] === this.props.wallet.get('account')) && 
             <BioRevisionInput />
           }
       </div>
@@ -30,9 +30,9 @@ class User extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, ui } = state;
-
-  return {wallet, ui};
+  const { wallet, ui } = state.core;
+  const { router } = state;
+  return {wallet, ui, router};
 }
 
 export default connect(mapStateToProps)(User);

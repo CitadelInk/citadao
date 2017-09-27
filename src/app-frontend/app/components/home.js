@@ -12,19 +12,17 @@ class Home extends Component {
 		super(props);
 	}
 
-
 	render() {
 		return (
-			
 			<div className={styles.page}>
 				<div className={styles.compose}>
-				<Compose />		
+					<Compose />		
 				</div>
 				<div className={styles.posts}>
-				<Posts postKeys={this.props.postKeys}/>	
+					<Posts postKeys={this.props.postKeys}/>	
 				</div>				
 				<div className={styles.empty}>
-				<EmptyRight />
+					<EmptyRight />
 				</div>
 			</div>
 		);
@@ -32,9 +30,9 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, postKeys } = state;
+  const { wallet, postKeys } = state.core;
 
-  return {wallet, postKeys };
+  return { wallet, postKeys };
 }
 
 export default connect(mapStateToProps)(Home)

@@ -32,9 +32,9 @@ class Posts extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, auths } = state;
+  const { wallet, auths } = state.core;
 
-  return {wallet, auths };
+  return { wallet, auths };
 }
 
 export default connect(mapStateToProps)(Posts)

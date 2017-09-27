@@ -1,12 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import thunk from 'redux-thunk';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import { initializeCurrentLocation, routerForBrowser } from 'redux-little-router';
 import { Provider } from 'react-redux';
-import reducers from './reducers';
+import rootReducer  from './reducers';
 import { AppContainer } from 'react-hot-loader';
 import App from './components/app';
-import Router from './router';
+import { routes } from './router';
 import actions from './actions';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -23,28 +24,44 @@ const muiTheme = getMuiTheme({
 });
 
 window.addEventListener('load', () => { 
-  const middleware = [ thunk ];
-
   const {
     setupWeb3 
   } = actions;
 
+
+  const {
+    reducer,
+    middleware,
+    enhancer
+  } = routerForBrowser({routes})
+
+  const middlewares = [thunk, middleware];
+
+  const composeEnhancers = compose;
   const store = createStore(
-    reducers,
-    applyMiddleware(...middleware)
+       combineReducers({core: rootReducer, router: reducer}),
+       composeEnhancers(enhancer, applyMiddleware(...middlewares)),
   );
 
+  const initialLocation = store.getState().router;
+  if (initialLocation) {
+    store.dispatch(initializeCurrentLocation(initialLocation));
+  }
+
+  console.log(store.getState())
+
   store.dispatch(setupWeb3());
-  
-  const router = new Router({store: store});
-  router.history.start();
-  
-  ReactDOM.render(
+
+  const app = (
     <Provider store={store}>
       <MuiThemeProvider muiTheme={muiTheme}>
         <App />
       </MuiThemeProvider>
-    </Provider>,
+    </Provider>
+  );
+  
+  ReactDOM.render(
+    app,
     document.getElementById('root')
   );  
 })

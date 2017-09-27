@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -77,7 +78,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './index.html',
       inject: 'body',
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: './server/server.js' }
+    ])
   ],
   devServer: {
     port: 8080,

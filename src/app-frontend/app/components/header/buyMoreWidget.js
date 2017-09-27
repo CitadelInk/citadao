@@ -45,9 +45,10 @@ class BuyMoreWidget extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state;
+  const { router } = state;
+  const { wallet } = state.core;
 
-  return {wallet };
+  return { wallet, router };
 }
 
 export default connect(mapStateToProps)(BuyMoreWidget)

@@ -13,7 +13,7 @@ import {
 } from '../api/updatePublicData';
 
 export const submitBio = () => (dispatch, getState) => {
-  const {wallet, network} = getState();
+  const {wallet, network} = getState().core;
   const account = wallet.get('account');
   const bioNameInput = wallet.get('bioNameInput');
   const bioTextInput = wallet.get('bioTextInput')
@@ -27,7 +27,7 @@ export const submitBio = () => (dispatch, getState) => {
 
 
 export const submitPost = () => (dispatch, getState) => {
-  const {wallet, network} = getState();
+  const {wallet, network} = getState().core;
   const account = wallet.get('account');
   const postTitleInput = wallet.get('postTitleInput');
   const postTextInput = wallet.get('postTextInput');
@@ -69,7 +69,7 @@ export const submitPost = () => (dispatch, getState) => {
 };
 
 export const submitReaction = (authorg, submissionHash, revisionHash, reaction) => (dispatch, getState) => {
-  const {wallet} = getState();
+  const {wallet} = getState().core;
   const account = wallet.get('account');
   return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(tx_id) {
       alert("post added to contract");

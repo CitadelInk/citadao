@@ -27,9 +27,9 @@ class PostPage extends Component {
 	}
 
 	render() {
-		const authorg = this.props.authorg;
-		const submission = this.props.submission;
-		const revision = this.props.revision;
+		const authorg = this.props.router.params["authorg"];
+		const submission = this.props.router.params["subHash"];
+		const revision = this.props.router.params["revHash"]
 		var post = "loading...";
 
 		if (submission) {
@@ -78,13 +78,13 @@ class PostPage extends Component {
 		return(
 			<div className={styles.page}>
 				<div className={styles.compose}>
-				<Compose />
+					<Compose />
 				</div>
 				<div className={styles.postContainer}>
-						{post}
+					{post}
 				</div>
 				<div className={styles.responses}>
-						{responses}
+					{responses}
 				</div>
 			</div>
 		);
@@ -92,9 +92,10 @@ class PostPage extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, auths } = state;
+  const { wallet, auths } = state.core;
+  const { router } = state;
 
-  return {wallet, auths };
+  return {wallet, auths, router };
 }
 
 export default connect(mapStateToProps)(PostPage)

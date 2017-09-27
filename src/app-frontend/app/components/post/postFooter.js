@@ -74,7 +74,7 @@ class PostFooter extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, approvedReactions, auths } = state;
+  const { wallet, approvedReactions, auths } = state.core;
 
   return {wallet, approvedReactions, auths };
 }

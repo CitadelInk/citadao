@@ -60,7 +60,7 @@ export const setWalletData = (data) => {
 };
 
 export const setBuyPrice = () => (dispatch, getState) => {
-  const {wallet, network} = getState();
+  const {wallet, network} = getState().core;
   const newBuyPrice = network.web3.toBigNumber(wallet.get('newBuyPrice'));
   const account = wallet.get('account');
   return updateBuyPrice(newBuyPrice, account, network.web3).then((data) => {
@@ -69,7 +69,7 @@ export const setBuyPrice = () => (dispatch, getState) => {
 };
 
 export const initializeApprovedReactions = () => (dispatch, getState) => {
-  const {network} = getState();
+  const {network} = getState().core;
   getApprovedReactions(network.web3).then((reactions) => {
       return dispatch(setApprovedReactions(reactions.approvedReactions));
   })
@@ -77,7 +77,7 @@ export const initializeApprovedReactions = () => (dispatch, getState) => {
 
 
 export const addNewApprovedReaction = () => (dispatch, getState) => {
-  const {wallet, network} = getState();
+  const {wallet, network} = getState().core;
   const reaction = wallet.get('newReaction');
   const account = wallet.get('account');
   return(addApprovedReaction(reaction, account, network.web3)).then((data) => {
@@ -86,7 +86,7 @@ export const addNewApprovedReaction = () => (dispatch, getState) => {
 }
 
 export const initializeContract = () => (dispatch, getState) => {
-  const {network} = getState();
+  const {network} = getState().core;
   return Promise.all([
     getAdvancedTokenPublicData(),
     getInkPublicData(),
@@ -125,7 +125,7 @@ export const initializeAccounts = (web3) => dispatch => {
 }
 
 export const setSelectedAccount = (account) => (dispatch, getState) => {
-  const {network} = getState();
+  const {network} = getState().core;
   return Promise.all([
         getEthBalance(account, network.web3),
         getInkBalance(account),
@@ -143,7 +143,7 @@ export const updateInkBalance = (account) => dispatch => {
 };
 
 export const handleBuySubmit = () => (dispatch, getState) => {
-  const {wallet, network} = getState();
+  const {wallet, network} = getState().core;
   const ethToSend = network.web3.toBigNumber(wallet.get('etherToSend'));
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
@@ -164,7 +164,7 @@ export const handleViewResponses = (responses) => (dispatch) => {
 }
 
 export const giveEther = (amount) => (dispatch, getState) => {
-  const {wallet, network} = getState();
+  const {wallet, network} = getState().core;
   var ethamount =  network.web3.toWei(amount, 'ether')
   console.log(ethamount);
   const account = wallet.get('account');

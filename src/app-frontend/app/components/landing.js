@@ -4,6 +4,9 @@ import Scroll from 'react-scroll';
 import styles from './landing.css';
 import classNames from 'classnames/bind';
 import { RaisedButton } from 'material-ui';
+import { push } from 'redux-little-router';
+
+
 const {
 	navigatePage
 } = actions;
@@ -64,7 +67,7 @@ class Landing extends Component {
 	 }
 
 	tryCitadelClicked(e) {
-		this.props.dispatch(navigatePage({page:'home', route:'/'}));
+		this.props.dispatch(push("/"));
 	}
 
 	 render() {

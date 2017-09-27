@@ -40,7 +40,9 @@
     "slate": "^0.24.1",
     "slate-react": "^0.1.1",
     "truffle-contract": "^2.0.5",
-    "url-loader": "^0.5.9"
+    "url-loader": "^0.5.9",
+    "redux-little-router": "^14.2.0",
+    "express": "^4.15.3"
   },
   "devDependencies": {
     "babel-core": "^6.23.1",
@@ -59,6 +61,9 @@
     "truffle-solidity-loader": "git+https://github.com/sogoiii/truffle-solidity-loader.git#1f1e213d52f033b6863218307b8968ae68220fe1",
     "webpack": "^2.2.1",
     "webpack-config-utils": "^2.3.0",
-    "webpack-dev-server": "^2.4.1"
+    "webpack-dev-server": "^2.4.1",
+    "redux-devtools": "^3.4.0",
+    "copy-webpack-plugin": "^4.0.1" 
+
   }
 }
