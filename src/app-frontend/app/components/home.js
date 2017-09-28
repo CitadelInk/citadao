@@ -19,7 +19,7 @@ class Home extends Component {
 					<Compose />		
 				</div>
 				<div className={styles.posts}>
-					<Posts postKeys={this.props.postKeys}/>	
+					<Posts postKeys={this.props.postKeys.slice().reverse()}/>	
 				</div>				
 				<div className={styles.empty}>
 					<EmptyRight />

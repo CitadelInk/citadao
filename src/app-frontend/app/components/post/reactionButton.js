@@ -19,12 +19,10 @@ class ReactionButton extends Component {
 
 
 	render() {	
-		console.log("render reaction button")
 		return (<RaisedButton secondary className={styles.button} labelPosition="before" label={this.props.text} onClick={this.reactionClicked} />)					
 	}
 
 	reactionClicked(e) {
-		console.log("value: " + this.props.reactionValue);
 		this.props.dispatch(submitReaction(this.props.authorg, this.props.submission, this.props.revision, this.props.reactionValue));
 		e.stopPropagation();
 	}

@@ -37,7 +37,7 @@ export const getAccountBioRevisions = (account) => {
 }
 
 export const getAccountName = (account, web3) => {
-  console.log("get account name. account: " + account);
+  //console.log("get account name. account: " + account);
    return new Promise((res, rej) => {
     appContracts.Ink.deployed()
     .then((instance) => {
@@ -50,7 +50,7 @@ export const getAccountName = (account, web3) => {
             const mostRecentBio = bioRevisions[bioRevisions.length - 1];
             getAccountBioRevision(mostRecentBio, web3)
             .then((data) => {
-              console.log("RETURN account name. account: " + account);
+              //console.log("RETURN account name. account: " + account);
               res({
                 accountName : JSON.parse(data.selectedBioRevision.toString()).name
               })
@@ -98,13 +98,13 @@ export const getAccountBioRevision = (revisionHash, web3) => {
 
 // once we add revisioning, will need to get specific revision (default likely most recent?)
 export const getRevisionFromSwarm = (revisionHash, web3) => {
-  console.log("get revision from swarm. revisionHash: " + revisionHash);
+  //console.log("get revision from swarm. revisionHash: " + revisionHash);
   return new Promise((res, rej) => {
     const bzzAddress = revisionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, revision) => {
       const manifest = JSON.parse(revision)
       web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
-        console.log("SET revision from swarm. revisionHash: " + revisionHash);  
+        //console.log("SET revision from swarm. revisionHash: " + revisionHash);  
         var revJson = JSON.parse(rev)
         res ({
           revisionSwarmHash: revisionHash, 
@@ -118,11 +118,11 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
 }
 
 export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
-  console.log("get revision time for revision: " + revisionHash);
+  //console.log("get revision time for revision: " + revisionHash);
   return new Promise((res, rej) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
-        console.log("SET revision time for revision: " + revisionHash);
+        //console.log("SET revision time for revision: " + revisionHash);
         res({timestamp : timestamp})
       })
     })
@@ -130,10 +130,10 @@ export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) =>
 }
 
 export const getNumReferences = (authorgAddress, submissionHash, revisionHash) => {
-  console.log("get num references for revision: " + revisionHash);
+  //console.log("get num references for revision: " + revisionHash);
   return new Promise((res, rej) => {
     appContracts.Ink.deployed().then((instance) => {
-      console.log("SET num references for revision: " + revisionHash);
+      //console.log("SET num references for revision: " + revisionHash);
       instance.getNumberReferencesForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash).then((count) => {
         res({count : count})
       })
