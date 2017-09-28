@@ -200,11 +200,15 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
           }
         }
       })
-      getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
-        dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
-      })
+      dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
     })
   }
+}
+
+export const getReactions = (authorgAddress, submissionHash, revisionHash, approvedReactions) => (dispatch) => {
+  getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
+    dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
+  })
 }
 
 export const getName = (authorgAddress) => (dispatch, getState) => {
@@ -262,5 +266,6 @@ export default {
   SET_LOAD_STARTED,
   SET_NAME_LOAD_STARTED,
   loadPost,
-  handleViewResponses
+  handleViewResponses,
+  getReactions
 };

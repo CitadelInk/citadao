@@ -12,6 +12,11 @@ import {
   post
 } from '../api/updatePublicData';
 
+import {
+  getReactions,
+  initializeNeededPosts
+} from './getPostData'
+
 export const submitBio = () => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const account = wallet.get('account');
@@ -62,20 +67,31 @@ export const submitPost = () => (dispatch, getState) => {
 
   var postJson = {"authorg" : account, "title" : postTitleInput, "text" : postTextInput}
   return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3).then(function(tx_id) {
-      alert("post added to contract");
-    }).catch(function(e) {
-      alert("error - " + e);
-    });
+    
+    // hack as fuck, need to listen to event or similar since this function returns before chain is updated apparently
+    setTimeout(function () {      
+      dispatch(initializeNeededPosts())
+    }, 3000); 
+
+  }).catch(function(e) {
+    alert("error - " + e);
+  });
 };
 
 export const submitReaction = (authorg, submissionHash, revisionHash, reaction) => (dispatch, getState) => {
-  const {wallet} = getState().core;
+  const {wallet, approvedReactions} = getState().core;
   const account = wallet.get('account');
   return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(tx_id) {
-      alert("post added to contract");
-    }).catch(function(e) {
-      alert("error - " + e);
-    });
+    
+    // hack as fuck, need to listen to event or similar since this function returns before chain is updated apparently
+    setTimeout(function () {      
+      dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions))
+    }, 3000); 
+
+
+  }).catch(function(e) {
+    alert("error - " + e);
+  });
 }
 
 export default {

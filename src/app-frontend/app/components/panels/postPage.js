@@ -46,17 +46,16 @@ class PostPage extends Component {
 			);
 		}
 
-
-		var authorgData = this.props.auths[this.props.authorg];
+		var authorgData = this.props.auths[authorg];
 		var keys = [];
 		if (authorgData) {
 			var submissionsData = authorgData.submissions;
 			if (submissionsData) {
-				var submissionData = submissionsData[this.props.submission];
+				var submissionData = submissionsData[submission];
 				if (submissionData) {
 					var revisionsData = submissionData.revisions;
 					if (revisionsData) {
-						var revisionData = revisionsData[this.props.revision];
+						var revisionData = revisionsData[revision];
 						if (revisionData) {
 							if (revisionData.refKeys) {
 								keys = revisionData.refKeys;
@@ -70,7 +69,7 @@ class PostPage extends Component {
 		var responses = "no responses... yet!";
 		if (keys.length > 0) {
 			responses = (			
-				<Posts postKeys={keys} />
+				<Posts postKeys={keys.slice().reverse()} />
 			)
 		}
 		
