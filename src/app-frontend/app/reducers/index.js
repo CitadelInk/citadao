@@ -105,7 +105,21 @@ const wallet = (state = Map({
 const postKeys = (state = [], action) => {
   switch(action.type) {
     case ADD_POST_KEY:
-      return [...state, action.data];
+      var shouldAdd = true;
+      for(var i = 0; i < state.length; i++) {
+        if (state[i].authorgAddress == action.data.authorgAddress) {
+          if (state[i].submissionHash == action.data.submissionHash) {
+            if (state[i].revisionHash == action.data.revisionHash) {
+              shouldAdd = false;
+            }
+          }
+        }
+      }
+      if (shouldAdd) {
+        return [...state, action.data];
+      } else {
+        return state;
+      }
     default:
       return state;
   }
@@ -135,13 +149,31 @@ const revs = (state = {}, action) => {
         })
       });
     case SET_AUTH_SUB_REV_REF_KEY:
+    //TODO: refactor to use a set so we don't have to do stupid check
       let refKeys = state[revHash].refKeys;
       if (!refKeys) {
         refKeys = [];
       }
+      var shouldAddKey = true;
+      for(var i = 0; i < refKeys.length; i++) {
+        if(refKeys[i].authorgAddress == action.data.refKey.authorgAddress) {
+          if(refKeys[i].submissionHash == action.data.refKey.submissionHash) {
+            if(refKeys[i].revisionHash == action.data.refKey.revisionHash) {
+              shouldAddKey = false;
+              break;
+            } 
+          }
+        }
+      }
+
+      var newKeys = refKeys;
+      if(shouldAddKey) {
+        newKeys = [...refKeys, action.data.refKey];
+      }
+
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
-          refKeys: [...refKeys, action.data.refKey]
+          refKeys: newKeys
         })
       });
     case SET_REVISION_REACTIONS:
@@ -165,11 +197,26 @@ const revs = (state = {}, action) => {
       if (!sectionRefKeyMap) {
         sectionRefKeyMap = new Map();
       }
+
+      // TODO: refactor this to be a set so we don't have to do this stupid loop
       var existingReferences = [];
+      var alreadyReferenced = false;
       if (sectionRefKeyMap.get(action.data.index)) {
         existingReferences = sectionRefKeyMap.get(action.data.index);
+        for(var i = 0; i < existingReferences.length; i++) {
+          if (existingReferences[i].authorgAddress == action.data.refKey.authorgAddress) {
+            if (existingReferences[i].submissionHash == action.data.refKey.submissionHash) {
+              if (existingReferences[i].revisionHash == action.data.refKey.revisionHash) {
+                alreadyReferenced = true;
+              } 
+            } 
+          }
+        }
       }
-      existingReferences.push(action.data.refKey);
+      if (!alreadyReferenced) {
+        existingReferences.push(action.data.refKey);
+      }
+      
       var sectionMap = sectionRefKeyMap.set(action.data.index, existingReferences);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {

@@ -19,10 +19,6 @@
 	text-align: center;
 }
 
-.button {
-	margin:2px;
-}
-
 .buttonContainer {
 	flex-wrap:wrap;
 }

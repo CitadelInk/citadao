@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
 import { CardText } from 'material-ui';
-import { RaisedButton } from 'material-ui';
+import ReactionButton from './reactionButton';
 
 const {
 	submitReaction
@@ -14,7 +14,6 @@ import styles from './postFooter.css';
 class PostFooter extends Component {
 	 constructor(props) {
 		 super(props);
-		  this.reactionClicked = this.reactionClicked.bind(this);
 	}
 
 
@@ -48,7 +47,7 @@ class PostFooter extends Component {
 							if (this.props.focusedPost) {
 								reactionButtons = revision.reactions.map(reaction => {
 									var buttonText = this.props.approvedReactions.get(reaction.reactionHash) + " - " + reaction.reactionReactors;
-									return (<RaisedButton secondary className={buttonStyle} labelPosition="before" label={buttonText} onClick={this.reactionClicked} value={reaction.reactionHash} />)
+									return (<ReactionButton authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash} text={buttonText} />)
 								})
 							}
 						}
@@ -65,11 +64,6 @@ class PostFooter extends Component {
 				<div className={styles.buttonContainer}>{reactionButtons}</div>
 			</div>
 		);
-	}
-
-	reactionClicked(e) {
-		this.props.dispatch(submitReaction(this.props.authorg, this.props.submission, this.props.revision, e.target.value));
-		e.stopPropagation();
 	}
 }
 
