@@ -81,14 +81,12 @@ export const submitPost = () => (dispatch, getState) => {
 export const submitReaction = (authorg, submissionHash, revisionHash, reaction) => (dispatch, getState) => {
   const {wallet, approvedReactions} = getState().core;
   const account = wallet.get('account');
-  return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(tx_id) {
-    
-    // hack as fuck, need to listen to event or similar since this function returns before chain is updated apparently
-    setTimeout(function () {      
-      dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions))
-    }, 3000); 
-
-
+  return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(resulty) {
+    resulty.reactionEvent.watch(function(error,result){
+      if (!error && result.transactionHash == resulty.tx_id) {
+        dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions))
+      }
+    });
   }).catch(function(e) {
     alert("error - " + e);
   });

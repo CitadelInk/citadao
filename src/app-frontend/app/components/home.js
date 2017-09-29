@@ -7,9 +7,19 @@ import EmptyRight from './panels/emptyRight';
 import Compose from './compose/compose';
 import styles from './home.css';
 
+import actions from '../actions';
+
+const {
+	getNext10Posts
+} = actions;
+
 class Home extends Component {
 	 constructor(props) {
-		super(props);
+		super(props);this.handleScroll = this.handleScroll.bind(this);
+	}
+
+	componentDidMount() {
+		this.scrollDiv.addEventListener('scroll', this.handleScroll);
 	}
 
 	render() {
@@ -18,14 +28,28 @@ class Home extends Component {
 				<div className={styles.compose}>
 					<Compose />		
 				</div>
-				<div className={styles.posts}>
-					<Posts postKeys={this.props.postKeys.slice().reverse()}/>	
+				<div className={styles.posts} ref={el => this.scrollDiv = el}>
+					<Posts postKeys={this.props.postKeys} onScroll={this.postsScrolled}/>	
 				</div>				
 				<div className={styles.empty}>
 					<EmptyRight />
 				</div>
 			</div>
 		);
+	}
+
+	handleScroll(e) {
+		var clientHeight = this.scrollDiv.clientHeight;
+		var divPos = this.scrollDiv.scrollTop;
+		var scrollHeight = this.scrollDiv.scrollHeight;
+		
+		var maxHeight = scrollHeight - clientHeight;
+
+		
+		if(divPos >= maxHeight - 200) {
+			this.props.dispatch(getNext10Posts());
+		}
+		
 	}
 }
 

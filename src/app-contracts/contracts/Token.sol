@@ -34,6 +34,7 @@ contract Token {
     /* This generates a public event on the blockchain that will notify clients */
     event Transfer(address indexed from, address indexed to, uint256 value);
 
+    event Bought(address indexed buyer);
     /* Initializes contract with initial supply tokens to the token itself */
     function Token(
         uint256 initialSupply,
@@ -145,6 +146,7 @@ contract MyAdvancedToken is Owned, Token {
         balanceOf[msg.sender] += amount;                   // adds the amount to buyer's balance
         balanceOf[this] -= amount;                         // subtracts amount from seller's balance
         Transfer(this, msg.sender, amount);                // execute an event reflecting the change
+        Bought(msg.sender);
     }
 
     function sell(uint256 amount) {
