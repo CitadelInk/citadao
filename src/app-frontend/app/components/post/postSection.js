@@ -108,7 +108,7 @@ class PostSection extends Component {
 		var section = (<div className={styles.editor}><Editor readonly state={state} schema={schema} /></div>);
 		var text = "";
 		try {
-			if(state.document && state.document.text) {
+			if(state.document && state.document.text && state.document.text !== "" && state.document.text.trim() != "") {
 				text = state.document.text;
 				var json = JSON.parse(state.document.text);
 				if(json) {
