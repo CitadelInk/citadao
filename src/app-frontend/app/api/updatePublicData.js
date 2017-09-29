@@ -69,8 +69,9 @@ export const addReaction = (account, authorg, submissionHash, revisionHash, reac
     appContracts.Citadel.deployed()
     .then((instance) => {
       instance.submitReaction.sendTransaction(authorg, submissionHash, revisionHash, reaction, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
-        res(tx_id)
-      }).catch(rej);
+        var reactionEvent = instance.ReactionRecorded({_postAuthorg : authorg, _postSubmission : submissionHash, _postRevision : revisionHash});
+        res({tx_id, reactionEvent})    
+      });      
     });
   });
 }

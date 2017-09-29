@@ -2,6 +2,8 @@ pragma solidity ^0.4.13;
 
 contract Citadel {
 
+    event ReactionRecorded(address indexed _postAuthorg, bytes32 indexed _postSubmission, bytes32 indexed _postRevision);
+
     function Citadel() {
     }
 
@@ -70,7 +72,9 @@ contract Citadel {
                 Reactor({
                     reactingAuthorg : msg.sender, 
                     reactionTimestamp : block.timestamp
-                }));            
+                }));           
+
+            ReactionRecorded(authorgAddress, subCitadelManifestHash, revCitadelManifestHash); 
         }
     }
 }
