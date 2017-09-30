@@ -78,7 +78,9 @@ const wallet = (state = Map({
   allSubmissionsTest: [],
   buyMoreActive: false,
   postTextInput: State.fromJSON(initialState),
-  selectedResponses: []
+  selectedResponses: [],
+  totalPostCount:0,
+  numPostsLoaded:0
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:
@@ -116,7 +118,9 @@ const postKeys = (state = [], action) => {
         }
       }
       if (shouldAdd) {
-        return [...state, action.data];
+        return [...state, action.data].sort(function(a,b) {
+          return b.index - a.index;
+        });
       } else {
         return state;
       }

@@ -16,11 +16,15 @@ import {
   getRevisionReactions
 } from '../api/getCitadelPostData'
 
+import {
+  setWalletData
+} from './contractPublicData'
+
 export const ADD_POST_KEY = "ADD_POST_KEY";
 export const addPostKey = (authorgAddress, submissionHash, revisionHash, index) => {
   return {
     type: ADD_POST_KEY,
-    data: {authorgAddress, submissionHash, revisionHash}
+    data: {authorgAddress, submissionHash, revisionHash, index}
   }
 }
 
@@ -230,14 +234,29 @@ export const getName = (authorgAddress) => (dispatch, getState) => {
 
 export const initializeTestTypedRevisions = () => dispatch => {
   getTotalPostCount().then((result) => {
-    for(var i = 0; i < 50 && i < result.totalPostCount; i++) {
-      var index = result.totalPostCount - i - 1;
-      getPostKey(index).then((result) => {
-        dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, index))
-        dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, index))
-      })
-    }
+    dispatch(setWalletData({totalPostCount : result.totalPostCount}));
+    dispatch(getNext10Posts());
   })
+}
+
+export const getNext10Posts = () => (dispatch, getState) => {
+  const {wallet} = getState().core;
+
+  var numPostsLoaded2 = wallet.get('numPostsLoaded');
+  var totalPostCount = wallet.get('totalPostCount');
+  
+  var postsLoaded = 0;
+  for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
+    var index = totalPostCount - i - 1;
+    getPostKey(index).then((result) => {
+      dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.index))
+      dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.index))
+      
+    })
+    postsLoaded++;
+  }
+
+  dispatch(setWalletData({numPostsLoaded : numPostsLoaded2 + postsLoaded}))
 }
 
 export const setSelectedBioRevision = (selectedRevision) => (dispatch, getState) => {
@@ -267,5 +286,6 @@ export default {
   SET_NAME_LOAD_STARTED,
   loadPost,
   handleViewResponses,
-  getReactions
+  getReactions,
+  getNext10Posts
 };

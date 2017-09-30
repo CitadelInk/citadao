@@ -16,7 +16,7 @@ export const getPostKey = (index) => {
   return new Promise((res,rej) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getAuthSubRevKey(index).then((results) => {
-        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2]});
+        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index});
       })
     })
   })
