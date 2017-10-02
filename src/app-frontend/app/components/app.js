@@ -7,8 +7,8 @@ import Debug from './debug/debug';
 import PostPage from './panels/postPage';
 import actions from '../actions';
 import BuyMoreWidget from './header/buyMoreWidget'
-import Landing from './landing';
 import { Fragment } from 'redux-little-router';
+import Landing from '../landingPage/components/landing';
 
 const {
 	initializeContract,
