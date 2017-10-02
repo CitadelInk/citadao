@@ -3,7 +3,7 @@ import { Map, List } from 'immutable';
 import actions from '../actions';
 import initialState from '../components/compose/state.json';
 import {State} from 'slate';
-
+import landing from '../landingPage/reducers';
 const {
   SET_INK_WALLET_ADRESS,
   SET_INK_COMPTROLLER_ACCOUNT,
@@ -327,7 +327,8 @@ const rootReducer = combineReducers({
   auths,
   approvedReactions,
   postKeys,
-  network
+  network,
+  landing
 });
 
 export default rootReducer;
