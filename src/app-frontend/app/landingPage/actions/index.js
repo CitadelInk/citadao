@@ -40,7 +40,7 @@ export const landingArrived = () => {
 };
 
 export const landingSection = (delta) => (dispatch, getState) => {
-  const {landing} = getState();
+  const {landing} = getState().core;
   const selected = decideSelected(delta, landing.get('top'), landing.get('sections'), landing.get('selected'));
   scrollTo(landing.get('top'), landing.getIn(['sections', selected]).top, 400, dispatch);
   dispatch({

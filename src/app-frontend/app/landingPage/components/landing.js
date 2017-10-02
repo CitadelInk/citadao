@@ -121,7 +121,7 @@ class Landing extends Component {
 
 
 const mapStateToProps = state => {
-	const { landing } = state;
+	const { landing } = state.core;
   
 	return { 
 		scrollPos: landing.get('top')
