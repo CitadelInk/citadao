@@ -52,6 +52,7 @@ export const getAccountName = (account, web3) => {
             .then((data) => {
               //console.log("RETURN account name. account: " + account);
               res({
+                bioSubHash : mostRecentBio,
                 accountName : JSON.parse(data.selectedBioRevision.toString()).name
               })
             })

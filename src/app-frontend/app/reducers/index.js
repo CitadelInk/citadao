@@ -25,6 +25,7 @@ const {
   SET_REFERENCE,
   ADD_POST_KEY,
   SET_AUTHORG_CURRENT_NAME,
+  SET_AUTHORG_CURRENT_BIO,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
   WEB_SETUP_COMPLETE,
@@ -71,7 +72,7 @@ const wallet = (state = Map({
   bioRevisions: [],
   bioRevisionsByAccount: {},
   bioNameInput: '',
-  bioTextInput: '',
+  bioTextInput: State.fromJSON(initialState),
   selectedBioRevision: null,
   selectedBioRevisionValue: null,
   tokenCitadelComptroller: '',
@@ -288,11 +289,21 @@ const auths = (state = {}, action) => {
           }
         }
       case SET_AUTHORG_CURRENT_NAME:
+      console.log("SETTING CURRENT NAME");
         return {
           ...state,
           [authAdd]: {
             ...stateAuth,
             name : action.data.name
+          }
+        }
+      case SET_AUTHORG_CURRENT_BIO:
+        console.log("SETTING CURRENT BIO");
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            bioSubHash : action.data.subHash
           }
         }
       default:

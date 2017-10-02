@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Home from './home';
-import User from './debug/user';
+import User from './user';
 import Header from './header/header';
 import Debug from './debug/debug';
 import PostPage from './panels/postPage';

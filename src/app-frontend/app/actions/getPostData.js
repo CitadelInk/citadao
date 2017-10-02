@@ -60,6 +60,14 @@ export const setAuthorgCurrentName = (authAdd, name) => {
   }
 }
 
+export const SET_AUTHORG_CURRENT_BIO = "SET_AUTHORG_CURRENT_BIO";
+export const setAuthorgCurrentBio = (authAdd, bio) => {
+  return {
+    type: SET_AUTHORG_CURRENT_BIO,
+    data: {authAdd : authAdd, bio : bio}
+  }
+}
+
 export const SET_LOAD_STARTED = "SET_LOAD_STARTED";
 export const setLoadStarted = (authAdd, subHash, revHash) => {
   return {
@@ -228,6 +236,7 @@ export const getName = (authorgAddress) => (dispatch, getState) => {
     dispatch(setNameLoadStarted(authorgAddress));
     getAccountName(authorgAddress, network.web3).then((name) => {
       dispatch(setAuthorgCurrentName(authorgAddress, name.accountName));
+      dispatch(setAuthorgCurrentBio(authorgAddress, name.bioSubHash))
     })
   }
 }
@@ -278,6 +287,7 @@ export default {
   SET_REVISION_SECTION_RESPONSES,
   ADD_POST_KEY,
   SET_AUTHORG_CURRENT_NAME,
+  SET_AUTHORG_CURRENT_BIO,
   SET_REVISION_TIME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
