@@ -146,7 +146,8 @@ const bio = (state = {}, action) => {
       return Object.assign({}, state, {
         revisions : bioRevisionHashes,
         [bioRevHash]: Object.assign({}, state[bioRevHash], {
-          revision : action.data.bioRevision
+          name : action.data.bioRevision.name,
+          text : action.data.bioRevision.text
         })
       })
     default:

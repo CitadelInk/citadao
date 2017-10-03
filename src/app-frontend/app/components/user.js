@@ -40,7 +40,7 @@ class User extends Component {
 					<BioCompose />		
 				</div>
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
-				{bioSubHash && 	<Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>	}
+					<Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>
 				</div>				
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
 				</div>
