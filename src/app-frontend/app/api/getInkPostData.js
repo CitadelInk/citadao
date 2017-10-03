@@ -60,18 +60,20 @@ export const getAccountInfo = (account, web3) => {
               })
             })
           } else {
+            console.log("BAD 1")
             res({
               authorg : account,
               bioRevisionHashes : [],
-              latestRevisionHash : 0,
+              latestRevisionHash : "1",
               revisionBio : {name : "none"}
             })
           }
         } else {
+          console.log("BAD 2")
           res({
             authorg : account,
             bioRevisionHashes : [],
-            latestRevisionHash : 0,
+            latestRevisionHash : "1",
             revisionBio : {name : "none"}
           })
         }

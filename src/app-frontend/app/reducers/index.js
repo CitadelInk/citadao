@@ -133,7 +133,9 @@ const postKeys = (state = [], action) => {
 const bio = (state = {}, action) => {
   let bioRevHash = action.data.latestRevisionHash;
   console.log("bio - bioRevHash: " + bioRevHash);
-  var bioRevisionHashes = [action.data.bioRevisionHashes]
+  console.log("bio - original hashes: " + action.data.bioRevisionHashes);
+  console.log("bio - original hashes length: " + action.data.bioRevisionHashes.length);
+  var bioRevisionHashes = action.data.bioRevisionHashes
   console.log("bio - bioRevisionHashes: " + bioRevisionHashes)
   console.log("bio - bioRevisionHashes.length: " + bioRevisionHashes.length);
   console.log("bio - bio revision: " + action.data.bioRevision);

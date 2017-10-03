@@ -54,6 +54,8 @@ export const setReference = (authAdd, subHash, revHash, refAuthAdd, refSubHash, 
 
 export const SET_AUTHORG_INFO = "SET_AUTHORG_INFO";
 export const setAuthorgInfo = (authAdd, bioRevisionHashes, latestRevisionHash, revisionBio) => {
+  
+  console.log("2 setAuthorgInfo - latest: " + latestRevisionHash);
   return {
     type: SET_AUTHORG_INFO,
     data: {authAdd : authAdd, bioRevisionHashes : bioRevisionHashes, latestRevisionHash : latestRevisionHash, bioRevision : revisionBio}
@@ -228,7 +230,7 @@ export const loadUserData = (authorgAddress) => (dispatch, getState) => {
   if (!userLoadStarted) {
     dispatch(setNameLoadStarted(authorgAddress));
     getAccountInfo(authorgAddress, network.web3).then((info) => {
-      dispatch(setAuthorgInfo(authorgAddress, info.latestRevisionHash, info.bioRevisionHashes, info.revisionBio));
+      dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.latestRevisionHash, info.revisionBio));
     })
   }
 }

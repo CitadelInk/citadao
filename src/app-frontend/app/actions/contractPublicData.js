@@ -109,7 +109,8 @@ export const initializeAccounts = (web3) => dispatch => {
         var accountNamesResults = values;
         var accountBios = accountNamesResults.map(result => {
           console.log("set authorg info - " + result.authorg);
-          dispatch(setAuthorgInfo(result.authorg, result.latestRevisionHash, result.bioRevisionHashes, result.revisionBio));
+          console.log("result latest = " + result.latestRevisionHash)
+          dispatch(setAuthorgInfo(result.authorg, result.bioRevisionHashes, result.latestRevisionHash, result.revisionBio));
         })
         var account = accounts.accounts[0];
         Promise.all([

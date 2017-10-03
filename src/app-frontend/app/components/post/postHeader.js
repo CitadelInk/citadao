@@ -27,8 +27,17 @@ class PostHeader extends Component {
 			if(authorg.bioSubmission) {
 				console.log("yes bioSubmission");
 				var bioSubmission = authorg.bioSubmission;
+				console.log("header - bioSubmission: " + bioSubmission);
 				var bioRevHashes = bioSubmission.revisions;
-				var revHash = bioRevHashes[0];
+				console.log("header - bioRevHashes: " + bioRevHashes)
+				var revHash = "1";
+				console.log("header - revHash 1: " + revHash);
+				console.log("header - bio rev hashes length: " + bioRevHashes.length)
+				if (bioRevHashes.length > 0) {
+					console.log("header thing: " - bioRevHashes[bioRevHashes.length - 1]);
+					revHash = bioRevHashes[bioRevHashes.length - 1];
+				}
+				console.log("header - revHash 2: " + revHash);
 				var bioRevision = bioSubmission[revHash];
 				name = bioRevision.revision.name;
 			}
