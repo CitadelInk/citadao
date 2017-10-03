@@ -35,10 +35,11 @@ class PostHeader extends Component {
 					revHash = bioRevHashes[bioRevHashes.length - 1];
 				}
 				var bioRevision = bioSubmission[revHash];
-				name = bioRevision.name;
-				if (bioRevision.image) {
-					console.log("bioRevision.image is real! - " + bioRevision.image)
-					avatar = bioRevision.image;
+				if (bioRevision) {
+					name = bioRevision.name;
+					if (bioRevision.image) {
+						avatar = bioRevision.image;
+					}
 				}
 			}
 
