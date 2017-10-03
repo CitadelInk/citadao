@@ -24,13 +24,13 @@ const {
   SET_REVISION_TIME,
   SET_REFERENCE,
   ADD_POST_KEY,
-  SET_AUTHORG_CURRENT_NAME,
-  SET_AUTHORG_CURRENT_BIO,
+  SET_AUTHORG_INFO,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
   WEB_SETUP_COMPLETE,
   SET_LOAD_STARTED,
-  SET_NAME_LOAD_STARTED
+  SET_NAME_LOAD_STARTED,
+  SET_AUTHORG_BIO_REVISIONS
 } = actions;
 
 const network = (state = Map({
@@ -125,6 +125,28 @@ const postKeys = (state = [], action) => {
       } else {
         return state;
       }
+    default:
+      return state;
+  }
+}
+
+const bio = (state = {}, action) => {
+  let bioRevHash = action.data.latestRevisionHash;
+  console.log("bio - bioRevHash: " + bioRevHash);
+  var bioRevisionHashes = [action.data.bioRevisionHashes]
+  console.log("bio - bioRevisionHashes: " + bioRevisionHashes)
+  console.log("bio - bioRevisionHashes.length: " + bioRevisionHashes.length);
+  console.log("bio - bio revision: " + action.data.bioRevision);
+  console.log("bio - bio revision name: " + action.data.bioRevision.name);
+ 
+  switch (action.type) {
+    case SET_AUTHORG_INFO:
+      return Object.assign({}, state, {
+        revisions : bioRevisionHashes,
+        [bioRevHash]: Object.assign({}, state[bioRevHash], {
+          revision : action.data.bioRevision
+        })
+      })
     default:
       return state;
   }
@@ -285,25 +307,16 @@ const auths = (state = {}, action) => {
           ...state,
           [authAdd]: {
             ...stateAuth,
-            nameLoadStarted: true
+            userLoadStarted: true
           }
         }
-      case SET_AUTHORG_CURRENT_NAME:
-      console.log("SETTING CURRENT NAME");
+      case SET_AUTHORG_INFO:
+      console.log("SETTING AUTHORG INFO");
         return {
           ...state,
           [authAdd]: {
             ...stateAuth,
-            name : action.data.name
-          }
-        }
-      case SET_AUTHORG_CURRENT_BIO:
-        console.log("SETTING CURRENT BIO");
-        return {
-          ...state,
-          [authAdd]: {
-            ...stateAuth,
-            bioSubHash : action.data.subHash
+            bioSubmission : bio(stateAuth.bioSubmission, action)
           }
         }
       default:

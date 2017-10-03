@@ -25,28 +25,29 @@ class User extends Component {
 
 	render() {
 		const user = this.props.router.params["account"];
+		//console.log("user: " + user);
 		const auth = this.props.auths[user];
+		//console.log("auth: " + auth);
 
 		var bioSubHash;
 		if (auth) {
-			console.log("there is an auth");
-			bioSubHash = auth.bioSubHash;
+			bioSubHash = auth.bioSubmission.revisions[auth.bioSubmission.revisions.length - 1];
 		}
 
-		console.log("user: " + user);
 		return (
 			<div className={styles.page}>
 				<div className={styles.compose}>
 					<BioCompose />		
 				</div>
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
-				{bioSubHash && 	<Post authorg={user} submission={bioSubHash} revision={bioSubHash} focusedPost={true}/>	}
+				{bioSubHash && 	<Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>	}
 				</div>				
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
-					<Posts postKeys={this.props.postKeys} onScroll={this.postsScrolled}/>	
 				</div>
 			</div>
 		);
+
+		//<Posts postKeys={this.props.postKeys} onScroll={this.postsScrolled}/>	
 	}
 
 	handleScroll(e) {

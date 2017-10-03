@@ -15,7 +15,7 @@ import {
 } from './getPostData';
 
 import {
-  getAccountName,
+  getAccountInfo,
   getAccountBioRevisions,
   getAccountBioRevision,
 } from '../api/getInkPostData';
@@ -37,14 +37,15 @@ export const gotoHomePage = () => dispatch => {
 }
 
 export const getUserPageBios = (user) => dispatch => {
+  console.log("get user page bios")
   return Promise.all([
         getAccountBioRevisions(user)
     ]).then(([bioRevisions]) => {
       var revisions = bioRevisions.bioRevisions;
-      if(revisions.length > 0) {
+      /*if(revisions.length > 0) {
         dispatch(setSelectedBioRevision(revisions[revisions.length - 1])); // most recent
       }
-      return dispatch(setWalletData({...bioRevisions}))
+      return dispatch(setWalletData({...bioRevisions}))*/
   });
 } 
 

@@ -22,24 +22,43 @@ class PostHeader extends Component {
 		var name = "loading...";
 		var time = "...";
 		var authorg = this.props.auths[this.props.authorg];
-		if (authorg && authorg.name) {
-			name = authorg.name;
-			var submissions = authorg.submissions;
-			if (submissions) {
-				var submission = submissions[this.props.submission];
-				if (submission) {
-					var revisions = submission.revisions;
-					if (revisions) {
-						var revision = revisions[this.props.revision];
-						if (revision) {
-							if (revision.timestamp && revision.timestamp > 0) {
-								var date = new Date(revision.timestamp * 1000);
-								time = date.toDateString();
-							}
+
+		if (authorg) {
+			if(authorg.bioSubmission) {
+				console.log("yes bioSubmission");
+				var bioSubmission = authorg.bioSubmission;
+				var bioRevHashes = bioSubmission.revisions;
+				var revHash = bioRevHashes[0];
+				var bioRevision = bioSubmission[revHash];
+				name = bioRevision.revision.name;
+			}
+
+			var submission;
+			
+			if (this.props.bio) {
+				console.log("yes bio")
+				submission = authorg.bioSubmission;
+			} else {
+				var submissions = authorg.submissions;
+				if (submissions) {
+					submission = submissions[this.props.submission];
+				}
+			}
+			
+			if (submission) {
+				console.log("yes submission");
+				var revisions = submission.revisions;
+				if (revisions) {
+					var revision = revisions[this.props.revision];
+					if (revision) {
+						if (revision.timestamp && revision.timestamp > 0) {
+							var date = new Date(revision.timestamp * 1000);
+							time = date.toDateString();
 						}
-					}					
-				}			
-			}		
+					}
+				}					
+			}			
+					
 		}
 
 		return (			

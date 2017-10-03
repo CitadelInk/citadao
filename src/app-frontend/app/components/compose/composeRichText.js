@@ -367,7 +367,7 @@ class ComposeRichText extends React.Component {
 
   getState() {
     var input;// = this.props.wallet.get('postTextInput');
-    console.log("this.props.bio: " + this.props.bio);
+    //console.log("this.props.bio: " + this.props.bio);
     if(this.props.bio) {
       input = this.props.wallet.get('bioTextInput');
     } else { 

@@ -68,32 +68,6 @@ class PostSection extends Component {
 				zIndex:'10000'
 		}
 
-		const headerStyle = {
-			background:'#7FDBFF',
-			borderTopLeftRadius: '15px',
-			borderTopRightRadius: '15px',
-			width:'100%',
-			position:'relative',
-			top:'0'
-		}
-
-
-		const bodyStyle = {
-			background:'#FFFFFF',
-			position:'relative',
-			overflow:'hidden',
-			width:'100%',
-			top:'0px',
-			fontSize:'10px'
-		}
-
-		const footerStyle = {
-			position:'absolute',
-			bottom:'0px',
-			height: '20px',  
-			width:'100%'
-		}
-
 			
 
 		var reference = false;
@@ -115,7 +89,7 @@ class PostSection extends Component {
 					var reference = json.reference;
 					if (reference) {
 						
-						section = (<div style={postStyle}><Post headerStyle={headerStyle} bodyStyle={bodyStyle} footerStyle={footerStyle} authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} /></div>)
+						section = (<div className={styles.embededPostStyle}><Post authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} /></div>)
 						reference = true;
 					}
 				}	

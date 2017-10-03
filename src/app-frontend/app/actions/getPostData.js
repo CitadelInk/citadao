@@ -5,7 +5,7 @@ import { State } from 'slate';
 import {
   getRevisionFromSwarm,
   getRevisionTime,
-  getAccountName,
+  getAccountInfo,
   getPostKey,
   getTotalPostCount,
   getNumReferences,
@@ -52,19 +52,11 @@ export const setReference = (authAdd, subHash, revHash, refAuthAdd, refSubHash, 
   }
 }
 
-export const SET_AUTHORG_CURRENT_NAME = "SET_AUTHORG_CURRENT_NAME";
-export const setAuthorgCurrentName = (authAdd, name) => {
+export const SET_AUTHORG_INFO = "SET_AUTHORG_INFO";
+export const setAuthorgInfo = (authAdd, bioRevisionHashes, latestRevisionHash, revisionBio) => {
   return {
-    type: SET_AUTHORG_CURRENT_NAME,
-    data: {authAdd : authAdd, name : name}
-  }
-}
-
-export const SET_AUTHORG_CURRENT_BIO = "SET_AUTHORG_CURRENT_BIO";
-export const setAuthorgCurrentBio = (authAdd, bio) => {
-  return {
-    type: SET_AUTHORG_CURRENT_BIO,
-    data: {authAdd : authAdd, bio : bio}
+    type: SET_AUTHORG_INFO,
+    data: {authAdd : authAdd, bioRevisionHashes : bioRevisionHashes, latestRevisionHash : latestRevisionHash, bioRevision : revisionBio}
   }
 }
 
@@ -200,7 +192,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
       getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
         dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
       })
-      dispatch(getName(authorgAddress));
+      dispatch(loadUserData(authorgAddress));
       getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
         dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
         if (focusedPost) {
@@ -223,20 +215,20 @@ export const getReactions = (authorgAddress, submissionHash, revisionHash, appro
   })
 }
 
-export const getName = (authorgAddress) => (dispatch, getState) => {
+export const loadUserData = (authorgAddress) => (dispatch, getState) => {
   const {auths, network} = getState().core;
-  var nameLoadStarted = false;
+  var userLoadStarted = false;
   var authorgData = auths [authorgAddress];
   if (authorgData) {
-    if (authorgData.nameLoadStarted || authorgData.name) {
-      nameLoadStarted = true;
+    if (authorgData.userLoadStarted || authorgData.name) {
+      userLoadStarted = true;
     }
   }
-  if (!nameLoadStarted) {
+
+  if (!userLoadStarted) {
     dispatch(setNameLoadStarted(authorgAddress));
-    getAccountName(authorgAddress, network.web3).then((name) => {
-      dispatch(setAuthorgCurrentName(authorgAddress, name.accountName));
-      dispatch(setAuthorgCurrentBio(authorgAddress, name.bioSubHash))
+    getAccountInfo(authorgAddress, network.web3).then((info) => {
+      dispatch(setAuthorgInfo(authorgAddress, info.latestRevisionHash, info.bioRevisionHashes, info.revisionBio));
     })
   }
 }
@@ -286,8 +278,7 @@ export default {
   SET_REVISION_REACTIONS,
   SET_REVISION_SECTION_RESPONSES,
   ADD_POST_KEY,
-  SET_AUTHORG_CURRENT_NAME,
-  SET_AUTHORG_CURRENT_BIO,
+  SET_AUTHORG_INFO,
   SET_REVISION_TIME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
