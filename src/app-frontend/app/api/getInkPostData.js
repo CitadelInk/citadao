@@ -52,7 +52,7 @@ export const getAccountInfo = (account, web3) => {
               //console.log("RETURN account name. account: " + account);
               res({
                 authorg : account,
-                bioRevisionHashes : [bioRevisions],
+                bioRevisionHashes : bioRevisions,
                 latestRevisionHash : mostRecentBio,
                 revisionBio : JSON.parse(data.selectedBioRevision.toString())
               })

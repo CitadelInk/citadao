@@ -134,8 +134,8 @@ const postKeys = (state = [], action) => {
 
 const bio = (state = {}, action) => {
   let bioRevHash = action.data.latestRevisionHash;
-  var bioRevisionHashes = action.data.bioRevisionHashes
-
+  var bioRevisionHashes = action.data.bioRevisionHashes;
+  
   switch (action.type) {
     case SET_AUTHORG_INFO:
       return Object.assign({}, state, {
