@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Posts from './panels/posts';
 import EmptyLeft from './panels/emptyLeft';
 import EmptyRight from './panels/emptyRight';
-import BioCompose from './compose/bioCompose';
+import ComposePanel from './compose/composePanel';
 import Post from './post/post';
 import styles from './home.css';
 
@@ -37,7 +37,7 @@ class User extends Component {
 		return (
 			<div className={styles.page}>
 				<div className={styles.compose}>
-					<BioCompose />		
+					<ComposePanel />		
 				</div>
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
 					<Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>

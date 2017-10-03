@@ -24,7 +24,7 @@ class BioCompose extends Component {
 		return(
 			<div className={styles.compose}>
 				<input placeholder="Name..." onChange={this.handleBioNameChange} value={this.props.wallet.get('bioNameInput')} /><br />
-				<Avatar src={this.props.wallet.get('bioAvatarImage')}/><input type="file" onChange={this.avatarImageChanged}/><br/>
+				<div className={styles.avatarContainer}><Avatar src={this.props.wallet.get('bioAvatarImage')}/><input type="file" onChange={this.avatarImageChanged}/></div><br/>
 				<ComposeRichText bio={true}/>
 			</div>
 		);

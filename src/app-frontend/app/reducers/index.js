@@ -82,7 +82,8 @@ const wallet = (state = Map({
   postTextInput: State.fromJSON(initialState),
   selectedResponses: [],
   totalPostCount:0,
-  numPostsLoaded:0
+  numPostsLoaded:0,
+  selectedTabIndex: 0
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:

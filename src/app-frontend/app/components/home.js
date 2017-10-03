@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Posts from './panels/posts';
 import EmptyLeft from './panels/emptyLeft';
 import EmptyRight from './panels/emptyRight';
-import Compose from './compose/compose';
+import ComposePanel from './compose/composePanel';
 import styles from './home.css';
 
 import actions from '../actions';
@@ -26,7 +26,7 @@ class Home extends Component {
 		return (
 			<div className={styles.page}>
 				<div className={styles.compose}>
-					<Compose />		
+					<ComposePanel />		
 				</div>
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
 					<Posts postKeys={this.props.postKeys} onScroll={this.postsScrolled}/>	
