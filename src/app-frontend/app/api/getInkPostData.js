@@ -36,8 +36,7 @@ export const getAccountBioRevisions = (account) => {
   });
 }
 
-export const getAccountName = (account, web3) => {
-  //console.log("get account name. account: " + account);
+export const getAccountInfo = (account, web3) => {
    return new Promise((res, rej) => {
     appContracts.Ink.deployed()
     .then((instance) => {
@@ -52,14 +51,27 @@ export const getAccountName = (account, web3) => {
             .then((data) => {
               //console.log("RETURN account name. account: " + account);
               res({
-                accountName : JSON.parse(data.selectedBioRevision.toString()).name
+                authorg : account,
+                bioRevisionHashes : [bioRevisions],
+                latestRevisionHash : mostRecentBio,
+                revisionBio : JSON.parse(data.selectedBioRevision.toString())
               })
             })
           } else {
-            res({accountName : "none"})
+            res({
+              authorg : account,
+              bioRevisionHashes : [],
+              latestRevisionHash : "1",
+              revisionBio : {name : "none", image : null}
+            })
           }
         } else {
-          res({accountName : "none"})
+          res({
+            authorg : account,
+            bioRevisionHashes : [],
+            latestRevisionHash : "1",
+            revisionBio : {name : "none", image : null}
+          })
         }
       })
     })

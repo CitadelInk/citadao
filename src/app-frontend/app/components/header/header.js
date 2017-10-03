@@ -73,8 +73,8 @@ class Header extends Component {
 			accountsDropDown = (
 				<select onChange={this.handleAccountSelected}>
 				{
-					this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
-						return (<option value={item[0]} key={item[0]}> {item[1]} - {item[0]} </option>);
+					this.props.wallet.get('accounts').map((item,) =>{
+						return (<option value={item} key={item}> {item} </option>);
 					})
 				}			
 				</select>	
@@ -82,15 +82,15 @@ class Header extends Component {
 		}	
 
 		if(this.props.wallet.get('accounts').size == 1) {
-			accountsDropDown = this.props.wallet.get('accounts').zip(this.props.wallet.get('accountNames')).map((item,) =>{
-				return (<b> {item[1]} - {item[0]} </b>);
+			accountsDropDown = this.props.wallet.get('accounts').map((item,) =>{
+				return (<b> {item} </b>);
 			})
 		}
 
 		const gotoAccountPage = (
 			<span><Link 
 				href = {"/user/" + this.props.wallet.get('account')}
-				onClick = {this.handleAccountSelected}
+				onClick = {this.gotoAccountPageClicked}
 			><u>View This Account</u></Link></span>
 		);
 		const gotoDebugPage = (

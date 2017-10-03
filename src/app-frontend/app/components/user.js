@@ -5,6 +5,7 @@ import Posts from './panels/posts';
 import EmptyLeft from './panels/emptyLeft';
 import EmptyRight from './panels/emptyRight';
 import ComposePanel from './compose/composePanel';
+import Post from './post/post';
 import styles from './home.css';
 
 import actions from '../actions';
@@ -13,7 +14,7 @@ const {
 	getNext10Posts
 } = actions;
 
-class Home extends Component {
+class User extends Component {
 	 constructor(props) {
 		super(props);this.handleScroll = this.handleScroll.bind(this);
 	}
@@ -23,19 +24,30 @@ class Home extends Component {
 	}
 
 	render() {
+		const user = this.props.router.params["account"];
+		const auth = this.props.auths[user];
+
+		var bioSubHash;
+		if (auth) {
+			if (auth.bioSubmission && auth.bioSubmission.revisions && auth.bioSubmission.revisions.length > 0) {
+				bioSubHash = auth.bioSubmission.revisions[auth.bioSubmission.revisions.length - 1];
+			}
+		}
+
 		return (
 			<div className={styles.page}>
 				<div className={styles.compose}>
 					<ComposePanel />		
 				</div>
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
-					<Posts postKeys={this.props.postKeys} onScroll={this.postsScrolled}/>	
+					<Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>
 				</div>				
-				<div className={styles.empty}>
-					<EmptyRight />
+				<div className={styles.posts} ref={el => this.scrollDiv = el}>
 				</div>
 			</div>
 		);
+
+		//<Posts postKeys={this.props.postKeys} onScroll={this.postsScrolled}/>	
 	}
 
 	handleScroll(e) {
@@ -54,9 +66,10 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, postKeys } = state.core;
+  const { wallet, auths, postKeys } = state.core;
+  const { router } = state;
 
-  return { wallet, postKeys };
+  return {wallet, auths, postKeys, router };
 }
 
-export default connect(mapStateToProps)(Home)
+export default connect(mapStateToProps)(User)

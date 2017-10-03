@@ -10,13 +10,14 @@ import {
 } from '../api/getInkData';
 
 import {
-  getAccountName,
+  getAccountInfo,
   getAccountBioRevisions,
   getAccountBioRevision,
 } from '../api/getInkPostData';
 
 import {
-  initializeNeededPosts
+  initializeNeededPosts,
+  setAuthorgInfo
 } from './getPostData'
 
 import {
@@ -102,24 +103,25 @@ export const initializeAccounts = (web3) => dispatch => {
   return new Promise((res, rej) => {
     getAccounts(web3).then((accounts) => {
       var accountNamePromises = accounts.accounts.map(acct => {
-        return getAccountName(acct, web3)
+        return getAccountInfo(acct, web3)
       })
       Promise.all(accountNamePromises).then(values => {
         var accountNamesResults = values;
-        var accountNames = accountNamesResults.map(result => {
-          return result.accountName
+        var accountBios = accountNamesResults.map(result => {
+          dispatch(setAuthorgInfo(result.authorg, result.bioRevisionHashes, result.latestRevisionHash, result.revisionBio));
         })
         var account = accounts.accounts[0];
         Promise.all([
           getEthBalance(account, web3),
           getInkBalance(account)
         ]).then(([ethBalance, inkBalance]) => {
-          res({...accounts, accountNames, account, ethBalance, inkBalance}); 
+          res({...accounts, ...accountBios, account, ethBalance, inkBalance}); 
         })
       })
       
     })
   }).then((data) => {
+
     dispatch(setWalletData(data))
   })  
 }

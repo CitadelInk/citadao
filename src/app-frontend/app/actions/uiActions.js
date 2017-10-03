@@ -11,11 +11,12 @@ import {
 
 import {
   loadPost,
+  loadUserData,
   initializeTestTypedRevisions
 } from './getPostData';
 
 import {
-  getAccountName,
+  getAccountInfo,
   getAccountBioRevisions,
   getAccountBioRevision,
 } from '../api/getInkPostData';
@@ -23,8 +24,9 @@ import {
 
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
-export const gotoUserPage  = (user) => dispatch =>  {
-  return dispatch(getUserPageBios(user)) 
+export const gotoUserPage  = (user) => dispatch =>  {  
+  dispatch(loadUserData(user));
+  return dispatch(navigatePage({page:'user', route:'user\/' + user}));
 }
 
 export const gotoPost = (authorg, subHash, revHash) => (dispatch) => {
@@ -35,18 +37,6 @@ export const gotoHomePage = () => dispatch => {
   dispatch(initializeTestTypedRevisions());
   return dispatch(navigatePage({page:'home', route:'\/'}));
 }
-
-export const getUserPageBios = (user) => dispatch => {
-  return Promise.all([
-        getAccountBioRevisions(user)
-    ]).then(([bioRevisions]) => {
-      var revisions = bioRevisions.bioRevisions;
-      if(revisions.length > 0) {
-        dispatch(setSelectedBioRevision(revisions[revisions.length - 1])); // most recent
-      }
-      return dispatch(setWalletData({...bioRevisions}))
-  });
-} 
 
 export const setBuyMore = (active) => dispatch => {
   return dispatch(
@@ -67,7 +57,6 @@ export default {
   NAVIGATE_PAGE,
   navigatePage,
   gotoUserPage,
-  getUserPageBios,
   setBuyMore,
   gotoPost,
   gotoHomePage

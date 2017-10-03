@@ -29,7 +29,7 @@ class PostPage extends Component {
 	render() {
 		const authorg = this.props.router.params["authorg"];
 		const submission = this.props.router.params["subHash"];
-		const revision = this.props.router.params["revHash"]
+		const revision = this.props.router.params["revHash"];
 		var post = "loading...";
 
 		if (submission) {
