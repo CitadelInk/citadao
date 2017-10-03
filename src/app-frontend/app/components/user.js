@@ -40,7 +40,7 @@ class User extends Component {
 					<ComposePanel />		
 				</div>
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
-					<Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>
+					Bio: <b>{user}</b><br/><Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>
 				</div>				
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
 				</div>

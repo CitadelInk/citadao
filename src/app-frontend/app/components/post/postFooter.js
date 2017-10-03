@@ -30,7 +30,6 @@ class PostFooter extends Component {
 
 		var authorg = this.props.auths[this.props.authorg];
 		if (authorg) {
-			name = authorg.name;
 			var submissions = authorg.submissions;
 			if (submissions) {
 				var submission = submissions[this.props.submission];
