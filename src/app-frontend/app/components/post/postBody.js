@@ -40,25 +40,37 @@ class PostBody extends Component {
 		var authorg = this.props.auths[this.props.authorg];
 		var text = ["loading"];
 		var responseMap;
+		
+		
+		
 		if (authorg) {
-			var submissions = authorg.submissions;
-			if (submissions) {
-				var submission = submissions[this.props.submission];
-				if (submission) {
-					var revisions = submission.revisions;
-					if (revisions) {
-						var revision = revisions[this.props.revision];
-						if (revision.finishedLoading) {
-							text = revision.text;
-							if (revision.sectionRefKeyMap) {
-								responseMap = revision.sectionRefKeyMap;
-							}
+			var revisions;
+			
+			if (this.props.bio) {
+				var submission = authorg.bioSubmission;
+				revisions = submission;
+			} else {
+				var submissions = authorg.submissions;
+				if (submissions) {
+					submission = submissions[this.props.submission];
+					if (submission) {
+						revisions = submission.revisions;
+					}
+				}
+			}
+			
+			if (revisions) {
+				var revision = revisions[this.props.revision];
+				if (revision) {
+					if (revision.text) {
+						text = revision.text;
+						if (revision.sectionRefKeyMap) {
+							responseMap = revision.sectionRefKeyMap;
 						}
-					}					
-				}			
+					}
+				}					
 			}			
-		}
-
+		}		
 
 		var state = State.fromJSON(text);
 		

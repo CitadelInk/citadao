@@ -24,12 +24,13 @@ const {
   SET_REVISION_TIME,
   SET_REFERENCE,
   ADD_POST_KEY,
-  SET_AUTHORG_CURRENT_NAME,
+  SET_AUTHORG_INFO,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
   WEB_SETUP_COMPLETE,
   SET_LOAD_STARTED,
-  SET_NAME_LOAD_STARTED
+  SET_NAME_LOAD_STARTED,
+  SET_AUTHORG_BIO_REVISIONS
 } = actions;
 
 const network = (state = Map({
@@ -71,7 +72,8 @@ const wallet = (state = Map({
   bioRevisions: [],
   bioRevisionsByAccount: {},
   bioNameInput: '',
-  bioTextInput: '',
+  bioTextInput: State.fromJSON(initialState),
+  bioAvatarImage: null,
   selectedBioRevision: null,
   selectedBioRevisionValue: null,
   tokenCitadelComptroller: '',
@@ -80,7 +82,8 @@ const wallet = (state = Map({
   postTextInput: State.fromJSON(initialState),
   selectedResponses: [],
   totalPostCount:0,
-  numPostsLoaded:0
+  numPostsLoaded:0,
+  selectedTabIndex: 0
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:
@@ -124,6 +127,25 @@ const postKeys = (state = [], action) => {
       } else {
         return state;
       }
+    default:
+      return state;
+  }
+}
+
+const bio = (state = {}, action) => {
+  let bioRevHash = action.data.latestRevisionHash;
+  var bioRevisionHashes = action.data.bioRevisionHashes
+
+  switch (action.type) {
+    case SET_AUTHORG_INFO:
+      return Object.assign({}, state, {
+        revisions : bioRevisionHashes,
+        [bioRevHash]: Object.assign({}, state[bioRevHash], {
+          name : action.data.bioRevision.name,
+          text : action.data.bioRevision.text,
+          image : action.data.bioRevision.image
+        })
+      })
     default:
       return state;
   }
@@ -279,20 +301,19 @@ const auths = (state = {}, action) => {
           }
         }
       case SET_NAME_LOAD_STARTED:
-        console.log("SET NAME LOAD STARTED");
         return {
           ...state,
           [authAdd]: {
             ...stateAuth,
-            nameLoadStarted: true
+            userLoadStarted: true
           }
         }
-      case SET_AUTHORG_CURRENT_NAME:
+      case SET_AUTHORG_INFO:
         return {
           ...state,
           [authAdd]: {
             ...stateAuth,
-            name : action.data.name
+            bioSubmission : bio(stateAuth.bioSubmission, action)
           }
         }
       default:

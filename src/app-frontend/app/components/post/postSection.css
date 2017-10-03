@@ -16,7 +16,7 @@ p {
 }
 
 .sectionDiv {
-  margin-top:5px;
+  padding:2px;
 }
 
 img {
@@ -44,3 +44,6 @@ blockquote[dir="rtl"] {
   border-right: 2px solid #ddd;
 }
 
+.embededPostStyle {
+  border: 1px solid gray;
+}

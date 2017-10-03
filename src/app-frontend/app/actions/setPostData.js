@@ -21,8 +21,9 @@ export const submitBio = () => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const account = wallet.get('account');
   const bioNameInput = wallet.get('bioNameInput');
-  const bioTextInput = wallet.get('bioTextInput')
-  var bioJson = {"name" : bioNameInput, "text" : bioTextInput}
+  const bioTextInput = wallet.get('bioTextInput');
+  const bioAvatarImage = wallet.get('bioAvatarImage');
+  var bioJson = {"name" : bioNameInput, "text" : bioTextInput, "image" : bioAvatarImage}
   return updateBio(JSON.stringify(bioJson), account, network.web3).then(function(tx_id) {
       alert("bio added to contract");
     }).catch(function(e) {

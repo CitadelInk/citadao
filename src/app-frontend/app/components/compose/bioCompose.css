@@ -1,0 +1,9 @@
+.compose {
+	position:relative;
+	background-color: #FFFFFF;
+	height:100%;
+}
+
+.avatarContainer {
+	display:flex;
+}
