@@ -20,7 +20,6 @@ class BioCompose extends Component {
 
 
 	render() {
-		console.log("image src = " + this.state.image);
 		return(
 			<div className={styles.compose}>
 				<input placeholder="Name..." onChange={this.handleBioNameChange} value={this.props.wallet.get('bioNameInput')} /><br />
@@ -31,11 +30,9 @@ class BioCompose extends Component {
 	}
 
 	avatarImageChanged(e) {
-		console.log("file: " + e.target.files[0]);
 		var reader = new FileReader();
 		var instance = this;
         reader.onloadend = function() {
-			console.log("ON LOADED - " + reader.result);
 			instance.props.dispatch(setWalletData({bioAvatarImage : reader.result}))
         }
 		reader.readAsDataURL(e.target.files[0]);

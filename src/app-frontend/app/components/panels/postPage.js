@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Post from '../post/post';
-import Compose from '../compose/compose';
+import ComposePanel from '../compose/composePanel';
 import Posts from './posts';
 import styles from './postPage.css';
 import { Card } from 'material-ui';
@@ -77,7 +77,7 @@ class PostPage extends Component {
 		return(
 			<div className={styles.page}>
 				<div className={styles.compose}>
-					<Compose />
+					<ComposePanel />
 				</div>
 				<div className={styles.postContainer}>
 					{post}

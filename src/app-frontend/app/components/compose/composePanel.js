@@ -4,7 +4,6 @@ import styles from './composePanel.css';
 import Compose from './compose';
 import BioCompose from './bioCompose';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-//import './react-tabs.css';
 import actions from '../../actions'
 const {
 	setWalletData
