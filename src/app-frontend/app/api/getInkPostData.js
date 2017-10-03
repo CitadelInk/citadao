@@ -37,7 +37,6 @@ export const getAccountBioRevisions = (account) => {
 }
 
 export const getAccountInfo = (account, web3) => {
-  console.log("get account info. account: " + account);
    return new Promise((res, rej) => {
     appContracts.Ink.deployed()
     .then((instance) => {
@@ -47,7 +46,6 @@ export const getAccountInfo = (account, web3) => {
       .then(([bioRevisions]) => {
         if(bioRevisions !== null) {
           if (bioRevisions.length > 0) {
-            console.log("bioRevisions.length: " + bioRevisions.length);
             const mostRecentBio = bioRevisions[bioRevisions.length - 1];
             getAccountBioRevision(mostRecentBio, web3)
             .then((data) => {
@@ -60,21 +58,19 @@ export const getAccountInfo = (account, web3) => {
               })
             })
           } else {
-            console.log("BAD 1")
             res({
               authorg : account,
               bioRevisionHashes : [],
               latestRevisionHash : "1",
-              revisionBio : {name : "none"}
+              revisionBio : {name : "none", image : null}
             })
           }
         } else {
-          console.log("BAD 2")
           res({
             authorg : account,
             bioRevisionHashes : [],
             latestRevisionHash : "1",
-            revisionBio : {name : "none"}
+            revisionBio : {name : "none", image : null}
           })
         }
       })

@@ -11,6 +11,7 @@ import {
 
 import {
   loadPost,
+  loadUserData,
   initializeTestTypedRevisions
 } from './getPostData';
 
@@ -23,8 +24,10 @@ import {
 
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
-export const gotoUserPage  = (user) => dispatch =>  {
-  return dispatch(getUserPageBios(user)) 
+export const gotoUserPage  = (user) => dispatch =>  {  
+  console.log("gotoUserPage - user: " + user);
+  dispatch(loadUserData(user));
+  return dispatch(navigatePage({page:'user', route:'user\/' + user}));
 }
 
 export const gotoPost = (authorg, subHash, revHash) => (dispatch) => {

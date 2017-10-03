@@ -53,9 +53,7 @@ export const setReference = (authAdd, subHash, revHash, refAuthAdd, refSubHash, 
 }
 
 export const SET_AUTHORG_INFO = "SET_AUTHORG_INFO";
-export const setAuthorgInfo = (authAdd, bioRevisionHashes, latestRevisionHash, revisionBio) => {
-  
-  console.log("2 setAuthorgInfo - latest: " + latestRevisionHash);
+export const setAuthorgInfo = (authAdd, bioRevisionHashes, latestRevisionHash, revisionBio) => {  
   return {
     type: SET_AUTHORG_INFO,
     data: {authAdd : authAdd, bioRevisionHashes : bioRevisionHashes, latestRevisionHash : latestRevisionHash, bioRevision : revisionBio}
@@ -136,6 +134,8 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
     if (Object.keys(router.params).length == 3) {
       dispatch(loadPost(router.params["authorg"], router.params["subHash"], router.params["revHash"], -1, true, true));
     }
+  } else if (router.result.title === 'Account') {
+    dispatch(loadUserData(router.params["account"]));
   }
 }
 
@@ -165,7 +165,6 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
 
 
   if (!alreadyLoaded) {
-    console.log("loading post for first time. revisionHash: " + revisionHash);
     dispatch(setLoadStarted(authorgAddress, submissionHash, revisionHash));
     return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 

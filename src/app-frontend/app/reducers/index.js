@@ -73,6 +73,7 @@ const wallet = (state = Map({
   bioRevisionsByAccount: {},
   bioNameInput: '',
   bioTextInput: State.fromJSON(initialState),
+  bioAvatarImage: null,
   selectedBioRevision: null,
   selectedBioRevisionValue: null,
   tokenCitadelComptroller: '',
@@ -132,22 +133,16 @@ const postKeys = (state = [], action) => {
 
 const bio = (state = {}, action) => {
   let bioRevHash = action.data.latestRevisionHash;
-  console.log("bio - bioRevHash: " + bioRevHash);
-  console.log("bio - original hashes: " + action.data.bioRevisionHashes);
-  console.log("bio - original hashes length: " + action.data.bioRevisionHashes.length);
   var bioRevisionHashes = action.data.bioRevisionHashes
-  console.log("bio - bioRevisionHashes: " + bioRevisionHashes)
-  console.log("bio - bioRevisionHashes.length: " + bioRevisionHashes.length);
-  console.log("bio - bio revision: " + action.data.bioRevision);
-  console.log("bio - bio revision name: " + action.data.bioRevision.name);
- 
+
   switch (action.type) {
     case SET_AUTHORG_INFO:
       return Object.assign({}, state, {
         revisions : bioRevisionHashes,
         [bioRevHash]: Object.assign({}, state[bioRevHash], {
           name : action.data.bioRevision.name,
-          text : action.data.bioRevision.text
+          text : action.data.bioRevision.text,
+          image : action.data.bioRevision.image
         })
       })
     default:
@@ -305,7 +300,6 @@ const auths = (state = {}, action) => {
           }
         }
       case SET_NAME_LOAD_STARTED:
-        console.log("SET NAME LOAD STARTED");
         return {
           ...state,
           [authAdd]: {
@@ -314,7 +308,6 @@ const auths = (state = {}, action) => {
           }
         }
       case SET_AUTHORG_INFO:
-      console.log("SETTING AUTHORG INFO");
         return {
           ...state,
           [authAdd]: {

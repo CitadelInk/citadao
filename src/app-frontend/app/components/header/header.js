@@ -90,7 +90,7 @@ class Header extends Component {
 		const gotoAccountPage = (
 			<span><Link 
 				href = {"/user/" + this.props.wallet.get('account')}
-				onClick = {this.handleAccountSelected}
+				onClick = {this.gotoAccountPageClicked}
 			><u>View This Account</u></Link></span>
 		);
 		const gotoDebugPage = (

@@ -25,13 +25,13 @@ class User extends Component {
 
 	render() {
 		const user = this.props.router.params["account"];
-		//console.log("user: " + user);
 		const auth = this.props.auths[user];
-		//console.log("auth: " + auth);
 
 		var bioSubHash;
 		if (auth) {
-			bioSubHash = auth.bioSubmission.revisions[auth.bioSubmission.revisions.length - 1];
+			if (auth.bioSubmission && auth.bioSubmission.revisions && auth.bioSubmission.revisions.length > 0) {
+				bioSubHash = auth.bioSubmission.revisions[auth.bioSubmission.revisions.length - 1];
+			}
 		}
 
 		return (

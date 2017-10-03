@@ -57,19 +57,6 @@ class PostSection extends Component {
 
 
 	render() {
-
-		const postStyle = {
-				position:'relative',
-				background:'#FFFFFF',
-				maxHeight:'150px',
-				width:'80%',
-				overflow:'hidden',
-				left:'10%',
-				zIndex:'10000'
-		}
-
-			
-
 		var reference = false;
 
 		var nodesList = List([this.props.section])
