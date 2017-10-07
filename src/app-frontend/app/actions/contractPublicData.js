@@ -38,7 +38,6 @@ import {
   getEthBalance,
   getSubmissionReactions,
   getRevisionSectionResponses,
-  getRevisionTime
 } from '../api/getAccounts';
 
 import {

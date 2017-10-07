@@ -54,18 +54,11 @@ class PostHeader extends Component {
 				}
 			}
 			
-			if (submission) {
-				var revisions = submission.revisions;
-				if (revisions) {
-					var revision = revisions[this.props.revision];
-					if (revision) {
-						if (revision.timestamp && revision.timestamp > 0) {
-							var date = new Date(revision.timestamp * 1000);
-							time = date.toDateString();
-						}
-					}
-				}					
-			}			
+			if (this.props.timestamp) {
+				var date = new Date(this.props.timestamp * 1000);
+				time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
+			}
+		
 					
 		}
 

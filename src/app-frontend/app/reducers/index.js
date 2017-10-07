@@ -21,7 +21,6 @@ const {
   SET_REVISION_AUTHORG_NAME,
   SET_REVISION_REACTIONS,
   SET_REVISION_SECTION_RESPONSES,
-  SET_REVISION_TIME,
   SET_REFERENCE,
   ADD_POST_KEY,
   SET_AUTHORG_INFO,
@@ -129,7 +128,7 @@ const postKeys = (state = [], action) => {
       }
       if (shouldAdd) {
         return [...state, action.data].sort(function(a,b) {
-          return b.index - a.index;
+          return b.timestamp - a.timestamp;
         });
       } else {
         return state;
@@ -161,12 +160,6 @@ const bio = (state = {}, action) => {
 const revs = (state = {}, action) => {
   let revHash = action.data.revHash;
   switch (action.type) {
-    case SET_REVISION_TIME:
-      return Object.assign({}, state, {
-        [revHash]: Object.assign({}, state[revHash], {
-          timestamp: action.data.timestamp
-        })
-      });
     case SET_REVISION_SWARM_DATA:
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
@@ -265,7 +258,6 @@ const subs = (state = {}, action) => {
   switch (action.type) {
     case SET_REVISION_REACTIONS:
     case SET_AUTH_SUB_REV_REF_KEY:
-    case SET_REVISION_TIME:
     case SET_AUTH_SUB_REV_REFERENCE_COUNT:
     case SET_REVISION_SWARM_DATA:
     case SET_LOAD_STARTED:
@@ -295,7 +287,6 @@ const auths = (state = {}, action) => {
     switch(action.type) {
       case SET_REVISION_REACTIONS:
       case SET_AUTH_SUB_REV_REF_KEY:
-      case SET_REVISION_TIME:
       case SET_AUTH_SUB_REV_REFERENCE_COUNT:
       case SET_REVISION_SWARM_DATA:
       case SET_LOAD_STARTED:
@@ -344,7 +335,7 @@ const auths = (state = {}, action) => {
             [authAdd]: {
               ...stateAuth,
               postKeys : postKeys2.sort(function(a,b) {
-                return b.index - a.index;
+                return b.timestamp - a.timestamp;
               })
             }
           }

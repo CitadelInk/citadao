@@ -16,7 +16,7 @@ export const getPostKey = (index) => {
   return new Promise((res,rej) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getAuthSubRevKey(index).then((results) => {
-        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index});
+        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
       })
     })
   })
@@ -145,18 +145,6 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
           revisionSwarmTitle: revJson.title, 
           revisionSwarmText: revJson.text
         }) 
-      })
-    })
-  })
-}
-
-export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
-  //console.log("get revision time for revision: " + revisionHash);
-  return new Promise((res, rej) => {
-    appContracts.Ink.deployed().then((instance) => {
-      instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
-        //console.log("SET revision time for revision: " + revisionHash);
-        res({timestamp : timestamp})
       })
     })
   })

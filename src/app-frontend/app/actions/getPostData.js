@@ -4,7 +4,6 @@ import { State } from 'slate';
 
 import {
   getRevisionFromSwarm,
-  getRevisionTime,
   getAccountInfo,
   getPostKey,
   getTotalPostCount,
@@ -25,10 +24,10 @@ import {
 } from './contractPublicData'
 
 export const ADD_POST_KEY = "ADD_POST_KEY";
-export const addPostKey = (authorgAddress, submissionHash, revisionHash, index) => {
+export const addPostKey = (authorgAddress, submissionHash, revisionHash, index, timestamp) => {
   return {
     type: ADD_POST_KEY,
-    data: {authAdd : authorgAddress, submissionHash, revisionHash, index}
+    data: {authAdd : authorgAddress, submissionHash, revisionHash, index, timestamp}
   }
 }
 
@@ -119,14 +118,6 @@ export const setRevisionSectionResponses = (authAdd, subHash, revHash, sectionIn
   }
 }
 
-export const SET_REVISION_TIME = "SET_REVISION_TIME";
-export const setRevisionTime = (authAdd, subHash, revHash, revisionTime) => {
-  return {
-    type: SET_REVISION_TIME,
-    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, timestamp : revisionTime}
-  }
-}
-
 export const SET_AUTHORG_POST_KEY_COUNT = "SET_AUTHORG_POST_KEY_COUNT";
 export const setAuthorgPostKeyCount = (authAdd, count) => {
   return {
@@ -178,7 +169,7 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
 }
 
 
-export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
+export const loadPost = (authorgAddress, submissionHash, revisionHash, index, timestamp, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   const {approvedReactions, network, auths} = getState().core;
   var alreadyLoaded = false;
   var authorgData = auths[authorgAddress];
@@ -203,7 +194,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
 
 
   if (!alreadyLoaded) {
-    dispatch(addPostKey(authorgAddress, submissionHash, revisionHash, index));
+    dispatch(addPostKey(authorgAddress, submissionHash, revisionHash, index, timestamp));
     dispatch(setLoadStarted(authorgAddress, submissionHash, revisionHash));
     return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 
@@ -229,9 +220,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
           }
         })       
       }      
-      getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
-        dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
-      })
+
       dispatch(loadUserData(authorgAddress));
       getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
         dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
@@ -334,7 +323,7 @@ export const getNext10Posts = () => (dispatch, getState) => {
   for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
     var index = totalPostCount - i - 1;
     getPostKey(index).then((result) => {
-      dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.index))
+      dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.index, result.timestamp))
       
     })
     postsLoaded++;
@@ -362,7 +351,6 @@ export default {
   SET_REVISION_SECTION_RESPONSES,
   ADD_POST_KEY,
   SET_AUTHORG_INFO,
-  SET_REVISION_TIME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
   SET_REFERENCE,

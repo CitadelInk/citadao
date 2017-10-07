@@ -95,7 +95,7 @@ export const submitReaction = (authorg, submissionHash, revisionHash, reaction) 
   const account = wallet.get('account');
   return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(resulty) {
     resulty.reactionEvent.watch(function(error,result){
-      if (!error && result.transactionHash == resulty.tx_id) {
+      if (!error && result.transactionHash === resulty.tx_id) {
         dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions))
       }
     });
@@ -109,7 +109,7 @@ export const follow = (authorg) => (dispatch, getState) => {
   const account = wallet.get('account');
   return followAuthorg(account, authorg).then(function(tx_result) {
     tx_result.followEvent.watch(function(error,result){
-      if (!error && result.transactionHash == tx_result.tx_id) {
+      if (!error && result.transactionHash === tx_result.tx_id) {
         dispatch(setAuthorgFollowsAuthorg(account, authorg));
       }
     })

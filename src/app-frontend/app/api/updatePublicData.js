@@ -80,9 +80,9 @@ export const followAuthorg = (account, authorg) => {
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed()
     .then((instance) => {
-      instance.follow(authorg, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+      instance.follow.sendTransaction(authorg, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
         var followEvent = instance.AuthorgFollowed({_authorgFollowed : authorg, _follower : account});
-        res({tx_id, reactionEvent})    
+        res({tx_id, followEvent})    
       });
     });
   });
