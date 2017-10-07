@@ -87,10 +87,6 @@ class ComposeRichText extends React.Component {
 	  this.renderSubmitPostButton = this.renderSubmitPostButton.bind(this);
 	  this.handleSubmitPost = this.handleSubmitPost.bind(this);
    }
-
-   componentWillMount() {
-	this.props.dispatch(setWalletData({postTextInput : State.fromJSON(initialState)}));
-   }
  
 
   /**

@@ -36,6 +36,27 @@ export const getAccountBioRevisions = (account) => {
   });
 }
 
+export const getAccountPostKeyCount = (account) => {
+  return new Promise((res, rej) => {
+    appContracts.Ink.deployed()
+    .then((instance) => {
+      instance.getPostKeyCountForAuthorg(account).then((count) => {
+        res({count});
+      })
+    })
+  })
+}
+
+export const getAuthorgPostKey = (account, index) => {
+  return new Promise((res,rej) => {
+    appContracts.Ink.deployed().then((instance) => {
+      instance.getAuthorgPostKey(account, index).then((results) => {
+        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index});
+      })
+    })
+  })
+}
+
 export const getAccountInfo = (account, web3) => {
    return new Promise((res, rej) => {
     appContracts.Ink.deployed()

@@ -30,7 +30,12 @@ const {
   WEB_SETUP_COMPLETE,
   SET_LOAD_STARTED,
   SET_NAME_LOAD_STARTED,
-  SET_AUTHORG_BIO_REVISIONS
+  SET_AUTHORG_BIO_REVISIONS,
+  SET_AUTHORG_POST_KEY_COUNT,
+  SET_AUTHORG_POST_KEYS_LOADED_COUNT,
+  SET_AUTHORG_FOLLOWS_AUTHORG,
+  SET_AUTHORG_FOLLOWS_AUTHORGS,
+  SET_AUTHORG_FOLLOWERS
 } = actions;
 
 const network = (state = Map({
@@ -83,7 +88,9 @@ const wallet = (state = Map({
   selectedResponses: [],
   totalPostCount:0,
   numPostsLoaded:0,
-  selectedTabIndex: 0
+  selectedTabIndex: 0,
+  selectedUserTabIndex: 0,
+  selectedHomeTabIndex:0
 }), action) => {
   switch (action.type) {
     case SET_TOKEN_ADRESS:
@@ -112,7 +119,7 @@ const postKeys = (state = [], action) => {
     case ADD_POST_KEY:
       var shouldAdd = true;
       for(var i = 0; i < state.length; i++) {
-        if (state[i].authorgAddress == action.data.authorgAddress) {
+        if (state[i].authAdd == action.data.authAdd) {
           if (state[i].submissionHash == action.data.submissionHash) {
             if (state[i].revisionHash == action.data.revisionHash) {
               shouldAdd = false;
@@ -314,6 +321,82 @@ const auths = (state = {}, action) => {
           [authAdd]: {
             ...stateAuth,
             bioSubmission : bio(stateAuth.bioSubmission, action)
+          }
+        }
+      case ADD_POST_KEY:
+        var shouldAdd = true;
+        var postKeys2 = [];
+        if (stateAuth.postKeys) {
+          postKeys2 = stateAuth.postKeys;
+          for(var i = 0; i < stateAuth.postKeys.length; i++) {
+            if (stateAuth.postKeys[i].submissionHash == action.data.submissionHash) {
+              if (stateAuth.postKeys[i].revisionHash == action.data.revisionHash) {
+                shouldAdd = false;
+              }
+            }
+          }
+        }
+        if (shouldAdd) {
+          postKeys2.push(action.data);
+          console.log("adding post key - action.data: " + action.data);
+          return {
+            ...state,
+            [authAdd]: {
+              ...stateAuth,
+              postKeys : postKeys2.sort(function(a,b) {
+                return b.index - a.index;
+              })
+            }
+          }
+        } else {
+          return state;
+        }
+      case SET_AUTHORG_POST_KEY_COUNT:
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            postKeyCount: action.data.count
+          }
+        }
+      case SET_AUTHORG_POST_KEYS_LOADED_COUNT:
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            postKeysLoadedCount: action.data.loadedCount
+          }
+        }
+      case SET_AUTHORG_FOLLOWS_AUTHORGS:
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            authorgsFollowed: action.data.authorgs
+          }
+        }
+      case SET_AUTHORG_FOLLOWERS:
+          return {
+            ...state,
+            [authAdd]: {
+              ...stateAuth,
+              followers: action.data.followers
+            }
+          }
+      case SET_AUTHORG_FOLLOWS_AUTHORG:
+        var followedAuth = state[action.data.followedAuthorg];
+        if (!followedAuth) {
+          followedAuth = {};
+        }
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            authorgsFollowed : [...stateAuth.authorgsFollowed, action.data.followedAuthorg]
+          },
+          [action.data.followedAuthorg]: {
+            ...followedAuth,
+            followers : [...followedAuth.followers, authAdd]
           }
         }
       default:

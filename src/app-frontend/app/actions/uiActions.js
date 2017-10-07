@@ -25,7 +25,7 @@ import {
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
 export const gotoUserPage  = (user) => dispatch =>  {  
-  dispatch(loadUserData(user));
+  dispatch(loadUserData(user, true));
   return dispatch(navigatePage({page:'user', route:'user\/' + user}));
 }
 

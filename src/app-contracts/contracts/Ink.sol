@@ -36,8 +36,7 @@ contract Ink is Managed {
 
         mapping(bytes32 => Submission) submissions;
 
-        bytes32[] postKeySubmissions;
-        bytes32[] postKeyRevisions;
+        uint[] postKeyIndexes;
     }
 
     struct Submission {
@@ -174,9 +173,7 @@ contract Ink is Managed {
 
         authorg.submissions[subCitadelManifestHash].revisionHashes.push(revCitadelManifestHash);
         internalAuthorgs[sender].submissions[subCitadelManifestHash].citadelManifestHash = subCitadelManifestHash;
-        internalAuthorgs[sender].postKeySubmissions.push(subCitadelManifestHash);
-        internalAuthorgs[sender].postKeyRevisions.push(revCitadelManifestHash);
-
+        internalAuthorgs[sender].postKeyIndexes.push(allPostRevisions.length);
         allPostAuthorgs.push(sender);
         allPostSubmissions.push(subCitadelManifestHash);
         allPostRevisions.push(revCitadelManifestHash);
@@ -205,5 +202,14 @@ contract Ink is Managed {
 
     function getTimestampForRevision(address authorgAddress, bytes32 submissionHash, bytes32 revisionHash) constant returns(uint) {
         return internalAuthorgs[authorgAddress].submissions[submissionHash].revisions[revisionHash].timestamp;
+    }
+
+    function getPostKeyCountForAuthorg(address authorgAddress) constant returns (uint) {
+        return internalAuthorgs[authorgAddress].postKeyIndexes.length;
+    }
+
+    function getAuthorgPostKey(address authAdd, uint indexIndex) constant returns (address authorgAddress, bytes32 submissionHash, bytes32 revisionHash) {
+        uint index = internalAuthorgs[authAdd].postKeyIndexes[indexIndex];
+        return (getAuthSubRevKey(index));
     }
 }
