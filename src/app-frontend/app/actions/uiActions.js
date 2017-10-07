@@ -21,6 +21,7 @@ import {
   getAccountBioRevision,
 } from '../api/getInkPostData';
 
+import { Link, push } from 'redux-little-router';
 
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
@@ -35,7 +36,7 @@ export const gotoPost = (authorg, subHash, revHash) => (dispatch) => {
 
 export const gotoHomePage = () => dispatch => {
   dispatch(initializeTestTypedRevisions());
-  return dispatch(navigatePage({page:'home', route:'\/'}));
+  return dispatch(push('/'));
 }
 
 export const setBuyMore = (active) => dispatch => {

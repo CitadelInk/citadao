@@ -147,6 +147,12 @@ export const updateInkBalance = (account) => dispatch => {
 export const handleBuySubmit = () => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const ethToSend = network.web3.toBigNumber(wallet.get('etherToSend'));
+  dispatch(handleBuy(ethToSend));
+};
+
+
+export const handleBuy = (ethToSend) => (dispatch, getState) => {
+  const {wallet, network} = getState().core;
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
   submitBuy(ethToSend, account, tokenOwnerAccount).then(() => {
@@ -155,7 +161,15 @@ export const handleBuySubmit = () => (dispatch, getState) => {
   }).catch(function(e) {
     alert("error - " + e);
   });
-};
+}
+
+export const handleQuickStart = () => (dispatch, getState) => {
+  const {wallet, network} = getState().core;
+  dispatch(giveEther(1, () => {
+    const ethToSend = network.web3.toBigNumber(10000);
+    dispatch(handleBuy(ethToSend));
+  }))
+}
 
 export const handleViewResponses = (responses) => (dispatch) => {
   console.log("2 handle view responses")
@@ -165,7 +179,7 @@ export const handleViewResponses = (responses) => (dispatch) => {
   return dispatch(setWalletData({selectedResponses : responses}))
 }
 
-export const giveEther = (amount) => (dispatch, getState) => {
+export const giveEther = (amount, callback) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   var ethamount =  network.web3.toWei(amount, 'ether')
   console.log(ethamount);
@@ -182,7 +196,7 @@ export const giveEther = (amount) => (dispatch, getState) => {
   xhr.setRequestHeader("Content-type", "application/json");
   xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
-          console.log(xhr);
+          dispatch(callback())
       }
   };
 
@@ -209,5 +223,6 @@ export default {
   handleBuySubmit,
   setSelectedAccount,
   handleViewResponses,
-  giveEther
+  giveEther,
+  handleQuickStart
 };

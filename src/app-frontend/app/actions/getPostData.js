@@ -292,6 +292,16 @@ export const initializeTestTypedRevisions = () => dispatch => {
   getTotalPostCount().then((result) => {
     dispatch(setWalletData({totalPostCount : result.totalPostCount}));
     dispatch(getNext10Posts());
+  });
+  dispatch(getNextFollowingPosts());
+}
+
+export const getNextFollowingPosts = () => (dispatch, getState) => {
+  const {wallet} = getState().core;
+  getAuthorgsFollowing(wallet.account).then((result) => {
+    result.authorgsFollowing.forEach(function(authorg) {
+      dispatch(getNext10AuthorgPosts(authorg));
+    })
   })
 }
 
