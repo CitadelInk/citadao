@@ -19,12 +19,16 @@ export default class ScrollController{
       this.alreadyCalled = true;
     }
     this.prevDelta = e.deltaY;
+    if (this.to2) {
+      window.clearTimeout(this.to2);
+    }
     if (!this.to) {
       this.to = window.setTimeout(() => {
         this.alreadyCalled = false
         this.to = null;
       }, SCROLL_TIMEOUT);
     }
+    this.to2 = window.setTimeout(() => this.prevDelta = 0, 50);
   }
   cleanUp() {
     window.removeEventListener('wheel', this.wheelHandler);
