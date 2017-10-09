@@ -72,7 +72,8 @@ class ComposeRichText extends React.Component {
    */
 
    constructor(props) {
-	   super(props);
+     super(props);
+     this.state = {input : this.getState()}
 	  this.hasMark = this.hasMark.bind(this);
 	  this.hasBlock = this.hasBlock.bind(this);
 	  this.onChange = this.onChange.bind(this);
@@ -97,7 +98,7 @@ class ComposeRichText extends React.Component {
    */
 
   hasMark(type) {
-    const state = this.getState();
+    const state = this.state.input;
     return state.activeMarks.some(mark => mark.type == type)
   }
 
@@ -109,7 +110,7 @@ class ComposeRichText extends React.Component {
    */
 
   hasBlock(type) {
-	const state = this.getState();
+	const state = this.state.input;
 	if (state) {
 		return state.blocks.some(node => node.type == type)
 	} else {
@@ -124,6 +125,7 @@ class ComposeRichText extends React.Component {
    */
 
   onChange({ state }) {
+    this.state.input = state;
     if (this.props.bio) {
       this.props.dispatch(setWalletData({bioTextInput : state}));
     } else {
@@ -175,7 +177,7 @@ class ComposeRichText extends React.Component {
 
   onClickMark(e, type) {
     e.preventDefault()
-    const state = this.getState();
+    const state = this.state.input;
     const change = state.change().toggleMark(type)
     this.onChange(change)
   }
@@ -189,7 +191,7 @@ class ComposeRichText extends React.Component {
 
   onClickBlock(e, type) {
     e.preventDefault()
-    const state = this.getState();
+    const state = this.state.input;
     const change = state.change()
     const { document } = state
 
@@ -350,7 +352,7 @@ class ComposeRichText extends React.Component {
     return (
       <div className={styles.editorContainer}>
         <Editor
-          state={this.getState()}
+          state={this.state.input}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
           schema={schema}
