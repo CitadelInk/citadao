@@ -34,7 +34,8 @@ const {
   SET_AUTHORG_POST_KEYS_LOADED_COUNT,
   SET_AUTHORG_FOLLOWS_AUTHORG,
   SET_AUTHORG_FOLLOWS_AUTHORGS,
-  SET_AUTHORG_FOLLOWERS
+  SET_AUTHORG_FOLLOWERS,
+  SET_REVISION_TIME
 } = actions;
 
 const network = (state = Map({
@@ -160,6 +161,13 @@ const bio = (state = {}, action) => {
 const revs = (state = {}, action) => {
   let revHash = action.data.revHash;
   switch (action.type) {
+    case SET_REVISION_TIME:
+    console.log("set revision time")
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          timestamp: action.data.timestamp
+        })
+      });
     case SET_REVISION_SWARM_DATA:
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
@@ -256,6 +264,7 @@ const revs = (state = {}, action) => {
 
 const subs = (state = {}, action) => {
   switch (action.type) {
+    case SET_REVISION_TIME:
     case SET_REVISION_REACTIONS:
     case SET_AUTH_SUB_REV_REF_KEY:
     case SET_AUTH_SUB_REV_REFERENCE_COUNT:
@@ -285,6 +294,7 @@ const auths = (state = {}, action) => {
       stateAuth = {};    
     }
     switch(action.type) {
+      case SET_REVISION_TIME:
       case SET_REVISION_REACTIONS:
       case SET_AUTH_SUB_REV_REF_KEY:
       case SET_AUTH_SUB_REV_REFERENCE_COUNT:

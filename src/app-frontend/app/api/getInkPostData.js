@@ -172,3 +172,12 @@ export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, in
   })
 }
 
+export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
+  return new Promise((res, rej) => {
+    appContracts.Ink.deployed().then((instance) => {
+      instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
+        res({timestamp : timestamp})
+      })
+    })
+  })
+}

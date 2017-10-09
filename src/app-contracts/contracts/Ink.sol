@@ -212,4 +212,8 @@ contract Ink is Managed {
         uint index = internalAuthorgs[authAdd].postKeyIndexes[indexIndex];
         return (getAuthSubRevKey(index));
     }
+
+    function getTimestampForRevision(address authorgAddress, bytes32 submissionHash, bytes32 revisionHash) constant returns(uint) {
+        return internalAuthorgs[authorgAddress].submissions[submissionHash].revisions[revisionHash].timestamp;
+    }
 }
