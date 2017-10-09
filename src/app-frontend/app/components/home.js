@@ -19,11 +19,19 @@ const {
 
 class Home extends Component {
 	 constructor(props) {
-		super(props);this.handleScroll = this.handleScroll.bind(this);
+		super(props);
+		this.handleAllPostsScroll = this.handleAllPostsScroll.bind(this);
+		this.handleStreamScroll = this.handleStreamScroll.bind(this);
 	}
 
 	componentDidMount() {
-		this.scrollDiv.addEventListener('scroll', this.handleScroll);
+		if (this.scrollDiv) {
+			this.scrollDiv.addEventListener('scroll', this.handleAllPostsScroll);
+		} 
+
+		if (this.streamScrollDiv) {
+			this.streamScrollDiv.addEventListener('scroll', this.handleStreamScroll);
+		} 
 	}
 
 	render() {
@@ -34,7 +42,7 @@ class Home extends Component {
 		var thisAccount = this.props.auths[this.props.wallet.get('account')];
 		var instance = this;
 		if (thisAccount) {
-			var following = thisAccount.authorgsFollowed;
+			var following = thisAccount.authorgsFollowed;   
 			if (following) {
 				following.forEach(function(authorg) {
 					var followingAuthorg = instance.props.auths[authorg];
@@ -54,7 +62,7 @@ class Home extends Component {
 				<div className={styles.compose}>
 					<ComposePanel />		
 				</div>
-				<div className={styles.posts} ref={el => this.scrollDiv = el}>
+				<div className={styles.posts}>
 					<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedHomeTabIndex : tabIndex}))}>
 						<TabList className={styles.tabList} >
 							<div className={styles.tabListDiv}>
@@ -70,13 +78,18 @@ class Home extends Component {
 							</div>
 						</TabList>
 
-						<TabPanel>							
-							<Posts postKeys={this.props.postKeys} onScroll={this.postsScrolled}/>	</TabPanel>
-						<TabPanel>
-							<Posts postKeys={followingAuthorgPostKeys} onScroll={this.postsScrolled}/>	
+						<TabPanel>		
+							<div className={styles.postList} ref={el => this.scrollDiv = el}>										
+								<Posts postKeys={this.props.postKeys} onScroll={this.handleAllPostsScroll}/>	
+							</div>
 						</TabPanel>
-					</Tabs>
-				</div>				
+						<TabPanel>
+							<div className={styles.postList} ref={el => this.streamScrollDiv = el}>
+								<Posts postKeys={followingAuthorgPostKeys} onScroll={this.handleStreamScroll}/>	
+							</div>
+						</TabPanel>
+					</Tabs>	
+				</div>	
 				<div className={styles.empty}>
 					<EmptyRight />
 				</div>
@@ -84,7 +97,7 @@ class Home extends Component {
 		);
 	}
 
-	handleScroll(e) {
+	handleAllPostsScroll(e) {
 		var clientHeight = this.scrollDiv.clientHeight;
 		var divPos = this.scrollDiv.scrollTop;
 		var scrollHeight = this.scrollDiv.scrollHeight;
@@ -94,8 +107,20 @@ class Home extends Component {
 		
 		if(divPos >= maxHeight - 200) {
 			this.props.dispatch(getNext10Posts());
-		}
+		}		
+	}
+
+	handleStreamScroll(e) {
+		var clientHeight = this.streamScrollDiv.clientHeight;
+		var divPos = this.streamScrollDiv.scrollTop;
+		var scrollHeight = this.streamScrollDiv.scrollHeight;
 		
+		var maxHeight = scrollHeight - clientHeight;
+
+		
+		if(divPos >= maxHeight - 200) {
+			this.props.dispatch(getNextFollowingPosts());
+		}		
 	}
 }
 

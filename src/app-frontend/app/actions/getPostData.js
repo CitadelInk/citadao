@@ -155,6 +155,7 @@ export const setAuthorgFollowers = (authAdd, followers) => {
 export const SET_SUBMISSION_REVISIONS = "SET_SUBMISSION_REVISIONS";
 
 export const initializeNeededPosts = () => (dispatch, getState) => {
+  console.log("initialize needed")
   const {ui} = getState().core;
   const {router} = getState();
   if(router.result.title === 'Home') {
@@ -211,7 +212,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, ti
               if(json.reference) {
                 dispatch(setReference(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, authorgAddress, submissionHash, revisionHash, json.reference.sectionIndex));
                 if (firstLevel) {
-                  dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, -1, false));
+                  dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, json.reference.timestamp, -1, false));
                 }
               }
             }
@@ -228,7 +229,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, ti
           for(var i = 0; i < refs.count; i++) {
             getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
               dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash))
-              dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, -1, false));
+              dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, -1, false));
             })
           }
         }
@@ -244,9 +245,8 @@ export const getReactions = (authorgAddress, submissionHash, revisionHash, appro
   })
 }
 
-export const loadUserData = (authorgAddress, focusedUser = false) => (dispatch, getState) => {
+export const loadUserData = (authorgAddress, focusedUser = false, userAccount = false) => (dispatch, getState) => {
   const {auths, network} = getState().core;
-  console.log("LOAD USER DATA - authorgAddress: " + authorgAddress);
   var userLoadStarted = false;
   var authorgData = auths [authorgAddress];
   if (authorgData) {
@@ -270,7 +270,6 @@ export const loadUserData = (authorgAddress, focusedUser = false) => (dispatch, 
         dispatch(setAuthorgFollowers(authorgAddress, result.followers));
         if (result.followers) {
           result.followers.forEach(function(authorg) {
-            console.log("load user because follower: " + authorg);
             dispatch(loadUserData(authorg));
           })
         }
@@ -279,8 +278,7 @@ export const loadUserData = (authorgAddress, focusedUser = false) => (dispatch, 
         dispatch(setAuthorgFollowsAuthorgs(authorgAddress, result.authorgsFollowing));
         if (result.authorgsFollowing) {
           result.authorgsFollowing.forEach(function(authorg) {
-            console.log("load user because following: " + authorg);
-            dispatch(loadUserData(authorg));
+            dispatch(loadUserData(authorg, userAccount));
           })
         }
       })
@@ -290,18 +288,21 @@ export const loadUserData = (authorgAddress, focusedUser = false) => (dispatch, 
 
 export const initializeTestTypedRevisions = () => dispatch => {
   getTotalPostCount().then((result) => {
-    dispatch(setWalletData({totalPostCount : result.totalPostCount}));
+    dispatch(setWalletData({totalPostCount : result.totalPostCount, numPostsLoaded : 0}));
     dispatch(getNext10Posts());
   });
-  dispatch(getNextFollowingPosts());
 }
 
 export const getNextFollowingPosts = () => (dispatch, getState) => {
   const {wallet} = getState().core;
-  getAuthorgsFollowing(wallet.account).then((result) => {
-    result.authorgsFollowing.forEach(function(authorg) {
-      dispatch(getNext10AuthorgPosts(authorg));
-    })
+  getAuthorgsFollowing(wallet.get('account')).then((result) => {
+    dispatch(getNextPostsFromUsers(result.authorgsFollowing))
+  })
+}
+
+export const getNextPostsFromUsers = (accounts) => (dispatch, getState) => {
+  accounts.forEach(function(authorg) {
+    dispatch(getNext10AuthorgPosts(authorg));
   })
 }
 
@@ -315,7 +316,7 @@ export const getNext10AuthorgPosts = (account) => (dispatch, getState) => {
     for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
       var index = totalPostCount - i - 1;
       getAuthorgPostKey(account, index).then((result) => {
-        dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.index));
+        dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.index, result.timestamp));
       })
       postsLoaded++;
     }

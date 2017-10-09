@@ -18,7 +18,8 @@ import {
 import {
   initializeNeededPosts,
   setAuthorgInfo,
-  loadUserData
+  loadUserData,
+  getNextFollowingPosts
 } from './getPostData'
 
 import {
@@ -102,15 +103,8 @@ export const initializeContract = () => (dispatch, getState) => {
 export const initializeAccounts = (web3) => dispatch => {
   return new Promise((res, rej) => {
     getAccounts(web3).then((accounts) => {
-      //var accountNamePromises = accounts.accounts.map(acct => {
-      //  return getAccountInfo(acct, web3)
-      //})
-      //Promise.all(accountNamePromises).then(values => {
-        //var accountNamesResults = values;
-        //var accountBios = accountNamesResults.map(result => {
-        //})
         var account = accounts.accounts[0];
-        dispatch(loadUserData(account, true));
+        dispatch(loadUserData(account, true, true));
         Promise.all([
           getEthBalance(account, web3),
           getInkBalance(account)
@@ -118,8 +112,6 @@ export const initializeAccounts = (web3) => dispatch => {
           res({...accounts, account, ethBalance, inkBalance}); 
         })
       })
-      
-    //})
   }).then((data) => {
 
     dispatch(setWalletData(data))

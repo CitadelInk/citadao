@@ -51,7 +51,7 @@ export const getAuthorgPostKey = (account, index) => {
   return new Promise((res,rej) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getAuthorgPostKey(account, index).then((results) => {
-        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index});
+        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
       })
     })
   })
