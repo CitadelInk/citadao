@@ -21,21 +21,23 @@ import {
   getAccountBioRevision,
 } from '../api/getInkPostData';
 
+import { Link, push } from 'redux-little-router';
 
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
 export const gotoUserPage  = (user) => dispatch =>  {  
-  dispatch(loadUserData(user));
+  dispatch(loadUserData(user, true));
   return dispatch(navigatePage({page:'user', route:'user\/' + user}));
 }
 
 export const gotoPost = (authorg, subHash, revHash) => (dispatch) => {
+  dispatch(loadPost(authorg, subHash, revHash))
   return dispatch(navigatePage({page:'post',route:'post\/authorg\/' + authorg + '\/sub\/' + subHash + '\/rev\/' + revHash}))
 }
 
 export const gotoHomePage = () => dispatch => {
   dispatch(initializeTestTypedRevisions());
-  return dispatch(navigatePage({page:'home', route:'\/'}));
+  return dispatch(push('/'));
 }
 
 export const setBuyMore = (active) => dispatch => {

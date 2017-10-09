@@ -25,3 +25,22 @@ export const getRevisionReactions = (authorgAddress, revisionHash, submissionHas
   });
 }
 
+export const getFollowers = (authorgAddress) => {
+  return new Promise((res, rej) => {
+    appContracts.Citadel.deployed().then((instance) => {
+      instance.getFollowers(authorgAddress).then((followers) => {
+        res ({followers});
+      })
+    })
+  })
+}
+
+export const getAuthorgsFollowing = (authorgAddress) => {
+  return new Promise((res, rej) => {
+    appContracts.Citadel.deployed().then((instance) => {
+      instance.getFollowedUsers(authorgAddress).then((authorgsFollowing) => {
+        res ({authorgsFollowing});
+      })
+    })
+  })
+}

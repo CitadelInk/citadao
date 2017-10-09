@@ -17,7 +17,9 @@ import {
 
 import {
   initializeNeededPosts,
-  setAuthorgInfo
+  setAuthorgInfo,
+  loadUserData,
+  getNextFollowingPosts
 } from './getPostData'
 
 import {
@@ -37,7 +39,6 @@ import {
   getEthBalance,
   getSubmissionReactions,
   getRevisionSectionResponses,
-  getRevisionTime
 } from '../api/getAccounts';
 
 import {
@@ -102,24 +103,15 @@ export const initializeContract = () => (dispatch, getState) => {
 export const initializeAccounts = (web3) => dispatch => {
   return new Promise((res, rej) => {
     getAccounts(web3).then((accounts) => {
-      var accountNamePromises = accounts.accounts.map(acct => {
-        return getAccountInfo(acct, web3)
-      })
-      Promise.all(accountNamePromises).then(values => {
-        var accountNamesResults = values;
-        var accountBios = accountNamesResults.map(result => {
-          dispatch(setAuthorgInfo(result.authorg, result.bioRevisionHashes, result.latestRevisionHash, result.revisionBio));
-        })
         var account = accounts.accounts[0];
+        dispatch(loadUserData(account, true, true));
         Promise.all([
           getEthBalance(account, web3),
           getInkBalance(account)
         ]).then(([ethBalance, inkBalance]) => {
-          res({...accounts, ...accountBios, account, ethBalance, inkBalance}); 
+          res({...accounts, account, ethBalance, inkBalance}); 
         })
       })
-      
-    })
   }).then((data) => {
 
     dispatch(setWalletData(data))
@@ -147,6 +139,12 @@ export const updateInkBalance = (account) => dispatch => {
 export const handleBuySubmit = () => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const ethToSend = network.web3.toBigNumber(wallet.get('etherToSend'));
+  dispatch(handleBuy(ethToSend));
+};
+
+
+export const handleBuy = (ethToSend) => (dispatch, getState) => {
+  const {wallet, network} = getState().core;
   const account = wallet.get('account');
   const tokenOwnerAccount = wallet.get('tokenOwnerAccount');
   submitBuy(ethToSend, account, tokenOwnerAccount).then(() => {
@@ -155,7 +153,15 @@ export const handleBuySubmit = () => (dispatch, getState) => {
   }).catch(function(e) {
     alert("error - " + e);
   });
-};
+}
+
+export const handleQuickStart = () => (dispatch, getState) => {
+  const {wallet, network} = getState().core;
+  dispatch(giveEther(1, () => {
+    const ethToSend = network.web3.toBigNumber(10000);
+    dispatch(handleBuy(ethToSend));
+  }))
+}
 
 export const handleViewResponses = (responses) => (dispatch) => {
   console.log("2 handle view responses")
@@ -165,7 +171,7 @@ export const handleViewResponses = (responses) => (dispatch) => {
   return dispatch(setWalletData({selectedResponses : responses}))
 }
 
-export const giveEther = (amount) => (dispatch, getState) => {
+export const giveEther = (amount, callback) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   var ethamount =  network.web3.toWei(amount, 'ether')
   console.log(ethamount);
@@ -182,7 +188,7 @@ export const giveEther = (amount) => (dispatch, getState) => {
   xhr.setRequestHeader("Content-type", "application/json");
   xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
-          console.log(xhr);
+          dispatch(callback())
       }
   };
 
@@ -209,5 +215,6 @@ export default {
   handleBuySubmit,
   setSelectedAccount,
   handleViewResponses,
-  giveEther
+  giveEther,
+  handleQuickStart
 };

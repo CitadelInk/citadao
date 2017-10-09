@@ -12,10 +12,9 @@ class Post extends Component {
 
 
 	render() {	
-		//console.log("post this.props.bio: " + true);
 		return(
 			<div className={styles.style}>
-				<PostHeader bio={this.props.bio} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} focusedPost={this.props.focusedPost} />
+				<PostHeader bio={this.props.bio} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} timestamp={this.props.timestamp} focusedPost={this.props.focusedPost} />
 				<PostBody bio={this.props.bio} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} sectionIndex={this.props.sectionIndex} focusedPost={this.props.focusedPost} />
 				<PostFooter bio={this.props.bio} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} focusedPost={this.props.focusedPost} />
 			</div>

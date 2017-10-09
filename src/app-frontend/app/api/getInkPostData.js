@@ -16,7 +16,7 @@ export const getPostKey = (index) => {
   return new Promise((res,rej) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getAuthSubRevKey(index).then((results) => {
-        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index});
+        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
       })
     })
   })
@@ -34,6 +34,27 @@ export const getAccountBioRevisions = (account) => {
       })
     });
   });
+}
+
+export const getAccountPostKeyCount = (account) => {
+  return new Promise((res, rej) => {
+    appContracts.Ink.deployed()
+    .then((instance) => {
+      instance.getPostKeyCountForAuthorg(account).then((count) => {
+        res({count});
+      })
+    })
+  })
+}
+
+export const getAuthorgPostKey = (account, index) => {
+  return new Promise((res,rej) => {
+    appContracts.Ink.deployed().then((instance) => {
+      instance.getAuthorgPostKey(account, index).then((results) => {
+        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
+      })
+    })
+  })
 }
 
 export const getAccountInfo = (account, web3) => {
@@ -129,18 +150,6 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
   })
 }
 
-export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
-  //console.log("get revision time for revision: " + revisionHash);
-  return new Promise((res, rej) => {
-    appContracts.Ink.deployed().then((instance) => {
-      instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
-        //console.log("SET revision time for revision: " + revisionHash);
-        res({timestamp : timestamp})
-      })
-    })
-  })
-}
-
 export const getNumReferences = (authorgAddress, submissionHash, revisionHash) => {
   //console.log("get num references for revision: " + revisionHash);
   return new Promise((res, rej) => {
@@ -163,3 +172,12 @@ export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, in
   })
 }
 
+export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
+  return new Promise((res, rej) => {
+    appContracts.Ink.deployed().then((instance) => {
+      instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
+        res({timestamp : timestamp})
+      })
+    })
+  })
+}

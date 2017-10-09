@@ -23,7 +23,7 @@ class PostWidgetContainer extends Component {
 		return (			
 			<div className={styles.style} onClick={this.widgetClicked}>
 				<Card>
- 				<Post authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} focusedPost={false} />
+ 				<Post authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} timestamp={this.props.timestamp} focusedPost={false} />
 				</Card>
 			</div>
 		);

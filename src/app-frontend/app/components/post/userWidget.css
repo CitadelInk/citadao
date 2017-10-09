@@ -1,0 +1,26 @@
+
+.div {
+  background-color:#B0E0E6;
+}
+
+.basicInfo {
+  display:flex;
+}
+
+.avatarContainer {
+  float:left;
+  margin:2px;
+}
+
+.nameAndTimeContainer {
+  float:left;
+  margin:2px;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.time {
+  
+}
