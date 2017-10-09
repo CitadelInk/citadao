@@ -31,20 +31,8 @@ class PostPage extends Component {
 		const submission = this.props.router.params["subHash"];
 		const revision = this.props.router.params["revHash"];
 		var post = "loading...";
-
-		if (submission) {
-			post = (			
-				<div className={styles.post}>
-					<Card>
-						<Post 
-							authorg={authorg} 
-							submission={submission} 
-							revision={revision} 
-							focusedPost={true} />
-					</Card>
-				</div>
-			);
-		}
+		var timestamp = undefined;
+		
 
 		var authorgData = this.props.auths[authorg];
 		var keys = [];
@@ -57,6 +45,7 @@ class PostPage extends Component {
 					if (revisionsData) {
 						var revisionData = revisionsData[revision];
 						if (revisionData) {
+							timestamp = revisionData.timestamp;
 							if (revisionData.refKeys) {
 								keys = revisionData.refKeys;
 							}
@@ -64,6 +53,21 @@ class PostPage extends Component {
 					}					
 				}			
 			}		
+		}
+
+		if (submission) {
+			post = (			
+				<div className={styles.post}>
+					<Card>
+						<Post 
+							authorg={authorg} 
+							submission={submission} 
+							revision={revision} 
+							timestamp={timestamp}
+							focusedPost={true} />
+					</Card>
+				</div>
+			);
 		}
 
 		var responses = "no responses... yet!";

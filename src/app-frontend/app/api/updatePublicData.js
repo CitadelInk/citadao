@@ -75,3 +75,15 @@ export const addReaction = (account, authorg, submissionHash, revisionHash, reac
     });
   });
 }
+
+export const followAuthorg = (account, authorg) => {
+  return new Promise((res, rej) => {
+    appContracts.Citadel.deployed()
+    .then((instance) => {
+      instance.follow.sendTransaction(authorg, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+        var followEvent = instance.AuthorgFollowed({_authorgFollowed : authorg, _follower : account});
+        res({tx_id, followEvent})    
+      });
+    });
+  });
+} 

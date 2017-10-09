@@ -9,13 +9,24 @@ import {
   updateName,
   submitNameChange,
   submitBuy,
-  post
+  post,
+  followAuthorg
 } from '../api/updatePublicData';
 
 import {
   getReactions,
   initializeNeededPosts
 } from './getPostData'
+
+
+export const SET_AUTHORG_FOLLOWS_AUTHORG = "SET_AUTHORG_FOLLOWS_AUTHORG";
+export const setAuthorgFollowsAuthorg = (followingAuthorg, followedAuthorg) => {
+  return {
+    type: SET_AUTHORG_FOLLOWS_AUTHORG,
+    data: {authAdd : followingAuthorg, followedAuthorg}
+  }
+}
+
 
 export const submitBio = () => (dispatch, getState) => {
   const {wallet, network} = getState().core;
@@ -84,7 +95,7 @@ export const submitReaction = (authorg, submissionHash, revisionHash, reaction) 
   const account = wallet.get('account');
   return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(resulty) {
     resulty.reactionEvent.watch(function(error,result){
-      if (!error && result.transactionHash == resulty.tx_id) {
+      if (!error && result.transactionHash === resulty.tx_id) {
         dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions))
       }
     });
@@ -93,8 +104,22 @@ export const submitReaction = (authorg, submissionHash, revisionHash, reaction) 
   });
 }
 
+export const follow = (authorg) => (dispatch, getState) => {
+  const {wallet} = getState().core;
+  const account = wallet.get('account');
+  return followAuthorg(account, authorg).then(function(tx_result) {
+    tx_result.followEvent.watch(function(error,result){
+      if (!error && result.transactionHash === tx_result.tx_id) {
+        dispatch(setAuthorgFollowsAuthorg(account, authorg));
+      }
+    })
+  })
+}
+
 export default {
   submitBio,
   submitPost,
-  submitReaction
+  submitReaction,
+  follow,
+  SET_AUTHORG_FOLLOWS_AUTHORG
 };

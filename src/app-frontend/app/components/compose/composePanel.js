@@ -22,8 +22,6 @@ class ComposePanel extends Component {
 		var selectedIndex = this.props.wallet.get('selectedTabIndex');
 
 		var tabNames = ["New Post", "UpdateBio"];
-		var tabPanels = [<Compose />, <BioCompose/>];
-
 		return(
 			<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedTabIndex : tabIndex}))}>
 				<TabList className={styles.tabList} >

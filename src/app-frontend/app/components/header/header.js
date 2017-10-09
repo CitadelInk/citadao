@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import actions from '../../actions';
 import { List } from 'immutable';
 import BuyMoreWidget from './buyMoreWidget';
+import QuickStartWidget from './quickStartWidget';
 import { Link, push } from 'redux-little-router';
 
 const {
@@ -116,13 +117,13 @@ class Header extends Component {
 				<div style={debugStyle}>
 				{gotoAccountPage} - {gotoDebugPage}	- {gotoLandingPage}	
 				</div>
-				<BuyMoreWidget />
+				<QuickStartWidget />
 			</div>
 		)
 	}
 
 	handleHomeClicked(e) {
-		this.props.dispatch(push('/'));
+		this.props.dispatch(gotoHomePage());
 	}
 
 	handleClickDiv(e) {

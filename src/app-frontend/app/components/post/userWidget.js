@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
 import { Avatar } from 'material-ui';
-import styles from './postHeader.css';
+import styles from './userWidget.css';
 import { Link, push } from 'redux-little-router';
 import placeholder from '../../images/placeholderprof.jpg';
 
@@ -11,11 +11,10 @@ const {
 } = actions;
 
 
-class PostHeader extends Component {
+class UserWidget extends Component {
 	 constructor(props) {
 		super(props);
 		this.authorgNameClicked = this.authorgNameClicked.bind(this);
-		this.infoButtonClicked = this.infoButtonClicked.bind(this);
 		this.state = {showDetails : false};
 	}
 
@@ -42,23 +41,6 @@ class PostHeader extends Component {
 					}
 				}
 			}
-
-			var submission;
-			
-			if (this.props.bio) {
-				submission = authorg.bioSubmission;
-			} else {
-				var submissions = authorg.submissions;
-				if (submissions) {
-					submission = submissions[this.props.submission];
-				}
-			}
-			
-			if (this.props.timestamp) {
-				var date = new Date(this.props.timestamp * 1000);
-				time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
-			}
-		
 					
 		}
 
@@ -73,18 +55,9 @@ class PostHeader extends Component {
 							<Link href = {"/user/" + this.props.authorg} onClick = {this.authorgNameClicked}>
 								{name}
 							</Link>
-						</span><br/>
-						<span className={styles.time}>{time}</span>
+						</span>
 					</div>
 				</div>
-				<span onClick={this.infoButtonClicked} style={{fontSize:'8pt', position:'relative', top:'5px', right:'200px'}}>info...</span>
-				{this.state.showDetails && 
-					<div>
-						<span style={{fontSize:'8pt'}}>authorg address - {this.props.authorg}</span><br />
-						<span style={{fontSize:'8pt'}}>submission hash - {this.props.submission}</span><br />
-						<span style={{fontSize:'8pt'}}>revision hash - {this.props.revision}</span><br />
-					</div>
-				 }
  			</div>
 		);
 	}
@@ -92,13 +65,6 @@ class PostHeader extends Component {
 	authorgNameClicked(e) {
 		e.stopPropagation();
 		this.props.dispatch(gotoUserPage(this.props.authorg));
-	}
-
-	infoButtonClicked(e) {
-		e.stopPropagation();
-		this.setState(previousState => {
-        return { showDetails: !previousState.showDetails };
-      });
 	}
 }
 
@@ -108,4 +74,4 @@ const mapStateToProps = state => {
   return {wallet, auths };
 }
 
-export default connect(mapStateToProps)(PostHeader)
+export default connect(mapStateToProps)(UserWidget)

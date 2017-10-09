@@ -3,6 +3,7 @@ pragma solidity ^0.4.13;
 contract Citadel {
 
     event ReactionRecorded(address indexed _postAuthorg, bytes32 indexed _postSubmission, bytes32 indexed _postRevision);
+    event AuthorgFollowed(address indexed _followedAuthorg, address indexed _follower);
 
     function Citadel() {
     }
@@ -14,6 +15,7 @@ contract Citadel {
     function follow(address authorgToFollow) {
         authorgToFollowing[msg.sender].push(authorgToFollow);
         authorgToFollowers[authorgToFollow].push(msg.sender);
+        AuthorgFollowed(authorgToFollow, msg.sender);
     }
 
     // and some reaction stuff  
@@ -45,6 +47,14 @@ contract Citadel {
     function addApprovedReaction(bytes32 reaction) {
         reaction_approved[reaction] = true;
         approved_reactions.push(reaction);
+    }
+
+    function getFollowedUsers(address authorg) constant returns (address[] followedUsers) {
+        return authorgToFollowing[authorg];
+    }
+
+    function getFollowers(address authorg) constant returns (address[] followers) {
+        return authorgToFollowers[authorg];
     }
 
     function getReactionForAuthorgSubmissionRevision(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction, uint index) constant returns (address, uint) {

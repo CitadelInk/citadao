@@ -4,16 +4,20 @@ import { State } from 'slate';
 
 import {
   getRevisionFromSwarm,
-  getRevisionTime,
   getAccountInfo,
   getPostKey,
   getTotalPostCount,
   getNumReferences,
-  getReferenceKey
+  getReferenceKey,
+  getAccountPostKeyCount,
+  getAuthorgPostKey,
+  getRevisionTime
 } from '../api/getInkPostData'
 
 import {
-  getRevisionReactions
+  getRevisionReactions,
+  getAuthorgsFollowing,
+  getFollowers
 } from '../api/getCitadelPostData'
 
 import {
@@ -21,10 +25,10 @@ import {
 } from './contractPublicData'
 
 export const ADD_POST_KEY = "ADD_POST_KEY";
-export const addPostKey = (authorgAddress, submissionHash, revisionHash, index) => {
+export const addPostKey = (authorgAddress, submissionHash, revisionHash, timestamp) => {
   return {
     type: ADD_POST_KEY,
-    data: {authorgAddress, submissionHash, revisionHash, index}
+    data: {authAdd : authorgAddress, submissionHash, revisionHash, timestamp}
   }
 }
 
@@ -115,9 +119,42 @@ export const setRevisionSectionResponses = (authAdd, subHash, revHash, sectionIn
   }
 }
 
+export const SET_AUTHORG_POST_KEY_COUNT = "SET_AUTHORG_POST_KEY_COUNT";
+export const setAuthorgPostKeyCount = (authAdd, count) => {
+  return {
+    type: SET_AUTHORG_POST_KEY_COUNT,
+    data: {authAdd, count}
+  }
+}
+
+export const SET_AUTHORG_POST_KEYS_LOADED_COUNT = "SET_AUTHORG_POST_KEYS_LOADED_COUNT";
+export const setAuthorgPostKeysLoadedCount = (authAdd, loadedCount) => {
+  return {
+    type: SET_AUTHORG_POST_KEYS_LOADED_COUNT,
+    data: {authAdd, loadedCount}
+  }
+}
+
+export const SET_AUTHORG_FOLLOWS_AUTHORGS = "SET_AUTHORG_FOLLOWS_AUTHORGS";
+export const setAuthorgFollowsAuthorgs = (authAdd, authorgs) => {
+  console.log("set authorg follows authorgs - " + authorgs);
+  return {
+    type: SET_AUTHORG_FOLLOWS_AUTHORGS,
+    data: {authAdd, authorgs}
+  }
+}
+
+export const SET_AUTHORG_FOLLOWERS = "SET_AUTHORG_FOLLOWERS";
+export const setAuthorgFollowers = (authAdd, followers) => {
+  return {
+    type: SET_AUTHORG_FOLLOWERS,
+    data: {authAdd, followers}
+  }
+}
+
 export const SET_REVISION_TIME = "SET_REVISION_TIME";
 export const setRevisionTime = (authAdd, subHash, revHash, revisionTime) => {
-  return {
+   return {
     type: SET_REVISION_TIME,
     data: {authAdd : authAdd, subHash : subHash, revHash : revHash, timestamp : revisionTime}
   }
@@ -132,15 +169,15 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
     dispatch(initializeTestTypedRevisions());
   } else if (router.result.title === 'Post') {
     if (Object.keys(router.params).length == 3) {
-      dispatch(loadPost(router.params["authorg"], router.params["subHash"], router.params["revHash"], -1, true, true));
+      dispatch(loadPost(router.params["authorg"], router.params["subHash"], router.params["revHash"], undefined, true, true));
     }
   } else if (router.result.title === 'Account') {
-    dispatch(loadUserData(router.params["account"]));
+    dispatch(loadUserData(router.params["account"], true));
   }
 }
 
 
-export const loadPost = (authorgAddress, submissionHash, revisionHash, index, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
+export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   const {approvedReactions, network, auths} = getState().core;
   var alreadyLoaded = false;
   var authorgData = auths[authorgAddress];
@@ -166,6 +203,14 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
 
   if (!alreadyLoaded) {
     dispatch(setLoadStarted(authorgAddress, submissionHash, revisionHash));
+    if (!timestamp) {
+      getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
+        dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
+      })
+    } else {
+      dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
+    }
+    dispatch(addPostKey(authorgAddress, submissionHash, revisionHash, timestamp));
     return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
     dispatch(setRevisionSwarmData(authorgAddress, 
                                   submissionHash, 
@@ -181,7 +226,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
               if(json.reference) {
                 dispatch(setReference(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, authorgAddress, submissionHash, revisionHash, json.reference.sectionIndex));
                 if (firstLevel) {
-                  dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, -1, false));
+                  dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, json.reference.timestamp, -1, false));
                 }
               }
             }
@@ -190,9 +235,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
           }
         })       
       }      
-      getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
-        dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
-      })
+
       dispatch(loadUserData(authorgAddress));
       getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
         dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
@@ -200,7 +243,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, index, fi
           for(var i = 0; i < refs.count; i++) {
             getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
               dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash))
-              dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, -1, false));
+              dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, false));
             })
           }
         }
@@ -216,7 +259,7 @@ export const getReactions = (authorgAddress, submissionHash, revisionHash, appro
   })
 }
 
-export const loadUserData = (authorgAddress) => (dispatch, getState) => {
+export const loadUserData = (authorgAddress, focusedUser = false, userAccount = false) => (dispatch, getState) => {
   const {auths, network} = getState().core;
   var userLoadStarted = false;
   var authorgData = auths [authorgAddress];
@@ -226,19 +269,73 @@ export const loadUserData = (authorgAddress) => (dispatch, getState) => {
     }
   }
 
-  if (!userLoadStarted) {
+  if (!userLoadStarted || focusedUser) {
     dispatch(setNameLoadStarted(authorgAddress));
     getAccountInfo(authorgAddress, network.web3).then((info) => {
       dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.latestRevisionHash, info.revisionBio));
-    })
+    });
+    if (focusedUser) {
+      getAccountPostKeyCount(authorgAddress).then((result) => {
+        dispatch(setAuthorgPostKeyCount(authorgAddress, result.count));
+        dispatch(setAuthorgPostKeysLoadedCount(authorgAddress, 0));
+        dispatch(getNext10AuthorgPosts(authorgAddress));
+      })
+      getFollowers(authorgAddress).then((result) => {
+        dispatch(setAuthorgFollowers(authorgAddress, result.followers));
+        if (result.followers) {
+          result.followers.forEach(function(authorg) {
+            dispatch(loadUserData(authorg));
+          })
+        }
+      })
+      getAuthorgsFollowing(authorgAddress).then((result) => {
+        dispatch(setAuthorgFollowsAuthorgs(authorgAddress, result.authorgsFollowing));
+        if (result.authorgsFollowing) {
+          result.authorgsFollowing.forEach(function(authorg) {
+            dispatch(loadUserData(authorg, userAccount));
+          })
+        }
+      })
+    }
   }
 }
 
 export const initializeTestTypedRevisions = () => dispatch => {
   getTotalPostCount().then((result) => {
-    dispatch(setWalletData({totalPostCount : result.totalPostCount}));
+    dispatch(setWalletData({totalPostCount : result.totalPostCount, numPostsLoaded : 0}));
     dispatch(getNext10Posts());
+  });
+}
+
+export const getNextFollowingPosts = () => (dispatch, getState) => {
+  const {wallet} = getState().core;
+  getAuthorgsFollowing(wallet.get('account')).then((result) => {
+    dispatch(getNextPostsFromUsers(result.authorgsFollowing))
   })
+}
+
+export const getNextPostsFromUsers = (accounts) => (dispatch, getState) => {
+  accounts.forEach(function(authorg) {
+    dispatch(getNext10AuthorgPosts(authorg));
+  })
+}
+
+export const getNext10AuthorgPosts = (account) => (dispatch, getState) => {
+  const {auths} = getState().core;
+  
+    var numPostsLoaded2 = auths[account].postKeysLoadedCount;
+    var totalPostCount =  auths[account].postKeyCount;
+    
+    var postsLoaded = 0;
+    for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
+      var index = totalPostCount - i - 1;
+      getAuthorgPostKey(account, index).then((result) => {
+        dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));
+      })
+      postsLoaded++;
+    }
+  
+    dispatch(setAuthorgPostKeysLoadedCount(account, numPostsLoaded2 + postsLoaded));
 }
 
 export const getNext10Posts = () => (dispatch, getState) => {
@@ -251,8 +348,7 @@ export const getNext10Posts = () => (dispatch, getState) => {
   for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
     var index = totalPostCount - i - 1;
     getPostKey(index).then((result) => {
-      dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.index))
-      dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.index))
+      dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp))
       
     })
     postsLoaded++;
@@ -280,12 +376,16 @@ export default {
   SET_REVISION_SECTION_RESPONSES,
   ADD_POST_KEY,
   SET_AUTHORG_INFO,
-  SET_REVISION_TIME,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
   SET_REFERENCE,
   SET_LOAD_STARTED,
   SET_NAME_LOAD_STARTED,
+  SET_AUTHORG_POST_KEY_COUNT,
+  SET_AUTHORG_POST_KEYS_LOADED_COUNT,
+  SET_AUTHORG_FOLLOWS_AUTHORGS,
+  SET_AUTHORG_FOLLOWERS,
+  SET_REVISION_TIME,
   loadPost,
   handleViewResponses,
   getReactions,
