@@ -1,4 +1,4 @@
-import { landingScroll, landingSection } from '../actions';
+import { landingScroll, landingSection, SCROLL_TIMEOUT } from '../actions';
 
 export default class ScrollController{
   constructor(dispatch) {
@@ -6,14 +6,29 @@ export default class ScrollController{
     this.wheelHandler = this.wheelHandler.bind(this);
     window.addEventListener('wheel', this.wheelHandler);
   }
-  wheelHandler(e) {
-    if (this.navTimeout) {
-      window.clearTimeout(this.navTimeout);
+  checkDeltas(delta) {
+    if (!this.prevDelta) {
+      return true;
     }
-    this.navTimeout = window.setTimeout(() => {
+    return Math.abs(delta) > Math.abs(this.prevDelta);
+  }
+  wheelHandler(e) {
+    e.preventDefault();
+    if (!this.alreadyCalled && this.checkDeltas(e.deltaY)) {
       this.dispatch(landingSection(e.deltaY));
-    }, 250);
-    window.requestAnimationFrame(() => this.dispatch(landingScroll(e.deltaY)));
+      this.alreadyCalled = true;
+    }
+    this.prevDelta = e.deltaY;
+    if (this.to2) {
+      window.clearTimeout(this.to2);
+    }
+    if (!this.to) {
+      this.to = window.setTimeout(() => {
+        this.alreadyCalled = false
+        this.to = null;
+      }, SCROLL_TIMEOUT);
+    }
+    this.to2 = window.setTimeout(() => this.prevDelta = 0, 50);
   }
   cleanUp() {
     window.removeEventListener('wheel', this.wheelHandler);
