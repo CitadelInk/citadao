@@ -161,6 +161,9 @@ contract Ink is Managed {
     function submitRevision(address sender, bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash) private {
         Authorg authorg = internalAuthorgs[sender];
 
+        // must have a bio set.
+        require (authorg.selfBioSubmission.revisionHashes.length > 0);
+
         // never submitted revision to this submission before        
         require (authorg.submissions[subCitadelManifestHash].revisions[revCitadelManifestHash].citadelManifestHash == 0);
         

@@ -26,6 +26,7 @@ contract Citadel {
     } 
 
     struct InkBioRevisionExtension {
+        mapping(bytes32 => mapping(address => bool)) hasReactorReacted;
         mapping(bytes32 => address[]) reactionToReactors;
         mapping(bytes32 => uint[]) reactionToReactorsTimestamps;
     }
@@ -35,6 +36,7 @@ contract Citadel {
     }
 
     struct InkRevisionExtension {
+        mapping(bytes32 => mapping(address => bool)) hasReactorReacted;
         mapping(bytes32 => address[]) reactionToReactors;
         mapping(bytes32 => uint[]) reactionToReactorsTimestamps;
     }           
@@ -91,14 +93,18 @@ contract Citadel {
     }    
     
     function submitReaction(address authorgAddress, bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash, bytes32 reaction) {
-        //spend(reaction_cost_in_ink);
-        if (reaction_approved[reaction]) {
-            InkRevisionExtension rev = authorgExtensionMap[authorgAddress].submissions[subCitadelManifestHash].revisions[revCitadelManifestHash];
-            rev.reactionToReactors[reaction].push(msg.sender);
-            rev.reactionToReactorsTimestamps[reaction].push(block.timestamp);
+        require(reaction_approved[reaction]);
+        InkRevisionExtension rev = authorgExtensionMap[authorgAddress].submissions[subCitadelManifestHash].revisions[revCitadelManifestHash];
+        
+        require(!rev.hasReactorReacted[reaction][msg.sender]);
+        
+        
+        rev.reactionToReactors[reaction].push(msg.sender);
+        rev.reactionToReactorsTimestamps[reaction].push(block.timestamp);
+        rev.hasReactorReacted[reaction][msg.sender] = true;
 
-            ReactionRecorded(authorgAddress, subCitadelManifestHash, revCitadelManifestHash); 
-        }
+        ReactionRecorded(authorgAddress, subCitadelManifestHash, revCitadelManifestHash); 
+    
     }  
 
     function getReactorsForAuthorgBio(address authorg, bytes32 bioRevision, bytes32 reaction) constant returns (address[], uint[]) {
@@ -120,13 +126,15 @@ contract Citadel {
     }
 
     function submitAuthorgReaction(address authorgAddress, bytes32 bioRevision, bytes32 reaction) {
-        //spend(reaction_cost_in_ink);
-        if (authorg_reaction_approved[reaction]) {
-            InkAuthorgExtension auth = authorgExtensionMap[authorgAddress];
-            auth.bioRevisions[bioRevision].reactionToReactors[reaction].push(msg.sender);
-            auth.bioRevisions[bioRevision].reactionToReactorsTimestamps[reaction].push(block.timestamp);
+        require(authorg_reaction_approved[reaction]);
+        InkAuthorgExtension auth = authorgExtensionMap[authorgAddress];
+        
+        require(!auth.bioRevisions[bioRevision].hasReactorReacted[reaction][msg.sender]);
+        
+        auth.bioRevisions[bioRevision].reactionToReactors[reaction].push(msg.sender);
+        auth.bioRevisions[bioRevision].reactionToReactorsTimestamps[reaction].push(block.timestamp);
 
-            AuthorgReactionRecorded(authorgAddress); 
-        }
+        auth.bioRevisions[bioRevision].hasReactorReacted[reaction][msg.sender] = true;
+        AuthorgReactionRecorded(authorgAddress);         
     }
 }
