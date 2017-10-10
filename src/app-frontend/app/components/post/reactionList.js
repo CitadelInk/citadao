@@ -6,7 +6,8 @@ import { RaisedButton } from 'material-ui';
 import UserList from '../panels/userList';
 import styles from './reactionList.css';
 const {
-	submitReaction
+	submitReaction,
+	submitBioReaction
 } = actions;
 
 
@@ -34,7 +35,11 @@ class ReactionList extends Component {
 	}
 
 	reactionClicked(e) {
-		this.props.dispatch(submitReaction(this.props.authorg, this.props.submission, this.props.revision, this.props.reactionValue));
+		if (this.props.bio) {
+			this.props.dispatch(submitBioReaction(this.props.authorg, this.props.revision, this.props.reactionValue));
+		} else {
+			this.props.dispatch(submitReaction(this.props.authorg, this.props.submission, this.props.revision, this.props.reactionValue));
+		}
 		e.stopPropagation();
 	}
 }

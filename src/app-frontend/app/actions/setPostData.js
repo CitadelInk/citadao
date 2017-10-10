@@ -10,12 +10,14 @@ import {
   submitNameChange,
   submitBuy,
   post,
-  followAuthorg
+  followAuthorg,
+  addBioReaction
 } from '../api/updatePublicData';
 
 import {
   getReactions,
-  initializeNeededPosts
+  initializeNeededPosts,
+  loadAuthorgBioReactions
 } from './getPostData'
 
 
@@ -113,6 +115,21 @@ export const submitReaction = (authorg, submissionHash, revisionHash, reaction) 
   });
 }
 
+export const submitBioReaction = (authorg, revisionHash, reaction) => (dispatch, getState) => {
+  const {wallet, approvedAuthorgReactions} = getState().core;
+  const account = wallet.get('account');
+  return addBioReaction(account, authorg, revisionHash, reaction).then(function(resulty) {
+    
+    resulty.bioReactionEvent.watch(function(error,result){
+      if (!error && result.transactionHash === resulty.tx_id) {
+        dispatch(loadAuthorgBioReactions(authorg, revisionHash, approvedAuthorgReactions))
+      }
+    });
+  }).catch(function(e) {
+    alert("error - " + e);
+  });
+}
+
 export const follow = (authorg) => (dispatch, getState) => {
   const {wallet} = getState().core;
   const account = wallet.get('account');
@@ -130,6 +147,7 @@ export default {
   submitPost,
   submitRevision,
   submitReaction,
+  submitBioReaction,
   follow,
   SET_AUTHORG_FOLLOWS_AUTHORG
 };

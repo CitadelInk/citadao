@@ -65,9 +65,9 @@ class PostFooter extends Component {
 								var buttonText = approvedReactions.get(reaction.reactionHash) + " - " + reaction.reactionReactors.length;
 								return (<div className={styles.singleButton}>
 									{
-										reactionFocused && <ReactionList users={reaction.reactionReactors} timestamps={reaction.reactionReactorsTimestamps} text={approvedReactions.get(reaction.reactionHash)} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash}/>
+										reactionFocused && <ReactionList bio={this.props.bio} users={reaction.reactionReactors} timestamps={reaction.reactionReactorsTimestamps} text={approvedReactions.get(reaction.reactionHash)} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash}/>
 									}
-										<ReactionButton bio={this.props.bio} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash} text={buttonText} />
+										<ReactionButton bio={this.props.bio} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash} text={buttonText} key={reaction.reactionHash}/>
 									</div>
 								)
 							})

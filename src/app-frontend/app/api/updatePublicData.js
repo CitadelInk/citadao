@@ -82,6 +82,18 @@ export const addReaction = (account, authorg, submissionHash, revisionHash, reac
   });
 }
 
+export const addBioReaction = (account, authorg, revisionHash, reaction) => {
+  return new Promise((res, rej) => {
+    appContracts.Citadel.deployed()
+    .then((instance) => {
+      instance.submitAuthorgReaction.sendTransaction(authorg, revisionHash, reaction, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+        var bioReactionEvent = instance.AuthorgReactionRecorded({_postAuthorg : authorg});
+        res({tx_id, bioReactionEvent})    
+      });      
+    });
+  });
+}
+
 export const followAuthorg = (account, authorg) => {
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed()

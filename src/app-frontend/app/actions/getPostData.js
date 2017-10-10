@@ -282,9 +282,10 @@ export const getReactions = (authorgAddress, submissionHash, revisionHash, appro
   })
 }
 
-export const loadAuthorgBioReactions = (authorgAddress, bioSubmissionHash, approvedAuthorgReactions) => (dispatch) => {
-  getAuthorgBioReactions(authorgAddress, bioSubmissionHash, approvedAuthorgReactions).then((reactions) => {
-    dispatch(setAuthorgBioRevisionReactions(authorgAddress, bioSubmissionHash, reactions.revisionReactionReactors))
+export const loadAuthorgBioReactions = (authorgAddress, revisionHash, approvedAuthorgReactions) => (dispatch) => {
+  console.log("loadAuthorgBioReactions");
+  getAuthorgBioReactions(authorgAddress, revisionHash, approvedAuthorgReactions).then((reactions) => {
+    dispatch(setAuthorgBioRevisionReactions(authorgAddress, revisionHash, reactions.revisionReactionReactors))
   })
 }
 
