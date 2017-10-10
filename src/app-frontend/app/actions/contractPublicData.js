@@ -11,7 +11,6 @@ import {
 
 import {
   getAccountInfo,
-  getAccountBioRevisions,
   getAccountBioRevision,
 } from '../api/getInkPostData';
 
@@ -42,13 +41,22 @@ import {
 } from '../api/getAccounts';
 
 import {
-  getApprovedReactions
+  getApprovedReactions,
+  getApprovedAuthorgReactions
 } from '../api/getCitadelGeneralData';
 
 export const SET_APPROVED_REACTIONS = "SET_APPROVED_REACTIONS";
 export const setApprovedReactions = (reactions) => {
   return {
     type: SET_APPROVED_REACTIONS,
+    data: {reactions : reactions}
+  }
+}
+
+export const SET_APPROVED_AUTHORG_REACTIONS = "SET_APPROVED_AUTHORG_REACTIONS";
+export const setApprovedAuthorgReactions = (reactions) => {
+  return {
+    type: SET_APPROVED_AUTHORG_REACTIONS,
     data: {reactions : reactions}
   }
 }
@@ -92,10 +100,12 @@ export const initializeContract = () => (dispatch, getState) => {
   return Promise.all([
     getAdvancedTokenPublicData(),
     getInkPublicData(),
-    getApprovedReactions(network.web3)
-  ]).then(([token, ink, reactions]) => {
+    getApprovedReactions(network.web3),
+    getApprovedAuthorgReactions(network.web3)
+  ]).then(([token, ink, reactions, authorgReactions]) => {
     dispatch(setWalletData({...token, ...ink}));
     dispatch(setApprovedReactions(reactions.approvedReactions));
+    dispatch(setApprovedAuthorgReactions(authorgReactions.approvedAuthorgReactions));
     dispatch(initializeNeededPosts());
   });
 };
@@ -122,11 +132,10 @@ export const setSelectedAccount = (account) => (dispatch, getState) => {
   const {network} = getState().core;
   return Promise.all([
         getEthBalance(account, network.web3),
-        getInkBalance(account),
-        getAccountBioRevisions(account)
-      ]) .then(([ethBalance, inkBalance, bioRevisions]) => {
+        getInkBalance(account)
+      ]) .then(([ethBalance, inkBalance]) => {
       network.web3.eth.defaultAccount = account
-    return dispatch(setWalletData({account, ...bioRevisions, ethBalance, inkBalance}))
+    return dispatch(setWalletData({account, ethBalance, inkBalance}))
   })
 };
 
@@ -196,7 +205,7 @@ export const giveEther = (amount, callback) => (dispatch, getState) => {
   var xx = {
     "jsonrpc":"2.0",
     "method":"eth_sendTransaction",
-    "params": [{"from":tokenOwner, "to":account, "value": 5e18}], 
+    "params": [{"from":tokenOwner, "to":account, "value": network.web3.toBigNumber(ethamount).toNumber()}], 
     "id":1};
 
   var data = JSON.stringify(xx);
@@ -211,6 +220,7 @@ export default {
   setWalletData,
   SET_WALLET_DATA,
   SET_APPROVED_REACTIONS,
+  SET_APPROVED_AUTHORG_REACTIONS,
   setBuyPrice,
   handleBuySubmit,
   setSelectedAccount,

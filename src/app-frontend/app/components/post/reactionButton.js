@@ -5,7 +5,8 @@ import { CardText } from 'material-ui';
 import { RaisedButton } from 'material-ui';
 
 const {
-	submitReaction
+	submitReaction,
+	setWalletData
 } = actions;
 
 import styles from './reactionButton.css';
@@ -23,15 +24,15 @@ class ReactionButton extends Component {
 	}
 
 	reactionClicked(e) {
-		this.props.dispatch(submitReaction(this.props.authorg, this.props.submission, this.props.revision, this.props.reactionValue));
+		this.props.dispatch(setWalletData({selectedReactionHash : this.props.reactionValue}))
 		e.stopPropagation();
 	}
 }
 
 const mapStateToProps = state => {
-  const { wallet, approvedReactions, auths } = state.core;
+  const {  } = state.core;
 
-  return {wallet, approvedReactions, auths };
+  return { };
 }
 
 export default connect(mapStateToProps)(ReactionButton)

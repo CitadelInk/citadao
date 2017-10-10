@@ -43,6 +43,7 @@ contract Ink is Managed {
         bytes32 citadelManifestHash;
         mapping(bytes32 => Revision) revisions;
         bytes32[] revisionHashes;
+        uint[] revisionTimestamps;
     }
     
     struct Revision {
@@ -82,8 +83,8 @@ contract Ink is Managed {
         wallet_address = newWalletAddress;
     }
 
-    function getBioRevisions(address authorgAddress) constant returns (bytes32[] hashes) {
-        return internalAuthorgs[authorgAddress].selfBioSubmission.revisionHashes;
+    function getBioRevisions(address authorgAddress) constant returns (bytes32[] hashes, uint[] timestamps) {
+        return (internalAuthorgs[authorgAddress].selfBioSubmission.revisionHashes, internalAuthorgs[authorgAddress].selfBioSubmission.revisionTimestamps);
     }
 
     function getTotalAuthSubRevKeyCount() constant returns (uint) {
@@ -108,6 +109,7 @@ contract Ink is Managed {
         var newSubmissions = new bytes32[](0);
         var newRevisions = new bytes32[](0);
         internalAuthorgs[msg.sender].selfBioSubmission.revisionHashes.push(citadelManifestHash);
+        internalAuthorgs[msg.sender].selfBioSubmission.revisionTimestamps.push(block.timestamp);
         var revision = Revision({
             timestamp : block.timestamp,
             citadelManifestHash : citadelManifestHash,
@@ -219,5 +221,9 @@ contract Ink is Managed {
 
     function getTimestampForRevision(address authorgAddress, bytes32 submissionHash, bytes32 revisionHash) constant returns(uint) {
         return internalAuthorgs[authorgAddress].submissions[submissionHash].revisions[revisionHash].timestamp;
+    }
+
+    function getSubmissionRevisions(address authorgAddress, bytes32 submissionHash) constant returns (bytes32[] revisionHashes) {
+         return internalAuthorgs[authorgAddress].submissions[submissionHash].revisionHashes;
     }
 }

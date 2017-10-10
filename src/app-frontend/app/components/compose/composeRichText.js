@@ -12,6 +12,7 @@ import { RaisedButton } from 'material-ui';
 const {
 	setWalletData,
   submitPost,
+  submitRevision,
   submitBio
 } = actions;
 
@@ -128,6 +129,8 @@ class ComposeRichText extends React.Component {
     this.state.input = state;
     if (this.props.bio) {
       this.props.dispatch(setWalletData({bioTextInput : state}));
+    } else if (this.props.submission) {
+      this.props.dispatch(setWalletData({reviseSubmissionInput : state}));
     } else {
       this.props.dispatch(setWalletData({postTextInput : state}));
     }
@@ -291,7 +294,9 @@ class ComposeRichText extends React.Component {
     var btnText = "Submit Post";
     if(this.props.bio) {
       btnText = "Submit Bio";
-    } 
+    } else if (this.props.submission) {
+      btnText = "Revise Post";
+    }
 	  return (<RaisedButton primary className={styles.raisedButton} onClick={this.handleSubmitPost} label={btnText}/>);
   }
 
@@ -299,6 +304,8 @@ class ComposeRichText extends React.Component {
 	handleSubmitPost(e) {
     if(this.props.bio) {
       this.props.dispatch(submitBio());
+    } if(this.props.submission) {
+      this.props.dispatch(submitRevision(this.props.submission));
     } else { 
       this.props.dispatch(submitPost());
     }
@@ -367,6 +374,8 @@ class ComposeRichText extends React.Component {
     var input;
     if(this.props.bio) {
       input = this.props.wallet.get('bioTextInput');
+    } else if(this.props.submission) {
+      input = this.props.wallet.get('reviseSubmissionInput');
     } else { 
       input = this.props.wallet.get('postTextInput');
     }

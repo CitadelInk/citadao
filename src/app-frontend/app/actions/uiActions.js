@@ -16,8 +16,6 @@ import {
 } from './getPostData';
 
 import {
-  getAccountInfo,
-  getAccountBioRevisions,
   getAccountBioRevision,
 } from '../api/getInkPostData';
 
@@ -26,11 +24,19 @@ import { Link, push } from 'redux-little-router';
 export const NAVIGATE_PAGE = "NAVIGATE_PAGE";
 
 export const gotoUserPage  = (user) => dispatch =>  {  
+  dispatch(clearUISpecifics());
   dispatch(loadUserData(user, true));
-  return dispatch(navigatePage({page:'user', route:'user\/' + user}));
+  return dispatch(push('/user/' + user));
+}
+
+export const gotoUserPageRev  = (user, rev) => dispatch =>  {  
+  dispatch(clearUISpecifics());
+  dispatch(loadUserData(user, true, false, rev));
+  return dispatch(push('/user/' + user +'/rev/' + rev));
 }
 
 export const gotoPost = (authorg, subHash, revHash) => (dispatch) => {
+  dispatch(clearUISpecifics());
   dispatch(loadPost(authorg, subHash, revHash, undefined, true, true))
   return dispatch(push("/post/authorg/" + authorg + "/sub/" + subHash + "/rev/" + revHash))
 }
@@ -39,6 +45,10 @@ export const gotoHomePage = () => dispatch => {
   dispatch(initializeTestTypedRevisions());
   return dispatch(push('/'));
 }
+
+export const clearUISpecifics = () => dispatch => {
+  dispatch(setWalletData({selectedReactionHash : ''}))
+} 
 
 export const setBuyMore = (active) => dispatch => {
   return dispatch(
@@ -59,6 +69,7 @@ export default {
   NAVIGATE_PAGE,
   navigatePage,
   gotoUserPage,
+  gotoUserPageRev,
   setBuyMore,
   gotoPost,
   gotoHomePage

@@ -22,20 +22,6 @@ export const getPostKey = (index) => {
   })
 }
 
-export const getAccountBioRevisions = (account) => {
-  return new Promise((res, rej) => {
-    appContracts.Ink.deployed()
-    .then((instance) => {
-      Promise.all([
-        instance.getBioRevisions(account)
-      ])
-      .then(([bioRevisions]) => {
-        res({bioRevisions: bioRevisions})
-      })
-    });
-  });
-}
-
 export const getAccountPostKeyCount = (account) => {
   return new Promise((res, rej) => {
     appContracts.Ink.deployed()
@@ -57,25 +43,32 @@ export const getAuthorgPostKey = (account, index) => {
   })
 }
 
-export const getAccountInfo = (account, web3) => {
+export const getAccountInfo = (account, web3, specificRev = undefined) => {
    return new Promise((res, rej) => {
     appContracts.Ink.deployed()
     .then((instance) => {
       Promise.all([
         instance.getBioRevisions(account)]
       )      
-      .then(([bioRevisions]) => {
+      .then(([result]) => {
+        var bioRevisions = result[0];
+        var timestamps = result[1];
         if(bioRevisions !== null) {
           if (bioRevisions.length > 0) {
-            const mostRecentBio = bioRevisions[bioRevisions.length - 1];
-            getAccountBioRevision(mostRecentBio, web3)
+            var bioToLoadIndex = bioRevisions.length - 1;
+            if (specificRev) {
+              bioToLoadIndex = bioRevisions.indexOf(specificRev);
+            }
+            const bioToLoad = bioRevisions[bioToLoadIndex];
+            getAccountBioRevision(bioToLoad, web3)
             .then((data) => {
-              //console.log("RETURN account name. account: " + account);
+              var revision = JSON.parse(data.selectedBioRevision.toString());
               res({
                 authorg : account,
                 bioRevisionHashes : bioRevisions,
-                latestRevisionHash : mostRecentBio,
-                revisionBio : JSON.parse(data.selectedBioRevision.toString())
+                bioRevisionTimestamps : timestamps,
+                bioLoadedIndex : bioToLoadIndex,
+                revisionBio : revision
               })
             })
           } else {
@@ -131,13 +124,11 @@ export const getAccountBioRevision = (revisionHash, web3) => {
 
 // once we add revisioning, will need to get specific revision (default likely most recent?)
 export const getRevisionFromSwarm = (revisionHash, web3) => {
-  //console.log("get revision from swarm. revisionHash: " + revisionHash);
   return new Promise((res, rej) => {
     const bzzAddress = revisionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, revision) => {
       const manifest = JSON.parse(revision)
       web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
-        //console.log("SET revision from swarm. revisionHash: " + revisionHash);  
         var revJson = JSON.parse(rev)
         res ({
           revisionSwarmHash: revisionHash, 
@@ -151,10 +142,8 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
 }
 
 export const getNumReferences = (authorgAddress, submissionHash, revisionHash) => {
-  //console.log("get num references for revision: " + revisionHash);
   return new Promise((res, rej) => {
     appContracts.Ink.deployed().then((instance) => {
-      //console.log("SET num references for revision: " + revisionHash);
       instance.getNumberReferencesForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash).then((count) => {
         res({count : count})
       })
@@ -177,6 +166,16 @@ export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) =>
     appContracts.Ink.deployed().then((instance) => {
       instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
         res({timestamp : timestamp})
+      })
+    })
+  })
+}
+
+export const getSubmissionRevisions = (authorgAddress, submissionHash) => {
+  return new Promise((res, rej) => {
+    appContracts.Ink.deployed().then((instance) => {
+      instance.getSubmissionRevisions(authorgAddress, submissionHash).then((revisionHashes) => {
+        res({revisionHashes : revisionHashes})
       })
     })
   })

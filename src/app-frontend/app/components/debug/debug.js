@@ -70,7 +70,7 @@ class Debug extends Component {
 				<textarea onChange={this.handleBioTextChange} value={this.props.wallet.get('bioTextInput')} rows="30" cols="100"/><br />
 				<button onClick={this.handleSubmitBio}>Submit Bio</button><br /><br />
 
-				SUBMIT NEW BIO<br />
+				SUBMIT aNEW BIO<br />
 				Post Title: <input onChange={this.handlePostTitleChange} value={this.props.wallet.get('postTitleInput')} /><br />
 				<textarea onChange={this.handlePostTextChange} value={this.props.wallet.get('postTextInput')} rows="30" cols="100"/><br />
 				<button onClick={this.handleSubmitPost}>Submit Post</button>

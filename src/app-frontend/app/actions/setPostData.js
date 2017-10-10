@@ -10,12 +10,14 @@ import {
   submitNameChange,
   submitBuy,
   post,
-  followAuthorg
+  followAuthorg,
+  addBioReaction
 } from '../api/updatePublicData';
 
 import {
   getReactions,
-  initializeNeededPosts
+  initializeNeededPosts,
+  loadAuthorgBioReactions
 } from './getPostData'
 
 
@@ -42,12 +44,21 @@ export const submitBio = () => (dispatch, getState) => {
     });
 };
 
+export const submitRevision = (revisionHash) => (dispatch, getState) => {
+  const {wallet} = getState().core;
+  var input = wallet.get('reviseSubmissionInput');
+  dispatch(submitNewRevision(input, revisionHash))
+}
 
 export const submitPost = () => (dispatch, getState) => {
+  const {wallet} = getState().core;
+  var input = wallet.get('postTextInput');
+  dispatch(submitNewRevision(input))
+}
+
+export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefined) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const account = wallet.get('account');
-  const postTitleInput = wallet.get('postTitleInput');
-  const postTextInput = wallet.get('postTextInput');
 
 
   var referenceKeyAuthorgs = [];
@@ -77,8 +88,8 @@ export const submitPost = () => (dispatch, getState) => {
     }
   })
 
-  var postJson = {"authorg" : account, "title" : postTitleInput, "text" : postTextInput}
-  return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3).then(function(tx_id) {
+  var postJson = {"authorg" : account, "text" : postTextInput}
+  return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3, revisionSubmissionHash).then(function(tx_id) {
     
     // hack as fuck, need to listen to event or similar since this function returns before chain is updated apparently
     setTimeout(function () {      
@@ -104,6 +115,21 @@ export const submitReaction = (authorg, submissionHash, revisionHash, reaction) 
   });
 }
 
+export const submitBioReaction = (authorg, revisionHash, reaction) => (dispatch, getState) => {
+  const {wallet, approvedAuthorgReactions} = getState().core;
+  const account = wallet.get('account');
+  return addBioReaction(account, authorg, revisionHash, reaction).then(function(resulty) {
+    
+    resulty.bioReactionEvent.watch(function(error,result){
+      if (!error && result.transactionHash === resulty.tx_id) {
+        dispatch(loadAuthorgBioReactions(authorg, revisionHash, approvedAuthorgReactions))
+      }
+    });
+  }).catch(function(e) {
+    alert("error - " + e);
+  });
+}
+
 export const follow = (authorg) => (dispatch, getState) => {
   const {wallet} = getState().core;
   const account = wallet.get('account');
@@ -119,7 +145,9 @@ export const follow = (authorg) => (dispatch, getState) => {
 export default {
   submitBio,
   submitPost,
+  submitRevision,
   submitReaction,
+  submitBioReaction,
   follow,
   SET_AUTHORG_FOLLOWS_AUTHORG
 };

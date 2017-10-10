@@ -1,10 +1,15 @@
 
 .div {
   background-color:#B0E0E6;
+  position:relative;
 }
 
 .basicInfo {
   display:flex;
+}
+
+.avatar {
+  size:100px;
 }
 
 .avatarContainer {
@@ -23,4 +28,39 @@
 
 .time {
   
+}
+
+.infoText {
+  font-size:8pt;
+}
+
+
+.infoTextDiv {
+  position:absolute;
+  top:50px;
+  right:5px;
+}
+
+.revText {
+  position:relative;
+  font-size:8pt;
+  margin-top:5px;
+}
+
+.arrow {
+  position:relative;
+}
+
+
+.revInfoDiv {
+  position:absolute;
+  top:45px;
+  left:70px;
+  display:flex;
+}
+
+.reviseDiv {
+  position:absolute;
+  top:0px;
+  right:0px;
 }

@@ -3,6 +3,7 @@ pragma solidity ^0.4.13;
 contract Citadel {
 
     event ReactionRecorded(address indexed _postAuthorg, bytes32 indexed _postSubmission, bytes32 indexed _postRevision);
+    event AuthorgReactionRecorded(address indexed _authorg);
     event AuthorgFollowed(address indexed _followedAuthorg, address indexed _follower);
 
     function Citadel() {
@@ -21,32 +22,45 @@ contract Citadel {
     // and some reaction stuff  
     struct InkAuthorgExtension {
         mapping(bytes32 => InkSubmissionExtension) submissions;
+        mapping(bytes32 => InkBioRevisionExtension) bioRevisions;
     } 
+
+    struct InkBioRevisionExtension {
+        mapping(bytes32 => address[]) reactionToReactors;
+        mapping(bytes32 => uint[]) reactionToReactorsTimestamps;
+    }
 
     struct InkSubmissionExtension {
         mapping(bytes32 => InkRevisionExtension) revisions;
     }
 
     struct InkRevisionExtension {
-        mapping(bytes32 => Reactor[]) reactionToReactors;
+        mapping(bytes32 => address[]) reactionToReactors;
+        mapping(bytes32 => uint[]) reactionToReactorsTimestamps;
     }           
-
-    struct Reactor {
-        address reactingAuthorg;
-        uint reactionTimestamp;
-    }
 
     mapping(address => InkAuthorgExtension) authorgExtensionMap;
     bytes32[] public approved_reactions;
     mapping(bytes32 => bool) reaction_approved;
+    bytes32[] public approved_authorg_reactions;
+    mapping(bytes32 => bool) authorg_reaction_approved;
     
     function getApprovedReactions() constant returns (bytes32[] hashes) {
         return approved_reactions;
     }
 
+    function getApprovedAuthorgReactions() constant returns (bytes32[] hashes) {
+        return approved_authorg_reactions;
+    }
+
     function addApprovedReaction(bytes32 reaction) {
         reaction_approved[reaction] = true;
         approved_reactions.push(reaction);
+    }
+
+    function addApprovedAuthorgReaction(bytes32 reaction) {
+        authorg_reaction_approved[reaction] = true;
+        approved_authorg_reactions.push(reaction);
     }
 
     function getFollowedUsers(address authorg) constant returns (address[] followedUsers) {
@@ -56,35 +70,63 @@ contract Citadel {
     function getFollowers(address authorg) constant returns (address[] followers) {
         return authorgToFollowers[authorg];
     }
+     
 
-    function getReactionForAuthorgSubmissionRevision(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction, uint index) constant returns (address, uint) {
-        if (reaction_approved[reaction]/* && isAuthorgOfRevision(authorg, revision)*/) {
-            var reactor = authorgExtensionMap[authorg].submissions[submission].revisions[revision].reactionToReactors[reaction][index];
-            return (reactor.reactingAuthorg, reactor.reactionTimestamp);
+    function getReactorsForAuthorgRevisionReaction(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction) constant returns (address[], uint[]) {
+        if (reaction_approved[reaction]) {
+            return (authorgExtensionMap[authorg].submissions[submission].revisions[revision].reactionToReactors[reaction],
+                    authorgExtensionMap[authorg].submissions[submission].revisions[revision].reactionToReactorsTimestamps[reaction]
+            );
         } else {
-            return (address(0), 0);
+            return (new address[](0), new uint[](0));
         }
     }
 
-    function getReactorsForAuthorgRevisionReaction(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction) constant returns (uint) {
-        if (reaction_approved[reaction]/* && isAuthorgOfRevision(authorg, revision)*/) {
+    function getReactorsCountForAuthorgRevisionReaction(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction) constant returns (uint) {
+        if (reaction_approved[reaction]) {
             return authorgExtensionMap[authorg].submissions[submission].revisions[revision].reactionToReactors[reaction].length;
         } else {
             return 0;
         }
-    }
+    }    
     
     function submitReaction(address authorgAddress, bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash, bytes32 reaction) {
         //spend(reaction_cost_in_ink);
         if (reaction_approved[reaction]) {
             InkRevisionExtension rev = authorgExtensionMap[authorgAddress].submissions[subCitadelManifestHash].revisions[revCitadelManifestHash];
-            rev.reactionToReactors[reaction].push(
-                Reactor({
-                    reactingAuthorg : msg.sender, 
-                    reactionTimestamp : block.timestamp
-                }));           
+            rev.reactionToReactors[reaction].push(msg.sender);
+            rev.reactionToReactorsTimestamps[reaction].push(block.timestamp);
 
             ReactionRecorded(authorgAddress, subCitadelManifestHash, revCitadelManifestHash); 
+        }
+    }  
+
+    function getReactorsForAuthorgBio(address authorg, bytes32 bioRevision, bytes32 reaction) constant returns (address[], uint[]) {
+        if (authorg_reaction_approved[reaction]) {
+            return (authorgExtensionMap[authorg].bioRevisions[bioRevision].reactionToReactors[reaction],
+                    authorgExtensionMap[authorg].bioRevisions[bioRevision].reactionToReactorsTimestamps[reaction]
+            );
+        } else {
+            return (new address[](0), new uint[](0));
+        }
+    }
+
+    function getReactorsCountForAuthorg(address authorg, bytes32 bioRevision, bytes32 reaction) constant returns (uint) {
+        if (authorg_reaction_approved[reaction]) {
+            return authorgExtensionMap[authorg].bioRevisions[bioRevision].reactionToReactors[reaction].length;
+        } else {
+            return 0;
+        }
+    }
+
+    function submitAuthorgReaction(address authorgAddress, bytes32 bioRevision, bytes32 reaction) {
+        //spend(reaction_cost_in_ink);
+        if (authorg_reaction_approved[reaction]) {
+            InkAuthorgExtension auth = authorgExtensionMap[authorgAddress];
+            auth.bioRevisions[bioRevision].reactionToReactors[reaction].push(msg.sender);
+            auth.bioRevisions[bioRevision].reactionToReactorsTimestamps[reaction].push(block.timestamp);
+
+            AuthorgReactionRecorded(authorgAddress); 
         }
     }
 }

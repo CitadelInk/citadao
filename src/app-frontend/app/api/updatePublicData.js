@@ -38,13 +38,19 @@ export const updateBio = (bioInput, account, web3) => {
   }); 
 };
 
-export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, web3) => {
+export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, web3, reviseSubmissionHash) => {
   return new Promise((res, rej) => {
     web3.bzz.put(postInput, (error, hash) => {
       appContracts.Ink.deployed()
       .then((instance) => {
         var maxGas = 400000 + refKeyAuths.length * 200000;
-        instance.submitRevisionWithReferences.sendTransaction('0x' + hash, '0x' + hash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+        var subHash = '0x' + hash;
+
+        if (reviseSubmissionHash) {
+          subHash = reviseSubmissionHash;
+        }
+
+        instance.submitRevisionWithReferences.sendTransaction(subHash, '0x' + hash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
           res(tx_id);  
         }).catch(rej);
       });
@@ -71,6 +77,18 @@ export const addReaction = (account, authorg, submissionHash, revisionHash, reac
       instance.submitReaction.sendTransaction(authorg, submissionHash, revisionHash, reaction, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
         var reactionEvent = instance.ReactionRecorded({_postAuthorg : authorg, _postSubmission : submissionHash, _postRevision : revisionHash});
         res({tx_id, reactionEvent})    
+      });      
+    });
+  });
+}
+
+export const addBioReaction = (account, authorg, revisionHash, reaction) => {
+  return new Promise((res, rej) => {
+    appContracts.Citadel.deployed()
+    .then((instance) => {
+      instance.submitAuthorgReaction.sendTransaction(authorg, revisionHash, reaction, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+        var bioReactionEvent = instance.AuthorgReactionRecorded({_postAuthorg : authorg});
+        res({tx_id, bioReactionEvent})    
       });      
     });
   });
