@@ -304,7 +304,7 @@ class ComposeRichText extends React.Component {
 	handleSubmitPost(e) {
     if(this.props.bio) {
       this.props.dispatch(submitBio());
-    } if(this.props.submission) {
+    } else if(this.props.submission) {
       this.props.dispatch(submitRevision(this.props.submission));
     } else { 
       this.props.dispatch(submitPost());
