@@ -270,10 +270,14 @@ class PostHeader extends Component {
 		var revisions;
 		if (submission) {
 			revisions = submission.revisions;
-			if(revisions) {
-				revisionHashes = revisions.revisionHashes;
-			}
 		}
+
+		if (this.props.bio) {
+			revisions = submission;
+			revisionHashes = revisions.revisions;
+		} else if(revisions) {
+			revisionHashes = revisions.revisionHashes;
+		}	
 
 		return revisionHashes;
 	}

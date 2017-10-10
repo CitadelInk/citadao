@@ -45,6 +45,12 @@ class App extends Component {
                 <User/>
               </div>
             </Fragment>
+            <Fragment forRoute="/user/:account">
+              <div>
+                <Header />         
+                <User/>
+              </div>
+            </Fragment>
             <Fragment forRoute="/post/authorg/:authorg/sub/:subHash/rev/:revHash">
               <div>
                 <Header />
