@@ -190,7 +190,7 @@ const revs = (state = {}, action) => {
       }
       var shouldAddKey = true;
       for(var i = 0; i < refKeys.length; i++) {
-        if(refKeys[i].authorgAddress == action.data.refKey.authorgAddress) {
+        if(refKeys[i].authAdd == action.data.refKey.authAdd) {
           if(refKeys[i].submissionHash == action.data.refKey.submissionHash) {
             if(refKeys[i].revisionHash == action.data.refKey.revisionHash) {
               shouldAddKey = false;

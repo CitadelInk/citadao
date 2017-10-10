@@ -352,7 +352,7 @@ class ComposeRichText extends React.Component {
     return (
       <div className={styles.editorContainer}>
         <Editor
-          state={this.state.input}
+          state={this.getState()}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
           schema={schema}
