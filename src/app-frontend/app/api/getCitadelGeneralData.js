@@ -48,7 +48,6 @@ export const getReactionValues = (approvedReactionHashes, web3) => {
 }
 
 export const getReactionValue = (reactionHash, web3) => {
-  console.log("get reaction value");
   return new Promise((res, rej) => {
     const bzzAddress = reactionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {

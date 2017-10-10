@@ -15,7 +15,6 @@ export const getRevisionReactions = (authorgAddress, revisionHash, submissionHas
         revisionReactionReactors.map((result) => {
           totalReactions += result.reactionReactors.length;
         })
-        //console.log("total reactions: " + totalReactions);
         res ({
           revisionReactionReactors: revisionReactionReactors,
           reactionCount : totalReactions
@@ -31,7 +30,6 @@ export const getAuthorgBioReactions = (authorgAddress, bioRevisionHash, reaction
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed().then((instance) => {
       var revisionReactionReactorPromisess = keys.map(function(entry) {
-        console.log("check a bio reaction");
         return instance.getReactorsForAuthorgBio(authorgAddress, bioRevisionHash, entry).then((result) => {
           return {reactionHash : entry, reactionReactors : result[0], reactionReactorsTimestamps : result[1]};
         })
@@ -41,7 +39,6 @@ export const getAuthorgBioReactions = (authorgAddress, bioRevisionHash, reaction
         revisionReactionReactors.map((result) => {
           totalReactions += result.reactionReactors.length;
         })
-        console.log("total bio reactions: " + totalReactions);
         res ({
           revisionReactionReactors: revisionReactionReactors,
           reactionCount : totalReactions
