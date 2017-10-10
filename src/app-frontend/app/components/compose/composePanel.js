@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import styles from './composePanel.css';
 import Compose from './compose';
 import BioCompose from './bioCompose';
+import ReviseSubmissionCompose from './reviseSubmissionCompose';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import actions from '../../actions'
+import actions from '../../actions';
 const {
 	setWalletData
 } = actions;
@@ -22,6 +23,9 @@ class ComposePanel extends Component {
 		var selectedIndex = this.props.wallet.get('selectedTabIndex');
 
 		var tabNames = ["New Post", "UpdateBio"];
+		if(this.props.wallet.get('reviseSubmissionHash')) {
+			tabNames.push("Revise");
+		}
 		return(
 			<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedTabIndex : tabIndex}))}>
 				<TabList className={styles.tabList} >
@@ -32,7 +36,7 @@ class ComposePanel extends Component {
 									[styles.tab]:true,
 									[styles.tabSelected]: (index === selectedIndex)
 								})
-								return (<Tab  className={selected}>{name}</Tab>);
+								return (<Tab key={"composePanel-"+index} className={selected}>{name}</Tab>);
 							})
 						}
 					</div>
@@ -44,6 +48,11 @@ class ComposePanel extends Component {
 				<TabPanel>
 					<BioCompose />
 				</TabPanel>
+				{ tabNames.length === 3 && 
+					<TabPanel>
+						<ReviseSubmissionCompose submission={this.props.wallet.get('reviseSubmissionHash')}/>
+					</TabPanel>
+				}
 			</Tabs>
 		);
 	}

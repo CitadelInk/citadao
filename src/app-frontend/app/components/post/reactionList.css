@@ -1,0 +1,16 @@
+.divStyle {
+	position:absolute;
+	z-index: 11000;
+	bottom:20px;
+	min-width:300px;
+}
+
+.cardStyle {
+	margin:10px;
+	padding:10px;
+}
+
+.userScrollList {
+	max-height:100px;
+	overflow-y: scroll;
+}

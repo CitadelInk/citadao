@@ -22,5 +22,10 @@
 }
 
 .buttonContainer {
+	display:flex;
 	flex-wrap:wrap;
+}
+
+.singleButton {
+	position:relative;
 }
