@@ -5,21 +5,15 @@ import initialState from '../components/compose/state.json';
 import {State} from 'slate';
 import landing from '../landingPage/reducers';
 const {
-  SET_INK_WALLET_ADRESS,
-  SET_INK_COMPTROLLER_ACCOUNT,
-  SET_TOKEN_ADRESS,
-  SET_TOKEN_OWNER_ACCONT,
-  SET_BUY_PRICE,
-  SET_TOKEN_SUPPLY,
   SET_WALLET_DATA,
   NAVIGATE_PAGE,
   SET_SUBMISSIONS,
-  SET_SUBMISSION_REVISIONS,
   SET_APPROVED_REACTIONS,
-  SET_BUY_MORE,
+  SET_APPROVED_AUTHORG_REACTIONS,
   SET_REVISION_SWARM_DATA,
   SET_REVISION_AUTHORG_NAME,
   SET_REVISION_REACTIONS,
+  SET_AUTHORG_BIO_REVISION_REACTIONS,
   SET_REVISION_SECTION_RESPONSES,
   SET_REFERENCE,
   ADD_POST_KEY,
@@ -35,7 +29,8 @@ const {
   SET_AUTHORG_FOLLOWS_AUTHORG,
   SET_AUTHORG_FOLLOWS_AUTHORGS,
   SET_AUTHORG_FOLLOWERS,
-  SET_REVISION_TIME
+  SET_REVISION_TIME,
+  SET_REVISION_HASHES
 } = actions;
 
 const network = (state = Map({
@@ -56,19 +51,11 @@ const network = (state = Map({
 
 
 const wallet = (state = Map({
-  accounts: List([]),
-  accountNames: List([]),
-  accountIndex: 0,
   account: null,
-  accounts: List([]),
   tokenSupply: 0,
   inkBalance: 0,
   ethBalance: 0,
   inkBuyPrice: 1.0,
-  etherToSend: 0,
-  newBuyPrice: 0,
-  newName: '',
-  newReaction: '',
   tokenOwnerAccount: null,
   inkComptrollerAccount: null,
   tokenAddress: null,
@@ -79,34 +66,17 @@ const wallet = (state = Map({
   bioNameInput: '',
   bioTextInput: State.fromJSON(initialState),
   bioAvatarImage: null,
-  selectedBioRevision: null,
-  selectedBioRevisionValue: null,
   tokenCitadelComptroller: '',
-  allSubmissionsTest: [],
-  buyMoreActive: false,
   postTextInput: State.fromJSON(initialState),
   selectedResponses: [],
   totalPostCount:0,
   numPostsLoaded:0,
   selectedTabIndex: 0,
   selectedUserTabIndex: 0,
-  selectedHomeTabIndex:0
+  selectedHomeTabIndex:0,
+  selectedReactionHash:''
 }), action) => {
   switch (action.type) {
-    case SET_TOKEN_ADRESS:
-      return state.set("tokenAddress", action.data);
-    case SET_TOKEN_OWNER_ACCONT:
-      return state.set("tokenOwnerAccount", action.data);
-    case SET_BUY_PRICE:
-      return state.set("inkBuyPrice", action.data);
-    case SET_TOKEN_SUPPLY:
-      return state.set("tokenSupply", action.data);
-    case SET_INK_COMPTROLLER_ACCOUNT:
-      return state.set("inkComptrollerAccount", action.data);
-    case SET_INK_WALLET_ADRESS:
-      return state.set("inkWalletAddress", action.data);
-    case SET_BUY_MORE:
-      return state.set("buyMoreActive", action.data)
     case SET_WALLET_DATA:
       return state.merge(action.data);
     default:
@@ -140,17 +110,25 @@ const postKeys = (state = [], action) => {
 }
 
 const bio = (state = {}, action) => {
-  let bioRevHash = action.data.latestRevisionHash;
+  var bioRevHash = action.data.revHash;
   var bioRevisionHashes = action.data.bioRevisionHashes;
   
   switch (action.type) {
     case SET_AUTHORG_INFO:
+      bioRevHash = action.data.bioRevisionHashes[action.data.bioLoadedIndex];
       return Object.assign({}, state, {
         revisions : bioRevisionHashes,
         [bioRevHash]: Object.assign({}, state[bioRevHash], {
           name : action.data.bioRevision.name,
           text : action.data.bioRevision.text,
-          image : action.data.bioRevision.image
+          image : action.data.bioRevision.image,
+          timestamp : action.data.bioRevisionTimestamps[action.data.bioLoadedIndex]
+        })
+      })
+    case SET_AUTHORG_BIO_REVISION_REACTIONS:   
+      return Object.assign({}, state, {        
+        [bioRevHash]: Object.assign({}, state[bioRevHash], {
+          reactions : action.data.reactions
         })
       })
     default:
@@ -162,7 +140,6 @@ const revs = (state = {}, action) => {
   let revHash = action.data.revHash;
   switch (action.type) {
     case SET_REVISION_TIME:
-    console.log("set revision time")
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           timestamp: action.data.timestamp
@@ -257,6 +234,10 @@ const revs = (state = {}, action) => {
           sectionRefKeyMap: sectionMap
         })
       });
+    case SET_REVISION_HASHES:
+      return Object.assign({}, state, {
+        revisionHashes: action.data.revisionHashes
+      });
     default:
       return state;
   }
@@ -271,6 +252,7 @@ const subs = (state = {}, action) => {
     case SET_REVISION_SWARM_DATA:
     case SET_LOAD_STARTED:
     case SET_REFERENCE:
+    case SET_REVISION_HASHES:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
       if (!stateSub) {
@@ -301,6 +283,7 @@ const auths = (state = {}, action) => {
       case SET_REVISION_SWARM_DATA:
       case SET_LOAD_STARTED:
       case SET_REFERENCE:
+      case SET_REVISION_HASHES:
         return {
           ...state,
           [authAdd]: {
@@ -317,6 +300,7 @@ const auths = (state = {}, action) => {
           }
         }
       case SET_AUTHORG_INFO:
+      case SET_AUTHORG_BIO_REVISION_REACTIONS:
         return {
           ...state,
           [authAdd]: {
@@ -339,7 +323,6 @@ const auths = (state = {}, action) => {
         }
         if (shouldAdd) {
           postKeys2.push(action.data);
-          console.log("adding post key - action.data: " + action.data);
           return {
             ...state,
             [authAdd]: {
@@ -417,6 +400,17 @@ const approvedReactions = (state = Map(), action) => {
   }
 }
 
+
+const approvedAuthorgReactions = (state = Map(), action) => {  
+  switch (action.type) {
+    case SET_APPROVED_AUTHORG_REACTIONS:
+      return action.data.reactions;
+    default:
+      return state;
+  }
+}
+
+
 const ui = (state = Map({page: 'home', route: '/'}), action) => {
   switch (action.type) {
     case NAVIGATE_PAGE:
@@ -431,6 +425,7 @@ const rootReducer = combineReducers({
   ui,
   auths,
   approvedReactions,
+  approvedAuthorgReactions,
   postKeys,
   network,
   landing

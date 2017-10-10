@@ -40,7 +40,7 @@ class User extends Component {
 		const user = this.props.router.params["account"];
 		const auth = this.props.auths[user];
 
-		const usingUser = this.props.wallet.get('account');
+		const usingUser = this.props.wallet.get('user');
 		const usingAuth = this.props.auths[usingUser];
 		var flabel = "";
 		var followButton;
@@ -78,6 +78,10 @@ class User extends Component {
 		if (auth) {
 			if (auth.bioSubmission && auth.bioSubmission.revisions && auth.bioSubmission.revisions.length > 0) {
 				bioSubHash = auth.bioSubmission.revisions[auth.bioSubmission.revisions.length - 1];
+
+				if(this.props.router.params["revHash"]) {
+					bioSubHash = this.props.router.params["revHash"];
+				}
 			}
 			if (auth.postKeys) {
 				postKeys = auth.postKeys;

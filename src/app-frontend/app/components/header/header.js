@@ -70,7 +70,7 @@ class Header extends Component {
 		}
 
 		var accountsDropDown = "";
-		if(this.props.wallet.get('accounts').size > 1) {
+		/*if(this.props.wallet.get('accounts').size > 1) {
 			accountsDropDown = (
 				<select onChange={this.handleAccountSelected}>
 				{
@@ -80,13 +80,12 @@ class Header extends Component {
 				}			
 				</select>	
 			);
-		}	
+		}*/	
 
-		if(this.props.wallet.get('accounts').size == 1) {
-			accountsDropDown = this.props.wallet.get('accounts').map((item,) =>{
-				return (<b> {item} </b>);
-			})
-		}
+		//if(this.props.wallet.get('accounts').size == 1) {
+			accountsDropDown = <b> {this.props.wallet.get('account')} </b>;
+			//})
+		//}
 
 		const gotoAccountPage = (
 			<span><Link 

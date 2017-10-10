@@ -16,6 +16,22 @@ export const getApprovedReactions = (web3) => {
   });
 }
 
+export const getApprovedAuthorgReactions = (web3) => {
+  return new Promise((res, rej) =>{
+    appContracts.Citadel.deployed()
+    .then((instance) => {
+      Promise.all([
+        instance.getApprovedAuthorgReactions()
+      ])
+      .then(([approvedReactionHashes]) => {
+        getReactionValues(approvedReactionHashes, web3).then((approvedReactions) => { 
+          res({approvedAuthorgReactions : approvedReactions.reactions});
+        })
+      })
+    });
+  });
+}
+
 export const getReactionValues = (approvedReactionHashes, web3) => {
   return new Promise((res, rej) => {
     var promises = approvedReactionHashes.map(hash => {
@@ -32,6 +48,7 @@ export const getReactionValues = (approvedReactionHashes, web3) => {
 }
 
 export const getReactionValue = (reactionHash, web3) => {
+  console.log("get reaction value");
   return new Promise((res, rej) => {
     const bzzAddress = reactionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {

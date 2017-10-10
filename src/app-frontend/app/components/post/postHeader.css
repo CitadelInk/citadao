@@ -1,6 +1,7 @@
 
 .div {
   background-color:#B0E0E6;
+  position:relative;
 }
 
 .basicInfo {
@@ -23,4 +24,29 @@
 
 .time {
   
+}
+
+.infoText {
+  font-size:8pt;
+}
+
+
+.infoTextDiv {
+  position:absolute;
+  top:30px;
+  right:5px;
+}
+
+.revText {
+  position:relative;
+  font-size:8pt;
+  top:5px;
+}
+
+
+.revInfoDiv {
+  position:absolute;
+  display:flex;
+  top:0px;
+  right:5px;
 }

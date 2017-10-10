@@ -11,11 +11,13 @@ import {
   getReferenceKey,
   getAccountPostKeyCount,
   getAuthorgPostKey,
-  getRevisionTime
+  getRevisionTime,
+  getSubmissionRevisions
 } from '../api/getInkPostData'
 
 import {
   getRevisionReactions,
+  getAuthorgBioReactions,
   getAuthorgsFollowing,
   getFollowers
 } from '../api/getCitadelPostData'
@@ -57,10 +59,10 @@ export const setReference = (authAdd, subHash, revHash, refAuthAdd, refSubHash, 
 }
 
 export const SET_AUTHORG_INFO = "SET_AUTHORG_INFO";
-export const setAuthorgInfo = (authAdd, bioRevisionHashes, latestRevisionHash, revisionBio) => {  
+export const setAuthorgInfo = (authAdd, bioRevisionHashes, bioRevisionTimestamps, bioLoadedIndex, revisionBio) => {  
   return {
     type: SET_AUTHORG_INFO,
-    data: {authAdd : authAdd, bioRevisionHashes : bioRevisionHashes, latestRevisionHash : latestRevisionHash, bioRevision : revisionBio}
+    data: {authAdd : authAdd, bioRevisionHashes : bioRevisionHashes, bioRevisionTimestamps : bioRevisionTimestamps, bioLoadedIndex : bioLoadedIndex, bioRevision : revisionBio}
   }
 }
 
@@ -91,7 +93,7 @@ export const SET_AUTH_SUB_REV_REF_KEY = "SET_AUTH_SUB_REV_REF_KEY";
 export const addAuthSubRevRefKey = (authAdd, subHash, revHash, refAuthAdd, refSubHash, refRevHash, timestamp) => {
   return {
     type: SET_AUTH_SUB_REV_REF_KEY,
-    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refKey: {authAdd : authAdd, submissionHash : refSubHash, revisionHash : refRevHash, timestamp : timestamp}}
+    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refKey: {authAdd : refAuthAdd, submissionHash : refSubHash, revisionHash : refRevHash, timestamp : timestamp}}
   }
 }
 
@@ -108,6 +110,14 @@ export const setRevisionReactions = (authAdd, subHash, revHash, reactions, count
   return {
     type: SET_REVISION_REACTIONS,
     data: {authAdd : authAdd, subHash : subHash, revHash : revHash, reactions : reactions, reactionCount : count}
+  }
+}
+
+export const SET_AUTHORG_BIO_REVISION_REACTIONS = "SET_AUTHORG_BIO_REVISION_REACTIONS";
+export const setAuthorgBioRevisionReactions = (authAdd, revHash, reactions, count) => {
+  return {
+    type: SET_AUTHORG_BIO_REVISION_REACTIONS,
+    data: {authAdd : authAdd, revHash : revHash, reactions : reactions, reactionCount : count}
   }
 }
 
@@ -137,7 +147,7 @@ export const setAuthorgPostKeysLoadedCount = (authAdd, loadedCount) => {
 
 export const SET_AUTHORG_FOLLOWS_AUTHORGS = "SET_AUTHORG_FOLLOWS_AUTHORGS";
 export const setAuthorgFollowsAuthorgs = (authAdd, authorgs) => {
-  console.log("set authorg follows authorgs - " + authorgs);
+  //console.log("set authorg follows authorgs - " + authorgs);
   return {
     type: SET_AUTHORG_FOLLOWS_AUTHORGS,
     data: {authAdd, authorgs}
@@ -160,7 +170,14 @@ export const setRevisionTime = (authAdd, subHash, revHash, revisionTime) => {
   }
 }
 
-export const SET_SUBMISSION_REVISIONS = "SET_SUBMISSION_REVISIONS";
+export const SET_REVISION_HASHES = "SET_REVISION_HASHES";
+export const setRevisionHashes = (authAdd, subHash, revisionHashes) => {
+  console.log("setRevisionHashes");
+  return {
+    type: SET_REVISION_HASHES,
+    data: {authAdd : authAdd, subHash : subHash, revisionHashes : revisionHashes}
+  }
+}
 
 export const initializeNeededPosts = () => (dispatch, getState) => {
   const {ui} = getState().core;
@@ -172,7 +189,7 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
       dispatch(loadPost(router.params["authorg"], router.params["subHash"], router.params["revHash"], undefined, true, true));
     }
   } else if (router.result.title === 'Account') {
-    dispatch(loadUserData(router.params["account"], true));
+    dispatch(loadUserData(router.params["account"], true, false, router.params["revHash"]));
   }
 }
 
@@ -242,7 +259,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
         if (focusedPost) {
           for(var i = 0; i < refs.count; i++) {
             getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
-              console.log("addAuthSubRevRefKey timestamp: " + result.timestamp);
+              //console.log("addAuthSubRevRefKey timestamp: " + result.timestamp);
               dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
               dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, false));
             })
@@ -250,8 +267,16 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
         }
       })
       dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
+      dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash));
     })
   }
+}
+
+export const loadSubmissionRevisionHashList = (authorgAddress, submissionHash) => (dispatch) => {
+  getSubmissionRevisions(authorgAddress, submissionHash).then((result) => {
+    console.log("dispatch setRevisionHashes - result.revisionHashes: " + result.revisionHashes);
+    dispatch(setRevisionHashes(authorgAddress, submissionHash, result.revisionHashes))
+  })
 }
 
 export const getReactions = (authorgAddress, submissionHash, revisionHash, approvedReactions) => (dispatch) => {
@@ -260,8 +285,15 @@ export const getReactions = (authorgAddress, submissionHash, revisionHash, appro
   })
 }
 
-export const loadUserData = (authorgAddress, focusedUser = false, userAccount = false) => (dispatch, getState) => {
-  const {auths, network} = getState().core;
+export const loadAuthorgBioReactions = (authorgAddress, bioSubmissionHash, approvedAuthorgReactions) => (dispatch) => {
+  //console.log("loadAuthorgBioReactions - approvedAuthorgReactions " + approvedAuthorgReactions)
+  getAuthorgBioReactions(authorgAddress, bioSubmissionHash, approvedAuthorgReactions).then((reactions) => {
+    dispatch(setAuthorgBioRevisionReactions(authorgAddress, bioSubmissionHash, reactions.revisionReactionReactors))
+  })
+}
+
+export const loadUserData = (authorgAddress, focusedUser = false, userAccount = false, specificRev = undefined) => (dispatch, getState) => {
+  const {auths, network, approvedAuthorgReactions} = getState().core;
   var userLoadStarted = false;
   var authorgData = auths [authorgAddress];
   if (authorgData) {
@@ -272,8 +304,10 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
 
   if (!userLoadStarted || focusedUser) {
     dispatch(setNameLoadStarted(authorgAddress));
-    getAccountInfo(authorgAddress, network.web3).then((info) => {
-      dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.latestRevisionHash, info.revisionBio));
+    getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
+      dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
+      console.log("dispatch. approvedAuthorgReactions: " + approvedAuthorgReactions);
+      dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions))
     });
     if (focusedUser) {
       getAccountPostKeyCount(authorgAddress).then((result) => {
@@ -387,6 +421,8 @@ export default {
   SET_AUTHORG_FOLLOWS_AUTHORGS,
   SET_AUTHORG_FOLLOWERS,
   SET_REVISION_TIME,
+  SET_AUTHORG_BIO_REVISION_REACTIONS,
+  SET_REVISION_HASHES,
   loadPost,
   handleViewResponses,
   getReactions,

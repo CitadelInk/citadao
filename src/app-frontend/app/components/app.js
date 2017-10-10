@@ -39,7 +39,7 @@ class App extends Component {
                 <Debug/>
               </div>
             </Fragment>
-            <Fragment forRoute="/user/:account">
+            <Fragment forRoute="/user/:account/rev/:revHash">
               <div>
                 <Header />         
                 <User/>
