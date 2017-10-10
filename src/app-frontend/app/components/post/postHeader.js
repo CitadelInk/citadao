@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
-import { Avatar } from 'material-ui';
+import { Avatar, FlatButton } from 'material-ui';
 import styles from './postHeader.css';
 import { Link, push } from 'redux-little-router';
 import placeholder from '../../images/placeholderprof.jpg';
+import {State} from 'slate';
 
 const {
 	gotoUserPage,
 	gotoUserPageRev,
-	gotoPost
+	gotoPost,
+	setWalletData
 } = actions;
 
 
@@ -21,6 +23,9 @@ class PostHeader extends Component {
 		this.navigateNextRev = this.navigateNextRev.bind(this);
 		this.navigatePreviousRev = this.navigatePreviousRev.bind(this);
 		this.getRevisionHashes = this.getRevisionHashes.bind(this);
+		this.onReviseClicked = this.onReviseClicked.bind(this);
+		this.getSubmission = this.getSubmission.bind(this);
+		this.getRevision = this.getRevision.bind(this);
 
 		this.state = {showDetails : false};
 	}
@@ -42,6 +47,8 @@ class PostHeader extends Component {
 			var revisionHashes = [];
 			var notFirst = false;
 			var notLast = false;
+			var canRevise = false;
+			var revHash;
 
 			if (this.props.bio) {
 				submission = authorg.bioSubmission;
@@ -73,6 +80,10 @@ class PostHeader extends Component {
 					notFirst = (index !== 0);
 					notLast = (index !== (revisionHashes.length - 1));
 
+					if(!notLast && this.props.authorg === this.props.wallet.get('account')) {
+						canRevise = true;
+					}
+
 					if (!timestamp) {
 						var revision = revisions[revisionHashes[index]];
 						if (revision) {
@@ -84,7 +95,7 @@ class PostHeader extends Component {
 					if(authorg.bioSubmission) {
 						var bioSubmission = authorg.bioSubmission;
 						var bioRevHashes = bioSubmission.revisions;
-						var revHash = "1";
+						revHash = "1";
 						if (bioRevHashes.length > 0) {
 							revHash = bioRevHashes[bioRevHashes.length - 1];
 						}
@@ -137,7 +148,7 @@ class PostHeader extends Component {
 			<div className={styles.div}>
 				<div className={styles.basicInfo}>
 					<div className={styles.avatarContainer}>
-						<Avatar src={avatar}/>
+						<Avatar size={60} src={avatar}/>
 					</div>
 					<div className={styles.nameAndTimeContainer}>
 						<span className={styles.name}>
@@ -146,13 +157,16 @@ class PostHeader extends Component {
 							</Link>
 						</span><br/>
 						<span className={styles.time}>{time}</span>
+						<div className={styles.revInfoDiv}>
+							{ (this.props.focusedPost && notFirst) && <div className={styles.arrow}><span onClick={this.navigatePreviousRev} className="material-icons">navigate_before</span></div>}
+							<span className={styles.revText}>{revText}</span>
+							{ (this.props.focusedPost && notLast) && <span onClick={this.navigateNextRev} className="material-icons">navigate_next</span>}
+						</div>
 					</div>
 				</div>
-				<div className={styles.revInfoDiv}>
-					{ notFirst && <span onClick={this.navigatePreviousRev} className="material-icons">navigate_before</span>}
-					<span className={styles.revText} onClick={this.infoButtonClicked}>{revText}</span>
-					{ notLast && <span onClick={this.navigateNextRev} className="material-icons">navigate_next</span>}
-				</div>
+				<div className={styles.reviseDiv}>
+					{ canRevise && <FlatButton onClick={this.onReviseClicked} label="REVISE"/>}
+				</div>				
 				<div className={styles.infoTextDiv}>
 					<span className={styles.infoText} onClick={this.infoButtonClicked}>{detailText}</span>
 				</div>
@@ -208,7 +222,24 @@ class PostHeader extends Component {
 		}
 	}
 
-	getRevisionHashes() {
+	onReviseClicked(e) {
+		var revision = this.getRevision();
+		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, reviseSubmissionInput : State.fromJSON(revision.text), selectedTabIndex : 2}));
+		e.stopPropagation();
+	}
+
+	getRevision() {
+		var submission = this.getSubmission();
+		var revisionHashes = this.getRevisionHashes();
+		var index = revisionHashes.length - 1;
+		if(this.props.revision) {
+			index = revisionHashes.indexOf(this.props.revision)
+		}
+
+		return submission.revisions[revisionHashes[index]];		
+	}
+
+	getSubmission() {
 		var authorg = this.props.auths[this.props.authorg];
 		var submission;
 		var revisions;
@@ -227,12 +258,20 @@ class PostHeader extends Component {
 			var submissions = authorg.submissions;
 			if (submissions) {
 				submission = submissions[this.props.submission];
-				if (submission) {
-					revisions = submission.revisions;
-					if(revisions) {
-						revisionHashes = revisions.revisionHashes;
-					}
-				}
+			}
+		}
+
+		return submission;
+	}
+
+	getRevisionHashes() {
+		var submission = this.getSubmission();
+		var revisionHashes;
+		var revisions;
+		if (submission) {
+			revisions = submission.revisions;
+			if(revisions) {
+				revisionHashes = revisions.revisionHashes;
 			}
 		}
 

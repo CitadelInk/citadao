@@ -74,7 +74,9 @@ const wallet = (state = Map({
   selectedTabIndex: 0,
   selectedUserTabIndex: 0,
   selectedHomeTabIndex:0,
-  selectedReactionHash:''
+  selectedReactionHash:'',
+  reviseSubmissionHash:null,
+  reviseSubmissionInput:State.fromJSON(initialState)
 }), action) => {
   switch (action.type) {
     case SET_WALLET_DATA:

@@ -172,7 +172,6 @@ export const setRevisionTime = (authAdd, subHash, revHash, revisionTime) => {
 
 export const SET_REVISION_HASHES = "SET_REVISION_HASHES";
 export const setRevisionHashes = (authAdd, subHash, revisionHashes) => {
-  console.log("setRevisionHashes");
   return {
     type: SET_REVISION_HASHES,
     data: {authAdd : authAdd, subHash : subHash, revisionHashes : revisionHashes}
@@ -207,7 +206,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
         var revisionsData = submissionData.revisions;
         if (revisionsData) {
           var revisionData = revisionsData[revisionHash];
-          if (revisionData.loadStarted) {
+          if (revisionData && revisionData.loadStarted) {
             if (!focusedPost) { // ok to reload focusedPost again to get the new goodies
               alreadyLoaded = true;
             } 
@@ -259,7 +258,6 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
         if (focusedPost) {
           for(var i = 0; i < refs.count; i++) {
             getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
-              //console.log("addAuthSubRevRefKey timestamp: " + result.timestamp);
               dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
               dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, false));
             })
@@ -274,7 +272,6 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
 
 export const loadSubmissionRevisionHashList = (authorgAddress, submissionHash) => (dispatch) => {
   getSubmissionRevisions(authorgAddress, submissionHash).then((result) => {
-    console.log("dispatch setRevisionHashes - result.revisionHashes: " + result.revisionHashes);
     dispatch(setRevisionHashes(authorgAddress, submissionHash, result.revisionHashes))
   })
 }
@@ -286,7 +283,6 @@ export const getReactions = (authorgAddress, submissionHash, revisionHash, appro
 }
 
 export const loadAuthorgBioReactions = (authorgAddress, bioSubmissionHash, approvedAuthorgReactions) => (dispatch) => {
-  //console.log("loadAuthorgBioReactions - approvedAuthorgReactions " + approvedAuthorgReactions)
   getAuthorgBioReactions(authorgAddress, bioSubmissionHash, approvedAuthorgReactions).then((reactions) => {
     dispatch(setAuthorgBioRevisionReactions(authorgAddress, bioSubmissionHash, reactions.revisionReactionReactors))
   })
@@ -306,7 +302,6 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
     dispatch(setNameLoadStarted(authorgAddress));
     getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
       dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
-      console.log("dispatch. approvedAuthorgReactions: " + approvedAuthorgReactions);
       dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions))
     });
     if (focusedUser) {
