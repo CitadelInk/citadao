@@ -7,9 +7,12 @@ import appActions from '../../actions';
 import { landingHeight, landingAddSection } from '../actions';
 import ScrollController from '../helpers/scrollController';
 import ScrollElement from './ScrollElement';
+import { Card } from 'material-ui';
+
 
 const {
-	navigatePage
+	navigatePage,
+	gotoHomePage
 } = appActions;
 
 let cx = classNames.bind(styles);
@@ -39,7 +42,7 @@ class Landing extends Component {
 	}
 
 	tryCitadelClicked(e) {
-		this.props.dispatch(navigatePage({page:'home', route:'/'}));
+		this.props.dispatch(gotoHomePage());
 	}
 
 	render() {
@@ -69,48 +72,83 @@ class Landing extends Component {
 					<div className={styles.headerStyle}>
 						<div className={navDivClassnames} id="bs-example-navbar-collapse-1">
 						<ul className={ulClassnames}>
-							<li className={styles.liStyle}>Ink</li>
-							<li className={styles.liStyle}>Citadel</li>
-							<li className={styles.liStyle}>Test 3</li>
-							<li className={styles.liStyle}>Test 4</li>
-							<li className={styles.alphaStyle}><span onClick={this.tryCitadelClicked}>Try Citadel Alpha Now!</span></li>
+							<li className={styles.liStyle}>C I T A D E L .ink</li>
+							<li className={styles.liStyle}>Why?</li>
+							<li className={styles.liStyle}>Tools</li>
+							<li className={styles.liStyle}>More Info</li>
+							<li className={styles.alphaStyle}><RaisedButton primary onClick={this.tryCitadelClicked} label="Try the Citadel Prototype Now!"/></li>
 						</ul>
 						</div>
 					</div>
 					<div className={styles.backgroundStyle}>
 					</div>
 					<div className={styles.containerStyle}>
-					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="test1">
-						<center>
-						<span className={styles.inkStyle}>INK</span>
-						<p className={styles.inkPStyle}>A web3-based public index consisting of content 
-							hashes that can be linked together to form explicit 
-							graphs of communication (original posts, references, 
-							and responses) and the protocol needed to add to and 
-							read from the index, with a simple economic incentive 
-							to discourage adding low quality content.
-						</p>
-						</center>
-					</ScrollElement>
-
-					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="test2">
-						<center>
-							<span className={styles.citadelStyle}>CITADEL</span>
-							<p className={styles.citadelPStyle}>A native web3 social network built on top of the Ink protocol 
-								and index that gives authorgs tools for [reading, digesting, 
-								publishing, endorsing, responding] to [articles, opinions, 
-								works-of-all-kinds] in a format that is designed to 
-								promote more meaningful and trustworthy proliferation of information.
+					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="citadel.ink">
+						<Card className={styles.cardStyle}>
+							<span className={styles.citadelHeader}>C I T A D E L</span>
+							<p className={styles.pStyle}>
+								A native Web 3 public social network
 							</p>
-						</center>
+						</Card>
+						<Card className={styles.cardStyle}>
+							<span className={styles.inkHeader}>.ink</span>
+							<p className={styles.pStyle}>
+								A protocol for decentralized social networks that links 
+								content together to form explicit 
+								graphs of communication (original posts, references, 
+								and responses). With simple economic incentive 
+								to discourage adding low quality content.
+							</p>
+						</Card>
 					</ScrollElement>
 
-					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="test3">
-						test 3
+					
+
+					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="problem cause solution">
+							<Card className={styles.cardStyle}>
+							<span className={styles.citadelH2Style}>Problem</span><br/>
+							<span className={styles.bulletSpan}>Censorship</span><br/>
+							<span className={styles.bulletSpan}h4>Disinformation</span><br/>
+							<span className={styles.bulletSpan}h4>Echo Chambers & Noise</span><br/>
+							<span className={styles.bulletSpan}>Toxic Discourse</span><br/>
+							</Card>
+							<Card className={styles.cardStyle}>
+							<span className={styles.citadelH2Style}>Cause</span><br/>
+							<span className={styles.bulletSpan}>Centralization</span><br/>
+							<span className={styles.bulletSpan}>Destructive Economic Model</span><br/>
+							</Card>
+							<Card className={styles.cardStyle}>
+							<span className={styles.citadelH2Style}>Solution</span><br/>
+							<span className={styles.bulletSpan}>Decentralize</span><br/>
+							<span className={styles.bulletSpan}>New Economic Model</span><br/>
+							<span className={styles.bulletSpan}>Better Tools</span><br/>
+							</Card>
 					</ScrollElement>
 
-					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="test4">
-						test 4
+					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="ecosystem diagram">
+						<Card className={styles.cardStyle}>
+							<span className={styles.bulletSpan}>Diagram 1 - ecosystem</span><br/>
+						</Card>
+					</ScrollElement>
+
+					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="tools">
+						<Card className={styles.cardStyle}>
+							<span className={styles.bulletSpan}>Reference</span><br/>
+						</Card>
+						<Card className={styles.cardStyle}>
+							<span className={styles.bulletSpan}>Reactions</span><br/>
+						</Card>
+						<Card className={styles.cardStyle}>
+							<span className={styles.bulletSpan}>Request Response/Critique</span><br/>
+						</Card>
+					</ScrollElement>
+
+
+					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="more info">
+						<Card className={styles.cardStyle}>
+							email list sign up<br/>
+							other links<br/>
+						</Card>
 					</ScrollElement>
 					</div>
 				</div>

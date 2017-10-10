@@ -10,8 +10,10 @@
 
 .unfocusedFooter {
 	position:relative;
-	bottom: 0px;
-	height: 40px;  
+	border:1px solid gray;
+	margin:auto;
+	margin-top:5px;
+	padding:5px;
 }
 
 .mentions {

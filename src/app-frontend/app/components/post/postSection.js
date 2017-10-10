@@ -8,7 +8,12 @@ import initialState from './state.json';
 import { List } from 'immutable';
 import styles from './postSection.css';
 import { Card } from 'material-ui';
+import { push } from 'redux-little-router';
 
+import actions from '../../actions';
+const {
+	gotoPost
+} = actions;
 
 /**
  * Define the default node type.
@@ -53,6 +58,7 @@ const schema = {
 class PostSection extends Component {
 	 constructor(props) {
 		 super(props);
+		 this.widgetClicked = this.widgetClicked.bind(this);
 	}
 
 
@@ -75,8 +81,8 @@ class PostSection extends Component {
 				if(json) {
 					var reference = json.reference;
 					if (reference) {
-						
-						section = (<div className={styles.embededPostStyle}><Post authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} /></div>)
+						var value = {authorg : reference.authorg, submission : reference.submissionHash, revision : reference.revisionHash};
+						section = (<div onClick={() => this.widgetClicked(value)} value={value} className={styles.embededPostStyle}><Post authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} /></div>)
 						reference = true;
 					}
 				}	
@@ -104,12 +110,20 @@ class PostSection extends Component {
 			</div>
 		);
 	}
+
+	widgetClicked(value) {
+		if (this.props.focusedPost) {
+			this.props.dispatch(
+				gotoPost(value.authorg, value.submission, value.revision)
+			);
+		}
+	}
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state.core;
+  const { wallet, auths } = state.core;
 
-  return {wallet };
+  return {wallet, auths };
 }
 
 export default connect(mapStateToProps)(PostSection)

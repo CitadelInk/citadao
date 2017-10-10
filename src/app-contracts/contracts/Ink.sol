@@ -199,9 +199,13 @@ contract Ink is Managed {
         return internalAuthorgs[authorgAddress].submissions[submissionHash].revisions[revisionHash].referenceKeyRevisions.length;
     }
 
-    function getReferenceForAuthorgSubmissionRevision(address authorgAddress, bytes32 submissionHash, bytes32 revisionHash, uint index) constant returns(address, bytes32, bytes32) {
+    function getReferenceForAuthorgSubmissionRevision(address authorgAddress, bytes32 submissionHash, bytes32 revisionHash, uint index) constant returns(address, bytes32, bytes32, uint) {
         Revision rev = internalAuthorgs[authorgAddress].submissions[submissionHash].revisions[revisionHash];
-        return (rev.referenceKeyAuthorgs[index], rev.referenceKeySubmissions[index], rev.referenceKeyRevisions[index]);
+        address refAuthorgAddress = rev.referenceKeyAuthorgs[index];
+        bytes32 refSubmissionHash = rev.referenceKeySubmissions[index];
+        bytes32 refRevisionHash = rev.referenceKeyRevisions[index];
+        Revision refRevision = internalAuthorgs[refAuthorgAddress].submissions[refSubmissionHash].revisions[refRevisionHash];
+        return (refAuthorgAddress, refSubmissionHash, refRevisionHash, refRevision.timestamp);
     }
 
     function getPostKeyCountForAuthorg(address authorgAddress) constant returns (uint) {

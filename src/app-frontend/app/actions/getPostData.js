@@ -88,10 +88,10 @@ export const setAuthSubRevReferenceCount = (authAdd, subHash, revHash, count) =>
 }
 
 export const SET_AUTH_SUB_REV_REF_KEY = "SET_AUTH_SUB_REV_REF_KEY";
-export const addAuthSubRevRefKey = (authAdd, subHash, revHash, refAuthAdd, refSubHash, refRevHash) => {
+export const addAuthSubRevRefKey = (authAdd, subHash, revHash, refAuthAdd, refSubHash, refRevHash, timestamp) => {
   return {
     type: SET_AUTH_SUB_REV_REF_KEY,
-    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refKey: {authorgAddress : refAuthAdd, submissionHash : refSubHash, revisionHash : refRevHash}}
+    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refKey: {authAdd : authAdd, submissionHash : refSubHash, revisionHash : refRevHash, timestamp : timestamp}}
   }
 }
 
@@ -242,7 +242,8 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
         if (focusedPost) {
           for(var i = 0; i < refs.count; i++) {
             getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
-              dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash))
+              console.log("addAuthSubRevRefKey timestamp: " + result.timestamp);
+              dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
               dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, false));
             })
           }

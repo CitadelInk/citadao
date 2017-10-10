@@ -25,6 +25,7 @@ class PostHeader extends Component {
 		var time = "...";
 		var authorg = this.props.auths[this.props.authorg];
 		var avatar = placeholder;
+		var timestamp = this.props.timestamp;
 
 		if (authorg) {
 			if(authorg.bioSubmission) {
@@ -54,11 +55,17 @@ class PostHeader extends Component {
 				}
 			}
 			
-			if (this.props.timestamp) {
-				var date = new Date(this.props.timestamp * 1000);
-				time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
+			if (submission) {
+				if (!timestamp) {
+					var revision = submission.revisions[this.props.revision];
+					timestamp = revision.timestamp;
+				}
+
+				if (timestamp) {
+					var date = new Date(timestamp * 1000);
+					time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
+				} 
 			}
-		
 					
 		}
 
