@@ -1,7 +1,6 @@
 
 html,
-input,
-textarea {
+input {
   font-family: 'Roboto', sans-serif;
   line-height: 1.4;
   background: #eee;
@@ -92,15 +91,11 @@ input:focus {
   background: #fff;
 }
 
-.richTextContainer {
-  position:relative;
-}
-
 .editorContainer {
   position:relative;
-	overflow-y:visible;
+  overflow-y:scroll;
   overflow-x:hidden;
-  top:65px;
+  margin:0;
 }
 
 .editor > * > * + * {
@@ -200,9 +195,18 @@ input:focus {
 .toolbarContainer {
   border-bottom: 2px solid #eee;
   height:60px;
-  position:fixed;
+  position:relative;
   background-color: #FFFFFF;
   flex:1;
-  width:33%;
+  width:100%;
   z-index:1000;
+}
+
+.sectionDiv {
+  padding:2px;
+}
+
+.embededPostStyle {
+  border: 1px solid gray;
+  min-width:100%;
 }

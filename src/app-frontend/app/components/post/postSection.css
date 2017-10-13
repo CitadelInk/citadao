@@ -1,49 +1,21 @@
-
-html,
-input,
-textarea {
-  font-family: 'Roboto', sans-serif;
-  line-height: 1.4;
-  background: #eee;
-}
-
-body {
-  margin: 0;
-}
-
-p {
-  margin: 0;
-}
-
 .sectionDiv {
+  position:relative;
   padding:2px;
-}
-
-img {
-  max-width: 100%;
-  max-height: 20em;
-}
-
-img.active {
-  box-shadow: 0 0 0 2px blue;
-}
-
-blockquote {
-  border-left: 2px solid #ddd;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 10px;
-  color: #aaa;
-  font-style: italic;
-}
-
-blockquote[dir="rtl"] {
-  border-left: none;
-  padding-left: 0;
-  padding-right: 10px;
-  border-right: 2px solid #ddd;
+  min-width:100%;
+  margin:0px;
 }
 
 .embededPostStyle {
+  position:relative;
+  right:2px;
   border: 1px solid gray;
+  min-width:100%;
+
+  margin:0px;
+}
+
+.editor {
+  min-width:100%;
+  margin-right:0px;
+  margin-left:0px;
 }

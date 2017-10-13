@@ -14,17 +14,41 @@ class BioCompose extends Component {
 	constructor(props) {
 		super(props);
 		this.handleBioNameChange = this.handleBioNameChange.bind(this);
-		this.avatarImageChanged = this.avatarImageChanged.bind(this);	
-		this.state = { image : null };
+		this.avatarImageChanged = this.avatarImageChanged.bind(this);
+		this.state = { image: null, width: '0', height: '0' };
+		this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+		}
+	
+	componentDidMount() {
+		this.updateWindowDimensions();
+		window.addEventListener('resize', this.updateWindowDimensions);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.updateWindowDimensions);
+	}
+
+	updateWindowDimensions() {
+		this.setState({ width: window.innerWidth, height: window.innerHeight });
 	}
 
 
 	render() {
-		return(
+		// hack - walker please fix.
+		var height = this.state.height - 245; //total height - header + tabs + name + file picker height
+		return (
 			<div className={styles.compose}>
-				<input placeholder="Name..." onChange={this.handleBioNameChange} value={this.props.wallet.get('bioNameInput')} /><br />
-				<div className={styles.avatarContainer}><Avatar src={this.props.wallet.get('bioAvatarImage')}/><input type="file" onChange={this.avatarImageChanged}/></div><br/>
-				<ComposeRichText bio={true}/>
+				<div className={styles.name}>
+					<input placeholder="Name..." onChange={this.handleBioNameChange} value={this.props.wallet.get('bioNameInput')} />
+				</div>
+				<div className={styles.name}>
+					<div className={styles.avatarContainer}>
+						<Avatar src={this.props.wallet.get('bioAvatarImage')} /><input type="file" onChange={this.avatarImageChanged} />
+					</div>
+				</div>
+				<div className={styles.richTextContainer}>
+					<ComposeRichText bio={true} height={height} />
+				</div>
 			</div>
 		);
 	}
@@ -32,21 +56,21 @@ class BioCompose extends Component {
 	avatarImageChanged(e) {
 		var reader = new FileReader();
 		var instance = this;
-        reader.onloadend = function() {
-			instance.props.dispatch(setWalletData({bioAvatarImage : reader.result}))
-        }
+		reader.onloadend = function () {
+			instance.props.dispatch(setWalletData({ bioAvatarImage: reader.result }))
+		}
 		reader.readAsDataURL(e.target.files[0]);
 	}
 
 	handleBioNameChange(e) {
-		this.props.dispatch(setWalletData({bioNameInput : e.target.value}));
+		this.props.dispatch(setWalletData({ bioNameInput: e.target.value }));
 	}
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state.core;
+	const { wallet } = state.core;
 
-  return {wallet };
+	return { wallet };
 }
 
 export default connect(mapStateToProps)(BioCompose)
