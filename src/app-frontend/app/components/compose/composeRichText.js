@@ -10,7 +10,6 @@ import actions from '../../actions';
 import { RaisedButton } from 'material-ui';
 import PasteLink from './plugins/pasteLink';
 import PasteRef from './plugins/pasteRef';
-import EmbededPostDeleter from './plugins/embededPostDeleter';
 import Post from '../post/post';
 
 const {
