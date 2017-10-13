@@ -1,9 +1,18 @@
 .compose {
 	position:relative;
 	background-color: #FFFFFF;
-	height:100%;
+	overflow:hidden;
 }
 
 .avatarContainer {
 	display:flex;
+}
+
+.name {
+	height:40px;
+	position:relative;
+}
+
+.richTextContainer {
+	position:relative;
 }

@@ -1,6 +1,6 @@
 
 import { Editor } from 'slate-react';
-import { State } from 'slate';
+import { Block, State } from 'slate';
 import React from 'react';
 import { connect } from 'react-redux';
 import initialState from './state.json';
@@ -8,6 +8,10 @@ import styles from './composeRichText.css';
 import classNames from 'classnames/bind';
 import actions from '../../actions';
 import { RaisedButton } from 'material-ui';
+import PasteLink from './plugins/pasteLink';
+import PasteRef from './plugins/pasteRef';
+import EmbededPostDeleter from './plugins/embededPostDeleter';
+import Post from '../post/post';
 
 const {
 	setWalletData,
@@ -24,6 +28,12 @@ let cx = classNames.bind(styles);
 
 const DEFAULT_NODE = 'paragraph'
 
+const defaultBlock = {
+  type: DEFAULT_NODE,
+  isVoid: false,
+  data: {}
+}
+
 /**
  * Define a schema.
  *
@@ -32,12 +42,34 @@ const DEFAULT_NODE = 'paragraph'
 
 const schema = {
   nodes: {
+    'paragraph': (props) => {
+      return <p {...props.attributes}>{props.children}</p>
+    },
     'block-quote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
     'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
     'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
     'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
     'list-item': props => <li {...props.attributes}>{props.children}</li>,
     'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
+    link: (props) => {
+        return (
+          <a {...props.attributes} href={props.node.data.get('url')}>
+            {props.children}
+          </a>
+        )
+    },
+    ref: (props) => {
+      return (
+        <div className={styles.embededPostStyle}>
+        <Post {...props.attributes} 
+        embeded={true}
+        authorg={props.node.data.get('authorg')} 
+        submission={props.node.data.get('submission')} 
+        revision={props.node.data.get('revision')} 
+        sectionIndex={props.node.data.get('index')}/>
+        </div>
+      )
+    }
   },
   marks: {
     bold: {
@@ -55,8 +87,54 @@ const schema = {
     underlined: {
       textDecoration: 'underline'
     }
-  }
+  },
+  rules: [
+    // Rule to insert a paragraph block if the document is empty.
+    {
+      match: (node) => {
+        return node.kind == 'document'
+      },
+      validate: (document) => {
+        return document.nodes.size ? null : true
+      },
+      normalize: (change, document) => {
+        const block = Block.create(defaultBlock)
+        change.insertNodeByKey(document.key, 0, block)
+      }
+    },
+    // Rule to insert a paragraph below a void node (the image) if that node is
+    // the last one in the document.
+    {
+      match: (node) => {
+        return node.kind == 'document'
+      },
+      validate: (document) => {
+        const lastNode = document.nodes.last()
+        return lastNode && lastNode.isVoid ? true : null
+      },
+      normalize: (change, document) => {
+        const block = Block.create(defaultBlock)
+        change.insertNodeByKey(document.key, document.nodes.size, block)
+      }
+    }
+  ]
 }
+
+const plugins = [
+  PasteLink({
+    type: 'link',
+    hrefProperty: 'url',
+    collapseTo: 'end'
+  }),
+  PasteRef({
+    type: 'ref',
+    authorgAddress: 'authorg',
+    submissionHash: 'submission',
+    revisionHash: 'revision',
+    collapseTo: 'end',
+    collapseWhat: 'next'
+  })
+]
 
 /**
  * The rich text example.
@@ -146,28 +224,28 @@ class ComposeRichText extends React.Component {
    */
 
   onKeyDown(e, data, change) {
-    if (!data.isMod) return
-    let mark
+      if (!data.isMod) return
+      let mark
 
-    switch (data.key) {
-      case 'b':
-        mark = 'bold'
-        break
-      case 'i':
-        mark = 'italic'
-        break
-      case 'u':
-        mark = 'underlined'
-        break
-      case '`':
-        mark = 'code'
-        break
-      default:
-        return
-    }
+      switch (data.key) {
+        case 'b':
+          mark = 'bold'
+          break
+        case 'i':
+          mark = 'italic'
+          break
+        case 'u':
+          mark = 'underlined'
+          break
+        case '`':
+          mark = 'code'
+          break
+        default:
+          return
+      }
 
     e.preventDefault()
-    change.toggleMark(mark)
+    change.toggleMark(mark)    
     return true
   }
 
@@ -250,10 +328,10 @@ class ComposeRichText extends React.Component {
 
   render() {
     return (
-      <div className={styles.richTextContainer}>
-        {this.renderToolbar()}
-        {this.renderEditor()}
-      </div>
+        <div className={styles.richTextContainer}>
+          {this.renderToolbar()}
+          {this.renderEditor()}
+        </div>
     )
   }
 
@@ -356,14 +434,21 @@ class ComposeRichText extends React.Component {
    */
 
   renderEditor() {
+    var style = {
+      'height' : this.props.height,
+      'position':'relative',
+      'overflow-y':'scroll',
+      'overflow-x':'hidden'
+    }
     return (
-      <div className={styles.editorContainer}>
+      <div style={style}>
         <Editor
-          state={this.getState()}
+          state={this.state.input}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
           schema={schema}
           placeholder={'Compose post...'}
+          plugins={plugins}
           spellCheck
         />
       </div>

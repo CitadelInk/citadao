@@ -1,5 +1,7 @@
 .compose {
 	position:relative;
 	background-color: #FFFFFF;
-	height:100%;
+	overflow:hidden;
+	height:calc(100vh - 85px);
+	margin:0;
 }

@@ -106,22 +106,24 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
     var referenceKeyRevisions = [];
     postTextInput.document.nodes.map((section) => {
       try {
-        var json = JSON.parse(section.text);
-        if (json) {
-          var reference = json.reference;
-          if (reference) {
-
-            var refKey = {authorg:reference.authorg, subHash:reference.submissionHash, revHash:reference.revisionHash}
-            if(referenceKeyAuthorgs.indexOf(reference.authorg) < 0 ) {
-              if(referenceKeySubmissions.indexOf(reference.submissionHash) < 0 ) {
-                if(referenceKeyRevisions.indexOf(reference.revisionHash) < 0 ) {
-                  referenceKeyAuthorgs.push(reference.authorg);
-                  referenceKeySubmissions.push(reference.submissionHash);
-                  referenceKeyRevisions.push(reference.revisionHash);
-                }
+        if(section.data.get('authorg') 
+          && section.data.get('submission')
+          && section.data.get('revision')) {
+          var authorg = section.data.get('authorg');
+          var submissionHash = section.data.get('submission');
+          var revisionHash = section.data.get('revision');
+          var index = section.data.get('index');
+        
+          var refKey = {authorg:authorg, subHash:submissionHash, revHash:revisionHash}
+          if(referenceKeyAuthorgs.indexOf(authorg) < 0 ) {
+            if(referenceKeySubmissions.indexOf(submissionHash) < 0 ) {
+              if(referenceKeyRevisions.indexOf(revisionHash) < 0 ) {
+                referenceKeyAuthorgs.push(authorg);
+                referenceKeySubmissions.push(submissionHash);
+                referenceKeyRevisions.push(revisionHash);
               }
             }
-          }
+          }          
         }
       } catch (e) {
         console.error("error when posting: " + e);
