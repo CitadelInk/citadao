@@ -7,6 +7,7 @@
 	z-index:900;
 	display:flex;
 	overflow-x:hidden;
+	overflow-y:hidden;
 }
 
 .empty {
@@ -28,7 +29,7 @@
 
 .postList {
 	position:relative;
-	height:100%;
+	height:calc(100vh - 100px);
 	overflow-y:scroll;
 	bottom:0px;
 }

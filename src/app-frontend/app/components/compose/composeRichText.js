@@ -434,8 +434,14 @@ class ComposeRichText extends React.Component {
    */
 
   renderEditor() {
+    var style = {
+      'height' : this.props.height,
+      'position':'relative',
+      'overflow-y':'scroll',
+      'overflow-x':'hidden'
+    }
     return (
-      <div className={styles.editorContainer}>
+      <div style={style}>
         <Editor
           state={this.state.input}
           onChange={this.onChange}

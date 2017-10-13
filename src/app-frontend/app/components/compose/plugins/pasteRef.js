@@ -45,21 +45,10 @@ function PasteRef(options = {}) {
       if (paste.type !== 'text' && paste.type !== 'html') return
       const { text, target } = paste
 
-      console.log("paste text: " + text);
-      console.log("paste target: " + target);
-
       try {
         var json = JSON.parse(text);
         if (!json.reference) return;
-        // change.call(addSpace);
-        console.log("section index found: " + json.reference.sectionIndex);
         change.call(wrapRef, json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, json.reference.sectionIndex);
-        //if (options.collapseTo) {
-        //  change[`collapseToStartOfNextBlock`]();
-        //  change.call(addSpace);
-        //}
-
-        change.focus();
       } catch (e) {
         console.log("caught - e: " + e);
         return;

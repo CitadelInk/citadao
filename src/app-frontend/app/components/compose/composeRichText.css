@@ -1,11 +1,9 @@
 
 html,
-input,
-textarea {
+input {
   font-family: 'Roboto', sans-serif;
   line-height: 1.4;
   background: #eee;
-  min-height:400px;
 }
 
 body {
@@ -67,7 +65,6 @@ input {
   padding: .5em;
   border: 2px solid #ddd;
   background: #fafafa;
-  min-height:400px;
 }
 
 input:focus {
@@ -94,15 +91,11 @@ input:focus {
   background: #fff;
 }
 
-.editorContainerContainer {
-  position:relative;
-}
-
 .editorContainer {
   position:relative;
   overflow-y:scroll;
   overflow-x:hidden;
-  min-height:400px;
+  margin:0;
 }
 
 .editor > * > * + * {
