@@ -80,7 +80,7 @@ class PostHeader extends Component {
 					notFirst = (index !== 0);
 					notLast = (index !== (revisionHashes.length - 1));
 
-					if(!notLast && this.props.authorg === this.props.wallet.get('account')) {
+					if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
 						canRevise = true;
 					}
 
@@ -142,21 +142,43 @@ class PostHeader extends Component {
 		if (this.state.showDetails) {
 			detailText = "hide info...";
 		}
+
+		var headerDivStyle = styles.div;
+		var basicInfoStyle = styles.basicInfo;
+		var avatarStyle = styles.avatar;
+		var avatarContainerStyle = styles.avatarContainer;
+		var nameAndTimeStyle = styles.nameAndTimeContainer;
+		var nameStyle = styles.name;
+		var timeStyle = styles.time;
+		var infoTextDiv = styles.infoTextDiv;
+
+		var size = 60;
+		if(this.props.embeded) {
+			headerDivStyle = styles.embededDiv;
+			basicInfoStyle = styles.embededBasicInfo;
+			avatarStyle = styles.embededAvatar;
+			nameAndTimeStyle = styles.embededNameAndTimeContainer;
+			nameStyle = styles.embededName;
+			timeStyle = styles.embededTime;
+			infoTextDiv = styles.embededInfoTextDiv;
+			size = 30;
+		}
+		
 		
 
 		return (			
-			<div className={styles.div}>
-				<div className={styles.basicInfo}>
-					<div className={styles.avatarContainer}>
-						<Avatar size={60} src={avatar}/>
+			<div className={headerDivStyle}>
+				<div className={basicInfoStyle}>
+					<div className={avatarContainerStyle}>
+						<Avatar size={size} src={avatar}/>
 					</div>
-					<div className={styles.nameAndTimeContainer}>
-						<span className={styles.name}>
+					<div className={nameAndTimeStyle}>
+						<span className={nameStyle}>
 							<Link href = {"/user/" + this.props.authorg} onClick = {this.authorgNameClicked}>
 								{name}
 							</Link>
 						</span><br/>
-						<span className={styles.time}>{time}</span>
+						<span className={timeStyle}>{time}</span>
 						<div className={styles.revInfoDiv}>
 							{ (this.props.focusedPost && notFirst) && <div className={styles.arrow}><span onClick={this.navigatePreviousRev} className="material-icons">navigate_before</span></div>}
 							<span className={styles.revText}>{revText}</span>
@@ -167,7 +189,7 @@ class PostHeader extends Component {
 				<div className={styles.reviseDiv}>
 					{ canRevise && <FlatButton onClick={this.onReviseClicked} label="REVISE"/>}
 				</div>				
-				<div className={styles.infoTextDiv}>
+				<div className={infoTextDiv}>
 					<span className={styles.infoText} onClick={this.infoButtonClicked}>{detailText}</span>
 				</div>
 				{ 

@@ -27,7 +27,7 @@ class ComposePanel extends Component {
 			tabNames.push("Revise");
 		}
 		return(
-			<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedTabIndex : tabIndex}))}>
+			<Tabs className={styles.tabs} selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedTabIndex : tabIndex}))}>
 				<TabList className={styles.tabList} >
 					<div className={styles.tabListDiv}>
 						{
