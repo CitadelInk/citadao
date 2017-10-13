@@ -1,5 +1,5 @@
 .compose {
 	position:relative;
 	background-color: #FFFFFF;
-	height:100%;
+	overflow:hidden;
 }

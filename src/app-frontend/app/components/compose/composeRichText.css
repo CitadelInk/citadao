@@ -5,6 +5,7 @@ textarea {
   font-family: 'Roboto', sans-serif;
   line-height: 1.4;
   background: #eee;
+  min-height:400px;
 }
 
 body {
@@ -66,6 +67,7 @@ input {
   padding: .5em;
   border: 2px solid #ddd;
   background: #fafafa;
+  min-height:400px;
 }
 
 input:focus {
@@ -92,15 +94,15 @@ input:focus {
   background: #fff;
 }
 
-.richTextContainer {
+.editorContainerContainer {
   position:relative;
 }
 
 .editorContainer {
   position:relative;
-	overflow-y:visible;
+  overflow-y:scroll;
   overflow-x:hidden;
-  top:65px;
+  min-height:400px;
 }
 
 .editor > * > * + * {
@@ -200,9 +202,18 @@ input:focus {
 .toolbarContainer {
   border-bottom: 2px solid #eee;
   height:60px;
-  position:fixed;
+  position:relative;
   background-color: #FFFFFF;
   flex:1;
-  width:33%;
+  width:100%;
   z-index:1000;
+}
+
+.sectionDiv {
+  padding:2px;
+}
+
+.embededPostStyle {
+  border: 1px solid gray;
+  min-width:100%;
 }

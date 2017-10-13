@@ -3,21 +3,16 @@
 .focusedFooter {
 	position:relative;
 	border:1px solid gray;
-	margin:auto;
-	margin-top:5px;
-	padding:5px;
+	width:100%;
 }
 
 .unfocusedFooter {
 	position:relative;
 	border:1px solid gray;
-	margin:auto;
-	margin-top:5px;
-	padding:5px;
+	width:100%;
 }
 
 .mentions {
-	margin:auto;
 	text-align: center;
 }
 

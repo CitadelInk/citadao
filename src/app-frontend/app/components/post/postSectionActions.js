@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import actions from '../../actions';
 import { Block, State, Text } from 'slate';
 import styles from './postSectionActions.css';
+import Clipboard from 'clipboard';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 const {
 	setWalletData,
@@ -12,7 +14,7 @@ const {
 class PostSectionActions extends Component {
 	 constructor(props) {
 		super(props);
-		this.onSectionActionsButtonClicked = this.onSectionActionsButtonClicked.bind(this);
+		//this.onSectionActionsButtonClicked = this.onSectionActionsButtonClicked.bind(this);
 		this.onSectionViewReferencingPostsClicked = this.onSectionViewReferencingPostsClicked.bind(this);
 	}
 
@@ -24,14 +26,29 @@ class PostSectionActions extends Component {
 		if(this.props.sectionResponses) {
 			mentions = (<span className={styles.mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>)
 		}
+		var referenceJson = {
+			"reference" : {
+				"authorg" : this.props.authorg,
+				"submissionHash" : this.props.submissionHash,
+				"revisionHash" : this.props.revisionHash,
+				"sectionIndex" : this.props.sectionIndex
+			}
+		}
+	
+		var referenceString = JSON.stringify(referenceJson);
 		return (	
 			<div className={styles.actionsStyle}>		
-			<span className={styles.responseStyle} onClick={this.onSectionActionsButtonClicked}>respond</span>
+			<CopyToClipboard text={referenceString}
+          		onCopy={() => this.setState({copied: true})}>
+          		<span className={styles.responseStyle}>Copy reference to clipboard</span>
+        		</CopyToClipboard>
 			</div>
 		);
 	}
 
-	onSectionActionsButtonClicked(e) {
+	//<span className={styles.responseStyle} onClick={this.onSectionActionsButtonClicked}>respond</span>
+
+	/*onSectionActionsButtonClicked(e) {
 		var currentTextInput = this.props.wallet.get('postTextInput');
 		if (currentTextInput) {
 			
@@ -56,7 +73,7 @@ class PostSectionActions extends Component {
 			}
 		}
 		e.stopPropagation();
-	}
+	}*/
 
 	onSectionViewReferencingPostsClicked(e) {
 		var sectionResponses = this.props.sectionResponses;

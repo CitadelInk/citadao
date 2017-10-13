@@ -1,16 +1,14 @@
-
+/* regular */
 .div {
   background-color:#B0E0E6;
   position:relative;
+  width:100%;
 }
 
 .basicInfo {
   display:flex;
 }
 
-.avatar {
-  size:100px;
-}
 
 .avatarContainer {
   float:left;
@@ -24,16 +22,16 @@
 
 .name {
   font-weight: bold;
+  font-size:12pt;
 }
 
 .time {
-  
+  font-size:12pt;
 }
 
 .infoText {
   font-size:8pt;
 }
-
 
 .infoTextDiv {
   position:absolute;
@@ -54,13 +52,55 @@
 
 .revInfoDiv {
   position:absolute;
-  top:45px;
-  left:70px;
+  top:5px;
+  right:5px;
   display:flex;
 }
 
 .reviseDiv {
   position:absolute;
-  top:0px;
-  right:0px;
+  top:40px;
+  left:70px;
+}
+
+/* embeded */
+.embededDiv {
+  background-color:#B0E0E6;
+  position:relative;
+  width:100%;
+}
+
+.embededBasicInfo {
+  display:flex;
+}
+
+.embededAvatarContainer {
+  float:left;
+  margin:2px;
+}
+
+.embededNameAndTimeContainer {
+  float:left;
+  margin:2px;
+}
+.embededName {
+  font-weight: bold;
+  font-size:8pt;
+}
+
+.embededTime {
+  font-size:8pt;
+}
+
+.embededInfoTextDiv {
+  position:absolute;
+  top:20px;
+  right:5px;  
+}
+
+.embededRevInfoDiv {
+  position:absolute;
+  top:5px;
+  right:5px;
+  display:flex;
 }

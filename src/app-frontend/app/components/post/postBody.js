@@ -12,23 +12,7 @@ class PostBody extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { width: '0', height: '0' };
-		this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
 	}
-
-	componentDidMount() {
-		this.updateWindowDimensions();
-		window.addEventListener('resize', this.updateWindowDimensions);
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener('resize', this.updateWindowDimensions);
-	}
-
-	updateWindowDimensions() {
-		this.setState({ width: window.innerWidth, height: window.innerHeight });
-	}
-
 
 
 	render() {		
@@ -76,6 +60,8 @@ class PostBody extends Component {
 		
 		var body = "loading";
 		var responses = [];
+		var focusedPost = this.props.focusedPost;
+
 		if(revision) {
 			if (this.props.sectionIndex) {
 				if (this.props.sectionIndex) {
@@ -89,17 +75,18 @@ class PostBody extends Component {
 					if (!responses) {
 						responses = [];
 					}
-					body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={this.props.focusedPost}/>
+					body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
 				}
-			} else {			
+			} else {		
 				if (state.document && state.document.nodes) {
+				
+					var instance = this;
 					body = state.document.nodes.map((section, i) => {		
 						if (responseMap) {
 							responses = responseMap.get(i);
 						}		
-						
-						var instance = this;
-						return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={instance.props.focusedPost}/>);	
+									
+						return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
 						
 					});
 				}

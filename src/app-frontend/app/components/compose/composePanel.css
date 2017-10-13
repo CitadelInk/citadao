@@ -36,4 +36,8 @@
 	border-color: #aaa;
 	color: black;
 	border-radius: 5px 5px 0 0;
-  }
+	}
+	
+	.tabs {
+		height:calc(100% - 65px);
+	}

@@ -29,12 +29,37 @@ const DEFAULT_NODE = 'paragraph'
 
 const schema = {
   nodes: {
+    'paragraph': (props) => {
+      return <p {...props.attributes}>{props.children}</p>
+    },
     'block-quote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
     'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
     'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
     'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
     'list-item': props => <li {...props.attributes}>{props.children}</li>,
     'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
+    link: (props) => {
+        return (
+          <a {...props.attributes} href={props.node.data.get('url')}>
+            {props.children}
+          </a>
+        )
+			},
+			ref: (props) => {
+
+				var value = {authorg : props.node.data.get('authorg'), submission : props.node.data.get('submission'), revision : props.node.data.get('revision')};
+				
+        return (
+					<div width="100%" className={styles.embededPostStyle}>
+						<Post width="100%" {...props.attributes} 
+						embeded={true}
+						authorg={props.node.data.get('authorg')} 
+						submission={props.node.data.get('submission')} 
+						revision={props.node.data.get('revision')} 
+						sectionIndex={props.node.data.get('index')} />
+					</div>
+        )
+      }
   },
   marks: {
     bold: {
@@ -56,6 +81,8 @@ const schema = {
 }
 
 class PostSection extends Component {
+
+
 	 constructor(props) {
 		 super(props);
 		 this.widgetClicked = this.widgetClicked.bind(this);
@@ -72,37 +99,38 @@ class PostSection extends Component {
 			})
 		});
 		var showActions = true;
-		var section = (<div className={styles.editor}><Editor readonly state={state} schema={schema} /></div>);
+
 		var text = "";
+		var reference;
+
 		try {
 			if(state.document && state.document.text && state.document.text !== "" && state.document.text.trim() != "") {
 				text = state.document.text;
-				var json = JSON.parse(state.document.text);
-				if(json) {
-					var reference = json.reference;
-					if (reference) {
-						var value = {authorg : reference.authorg, submission : reference.submissionHash, revision : reference.revisionHash};
-						section = (<div onClick={() => this.widgetClicked(value)} value={value} className={styles.embededPostStyle}><Post authorg={reference.authorg} submission={reference.submissionHash} revision={reference.revisionHash} sectionIndex={reference.sectionIndex} /></div>)
-						reference = true;
-					}
-				}	
 			} else {
+				var authorg = this.props.section.data.get("authorg");
+				var submission = this.props.section.data.get("submission");
+				var revision = this.props.section.data.get("revision");
+				var index = this.props.section.data.get("index");
+
+				if(authorg) {
+					reference = {authorg:authorg, submission:submission, revision:revision, index:index}
+				}	
 				showActions = false;
+
 			}
 		} catch(e) {
 			//console.error("error while checking reference")
 		}
 
+		var section = (<div onClick={() => this.widgetClicked(reference)} className={styles.editor}><Editor readonly state={state} schema={schema} /></div>);
 		var actions = (<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
 		
 		if (reference || !this.props.focusedPost) {
 			showActions = false;
 		}
 
-		//console.log("showActions: " + showActions + " - text: " + text + " - actions: " + actions);
-
 		return (			
-			<div className={styles.sectionDiv}>
+			<div  className={styles.sectionDiv}>
 				{section}
 				{showActions && 
 					actions
@@ -112,7 +140,7 @@ class PostSection extends Component {
 	}
 
 	widgetClicked(value) {
-		if (this.props.focusedPost) {
+		if (value && this.props.focusedPost) {
 			this.props.dispatch(
 				gotoPost(value.authorg, value.submission, value.revision)
 			);
