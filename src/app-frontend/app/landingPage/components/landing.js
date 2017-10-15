@@ -11,6 +11,7 @@ import { Card } from 'material-ui';
 import inkIcon from './inkIcon.png';
 import citadelIcon from './citadelIconLong.png';
 
+import GraphVisualization from './GraphVisualization';
 
 const {
 	navigatePage,
@@ -82,8 +83,8 @@ class Landing extends Component {
 						</ul>
 						</div>
 					</div>
-					<div className={styles.backgroundStyle}>
-					</div>
+					<GraphVisualization className={styles.backgroundStyle}>
+					</GraphVisualization>
 					<div className={styles.containerStyle}>
 					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="citadel.ink">
 						<Card className={styles.cardStyle}>
