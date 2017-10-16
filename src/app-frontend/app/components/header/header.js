@@ -69,52 +69,47 @@ class Header extends Component {
 			left:'5px'
 		}
 
-		var accountsDropDown = "";
-		/*if(this.props.wallet.get('accounts').size > 1) {
-			accountsDropDown = (
-				<select onChange={this.handleAccountSelected}>
-				{
-					this.props.wallet.get('accounts').map((item,) =>{
-						return (<option value={item} key={item}> {item} </option>);
-					})
-				}			
-				</select>	
-			);
-		}*/	
+		const pStyle = {
+			maxWidth:'500'
+		}
 
-		//if(this.props.wallet.get('accounts').size == 1) {
-			accountsDropDown = <b> {this.props.wallet.get('account')} </b>;
-			//})
-		//}
+		var accountsDropDown = "";
+		var account = this.props.wallet.get('account');
+		if (account) {
+			accountsDropDown = <b>Account: {account} </b>;
+		} else {
+			accountsDropDown = <p style={pStyle}>No account found. Please unlock MetaMask, set network to 'Custom RPC' URL = "http://104.236.160.22:8545/" then refresh the page.</p>
+		}
+
 
 		const gotoAccountPage = (
 			<span><Link 
-				href = {"/user/" + this.props.wallet.get('account')}
+				href = {"/user/" + account}
 				onClick = {this.gotoAccountPageClicked}
-			><u>View This Account</u></Link></span>
+			><u>View This Account</u></Link> - </span>
 		);
-		const gotoDebugPage = (
+		/*const gotoDebugPage = (
 			<span><Link href="/debug"><u>View Debug Page</u></Link></span>
-		);
+		);*/
 		const gotoLandingPage = (
-			<span><Link href="/landing"><u>Landing Page</u></Link></span>
+			<span><Link href="/landing"><u>What is C I T A D E L.ink?</u></Link></span>
 		);
-		
-		const inkBalance = (
+		var ethBalanceVal = this.props.wallet.get('ethBalance');
+		const ethBalance = (
 			<div style={inkBalanceDivStyle}>
-			<span>Balance: <b>{this.props.wallet.get('inkBalance')} INK</b></span><br />
+			<span>Balance: <b>{ethBalanceVal} ETH</b></span><br />
 			</div>
 		)
 		
 		return (
 			<div style={divStyle} className="header" onClick={this.handleClickDiv}>			
-				<div style={headerStyle} onClick={this.handleHomeClicked}>C I T A D E L</div>		
+				<div style={headerStyle} onClick={this.handleHomeClicked}>C I T A D E L - P R O T O T Y P E</div>		
 				<div style={dropDownStyle}>
-				Account: {accountsDropDown}
+				{accountsDropDown}
 				</div>
-				{inkBalance}
+				{account && ethBalance}
 				<div style={debugStyle}>
-				{gotoAccountPage} - {gotoDebugPage}	- {gotoLandingPage}	
+				{account && gotoAccountPage} {gotoLandingPage}	
 				</div>
 				<QuickStartWidget />
 			</div>

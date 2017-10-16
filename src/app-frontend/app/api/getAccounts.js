@@ -7,7 +7,7 @@ export const getEthBalance = (account, web3) => {
         rej(error);
       } else if (balance) {
         var b = web3.fromWei(balance, 'ether').toString();
-        res({b})
+        res(b)
       }
     });
   });
