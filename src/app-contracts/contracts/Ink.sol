@@ -14,7 +14,8 @@ contract Managed {
 
 contract Ink is Managed {
 
-    event BioUpdated(address indexed _from, bytes32 _value);
+    event BioUpdated(address indexed _authorg, bytes32 indexed _revHash);
+    event RevisionPosted(address indexed _authorg, bytes32 indexed _subHash, bytes32 indexed _revHash);
 
     address public wallet_address;
     uint256 public bio_update_in_ink;
@@ -104,7 +105,7 @@ contract Ink is Managed {
     }
     
     function submitBioRevision(bytes32 citadelManifestHash) {
-        spend(bio_update_in_ink);
+        //spend(bio_update_in_ink);
         var newAuthorgs = new address[](0);
         var newSubmissions = new bytes32[](0);
         var newRevisions = new bytes32[](0);
@@ -139,7 +140,7 @@ contract Ink is Managed {
     }
 
     function submitSubmission(bytes32 subCitadelManifestHash) {
-        spend(submit_submission_cost_in_ink);
+        //spend(submit_submission_cost_in_ink);
         submitRevision(msg.sender, subCitadelManifestHash, subCitadelManifestHash);
     }
 
@@ -154,7 +155,7 @@ contract Ink is Managed {
     }
     
     function submitRevision(bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash) {
-        spend(submit_revision_cost_in_ink);
+        //spend(submit_revision_cost_in_ink);
         submitRevision(msg.sender, subCitadelManifestHash, revCitadelManifestHash);
     }
     
@@ -186,11 +187,12 @@ contract Ink is Managed {
         allPostAuthorgs.push(sender);
         allPostSubmissions.push(subCitadelManifestHash);
         allPostRevisions.push(revCitadelManifestHash);
+        RevisionPosted(sender, subCitadelManifestHash, revCitadelManifestHash);
     }
     
     function respondToAuthorgSubmissionRevision(address originalAuthorgAddress, bytes32 originalSubmissionHash, bytes32 originalRevisionHash, bytes32 responseSubmissionHash, bytes32 responseRevisionHash) {
         require (isAuthorgOfSubmissionRevision(msg.sender, responseSubmissionHash, responseRevisionHash));
-        spend(1);
+        //spend(1);
         var originalAuthorg = internalAuthorgs[originalAuthorgAddress];
         var originalSubmission = originalAuthorg.submissions[originalSubmissionHash];
         var originalRevision = originalSubmission.revisions[originalRevisionHash];

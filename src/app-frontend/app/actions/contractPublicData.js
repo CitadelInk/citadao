@@ -135,6 +135,7 @@ export const setSelectedAccount = (account) => (dispatch, getState) => {
         getInkBalance(account)
       ]) .then(([ethBalance, inkBalance]) => {
       network.web3.eth.defaultAccount = account
+
     return dispatch(setWalletData({account, ethBalance, inkBalance}))
   })
 };
@@ -142,6 +143,13 @@ export const setSelectedAccount = (account) => (dispatch, getState) => {
 export const updateInkBalance = (account) => dispatch => {
   return getInkBalance(account).then(inkBalance => {
     return dispatch(setWalletData({inkBalance}));
+  });
+};
+
+export const updateEthBalance = (account) => (dispatch, getState) => {
+  const {network} = getState().core;
+  return getEthBalance(account, network.web3).then(ethBalance => {
+    return dispatch(setWalletData({ethBalance}));
   });
 };
 
@@ -166,14 +174,14 @@ export const handleBuy = (ethToSend) => (dispatch, getState) => {
 
 export const handleQuickStart = () => (dispatch, getState) => {
   const {wallet, network} = getState().core;
-  dispatch(giveEther(1, () => {
-    const ethToSend = network.web3.toBigNumber(10000);
-    dispatch(handleBuy(ethToSend));
-  }))
+  const account = wallet.get('account');
+  dispatch(giveEther(1));
+  setTimeout(function () {      
+    dispatch(updateEthBalance(account))
+  }, 2000); 
 }
 
 export const handleViewResponses = (responses) => (dispatch) => {
-  console.log("2 handle view responses")
   //responses.map((response) => {
     //dispatch(loadPost(response, false))
   //})
@@ -183,7 +191,6 @@ export const handleViewResponses = (responses) => (dispatch) => {
 export const giveEther = (amount, callback) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   var ethamount =  network.web3.toWei(amount, 'ether')
-  console.log(ethamount);
   const account = wallet.get('account');
   const tokenOwner = wallet.get('tokenOwnerAccount');
 

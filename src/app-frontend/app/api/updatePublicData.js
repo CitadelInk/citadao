@@ -30,8 +30,10 @@ export const updateBio = (bioInput, account, web3) => {
     web3.bzz.put(bioInput, (error, hash) => {
       appContracts.Ink.deployed()
       .then((instance) => {
+        var subHash = '0x' + hash;
         instance.submitBioRevision.sendTransaction('0x' + hash, {from : account, gas : 200000, gasPrice : 1000000000}).then((tx_id) => {
-          res(tx_id)
+          var bioSubmissionEvent = instance.BioUpdated({_authorg : account, _subHash : subHash})
+          res({tx_id, bioSubmissionEvent})
         }).catch(rej);
       });
     });
@@ -45,13 +47,15 @@ export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, we
       .then((instance) => {
         var maxGas = 400000 + refKeyAuths.length * 200000;
         var subHash = '0x' + hash;
+        var revHash = '0x' + hash;
 
         if (reviseSubmissionHash) {
           subHash = reviseSubmissionHash;
         }
 
-        instance.submitRevisionWithReferences.sendTransaction(subHash, '0x' + hash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
-          res(tx_id);  
+        instance.submitRevisionWithReferences.sendTransaction(subHash, revHash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+          var submissionEvent = instance.RevisionPosted({_authorg : account});
+          res({tx_id, submissionEvent, revHash});  
         }).catch(rej);
       });
     });
