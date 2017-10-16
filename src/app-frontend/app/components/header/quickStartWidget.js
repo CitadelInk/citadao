@@ -17,9 +17,14 @@ class QuickStartWidget extends Component {
 
 
 	render() {			
+		var ethBalance = this.props.wallet.get('ethBalance');
+		var button = (<RaisedButton primary className={styles.button} onClick={this.handleQuickStartClicked} label="Click for Private ETH" />);
+		if (ethBalance >= 1) {
+			button = (<RaisedButton disabled className={styles.button} label="Click for Private ETH" />);
+		}
 		return (			
 			<div className={styles.buyMoreWidget}>
-				<RaisedButton primary className={styles.button} onClick={this.handleQuickStartClicked} label="Click for Private ETH and INK" />	
+				{button}
 			</div>
 		);
 	}
