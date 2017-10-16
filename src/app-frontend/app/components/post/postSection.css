@@ -1,21 +1,39 @@
 .sectionDiv {
   position:relative;
-  padding:2px;
   min-width:100%;
   margin:0px;
 }
 
 .embededPostStyle {
-  position:relative;
-  right:2px;
   border: 1px solid gray;
-  min-width:100%;
-
-  margin:0px;
+  min-width:80%;
+  max-width:80%;
+  margin:5px;
 }
 
 .editor {
   min-width:100%;
   margin-right:0px;
   margin-left:0px;
+}
+
+
+.p {
+  margin: 10px;
+}
+
+.h1 {
+  margin: 10px;
+}
+
+.h2 {
+  margin: 10px;
+}
+
+.blockquote {
+  border-left: 2px solid #ddd;
+  margin: 10px;
+  padding-left: 10px;
+  color: #aaa;
+  font-style: italic;
 }

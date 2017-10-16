@@ -30,12 +30,12 @@ const DEFAULT_NODE = 'paragraph'
 const schema = {
   nodes: {
     'paragraph': (props) => {
-      return <p {...props.attributes}>{props.children}</p>
+      return <p className={styles.p} {...props.attributes}>{props.children}</p>
     },
-    'block-quote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
+    'block-quote': props => <blockquote className={styles.blockquote} {...props.attributes}>{props.children}</blockquote>,
     'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
-    'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
-    'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
+    'heading-one': props => <h1 className={styles.h1} {...props.attributes}>{props.children}</h1>,
+    'heading-two': props => <h2 className={styles.h2} {...props.attributes}>{props.children}</h2>,
     'list-item': props => <li {...props.attributes}>{props.children}</li>,
     'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
     link: (props) => {
@@ -112,7 +112,9 @@ class PostSection extends Component {
 				var revision = this.props.section.data.get("revision");
 				var index = this.props.section.data.get("index");
 
+
 				if(authorg) {
+					console.log("index: " + index);
 					reference = {authorg:authorg, submission:submission, revision:revision, index:index}
 				}	
 				showActions = false;
@@ -122,7 +124,7 @@ class PostSection extends Component {
 			//console.error("error while checking reference")
 		}
 
-		var section = (<div onClick={() => this.widgetClicked(reference)} className={styles.editor}><Editor readonly state={state} schema={schema} /></div>);
+		var section = (<div onClick={() => this.widgetClicked(reference)} className={styles.editor}><Editor readOnly state={state} schema={schema} /></div>);
 		var actions = (<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
 		
 		if (reference || !this.props.focusedPost) {

@@ -33,24 +33,22 @@ export const setAuthorgFollowsAuthorg = (followingAuthorg, followedAuthorg) => {
 
 
 
-export const submitRevision = (revisionHash) => (dispatch, getState) => {
+export const submitRevision = (input, revisionHash) => (dispatch, getState) => {
   const {wallet} = getState().core;
   const account = wallet.get('account');
   if (!account) {
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://104.236.160.22:8545/")
   } else {
-    var input = wallet.get('reviseSubmissionInput');
     dispatch(submitNewRevision(input, revisionHash))
   }
 }
 
-export const submitPost = () => (dispatch, getState) => {  
+export const submitPost = (input) => (dispatch, getState) => {  
   const {wallet, auths} = getState().core;
   const account = wallet.get('account');
   if (!account) {
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://104.236.160.22:8545/")
   } else {
-    var input = wallet.get('postTextInput');
 
     var auth = auths[account];
     if (auth) {
@@ -65,7 +63,7 @@ export const submitPost = () => (dispatch, getState) => {
   }
 }
 
-export const submitBio = () => (dispatch, getState) => {
+export const submitBio = (bioTextInput) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const account = wallet.get('account');
   if (!account) {
@@ -78,7 +76,6 @@ export const submitBio = () => (dispatch, getState) => {
       alert("Please buy ETH using the button in the top right corner of your screen. ETH is required to post.")
     } else {
       const bioNameInput = wallet.get('bioNameInput');
-      const bioTextInput = wallet.get('bioTextInput');
       const bioAvatarImage = wallet.get('bioAvatarImage');
       var bioJson = {"name" : bioNameInput, "text" : bioTextInput, "image" : bioAvatarImage}
       return updateBio(JSON.stringify(bioJson), account, network.web3).then(function(tx_result) {

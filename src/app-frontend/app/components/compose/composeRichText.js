@@ -42,12 +42,12 @@ const defaultBlock = {
 const schema = {
   nodes: {
     'paragraph': (props) => {
-      return <p {...props.attributes}>{props.children}</p>
+      return <p className={styles.p} {...props.attributes}>{props.children}</p>
     },
-    'block-quote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
+    'block-quote': props => <blockquote className={styles.blockquote} {...props.attributes}>{props.children}</blockquote>,
     'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
-    'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
-    'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
+    'heading-one': props => <h1 className={styles.h1} {...props.attributes}>{props.children}</h1>,
+    'heading-two': props => <h2 className={styles.h2}  {...props.attributes}>{props.children}</h2>,
     'list-item': props => <li {...props.attributes}>{props.children}</li>,
     'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
     link: (props) => {
@@ -151,7 +151,6 @@ class ComposeRichText extends React.Component {
 
    constructor(props) {
      super(props);
-     this.state = {input : this.getState()}
 	  this.hasMark = this.hasMark.bind(this);
 	  this.hasBlock = this.hasBlock.bind(this);
 	  this.onChange = this.onChange.bind(this);
@@ -166,6 +165,21 @@ class ComposeRichText extends React.Component {
 	  this.renderSubmitPostButton = this.renderSubmitPostButton.bind(this);
 	  this.handleSubmitPost = this.handleSubmitPost.bind(this);
    }
+
+   componentWillMount() {
+     this.state = {input: this.getState()};
+   }
+
+   componentWillUnmount() {
+    var state = this.state.input;
+    if (this.props.bio) {
+      this.props.dispatch(setWalletData({bioTextInput : state}));
+    } else if (this.props.submission) {
+      this.props.dispatch(setWalletData({reviseSubmissionInput : state}));
+    } else {
+      this.props.dispatch(setWalletData({postTextInput : state}));
+    }
+   }
  
 
   /**
@@ -177,7 +191,9 @@ class ComposeRichText extends React.Component {
 
   hasMark(type) {
     const state = this.state.input;
-    return state.activeMarks.some(mark => mark.type == type)
+    if (state && state.activeMarks) {
+      return state.activeMarks.some(mark => mark.type == type)
+    }
   }
 
   /**
@@ -188,12 +204,10 @@ class ComposeRichText extends React.Component {
    */
 
   hasBlock(type) {
-	const state = this.state.input;
-	if (state) {
-		return state.blocks.some(node => node.type == type)
-	} else {
-
-	}
+	  const state = this.state.input;
+	  if (state && state.blocks) {
+	  	return state.blocks.some(node => node.type == type)
+	  } 
   }
 
   /**
@@ -201,17 +215,10 @@ class ComposeRichText extends React.Component {
    *
    * @param {Change} change
    */
-
   onChange({ state }) {
-    this.state.input = state;
-    if (this.props.bio) {
-      this.props.dispatch(setWalletData({bioTextInput : state}));
-    } else if (this.props.submission) {
-      this.props.dispatch(setWalletData({reviseSubmissionInput : state}));
-    } else {
-      this.props.dispatch(setWalletData({postTextInput : state}));
-    }
+    this.setState({input : state});
   }
+
 
   /**
    * On key down, if it's a formatting command toggle a mark.
@@ -221,7 +228,6 @@ class ComposeRichText extends React.Component {
    * @param {Change} change
    * @return {Change}
    */
-
   onKeyDown(e, data, change) {
       if (!data.isMod) return
       let mark
@@ -258,8 +264,10 @@ class ComposeRichText extends React.Component {
   onClickMark(e, type) {
     e.preventDefault()
     const state = this.state.input;
-    const change = state.change().toggleMark(type)
-    this.onChange(change)
+    if (state) {
+      const change = state.change().toggleMark(type)
+      this.onChange(change)
+    }
   }
 
   /**
@@ -272,51 +280,52 @@ class ComposeRichText extends React.Component {
   onClickBlock(e, type) {
     e.preventDefault()
     const state = this.state.input;
-    const change = state.change()
-    const { document } = state
+    if (state && state.blocks) {
+      const change = state.change()
+      const { document } = state
 
-    // Handle everything but list buttons.
-    if (type != 'bulleted-list' && type != 'numbered-list') {
-      const isActive = this.hasBlock(type)
-      const isList = this.hasBlock('list-item')
+      // Handle everything but list buttons.
+      if (type != 'bulleted-list' && type != 'numbered-list') {
+        const isActive = this.hasBlock(type)
+        const isList = this.hasBlock('list-item')
 
-      if (isList) {
-        change
-          .setBlock(isActive ? DEFAULT_NODE : type)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list')
+        if (isList) {
+          change
+            .setBlock(isActive ? DEFAULT_NODE : type)
+            .unwrapBlock('bulleted-list')
+            .unwrapBlock('numbered-list')
+        }
+
+        else {
+          change
+            .setBlock(isActive ? DEFAULT_NODE : type)
+        }
       }
 
+      // Handle the extra wrapping required for list buttons.
       else {
-        change
-          .setBlock(isActive ? DEFAULT_NODE : type)
+        const isList = this.hasBlock('list-item')
+        const isType = state.blocks.some((block) => {
+          return !!document.getClosest(block.key, parent => parent.type == type)
+        })
+
+        if (isList && isType) {
+          change
+            .setBlock(DEFAULT_NODE)
+            .unwrapBlock('bulleted-list')
+            .unwrapBlock('numbered-list')
+        } else if (isList) {
+          change
+            .unwrapBlock(type == 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
+            .wrapBlock(type)
+        } else {
+          change
+            .setBlock('list-item')
+            .wrapBlock(type)
+        }
       }
+      this.onChange(change)
     }
-
-    // Handle the extra wrapping required for list buttons.
-    else {
-      const isList = this.hasBlock('list-item')
-      const isType = state.blocks.some((block) => {
-        return !!document.getClosest(block.key, parent => parent.type == type)
-      })
-
-      if (isList && isType) {
-        change
-          .setBlock(DEFAULT_NODE)
-          .unwrapBlock('bulleted-list')
-          .unwrapBlock('numbered-list')
-      } else if (isList) {
-        change
-          .unwrapBlock(type == 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-          .wrapBlock(type)
-      } else {
-        change
-          .setBlock('list-item')
-          .wrapBlock(type)
-      }
-    }
-
-    this.onChange(change)
   }
 
   /**
@@ -379,12 +388,15 @@ class ComposeRichText extends React.Component {
 
 
 	handleSubmitPost(e) {
-    if(this.props.bio) {
-      this.props.dispatch(submitBio());
-    } else if(this.props.submission) {
-      this.props.dispatch(submitRevision(this.props.submission));
-    } else { 
-      this.props.dispatch(submitPost());
+    var input = this.state.input;
+    if(input) {
+      if(this.props.bio) {
+        this.props.dispatch(submitBio(input));
+      } else if(this.props.submission) {
+        this.props.dispatch(submitRevision(input, this.props.submission));
+      } else { 
+        this.props.dispatch(submitPost(input));
+      }
     }
 	}
 
@@ -434,22 +446,29 @@ class ComposeRichText extends React.Component {
 
   renderEditor() {
     var style = {
-      'height' : this.props.height,
+      'maxHeight' : this.props.height,
       'position':'relative',
-      'overflow-y':'scroll',
-      'overflow-x':'hidden'
+      'overflowY':'scroll',
+      'overflowX':'hidden',
+      'backgroundColor' : "#FFFFFF"
+    }
+    var outerStyle = {
+      'height' : this.props.height,
+      'backgroundColor' : "#F0F0F0"
     }
     return (
-      <div style={style}>
-        <Editor
-          state={this.state.input}
-          onChange={this.onChange}
-          onKeyDown={this.onKeyDown}
-          schema={schema}
-          placeholder={'Compose post...'}
-          plugins={plugins}
-          spellCheck
-        />
+      <div style={outerStyle}>
+        <div style={style}>
+          <Editor
+            state={this.state.input}
+            onChange={this.onChange}
+            onKeyDown={this.onKeyDown}
+            schema={schema}
+            placeholder={'Compose post...'}
+            plugins={plugins}
+            spellCheck
+          />
+        </div>
       </div>
     )
   }
