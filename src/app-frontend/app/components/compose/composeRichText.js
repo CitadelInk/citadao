@@ -42,12 +42,12 @@ const defaultBlock = {
 const schema = {
   nodes: {
     'paragraph': (props) => {
-      return <p {...props.attributes}>{props.children}</p>
+      return <p className={styles.p} {...props.attributes}>{props.children}</p>
     },
-    'block-quote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
+    'block-quote': props => <blockquote className={styles.blockquote} {...props.attributes}>{props.children}</blockquote>,
     'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
-    'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
-    'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
+    'heading-one': props => <h1 className={styles.h1} {...props.attributes}>{props.children}</h1>,
+    'heading-two': props => <h2 className={styles.h2}  {...props.attributes}>{props.children}</h2>,
     'list-item': props => <li {...props.attributes}>{props.children}</li>,
     'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
     link: (props) => {
@@ -151,7 +151,6 @@ class ComposeRichText extends React.Component {
 
    constructor(props) {
      super(props);
-     //this.state = {input : State.fromJSON(initialState)}
 	  this.hasMark = this.hasMark.bind(this);
 	  this.hasBlock = this.hasBlock.bind(this);
 	  this.onChange = this.onChange.bind(this);
@@ -162,7 +161,7 @@ class ComposeRichText extends React.Component {
 	  this.renderMarkButton = this.renderMarkButton.bind(this);
 	  this.renderBlockButton = this.renderBlockButton.bind(this);
 	  this.renderEditor = this.renderEditor.bind(this);
-	  //this.getState = this.getState.bind(this);
+	  this.getState = this.getState.bind(this);
 	  this.renderSubmitPostButton = this.renderSubmitPostButton.bind(this);
 	  this.handleSubmitPost = this.handleSubmitPost.bind(this);
    }
@@ -216,10 +215,10 @@ class ComposeRichText extends React.Component {
    *
    * @param {Change} change
    */
-
   onChange({ state }) {
     this.setState({input : state});
   }
+
 
   /**
    * On key down, if it's a formatting command toggle a mark.
@@ -229,7 +228,6 @@ class ComposeRichText extends React.Component {
    * @param {Change} change
    * @return {Change}
    */
-
   onKeyDown(e, data, change) {
       if (!data.isMod) return
       let mark
@@ -448,22 +446,29 @@ class ComposeRichText extends React.Component {
 
   renderEditor() {
     var style = {
-      'height' : this.props.height,
+      'maxHeight' : this.props.height,
       'position':'relative',
-      'overflow-y':'scroll',
-      'overflow-x':'hidden'
+      'overflowY':'scroll',
+      'overflowX':'hidden',
+      'backgroundColor' : "#FFFFFF"
+    }
+    var outerStyle = {
+      'height' : this.props.height,
+      'backgroundColor' : "#F0F0F0"
     }
     return (
-      <div style={style}>
-        <Editor
-          state={this.state.input}
-          onChange={this.onChange}
-          onKeyDown={this.onKeyDown}
-          schema={schema}
-          placeholder={'Compose post...'}
-          plugins={plugins}
-          spellCheck
-        />
+      <div style={outerStyle}>
+        <div style={style}>
+          <Editor
+            state={this.state.input}
+            onChange={this.onChange}
+            onKeyDown={this.onKeyDown}
+            schema={schema}
+            placeholder={'Compose post...'}
+            plugins={plugins}
+            spellCheck
+          />
+        </div>
       </div>
     )
   }

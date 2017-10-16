@@ -63,11 +63,15 @@ class PostBody extends Component {
 		var focusedPost = this.props.focusedPost;
 
 		if(revision) {
-			if (this.props.sectionIndex) {
-				if (this.props.sectionIndex) {
-					var nodeArray = Array.from(state.document.nodes);
-					text = nodeArray[this.props.sectionIndex];
+			if (this.props.embeded) {
+				var index = this.props.sectionIndex;
+				if(!index) {
+					index = 0;
 				}
+
+				var nodeArray = Array.from(state.document.nodes);
+				text = nodeArray[index];
+				
 				if (text) {
 					if (responseMap) {
 						responses = responseMap.get(this.props.sectionIndex);
@@ -77,7 +81,7 @@ class PostBody extends Component {
 					}
 					body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
 				}
-			} else {		
+			} else {	
 				if (state.document && state.document.nodes) {
 				
 					var instance = this;

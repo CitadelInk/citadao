@@ -10,8 +10,16 @@ body {
   margin: 0;
 }
 
-p {
-  margin: 0;
+.p {
+  margin: 10px;
+}
+
+.h1 {
+  margin: 10px;
+}
+
+.h2 {
+  margin: 10px;
 }
 
 pre {
@@ -34,20 +42,12 @@ img.active {
   box-shadow: 0 0 0 2px blue;
 }
 
-blockquote {
+.blockquote {
   border-left: 2px solid #ddd;
-  margin-left: 0;
-  margin-right: 0;
+  margin: 10px;
   padding-left: 10px;
   color: #aaa;
   font-style: italic;
-}
-
-blockquote[dir="rtl"] {
-  border-left: none;
-  padding-left: 0;
-  padding-right: 10px;
-  border-right: 2px solid #ddd;
 }
 
 table {
@@ -81,21 +81,17 @@ input:focus {
   vertical-align: text-bottom;
 }
 
-/**
- * Example.
- */
-
-.example {
-  max-width: 42em;
-  margin: 0 auto;
-  background: #fff;
+.richTextContainer {
+  background-color: #FFFFFF;
 }
 
 .editorContainer {
+  background-color:#FFFFFF;
   position:relative;
-  overflow-y:scroll;
+  overflow-y:auto;
   overflow-x:hidden;
-  margin:0;
+  padding:5px;
+  margin:5px;
 }
 
 .editor > * > * + * {
@@ -208,5 +204,7 @@ input:focus {
 
 .embededPostStyle {
   border: 1px solid gray;
-  min-width:100%;
+  min-width:80%;
+  max-width:80%;
+  margin:5px;
 }
