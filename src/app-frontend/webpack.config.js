@@ -13,7 +13,7 @@ module.exports = {
     ]
   },
   output: {
-    filename: 'bundle.js',
+    filename: ("production" === process.env.NODE_ENV) ? 'bundle-[hash:6].js' : 'bundle.js',
     path: path.resolve(__dirname, './public'),
 
     // necessary for HMR to know where to load the hot update chunks
@@ -78,6 +78,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './index.html',
       inject: 'body',
+      hash: true,
     }),
     new CopyWebpackPlugin([
       { from: './server/server.js' }
