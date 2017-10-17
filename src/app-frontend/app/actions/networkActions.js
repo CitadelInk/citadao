@@ -12,23 +12,30 @@ export const WEB_SETUP_COMPLETE = 'network/WEB_SETUP_COMPLETE';
 
 export function setupWeb3() {
     console.log('setupWeb3()');
+    
     return function(dispatch) {
       let web3Provider;
-      if(typeof web3 !== 'undefined') {
+
+      const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+      const hasMetamask = typeof web3 !== 'undefined'
+
+      if ((hasMetamask && isChrome)) {
         console.log('using injected web3 instance');
         web3Provider = new Web3(web3.currentProvider);
       }
-      else {
-        console.log('using own web3 instance');
-        console.log(config)
-        const provider = new Web3.providers.HttpProvider(`http://${config.Server}:8545`)
-        web3Provider = new Web3(provider);
-      }
+
+      // $AS WE no longer support connecting to the any sort of debug network! You should be always testing 
+      // with metamask
+      // else {
+      //   console.log('using own web3 instance');
+      //   console.log(config)
+      //   const provider = new Web3.providers.HttpProvider(`http://${config.Server}:8545`)
+      //   web3Provider = new Web3(provider);
+      // }
 
       if(!web3Provider || !web3Provider.currentProvider.isConnected()) return;
       
       appContracts.setProvider(web3Provider.currentProvider);
-      
 
       console.log('web3 provider:', web3Provider.currentProvider !== undefined);
       console.log('web3 provider:', web3Provider);

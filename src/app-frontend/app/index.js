@@ -50,7 +50,12 @@ window.addEventListener('load', () => {
 
   console.log(store.getState())
 
-  store.dispatch(setupWeb3());
+  const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+  const hasMetamask = typeof web3 !== 'undefined'
+
+  if (hasMetamask && isChrome) {
+    store.dispatch(setupWeb3());
+  }
 
   const app = (
     <Provider store={store}>
