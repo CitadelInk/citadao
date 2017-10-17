@@ -78,7 +78,7 @@ class Header extends Component {
 		if (account) {
 			accountsDropDown = <b>Account: {account} </b>;
 		} else {
-			accountsDropDown = <p style={pStyle}>No account found. Please unlock MetaMask, set network to 'Custom RPC' URL = "http://104.236.160.22:8545/" then refresh the page.</p>
+			accountsDropDown = <p style={pStyle}>No account found. Please unlock MetaMask, set network to 'Custom RPC' URL = "http://citadel.ink:8545/" then refresh the page.</p>
 		}
 
 

@@ -37,7 +37,7 @@ export const submitRevision = (input, revisionHash) => (dispatch, getState) => {
   const {wallet} = getState().core;
   const account = wallet.get('account');
   if (!account) {
-    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://104.236.160.22:8545/")
+    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
     dispatch(submitNewRevision(input, revisionHash))
   }
@@ -47,7 +47,7 @@ export const submitPost = (input) => (dispatch, getState) => {
   const {wallet, auths} = getState().core;
   const account = wallet.get('account');
   if (!account) {
-    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://104.236.160.22:8545/")
+    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
 
     var auth = auths[account];
@@ -67,7 +67,7 @@ export const submitBio = (bioTextInput) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const account = wallet.get('account');
   if (!account) {
-    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://104.236.160.22:8545/")
+    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
     const ethBalance = wallet.get('ethBalance');
   
@@ -169,7 +169,7 @@ export const submitReaction = (authorg, submissionHash, revisionHash, reaction) 
   const {wallet, approvedReactions} = getState().core;
   const account = wallet.get('account');
   if (!account) {
-    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://104.236.160.22:8545/")
+    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
     return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(resulty) {
       var hasReloaded = false;
@@ -194,7 +194,7 @@ export const submitBioReaction = (authorg, revisionHash, reaction) => (dispatch,
   const {wallet, approvedAuthorgReactions} = getState().core;
   const account = wallet.get('account');
   if (!account) {
-    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://104.236.160.22:8545/")
+    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
     return addBioReaction(account, authorg, revisionHash, reaction).then(function(resulty) {
       var hasReloaded = false;      

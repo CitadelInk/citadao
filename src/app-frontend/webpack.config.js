@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -71,14 +72,21 @@ module.exports = {
   plugins: [
     new ExtractTextPlugin('styles.css'),
     new webpack.HotModuleReplacementPlugin(),
+    // new HtmlWebpackPlugin({
+    //   template: './index.html',
+    //   inject: 'head',
+    // }),
     new HtmlWebpackPlugin({
       template: './index.html',
-      inject: 'head',
-    }),
-    new HtmlWebpackPlugin({
-      template: './index.html',
-      inject: 'body',
+      inject: 'body | head',
       hash: true,
+      excludeChunks: ['base'],
+      minify: {
+        collapseWhitespace: true,
+        collapseInlineTagWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true
+      }
     }),
     new CopyWebpackPlugin([
       { from: './server/server.js' }
@@ -94,5 +102,48 @@ module.exports = {
 
     // enable HMR on the server
     hot: true
-  }
+  },
+  devtool: '#eval-source-map'
+}
+
+
+if (process.env.NODE_ENV === 'production') {
+  // Use standard source mapping instead of eval-source-map.
+  module.exports.devtool = '#cheap-module-source-map'
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    // Let's your app access the NODE_ENV variable via. window.process.env.
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true,
+      compress: {
+        warnings: false,
+        screw_ie8: true,
+        conditionals: true,
+        unused: true,
+        comparisons: true,
+        sequences: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        join_vars: true
+      }
+    }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
+    new webpack.HashedModuleIdsPlugin(),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.[hash].js',
+      minChunks (module) {
+        return module.context &&
+               module.context.indexOf('node_modules') >= 0;
+      }
+    }),
+    new ScriptExtHtmlWebpackPlugin({
+      defaultAttribute: 'defer'
+    })
+  ])
 }
