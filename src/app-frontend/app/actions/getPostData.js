@@ -26,6 +26,10 @@ import {
   setWalletData
 } from './contractPublicData'
 
+import {
+  loadPostResponseRequests
+} from './responseRequestActions'
+
 export const ADD_POST_KEY = "ADD_POST_KEY";
 export const addPostKey = (authorgAddress, submissionHash, revisionHash, timestamp) => {
   return {
@@ -264,6 +268,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
       })
       dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
       dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash));
+      dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash))
     })
   }
 }

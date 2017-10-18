@@ -16,6 +16,11 @@ class UserWidget extends Component {
 		super(props);
 		this.authorgNameClicked = this.authorgNameClicked.bind(this);
 		this.state = {showDetails : false};
+		this.userWidgetClicked = this.userWidgetClicked.bind(this);
+	}
+
+	userWidgetClicked(e) {
+		this.props.onClick(this.props.value);
 	}
 
 
@@ -44,8 +49,9 @@ class UserWidget extends Component {
 					
 		}
 
+
 		return (			
-			<div className={styles.div}>
+			<div className={styles.div} value={this.props.value} onClick={this.userWidgetClicked}>
 				<div className={styles.basicInfo}>
 					<div className={styles.avatarContainer}>
 						<Avatar src={avatar}/>

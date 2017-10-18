@@ -30,7 +30,9 @@ const {
   SET_AUTHORG_FOLLOWS_AUTHORGS,
   SET_AUTHORG_FOLLOWERS,
   SET_REVISION_TIME,
-  SET_REVISION_HASHES
+  SET_REVISION_HASHES,
+  SET_REVISION_REQUEST_RESPONSE_KEYS,
+  SET_REVISION_REQUEST_RESPONSE_RECEIPT
 } = actions;
 
 const network = (state = Map({
@@ -196,6 +198,34 @@ const revs = (state = {}, action) => {
           reactionCount: action.data.reactionCount
         })
       });
+    case SET_REVISION_REQUEST_RESPONSE_KEYS:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          requestResponseOfferers: action.data.requestResponseOfferers,
+          requestResponseRecipients: action.data.requestResponseRecipients
+        })
+      });
+    case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+      var offerer = action.data.offerer;
+      var recipient = action.data.recipient;
+      var stateOfferersToRecipients = state[revHash].offerersToRecipients;
+      if (!stateOfferersToRecipients) {
+        stateOfferersToRecipients = Map();
+      }
+
+      if (!stateOfferersToRecipients[offerer]) {
+        stateOfferersToRecipients[offerer] = Map();
+      }
+
+      stateOfferersToRecipients[offerer][recipient] = action.data.receipt;
+
+
+
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          offerersToRecipients: stateOfferersToRecipients
+        })
+      });
     case SET_LOAD_STARTED:
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
@@ -255,6 +285,8 @@ const subs = (state = {}, action) => {
     case SET_LOAD_STARTED:
     case SET_REFERENCE:
     case SET_REVISION_HASHES:
+    case SET_REVISION_REQUEST_RESPONSE_KEYS:
+    case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
       if (!stateSub) {
@@ -286,6 +318,8 @@ const auths = (state = {}, action) => {
       case SET_LOAD_STARTED:
       case SET_REFERENCE:
       case SET_REVISION_HASHES:
+      case SET_REVISION_REQUEST_RESPONSE_KEYS:
+      case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
         return {
           ...state,
           [authAdd]: {

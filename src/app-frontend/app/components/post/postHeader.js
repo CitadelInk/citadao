@@ -6,6 +6,7 @@ import styles from './postHeader.css';
 import { Link, push } from 'redux-little-router';
 import placeholder from '../../images/placeholderprof.jpg';
 import {State} from 'slate';
+import ResponseRequestModal from '../panels/responseRequestModal';
 
 const {
 	gotoUserPage,
@@ -39,6 +40,23 @@ class PostHeader extends Component {
 		var timestamp = this.props.timestamp;
 		var revText = "";
 
+		var currentUserAccount = this.props.wallet.get('account');
+		var currentUser = this.props.auths[currentUserAccount];
+		var currentUserFollowers;
+		var currentUserFollowingUsers;
+		var usersInPotentialResponseRequestList = [];
+		if (currentUser) {
+			currentUserFollowers = currentUser.followers;
+			currentUserFollowingUsers = currentUser.authorgsFollowed;
+			if (currentUserFollowers) {
+				usersInPotentialResponseRequestList.push(...currentUserFollowers);
+			}
+			if (currentUserFollowingUsers) {
+				usersInPotentialResponseRequestList.push(...currentUserFollowingUsers);
+			}
+		}
+		//console.log("usersInPotentialResponseRequestList: " + usersInPotentialResponseRequestList);
+
 		if (authorg) {
 
 			var submission;
@@ -48,6 +66,7 @@ class PostHeader extends Component {
 			var notFirst = false;
 			var notLast = false;
 			var canRevise = false;
+			var canRequestResponse = true;
 			var revHash;
 
 			if (this.props.bio) {
@@ -82,6 +101,8 @@ class PostHeader extends Component {
 
 					if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
 						canRevise = true;
+					} else if(!this.props.embeded && this.props.authorg !== this.props.wallet.get('account')) {
+						canRequestResponse = true;
 					}
 
 					if (!timestamp) {
@@ -188,7 +209,10 @@ class PostHeader extends Component {
 				</div>
 				<div className={styles.reviseDiv}>
 					{ canRevise && <FlatButton onClick={this.onReviseClicked} label="REVISE"/>}
-				</div>				
+				</div>	
+				<div className={styles.reviseDiv}>
+					{ canRequestResponse && <ResponseRequestModal users={usersInPotentialResponseRequestList} postAuthorg={this.props.authorg} postSubmission={this.props.submission} postRevision={this.props.revision}/>}
+				</div>			
 				<div className={infoTextDiv}>
 					<span className={styles.infoText} onClick={this.infoButtonClicked}>{detailText}</span>
 				</div>
