@@ -69,7 +69,7 @@ class ResponseRequestModal extends Component {
 		if(this.props.users){
 			var instance = this;
 			users = Array.from(this.props.users.values()).map(function(key) {
-				return (<UserWidget key={key} authorg={key} value={key} onClick={instance.setPickedUser}/>)
+				return (<UserWidget secondary={true} key={key} authorg={key} value={key} onClick={instance.setPickedUser}/>)
 			})
 		}
 		

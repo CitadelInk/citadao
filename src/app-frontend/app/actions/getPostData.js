@@ -27,7 +27,9 @@ import {
 } from './contractPublicData'
 
 import {
-  loadPostResponseRequests
+  loadPostResponseRequests,
+  loadResponseRequestsCreated,
+  loadResponseRequestsReceived
 } from './responseRequestActions'
 
 export const ADD_POST_KEY = "ADD_POST_KEY";
@@ -329,6 +331,8 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
           })
         }
       })
+      dispatch(loadResponseRequestsCreated(authorgAddress));
+      dispatch(loadResponseRequestsReceived(authorgAddress));
     }
   }
 }

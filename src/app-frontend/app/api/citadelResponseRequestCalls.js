@@ -90,3 +90,25 @@ export const getResponseRequestReceipt = (postUser, postSubmission, postRevision
     })
   })
 }
+
+export const getUserResponseRequestOffersReceived = (user) => {
+  return new Promise((res, rej) => {
+    appContracts.CitadelResponseRequest.deployed()
+    .then((instance) => {
+      instance.getUserBountiesReceived(user).then((result) => {
+        res({offerers : result[0], postUsers : result[1], postSubmissions : result[2], postRevisions : result[3]});
+      })
+    })
+  })
+}
+
+export const getUserResponseRequestOffersCreated = (user) => {
+  return new Promise((res, rej) => {
+    appContracts.CitadelResponseRequest.deployed()
+    .then((instance) => {
+      instance.getUserBountiesCreated(user).then((result) => {
+        res({recipients : result[0], postUsers : result[1], postSubmissions : result[2], postRevisions : result[3]});
+      })
+    })
+  })
+}

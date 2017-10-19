@@ -79,7 +79,7 @@ class PostBody extends Component {
 					if (!responses) {
 						responses = [];
 					}
-					body = <PostSection sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
+					body = <PostSection key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
 				}
 			} else {	
 				if (state.document && state.document.nodes) {
@@ -90,7 +90,7 @@ class PostBody extends Component {
 							responses = responseMap.get(i);
 						}		
 									
-						return (<PostSection sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
+						return (<PostSection key={"post-body-" + i} sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
 						
 					});
 				}

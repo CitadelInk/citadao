@@ -14,7 +14,7 @@ const {
 	checkCitadelIfUserReferencesPost,
 	checkCitadelResponseRequestInkAddress
 } = actions;
-import styles from './postWidgetContainer.css';
+import styles from './responseRequestWidgetContainer.css';
 
 
 class ResponseRequestWidgetContainer extends Component {
@@ -23,6 +23,11 @@ class ResponseRequestWidgetContainer extends Component {
 		 this.collectBounty = this.collectBounty.bind(this);
 		 this.withdrawBounty = this.withdrawBounty.bind(this);
 		 this.checkIfUserReferencesPost = this.checkIfUserReferencesPost.bind(this);
+		 this.embededPostClicked = this.embededPostClicked.bind(this);
+	}
+
+	embededPostClicked(e) {
+		this.props.dispatch(gotoPost(this.props.postUser, this.props.postSubmission, this.props.postRevision));
 	}
 
 	collectBounty(e) {
@@ -54,6 +59,11 @@ class ResponseRequestWidgetContainer extends Component {
 		var canCollect = false;
 		var canWithdraw = false;
 
+		var isCurrentUserOfferer = this.props.offerer === this.props.wallet.get('account');
+		var isCurrentUserRecipient = this.props.recipient === this.props.wallet.get('account');
+
+		var endTimeString = "";
+
 		if (authorgData) {
 			var submissionsData = authorgData.submissions;
 			if (submissionsData) {
@@ -81,9 +91,11 @@ class ResponseRequestWidgetContainer extends Component {
 										endsAtTime = new Date((timestamp * 1000) + (24 * 60 * 60 * 1000)); // bounty 2 minutes long 
 										expired = (now > endsAtTime);
 
-										if(completed && !expired && !collected && this.props.recipient === this.props.wallet.get('account')) {
+										endTimeString = endsAtTime.toLocaleDateString() + " - " + endsAtTime.toLocaleTimeString();
+
+										if(completed && !expired && !collected && isCurrentUserRecipient) {
 											canCollect = true;
-										} else if (!withdrawn && expired && this.props.offerer === this.props.wallet.get('account')) {
+										} else if (!withdrawn && expired && isCurrentUserOfferer) {
 											canWithdraw = true;
 										}
 									}
@@ -95,16 +107,31 @@ class ResponseRequestWidgetContainer extends Component {
 			}		
 		}
 
-			
+		var embededPost = (<div className={styles.embededPostStyle} onClick={this.embededPostClicked}>
+							<Post 
+								embeded={true}
+								authorg={this.props.postUser} 
+								submission={this.props.postSubmission} 
+								revision={this.props.postRevision} />
+							</div>)
+
+		const offersString = "offers";
+		const youOfferString = "You offer";
+		const youString = " you";
+
 		return (			
 			<div className={styles.style}>
 				<Card>
  				<div>
-					<UserWidget authorg={this.props.offerer}/>
-					offers
-					<UserWidget authorg={this.props.recipient}/>
-					<span>{bounty} ETH to repond to the current post.</span><br/>
-					{ !expired && endsAtTime && <span>Bounty Expires: {endsAtTime.toLocaleDateString() + " - " + endsAtTime.toLocaleTimeString()}</span> }
+					{!isCurrentUserOfferer && <UserWidget secondary={true} authorg={this.props.offerer}/>}
+					{!isCurrentUserOfferer && offersString}
+					{isCurrentUserOfferer && youOfferString}
+					{!isCurrentUserRecipient && <UserWidget secondary={true} authorg={this.props.recipient}/>}
+					{isCurrentUserRecipient && youString}
+					{!this.props.showPost && <span>{bounty} ETH to repond to the current post.<br/></span>}
+					{this.props.showPost && <span>{bounty} ETH to repond to:<br/><br/></span>}
+					{this.props.showPost && embededPost}
+					{ !expired && endsAtTime && <span>Bounty Expires: {endTimeString}</span> }
 					{ expired && <span>Bounty Expired.</span> }
 					{ collected && <RaisedButton disabled label="Collected"/> }
 					{ withdrawn && <RaisedButton disabled label="Withdrawn"/> }

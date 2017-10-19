@@ -70,7 +70,7 @@ class Header extends Component {
 		}
 
 		const pStyle = {
-			maxWidth:'500'
+			maxWidth:'500px'
 		}
 
 		var accountsDropDown = "";

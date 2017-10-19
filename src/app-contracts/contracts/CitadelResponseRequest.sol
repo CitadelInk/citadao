@@ -193,17 +193,17 @@ contract CitadelResponseRequest {
     }*/
 
     function getUserBountiesCreated(address user) constant returns (address[] recipientUsers, address[] postUsers, bytes32[] postSubmissions, bytes32[] postRevisions) {
-        recipientUsers = authorgExtensionMap[msg.sender].responseRequestsOfferedToUsers;
-        postUsers = authorgExtensionMap[msg.sender].responseRequestsOfferedToUsersPostUsers;
-        postSubmissions = authorgExtensionMap[msg.sender].responseRequestsOfferedToUsersPostSubmissions;
-        postRevisions = authorgExtensionMap[msg.sender].responseRequestsOfferedToUsersPostRevisions;
+        recipientUsers = authorgExtensionMap[user].responseRequestsOfferedToUsers;
+        postUsers = authorgExtensionMap[user].responseRequestsOfferedToUsersPostUsers;
+        postSubmissions = authorgExtensionMap[user].responseRequestsOfferedToUsersPostSubmissions;
+        postRevisions = authorgExtensionMap[user].responseRequestsOfferedToUsersPostRevisions;
     }
 
     function getUserBountiesReceived(address user) constant returns (address[] offererUsers, address[] postUsers, bytes32[] postSubmissions, bytes32[] postRevisions) {
-        offererUsers = authorgExtensionMap[msg.sender].responseRequestsReceivedFromUsers;
-        postUsers = authorgExtensionMap[msg.sender].responseRequestsReceivedFromUsersPostUsers;
-        postSubmissions = authorgExtensionMap[msg.sender].responseRequestsReceivedFromUsersPostSubmissions;
-        postRevisions = authorgExtensionMap[msg.sender].responseRequestsReceivedFromUsersPostRevisions;
+        offererUsers = authorgExtensionMap[user].responseRequestsReceivedFromUsers;
+        postUsers = authorgExtensionMap[user].responseRequestsReceivedFromUsersPostUsers;
+        postSubmissions = authorgExtensionMap[user].responseRequestsReceivedFromUsersPostSubmissions;
+        postRevisions = authorgExtensionMap[user].responseRequestsReceivedFromUsersPostRevisions;
     }
 
     function hasUserMadeOfferOnPostToUser(address offerUser, address recipientUser, address postUser, bytes32 postSubmission, bytes32 postRevision) constant returns (bool) {

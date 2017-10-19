@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import Posts from './panels/posts';
+import UserResponseRequests from './panels/userResponseRequests';
 import EmptyLeft from './panels/emptyLeft';
 import EmptyRight from './panels/emptyRight';
 import ComposePanel from './compose/composePanel';
@@ -90,7 +91,7 @@ class User extends Component {
 
 		var selectedIndex = this.props.wallet.get('selectedUserTabIndex');
 
-		var tabNames = ["Bio", "Posts", "Followers - " + numFollowers, "Follows - " + numFollowedUsers];
+		var tabNames = ["Bio", "Posts", "RR Received", "RR Created", "Followers - " + numFollowers, "Follows - " + numFollowedUsers];
 
 
 
@@ -111,7 +112,7 @@ class User extends Component {
 									[styles.tab]:true,
 									[styles.tabSelected]: (index === selectedIndex)
 								})
-								return (<Tab  className={selected}>{name}</Tab>);
+								return (<Tab key={name} className={selected}>{name}</Tab>);
 							})
 						}
 							</div>
@@ -122,6 +123,12 @@ class User extends Component {
 						</TabPanel>
 						<TabPanel>
 							<Posts postKeys={postKeys} onScroll={this.postsScrolled}/>	
+						</TabPanel>
+						<TabPanel>
+							<UserResponseRequests user={user} received />
+						</TabPanel>
+						<TabPanel>
+							<UserResponseRequests user={user} created />
 						</TabPanel>
 						<TabPanel>
 							<UserList users={followers}/>

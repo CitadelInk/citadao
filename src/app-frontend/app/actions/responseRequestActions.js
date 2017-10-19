@@ -9,10 +9,13 @@ import {
   withdrawBounty,
   checkUserReferenceAgainstPost,
   checkCitadelUserReferenceAgainstPost,
-  getCitadelResponseRequestInkAddress
+  getCitadelResponseRequestInkAddress,
+  getUserResponseRequestOffersReceived,
+  getUserResponseRequestOffersCreated
 } from '../api/citadelResponseRequestCalls'
 
 import {
+  loadUserData,
   loadPost
 } from './getPostData'
 
@@ -30,6 +33,22 @@ export const setRevisionResponseRequestReceipt = (authAdd, subHash, revHash, off
   return {
     type: SET_REVISION_REQUEST_RESPONSE_RECEIPT,
     data: {authAdd, subHash, revHash, offerer, recipient, receipt: {exists, timestamp, bounty, collected, completed, withdrawn}}
+  }
+}
+
+export const SET_USER_RESPONSE_REQUESTS_RECEIVED = "SET_USER_RESPONSE_REQUESTS_RECEIVED";
+export const setUserResponseRequestsReceived = (authAdd, requestsReceivedKeys) => {
+  return {
+    type: SET_USER_RESPONSE_REQUESTS_RECEIVED,
+    data: {authAdd, requestsReceivedKeys}
+  }
+}
+
+export const SET_USER_RESPONSE_REQUESTS_CREATED = "SET_USER_RESPONSE_REQUESTS_CREATED";
+export const setUserResponseRequestsCreated = (authAdd, requestsCreatedKeys) => {
+  return {
+    type: SET_USER_RESPONSE_REQUESTS_CREATED,
+    data: {authAdd, requestsCreatedKeys}
   }
 }
 
@@ -111,8 +130,6 @@ export const withdrawResponseRequestBounty = (recipientUser, postUser, postSubmi
 }
 
 export const checkCitadelIfUserReferencesPost = (recipientUser, originalPostUser, originalPostSubmission, originalPostRevision) => (dispatch, getState) => {
-  console.log("check citadel 1");
-
     return checkCitadelUserReferenceAgainstPost(recipientUser, originalPostUser, originalPostSubmission, originalPostRevision).then(function(resulty) {
       console.log("checkCitadelUserReferenceAgainstPost result - " + resulty);
     })
@@ -147,11 +164,36 @@ export const loadRequestResponse = (postUser, postSubmission, postRevision, offe
   var account = wallet.get('account');
   getResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient).then((result) => {
     var convertedBounty = network.web3.fromWei(result.bounty, "ether");
-    console.log("converted bounty = " + convertedBounty);
     dispatch(setRevisionResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient, result.exists, result.timestamp, convertedBounty, result.collected, result.completed, result.withdrawn))
+    dispatch(loadUserData(offerer));
+    dispatch(loadUserData(recipient));
+    dispatch(loadPost(postUser, postSubmission, postRevision));
   })
 }
 
+export const loadResponseRequestsReceived = (user) => (dispatch) => {
+  getUserResponseRequestOffersReceived(user).then((result) => {
+    var receiptKeys = [];
+    for(var i = 0; i < result.offerers.length; i++) {
+      var key = {offerer : result.offerers[i], postUser : result.postUsers[i], postSubmission : result.postSubmissions[i], postRevision : result.postRevisions[i]};
+      receiptKeys.push(key);
+      dispatch(loadRequestResponse(result.postUsers[i], result.postSubmissions[i], result.postRevisions[i], result.offerers[i], user));
+    }
+    dispatch(setUserResponseRequestsReceived(user, receiptKeys));
+  })
+}
+
+export const loadResponseRequestsCreated = (user) => (dispatch) => {
+  getUserResponseRequestOffersCreated(user).then((result) => {
+    var receiptKeys = [];
+    for(var i = 0; i < result.recipients.length; i++) {
+      var key = {recipient : result.recipients[i], postUser : result.postUsers[i], postSubmission : result.postSubmissions[i], postRevision : result.postRevisions[i]};
+      receiptKeys.push(key);
+      dispatch(loadRequestResponse(result.postUsers[i], result.postSubmissions[i], result.postRevisions[i], user, result.recipients[i]));
+    }
+    dispatch(setUserResponseRequestsCreated(user, receiptKeys));
+  })
+}
 
 export default {
   submitResponseRequest,
@@ -162,5 +204,7 @@ export default {
   checkCitadelIfUserReferencesPost,
   checkCitadelResponseRequestInkAddress,
   SET_REVISION_REQUEST_RESPONSE_KEYS,
-  SET_REVISION_REQUEST_RESPONSE_RECEIPT
+  SET_REVISION_REQUEST_RESPONSE_RECEIPT,
+  SET_USER_RESPONSE_REQUESTS_RECEIVED,
+  SET_USER_RESPONSE_REQUESTS_CREATED
 }
