@@ -47,10 +47,12 @@ class Header extends Component {
 		const headerStyle = {
 			fontFamily: 'sans-serif',
 			textAlign: 'center',
-			fontSize:'24pt',
 			width:'100%',
 			margin:'auto',
 			position:'relative'
+		}
+		const headerSpan = {
+			fontSize:'24pt',
 		}
 		const dropDownStyle = {
 			position:'absolute',
@@ -71,6 +73,14 @@ class Header extends Component {
 
 		const pStyle = {
 			maxWidth:'500px'
+		}
+
+		const whatIsStyle = {
+			position:'fixed',
+			top:'35px',
+			textAlign: 'center',
+			margin:'auto',
+			width:'100%'
 		}
 
 		var accountsDropDown = "";
@@ -103,13 +113,18 @@ class Header extends Component {
 		
 		return (
 			<div style={divStyle} className="header" onClick={this.handleClickDiv}>			
-				<div style={headerStyle} onClick={this.handleHomeClicked}>C I T A D E L - P R O T O T Y P E</div>		
+				<div style={headerStyle} onClick={this.handleHomeClicked}>
+					<span style={headerSpan}>C I T A D E L - P R O T O T Y P E</span><br/>
+				</div>		
+				<div style={whatIsStyle}>
+					{gotoLandingPage}
+				</div>
 				<div style={dropDownStyle}>
 				{accountsDropDown}
 				</div>
 				{account && ethBalance}
 				<div style={debugStyle}>
-				{account && gotoAccountPage} {gotoLandingPage}	
+				{account && gotoAccountPage}
 				</div>
 				<QuickStartWidget />
 			</div>

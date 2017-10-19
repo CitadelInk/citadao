@@ -8,6 +8,8 @@ import { landingHeight, landingAddSection } from '../actions';
 import ScrollController from '../helpers/scrollController';
 import ScrollElement from './ScrollElement';
 import { Card } from 'material-ui';
+import inkIcon from './inkIcon.png';
+import citadelIcon from './citadelIconLong.png';
 
 
 const {
@@ -85,19 +87,22 @@ class Landing extends Component {
 					<div className={styles.containerStyle}>
 					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="citadel.ink">
 						<Card className={styles.cardStyle}>
-							<span className={styles.citadelHeader}>C I T A D E L</span>
+							<div className={styles.citadelLogo}>
+								<img src={citadelIcon} height="100" />
+							</div>							
 							<p className={styles.pStyle}>
-								A native Web 3 public social network
+								A native Web 3 public social network, built on the ink protocol, 
+								that gives users tools for better discussions and respects their attention.
 							</p>
 						</Card>
 						<Card className={styles.cardStyle}>
-							<span className={styles.inkHeader}>.ink</span>
+							<div className={styles.inkLogo}><img src={inkIcon} height="100" /></div>
 							<p className={styles.pStyle}>
 								A protocol for decentralized social networks that links 
 								content together to form explicit 
 								graphs of communication (original posts, references, 
-								and responses). With simple economic incentive 
-								to discourage adding low quality content.
+								and responses) with a simple economic incentive 
+								to discourage adding low quality content, raising signal:noise.
 							</p>
 						</Card>
 					</ScrollElement>
