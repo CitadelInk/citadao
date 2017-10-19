@@ -1,0 +1,957 @@
+{
+  "contract_name": "CitadelResponseRequest",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "offerUser",
+          "type": "address"
+        },
+        {
+          "name": "postUser",
+          "type": "address"
+        },
+        {
+          "name": "postSubmission",
+          "type": "bytes32"
+        },
+        {
+          "name": "postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "collectResponseRequestBounty",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "recipientUser",
+          "type": "address"
+        },
+        {
+          "name": "postUser",
+          "type": "address"
+        },
+        {
+          "name": "postSubmission",
+          "type": "bytes32"
+        },
+        {
+          "name": "postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "refundResponseRequestBounty",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getInkAddress",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "postUser",
+          "type": "address"
+        },
+        {
+          "name": "postSubmission",
+          "type": "bytes32"
+        },
+        {
+          "name": "postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOffererRecipientKeysForPost",
+      "outputs": [
+        {
+          "name": "offerers",
+          "type": "address[]"
+        },
+        {
+          "name": "recipients",
+          "type": "address[]"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "ink_address",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserBountiesReceived",
+      "outputs": [
+        {
+          "name": "offererUsers",
+          "type": "address[]"
+        },
+        {
+          "name": "postUsers",
+          "type": "address[]"
+        },
+        {
+          "name": "postSubmissions",
+          "type": "bytes32[]"
+        },
+        {
+          "name": "postRevisions",
+          "type": "bytes32[]"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "recipientUser",
+          "type": "address"
+        },
+        {
+          "name": "offerUser",
+          "type": "address"
+        },
+        {
+          "name": "postUser",
+          "type": "address"
+        },
+        {
+          "name": "postSubmission",
+          "type": "bytes32"
+        },
+        {
+          "name": "postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "hasUserCollectedBounty",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "name": "postUser",
+          "type": "address"
+        },
+        {
+          "name": "postSubmission",
+          "type": "bytes32"
+        },
+        {
+          "name": "postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "doesUserReferencePost",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "userToRespond",
+          "type": "address"
+        },
+        {
+          "name": "postUser",
+          "type": "address"
+        },
+        {
+          "name": "postSubmission",
+          "type": "bytes32"
+        },
+        {
+          "name": "postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "submitResponseRequest",
+      "outputs": [],
+      "payable": true,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "offerUser",
+          "type": "address"
+        },
+        {
+          "name": "recipientUser",
+          "type": "address"
+        },
+        {
+          "name": "postUser",
+          "type": "address"
+        },
+        {
+          "name": "postSubmission",
+          "type": "bytes32"
+        },
+        {
+          "name": "postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "hasUserMadeOfferOnPostToUser",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserBountiesCreated",
+      "outputs": [
+        {
+          "name": "recipientUsers",
+          "type": "address[]"
+        },
+        {
+          "name": "postUsers",
+          "type": "address[]"
+        },
+        {
+          "name": "postSubmissions",
+          "type": "bytes32[]"
+        },
+        {
+          "name": "postRevisions",
+          "type": "bytes32[]"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "postUser",
+          "type": "address"
+        },
+        {
+          "name": "postSubmission",
+          "type": "bytes32"
+        },
+        {
+          "name": "postRevision",
+          "type": "bytes32"
+        },
+        {
+          "name": "offererUser",
+          "type": "address"
+        },
+        {
+          "name": "recipientUser",
+          "type": "address"
+        }
+      ],
+      "name": "getReceipt",
+      "outputs": [
+        {
+          "name": "exists",
+          "type": "bool"
+        },
+        {
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "name": "bounty",
+          "type": "uint256"
+        },
+        {
+          "name": "collected",
+          "type": "bool"
+        },
+        {
+          "name": "referenced",
+          "type": "bool"
+        },
+        {
+          "name": "refunded",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "ink",
+          "type": "address"
+        },
+        {
+          "name": "bountyOpenLengthInMinutes",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_offererUser",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "_recipientUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_postUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_postSumission",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "_postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ResponseRequestCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_postUser",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "_postSumission",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "name": "_postRevision",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "_offererUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_recipientUser",
+          "type": "address"
+        }
+      ],
+      "name": "PostResponseRequestCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_offererUser",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "_recipientUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_postUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_postSumission",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "_postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ResponseRequestBountyCollected",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_postUser",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "_postSumission",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "name": "_postRevision",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "_offererUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_recipientUser",
+          "type": "address"
+        }
+      ],
+      "name": "PostResponseRequestBountyCollected",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_offererUser",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "_recipientUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_postUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_postSumission",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "_postRevision",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ResponseRequestBountyRefunded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_postUser",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "_postSumission",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "name": "_postRevision",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "_offererUser",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_recipientUser",
+          "type": "address"
+        }
+      ],
+      "name": "PostResponseRequestBountyRefunded",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000f57600080fd5b6040516040806118bb83398101604052808051919060200180519150505b60008054600160a060020a031916600160a060020a03841617905560018190555b50505b61185b806100606000396000f3006060604052361561009e5763ffffffff60e060020a60003504166314595cd181146100a35780631c87dbf3146100d057806325e0d20a146100fd578063291ad6081461012c57806336421ef6146101ec5780634235b09a1461021b5780634827c42b146103615780634a288802146103a6578063764d204f146103e5578063b190bb4514610407578063b6d01c1e1461044c578063f79c5ef114610592575b600080fd5b34156100ae57600080fd5b6100ce600160a060020a0360043581169060243516604435606435610602565b005b34156100db57600080fd5b6100ce600160a060020a0360043581169060243516604435606435610830565b005b341561010857600080fd5b6101106109b6565b604051600160a060020a03909116815260200160405180910390f35b341561013757600080fd5b610151600160a060020a03600435166024356044356109c6565b604051808060200180602001838103835285818151815260200191508051906020019060200280838360005b838110156101965780820151818401525b60200161017d565b50505050905001838103825284818151815260200191508051906020019060200280838360005b838110156101d65780820151818401525b6020016101bd565b5050505090500194505050505060405180910390f35b34156101f757600080fd5b610110610af2565b604051600160a060020a03909116815260200160405180910390f35b341561022657600080fd5b61023a600160a060020a0360043516610b01565b6040518080602001806020018060200180602001858103855289818151815260200191508051906020019060200280838360005b838110156102875780820151818401525b60200161026e565b50505050905001858103845288818151815260200191508051906020019060200280838360005b838110156102c75780820151818401525b6020016102ae565b50505050905001858103835287818151815260200191508051906020019060200280838360005b838110156103075780820151818401525b6020016102ee565b50505050905001858103825286818151815260200191508051906020019060200280838360005b838110156103475780820151818401525b60200161032e565b505050509050019850505050505050505060405180910390f35b341561036c57600080fd5b610392600160a060020a0360043581169060243581169060443516606435608435610d23565b604051901515815260200160405180910390f35b34156103b157600080fd5b610392600160a060020a0360043581169060243516604435606435610d73565b604051901515815260200160405180910390f35b6100ce600160a060020a0360043581169060243516604435606435610e0a565b005b341561041257600080fd5b610392600160a060020a0360043581169060243581169060443516606435608435611345565b604051901515815260200160405180910390f35b341561045757600080fd5b61023a600160a060020a0360043516611392565b6040518080602001806020018060200180602001858103855289818151815260200191508051906020019060200280838360005b838110156102875780820151818401525b60200161026e565b50505050905001858103845288818151815260200191508051906020019060200280838360005b838110156102c75780820151818401525b6020016102ae565b50505050905001858103835287818151815260200191508051906020019060200280838360005b838110156103075780820151818401525b6020016102ee565b50505050905001858103825286818151815260200191508051906020019060200280838360005b838110156103475780820151818401525b60200161032e565b505050509050019850505050505050505060405180910390f35b341561059d57600080fd5b6105c5600160a060020a036004358116906024359060443590606435811690608435166115b4565b6040519515158652602086019490945260408086019390935290151560608501521515608084015290151560a083015260c0909101905180910390f35b600160a060020a038084166000908152600260209081526040808320868452825280832085845282528083208885168452825280832033909416835292905290812080549091908190819060ff16151561065b57600080fd5b60008054600160a060020a0316906376f6c3619033908a908a908a906040516020015260405160e060020a63ffffffff8716028152600160a060020a03948516600482015292909316602483015260448201526064810191909152608401602060405180830381600087803b15156106d257600080fd5b6102c65a03f115156106e357600080fd5b50505060405180519350508215156106fa57600080fd5b600384015460ff161561070c57600080fd5b600154603c028460010154014210915081151561072857600080fd5b5060038301805460ff191660011790556002830154600160a060020a03331681156108fc0282604051600060405180830381858888f19350505050151561076e57600080fd5b33600160a060020a031688600160a060020a03167fb108b5618e10c93bd34319ea5f2bb4e3b0de06efd417d0165b5f133a8a38356b898989604051600160a060020a03909316835260208301919091526040808301919091526060909101905180910390a38486600160a060020a0389167fc29d15b700a13be3af5133bab7b7aee4b247d62950aa75fdf42e21d5632ff5a08b33604051600160a060020a039283168152911660208201526040908101905180910390a45b5050505050505050565b600160a060020a03808416600090815260026020908152604080832086845282528083208584528252808320338516845282528083209388168352929052908120805490919060ff16151561088457600080fd5b600382015460ff161580156108a357506003820154610100900460ff16155b15156108ae57600080fd5b5060038101805461ff0019166101001790556002810154600160a060020a03331681156108fc0282604051600060405180830381858888f1935050505015156108f657600080fd5b85600160a060020a031633600160a060020a03167f4c4b53fb00ccb7bff62caf42948d62837b4625d1b4b99d42c3c28e3116dbc056878787604051600160a060020a03909316835260208301919091526040808301919091526060909101905180910390a38284600160a060020a0387167f8a37676d74b8af93de302c39a3717a773f6405966e2be410efd85a620cf1a290338a604051600160a060020a039283168152911660208201526040908101905180910390a45b505050505050565b600054600160a060020a03165b90565b6109ce611747565b6109d6611747565b600160a060020a03851660009081526002602090815260408083208784528252808320868452825291829020600101805490929091828102019051908101604052809291908181526020018280548015610a5957602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610a3b575b505050600160a060020a03881660009081526002602081815260408084208b855282528084208a8552825292839020909101805495975094935083810201915051908101604052809291908181526020018280548015610ae257602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610ac4575b505050505090505b935093915050565b600054600160a060020a031681565b610b09611747565b610b11611747565b610b19611747565b610b21611747565b6002600086600160a060020a0316600160a060020a03168152602001908152602001600020600501805480602002602001604051908101604052809291908181526020018280548015610b9d57602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610b7f575b505050505093506002600086600160a060020a0316600160a060020a03168152602001908152602001600020600601805480602002602001604051908101604052809291908181526020018280548015610c2057602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311610c02575b505050505092506002600086600160a060020a0316600160a060020a03168152602001908152602001600020600701805480602002602001604051908101604052809291908181526020018280548015610c9a57602002820191906000526020600020905b81548152600190910190602001808311610c85575b505050505091506002600086600160a060020a0316600160a060020a03168152602001908152602001600020600801805480602002602001604051908101604052809291908181526020018280548015610d1457602002820191906000526020600020905b81548152600190910190602001808311610cff575b505050505090505b9193509193565b600160a060020a03808416600090815260026020908152604080832086845282528083208584528252808320888516845282528083209389168352929052206003015460ff165b95945050505050565b60008054600160a060020a03166376f6c36186868686866040516020015260405160e060020a63ffffffff8716028152600160a060020a03948516600482015292909316602483015260448201526064810191909152608401602060405180830381600087803b1515610de557600080fd5b6102c65a03f11515610df657600080fd5b50505060405180519150505b949350505050565b610e1261176b565b600033600160a060020a031686600160a060020a031614151515610e3557600080fd5b600160a060020a038681169086161415610e4e57600080fd5b60a0604051908101604090815260018252426020830152349082015260006060820181905260808201529150610e873387878787611345565b90508015610e9457600080fd5b600160a060020a0380861660009081526002602090815260408083208884528252808320878452825280832033851684528252808320938a1683529290522082908151815460ff19169015151781556020820151816001015560408201518160020155606082015160038201805460ff19169115159190911790556080820151600390910180549115156101000261ff001990921691909117905550600160a060020a0385166000908152600260209081526040808320878452825280832086845290915290206001908101805490918101610f708382611799565b916000526020600020900160005b81546101009190910a600160a060020a0381810219909216338316919091021790915586166000908152600260208181526040808420898552825280842088855290915290912001805490915060018101610fd98382611799565b916000526020600020900160005b88909190916101000a815481600160a060020a030219169083600160a060020a03160217905550506002600033600160a060020a0316600160a060020a0316815260200190815260200160002060010180548060010182816110499190611799565b916000526020600020900160005b88909190916101000a815481600160a060020a030219169083600160a060020a03160217905550506002600033600160a060020a0316600160a060020a0316815260200190815260200160002060020180548060010182816110b99190611799565b916000526020600020900160005b81546101009190910a600160a060020a03818102199092168983169190910217909155331660009081526002602052604090206003018054909150600181016111108382611799565b916000526020600020900160005b5085905550600160a060020a033316600090815260026020526040902060040180546001810161114e8382611799565b916000526020600020900160005b5084905550600160a060020a038616600090815260026020526040902060050180546001810161118c8382611799565b916000526020600020900160005b81546101009190910a600160a060020a03818102199092163383169190910217909155871660009081526002602052604090206006018054909150600181016111e38382611799565b916000526020600020900160005b81546101009190910a600160a060020a038181021990921689831691909102179091558716600090815260026020526040902060070180549091506001810161123a8382611799565b916000526020600020900160005b5085905550600160a060020a03861660009081526002602052604090206008018054600181016112788382611799565b916000526020600020900160005b5084905550600160a060020a038087169033167f789f89351a381e051a03e0b57c0af1c7459bb523c382e9bafe2a0fafccd59954878787604051600160a060020a03909316835260208301919091526040808301919091526060909101905180910390a38284600160a060020a0387167fd29237a5fc8a3aaa30a5aed2d820f0bb68dc9f84312fe636a69b9fef8b0761e6338a604051600160a060020a039283168152911660208201526040908101905180910390a45b505050505050565b600160a060020a03808416600090815260026020908152604080832086845282528083208584528252808320898516845282528083209388168352929052205460ff165b95945050505050565b61139a611747565b6113a2611747565b6113aa611747565b6113b2611747565b6002600086600160a060020a0316600160a060020a0316815260200190815260200160002060010180548060200260200160405190810160405280929190818152602001828054801561142e57602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311611410575b505050505093506002600086600160a060020a0316600160a060020a031681526020019081526020016000206002018054806020026020016040519081016040528092919081815260200182805480156114b157602002820191906000526020600020905b8154600160a060020a03168152600190910190602001808311611493575b505050505092506002600086600160a060020a0316600160a060020a0316815260200190815260200160002060030180548060200260200160405190810160405280929190818152602001828054801561152b57602002820191906000526020600020905b81548152600190910190602001808311611516575b505050505091506002600086600160a060020a0316600160a060020a03168152602001908152602001600020600401805480602002602001604051908101604052809291908181526020018280548015610d1457602002820191906000526020600020905b81548152600190910190602001808311610cff575b505050505090505b9193509193565b600080600080600080600080600260008e600160a060020a0316600160a060020a0316815260200190815260200160002060000160008d6000191660001916815260200190815260200160002060000160008c6000191660001916815260200190815260200160002060000160008b600160a060020a0316600160a060020a0316815260200190815260200160002060008a600160a060020a0316600160a060020a0316815260200190815260200160002091506000809054906101000a9004600160a060020a0316600160a060020a03166376f6c361338f8f8f60006040516020015260405160e060020a63ffffffff8716028152600160a060020a03948516600482015292909316602483015260448201526064810191909152608401602060405180830381600087803b15156116ec57600080fd5b6102c65a03f115156116fd57600080fd5b5050506040518051835460018501546002860154600387015460ff9384169d50919b5099508082169850919650610100909104169350849150505b50509550955095509550955095565b60206040519081016040526000815290565b60206040519081016040526000815290565b60a0604051908101604090815260008083526020830181905290820181905260608201819052608082015290565b8154818355818115116117bd576000838152602090206117bd9181019083016117ed565b5b505050565b8154818355818115116117bd576000838152602090206117bd9181019083016117ed565b5b505050565b6109c391905b8082111561180757600081556001016117f3565b5090565b90565b6109c391905b8082111561180757600081556001016117f3565b5090565b905600a165627a7a7230582090437d894867c4f2f5540ab7662fd9100dca24c219faea200a468cf3da0cd20a0029",
+  "networks": {
+    "1508389167531": {
+      "events": {
+        "0x789f89351a381e051a03e0b57c0af1c7459bb523c382e9bafe2a0fafccd59954": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_recipientUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_postRevision",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ResponseRequestCreated",
+          "type": "event"
+        },
+        "0xd29237a5fc8a3aaa30a5aed2d820f0bb68dc9f84312fe636a69b9fef8b0761e6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "_postRevision",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_recipientUser",
+              "type": "address"
+            }
+          ],
+          "name": "PostResponseRequestCreated",
+          "type": "event"
+        },
+        "0xb108b5618e10c93bd34319ea5f2bb4e3b0de06efd417d0165b5f133a8a38356b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_recipientUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_postRevision",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ResponseRequestBountyCollected",
+          "type": "event"
+        },
+        "0xc29d15b700a13be3af5133bab7b7aee4b247d62950aa75fdf42e21d5632ff5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "_postRevision",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_recipientUser",
+              "type": "address"
+            }
+          ],
+          "name": "PostResponseRequestBountyCollected",
+          "type": "event"
+        },
+        "0x4c4b53fb00ccb7bff62caf42948d62837b4625d1b4b99d42c3c28e3116dbc056": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_recipientUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_postRevision",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ResponseRequestBountyRefunded",
+          "type": "event"
+        },
+        "0x8a37676d74b8af93de302c39a3717a773f6405966e2be410efd85a620cf1a290": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "_postRevision",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_recipientUser",
+              "type": "address"
+            }
+          ],
+          "name": "PostResponseRequestBountyRefunded",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x48f55a6eac798be601a4d53888f0c13b2a4187f0",
+      "updated_at": 1508395770034
+    },
+    "cita": {
+      "events": {
+        "0x789f89351a381e051a03e0b57c0af1c7459bb523c382e9bafe2a0fafccd59954": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_recipientUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_postRevision",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ResponseRequestCreated",
+          "type": "event"
+        },
+        "0xd29237a5fc8a3aaa30a5aed2d820f0bb68dc9f84312fe636a69b9fef8b0761e6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "_postRevision",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_recipientUser",
+              "type": "address"
+            }
+          ],
+          "name": "PostResponseRequestCreated",
+          "type": "event"
+        },
+        "0xb108b5618e10c93bd34319ea5f2bb4e3b0de06efd417d0165b5f133a8a38356b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_recipientUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_postRevision",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ResponseRequestBountyCollected",
+          "type": "event"
+        },
+        "0xc29d15b700a13be3af5133bab7b7aee4b247d62950aa75fdf42e21d5632ff5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "_postRevision",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_recipientUser",
+              "type": "address"
+            }
+          ],
+          "name": "PostResponseRequestBountyCollected",
+          "type": "event"
+        },
+        "0x4c4b53fb00ccb7bff62caf42948d62837b4625d1b4b99d42c3c28e3116dbc056": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_recipientUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_postRevision",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ResponseRequestBountyRefunded",
+          "type": "event"
+        },
+        "0x8a37676d74b8af93de302c39a3717a773f6405966e2be410efd85a620cf1a290": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_postUser",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_postSumission",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "_postRevision",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_offererUser",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_recipientUser",
+              "type": "address"
+            }
+          ],
+          "name": "PostResponseRequestBountyRefunded",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xa08146d0a7d3044782bf8cd819143000e5474d4a",
+      "updated_at": 1508453847158
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1508453847158
+}
