@@ -16,6 +16,13 @@ class UserWidget extends Component {
 		super(props);
 		this.authorgNameClicked = this.authorgNameClicked.bind(this);
 		this.state = {showDetails : false};
+		this.userWidgetClicked = this.userWidgetClicked.bind(this);
+	}
+
+	userWidgetClicked(e) {
+		if (this.props.onClick) {
+			this.props.onClick(this.props.value);
+		}
 	}
 
 
@@ -30,7 +37,7 @@ class UserWidget extends Component {
 				var bioSubmission = authorg.bioSubmission;
 				var bioRevHashes = bioSubmission.revisions;
 				var revHash = "1";
-				if (bioRevHashes.length > 0) {
+				if (bioRevHashes && bioRevHashes.length > 0) {
 					revHash = bioRevHashes[bioRevHashes.length - 1];
 				}
 				var bioRevision = bioSubmission[revHash];
@@ -44,8 +51,13 @@ class UserWidget extends Component {
 					
 		}
 
+		var divStyle = styles.div;
+		if (this.props.secondary) {
+			divStyle = styles.secondaryDiv;
+		}
+
 		return (			
-			<div className={styles.div}>
+			<div className={divStyle} value={this.props.value} onClick={this.userWidgetClicked}>
 				<div className={styles.basicInfo}>
 					<div className={styles.avatarContainer}>
 						<Avatar src={avatar}/>

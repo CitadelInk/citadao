@@ -54,6 +54,8 @@ contract Ink is Managed {
         address[] referenceKeyAuthorgs;
         bytes32[] referenceKeySubmissions;
         bytes32[] referenceKeyRevisions;
+
+        mapping(address => bool) hasUserReferencedRevision;
     }
 
     struct SubRevKey {
@@ -163,7 +165,7 @@ contract Ink is Managed {
         Authorg authorg = internalAuthorgs[sender];
 
         // must have a bio set.
-        require (authorg.selfBioSubmission.revisionHashes.length > 0);
+        //require (authorg.selfBioSubmission.revisionHashes.length > 0);
 
         // never submitted revision to this submission before        
         require (authorg.submissions[subCitadelManifestHash].revisions[revCitadelManifestHash].citadelManifestHash == 0);
@@ -200,6 +202,8 @@ contract Ink is Managed {
         originalRevision.referenceKeyAuthorgs.push(msg.sender);
         originalRevision.referenceKeySubmissions.push(responseSubmissionHash);
         originalRevision.referenceKeyRevisions.push(responseRevisionHash);
+
+        originalRevision.hasUserReferencedRevision[msg.sender] = true;
     }
 
     function getNumberReferencesForAuthorgSubmissionRevision(address authorgAddress, bytes32 submissionHash, bytes32 revisionHash) constant returns (uint) {
@@ -231,4 +235,25 @@ contract Ink is Managed {
     function getSubmissionRevisions(address authorgAddress, bytes32 submissionHash) constant returns (bytes32[] revisionHashes) {
          return internalAuthorgs[authorgAddress].submissions[submissionHash].revisionHashes;
     }
+
+    function doesPostReferencePost(address postUserAddress, 
+                                    address originalPostUserAddress, 
+                                    bytes32 originalPostSubmissionHash, 
+                                    bytes32 originalPostRevisionHash) 
+                                    constant returns (bool) 
+    {
+        Revision rev = internalAuthorgs[originalPostUserAddress].submissions[originalPostSubmissionHash].revisions[originalPostRevisionHash];
+        return rev.hasUserReferencedRevision[postUserAddress];
+    }
+
+    function constDoesPostReferencePost(address postUserAddress, 
+                                    address originalPostUserAddress, 
+                                    bytes32 originalPostSubmissionHash, 
+                                    bytes32 originalPostRevisionHash) 
+                                    constant returns (bool) 
+    {
+        Revision rev = internalAuthorgs[originalPostUserAddress].submissions[originalPostSubmissionHash].revisions[originalPostRevisionHash];
+        return rev.hasUserReferencedRevision[postUserAddress];
+    }
+
 }

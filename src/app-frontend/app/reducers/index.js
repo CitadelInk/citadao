@@ -30,7 +30,11 @@ const {
   SET_AUTHORG_FOLLOWS_AUTHORGS,
   SET_AUTHORG_FOLLOWERS,
   SET_REVISION_TIME,
-  SET_REVISION_HASHES
+  SET_REVISION_HASHES,
+  SET_REVISION_REQUEST_RESPONSE_KEYS,
+  SET_REVISION_REQUEST_RESPONSE_RECEIPT,
+  SET_USER_RESPONSE_REQUESTS_CREATED,
+  SET_USER_RESPONSE_REQUESTS_RECEIVED
 } = actions;
 
 const network = (state = Map({
@@ -117,16 +121,20 @@ const bio = (state = {}, action) => {
   
   switch (action.type) {
     case SET_AUTHORG_INFO:
-      bioRevHash = action.data.bioRevisionHashes[action.data.bioLoadedIndex];
-      return Object.assign({}, state, {
-        revisions : bioRevisionHashes,
-        [bioRevHash]: Object.assign({}, state[bioRevHash], {
-          name : action.data.bioRevision.name,
-          text : action.data.bioRevision.text,
-          image : action.data.bioRevision.image,
-          timestamp : action.data.bioRevisionTimestamps[action.data.bioLoadedIndex]
+      if (action.data.bioRevisionTimestamps && action.data.bioRevisionTimestamps.length > 0) {
+        bioRevHash = action.data.bioRevisionHashes[action.data.bioLoadedIndex];
+        return Object.assign({}, state, {
+          revisions : bioRevisionHashes,
+          [bioRevHash]: Object.assign({}, state[bioRevHash], {
+            name : action.data.bioRevision.name,
+            text : action.data.bioRevision.text,
+            image : action.data.bioRevision.image,
+            timestamp : action.data.bioRevisionTimestamps[action.data.bioLoadedIndex]
+          })
         })
-      })
+      } else {
+        return state;
+      }
     case SET_AUTHORG_BIO_REVISION_REACTIONS:   
       return Object.assign({}, state, {        
         [bioRevHash]: Object.assign({}, state[bioRevHash], {
@@ -196,6 +204,38 @@ const revs = (state = {}, action) => {
           reactionCount: action.data.reactionCount
         })
       });
+    case SET_REVISION_REQUEST_RESPONSE_KEYS:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          requestResponseOfferers: action.data.requestResponseOfferers,
+          requestResponseRecipients: action.data.requestResponseRecipients
+        })
+      });
+    case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+      var offerer = action.data.offerer;
+      var recipient = action.data.recipient;
+
+      var stateOfferersToRecipients;
+      if(state[revHash]){ 
+        stateOfferersToRecipients = state[revHash].offerersToRecipients;
+      }
+      if (!stateOfferersToRecipients) {
+        stateOfferersToRecipients = Map();
+      }
+
+      if (!stateOfferersToRecipients[offerer]) {
+        stateOfferersToRecipients[offerer] = Map();
+      }
+
+      stateOfferersToRecipients[offerer][recipient] = action.data.receipt;
+
+
+
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          offerersToRecipients: stateOfferersToRecipients
+        })
+      });
     case SET_LOAD_STARTED:
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
@@ -255,6 +295,8 @@ const subs = (state = {}, action) => {
     case SET_LOAD_STARTED:
     case SET_REFERENCE:
     case SET_REVISION_HASHES:
+    case SET_REVISION_REQUEST_RESPONSE_KEYS:
+    case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
       if (!stateSub) {
@@ -286,6 +328,8 @@ const auths = (state = {}, action) => {
       case SET_LOAD_STARTED:
       case SET_REFERENCE:
       case SET_REVISION_HASHES:
+      case SET_REVISION_REQUEST_RESPONSE_KEYS:
+      case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
         return {
           ...state,
           [authAdd]: {
@@ -385,6 +429,22 @@ const auths = (state = {}, action) => {
             followers : [...followedAuth.followers, authAdd]
           }
         }
+      case SET_USER_RESPONSE_REQUESTS_RECEIVED:
+        return {
+          ...state,
+          [authAdd]: {
+            ...stateAuth,
+            responseRequestsReceivedKeys : action.data.requestsReceivedKeys
+          }
+        }
+        case SET_USER_RESPONSE_REQUESTS_CREATED:
+          return {
+            ...state,
+            [authAdd]: {
+              ...stateAuth,
+              responseRequestsCreatedKeys : action.data.requestsCreatedKeys
+            }
+          }
       default:
         return state;
     }

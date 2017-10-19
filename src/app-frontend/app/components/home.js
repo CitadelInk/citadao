@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import appContracts from 'app-contracts'
 import { connect } from 'react-redux';
 import Posts from './panels/posts';
+import UserResponseRequests from './panels/userResponseRequests';
 import EmptyLeft from './panels/emptyLeft';
 import EmptyRight from './panels/emptyRight';
 import ComposePanel from './compose/composePanel';
@@ -36,13 +37,21 @@ class Home extends Component {
 
 	render() {
 		var selectedIndex = this.props.wallet.get('selectedHomeTabIndex');
-		var tabNames = ["All Posts", "Stream"];
 
 		var followingAuthorgPostKeys = [];
-		var thisAccount = this.props.auths[this.props.wallet.get('account')];
+		var thisUserAccount = this.props.wallet.get('account');
+		var thisUser = this.props.auths[thisUserAccount];
 		var instance = this;
-		if (thisAccount) {
-			var following = thisAccount.authorgsFollowed;   
+		var bountiesCreatedCount = 0;
+		var bountiesReceivedCount = 0;
+		if (thisUser) {
+			if (thisUser.responseRequestsReceivedKeys) {
+				bountiesReceivedCount = thisUser.responseRequestsReceivedKeys.length;
+			}
+			if (thisUser.responseRequestsCreatedKeys) {
+				bountiesCreatedCount = thisUser.responseRequestsCreatedKeys.length;
+			}
+			var following = thisUser.authorgsFollowed;   
 			if (following) {
 				following.forEach(function(authorg) {
 					var followingAuthorg = instance.props.auths[authorg];
@@ -56,6 +65,8 @@ class Home extends Component {
 				})
 			}
 		}
+
+		var tabNames = ["All Posts", "Stream", "Bounties Received - " + bountiesReceivedCount, "Bounties Created - " + bountiesCreatedCount];
 		
 		return (
 			<div className={styles.page}>
@@ -72,7 +83,7 @@ class Home extends Component {
 									[styles.tab]:true,
 									[styles.tabSelected]: (index === selectedIndex)
 								})
-								return (<Tab  className={selected}>{name}</Tab>);
+								return (<Tab key={name} className={selected}>{name}</Tab>);
 							})
 						}
 							</div>
@@ -87,6 +98,12 @@ class Home extends Component {
 							<div className={styles.postList} ref={el => this.streamScrollDiv = el}>
 								<Posts postKeys={followingAuthorgPostKeys} onScroll={this.handleStreamScroll}/>	
 							</div>
+						</TabPanel>
+						<TabPanel>
+							<UserResponseRequests user={thisUserAccount} received />
+						</TabPanel>
+						<TabPanel>
+							<UserResponseRequests user={thisUserAccount} created />
 						</TabPanel>
 					</Tabs>	
 				</div>	

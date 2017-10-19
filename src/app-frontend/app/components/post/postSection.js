@@ -114,7 +114,6 @@ class PostSection extends Component {
 
 
 				if(authorg) {
-					console.log("index: " + index);
 					reference = {authorg:authorg, submission:submission, revision:revision, index:index}
 				}	
 				showActions = false;

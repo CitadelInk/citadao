@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './compose.css';
 import ComposeRichText from './composeRichText';
+import UserWidget from '../post/userWidget';
 
 class Compose extends Component {
 	constructor(props) {
@@ -28,6 +29,7 @@ class Compose extends Component {
 		var height = this.state.height - 170; //total height - header + tabs + name + file picker height
 		return(
 			<div className={styles.compose}>
+				<UserWidget authorg={this.props.wallet.get('account')}/>
 				<ComposeRichText height={height}/>
 			</div>
 		);

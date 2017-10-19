@@ -6,6 +6,7 @@ import styles from './postHeader.css';
 import { Link, push } from 'redux-little-router';
 import placeholder from '../../images/placeholderprof.jpg';
 import {State} from 'slate';
+import ResponseRequestModal from '../panels/responseRequestModal';
 
 const {
 	gotoUserPage,
@@ -39,6 +40,14 @@ class PostHeader extends Component {
 		var timestamp = this.props.timestamp;
 		var revText = "";
 
+		var currentUserAccount = this.props.wallet.get('account');
+		var currentUser = this.props.auths[currentUserAccount];
+		var currentUserFollowers;
+		var currentUserFollowingUsers;
+		var usersInPotentialResponseRequestList = new Set();
+
+		//console.log("usersInPotentialResponseRequestList: " + usersInPotentialResponseRequestList);
+
 		if (authorg) {
 
 			var submission;
@@ -48,7 +57,10 @@ class PostHeader extends Component {
 			var notFirst = false;
 			var notLast = false;
 			var canRevise = false;
+			var canRequestResponse = false;
 			var revHash;
+			var text;
+			var responseMap;
 
 			if (this.props.bio) {
 				submission = authorg.bioSubmission;
@@ -82,14 +94,73 @@ class PostHeader extends Component {
 
 					if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
 						canRevise = true;
+					} else if(!this.props.embeded) {
+						canRequestResponse = true;
 					}
 
-					if (!timestamp) {
-						var revision = revisions[revisionHashes[index]];
-						if (revision) {
+					var revision = revisions[revisionHashes[index]];
+					if (revision) {
+
+
+						if (!timestamp) {
 							timestamp = revision.timestamp;
 						}
+
+						if (this.props.focusedPost && revision.text) {
+							if (currentUser) {
+								currentUserFollowers = currentUser.followers;
+								currentUserFollowingUsers = currentUser.authorgsFollowed;
+								if (currentUserFollowers) {
+									//usersInPotentialResponseRequestList.push(...currentUserFollowers);
+									currentUserFollowers.forEach((user) => {
+										usersInPotentialResponseRequestList.add(user);
+									});
+								}
+								if (currentUserFollowingUsers) {
+									//usersInPotentialResponseRequestList.push(...currentUserFollowingUsers);
+									currentUserFollowingUsers.forEach((user) => {
+										usersInPotentialResponseRequestList.add(user);
+									});
+								}
+							}
+
+							text = revision.text;
+							if (text) {
+							var state = State.fromJSON(text);
+								if (state.document && state.document.nodes) {
+									
+									var instance = this;
+
+									//console.log("nodes size: " + state.document.nodes.size);
+									state.document.nodes.map((section, i) => {
+									//	console.log("check section - section: " + section)
+										var refAuthorg = section.data.get("authorg");							
+						
+										if(refAuthorg) {
+											//console.log("refAuthorg: " + refAuthorg);
+											usersInPotentialResponseRequestList.add(refAuthorg);
+										}	
+									});
+								}
+							}
+
+
+							if (revision.sectionRefKeyMap) {
+								responseMap = revision.sectionRefKeyMap;
+							}
+							if (revision.refKeys) {
+								revision.refKeys.forEach(function(value) {
+									console.log("ref key map value.authorgAddress - " + value.authAdd);
+									usersInPotentialResponseRequestList.delete(value.authAdd);
+								})
+							}
+						}
 					}
+					
+
+					usersInPotentialResponseRequestList.delete(this.props.wallet.get('account'));
+
+					//console.log("map of users: " + usersInPotentialResponseRequestList)
 
 
 					if(authorg.bioSubmission) {
@@ -180,15 +251,17 @@ class PostHeader extends Component {
 						</span><br/>
 						<span className={timeStyle}>{time}</span>
 						<div className={styles.revInfoDiv}>
+							{ canRevise && <FlatButton onClick={this.onReviseClicked} label="REVISE"/>}
 							{ (this.props.focusedPost && notFirst) && <div className={styles.arrow}><span onClick={this.navigatePreviousRev} className="material-icons">navigate_before</span></div>}
 							<span className={styles.revText}>{revText}</span>
 							{ (this.props.focusedPost && notLast) && <span onClick={this.navigateNextRev} className="material-icons">navigate_next</span>}
 						</div>
 					</div>
 				</div>
+	
 				<div className={styles.reviseDiv}>
-					{ canRevise && <FlatButton onClick={this.onReviseClicked} label="REVISE"/>}
-				</div>				
+					{ canRequestResponse && <ResponseRequestModal users={usersInPotentialResponseRequestList} postAuthorg={this.props.authorg} postSubmission={this.props.submission} postRevision={this.props.revision}/>}
+				</div>			
 				<div className={infoTextDiv}>
 					<span className={styles.infoText} onClick={this.infoButtonClicked}>{detailText}</span>
 				</div>

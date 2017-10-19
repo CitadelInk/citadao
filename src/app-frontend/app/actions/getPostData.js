@@ -26,6 +26,12 @@ import {
   setWalletData
 } from './contractPublicData'
 
+import {
+  loadPostResponseRequests,
+  loadResponseRequestsCreated,
+  loadResponseRequestsReceived
+} from './responseRequestActions'
+
 export const ADD_POST_KEY = "ADD_POST_KEY";
 export const addPostKey = (authorgAddress, submissionHash, revisionHash, timestamp) => {
   return {
@@ -235,22 +241,20 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
                                   result.revisionSwarmText))
     var document = State.fromJSON(result.revisionSwarmText)
     if(document) {
-      document.document.nodes.forEach(function(section) {    
-          try {
-            var json = JSON.parse(section.text);
-            if(json) {
-              if(json.reference) {
-                dispatch(setReference(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, authorgAddress, submissionHash, revisionHash, json.reference.sectionIndex));
-                if (firstLevel) {
-                  dispatch(loadPost(json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, json.reference.timestamp, -1, false));
-                }
-              }
-            }
-          } catch (e) {
-            //console.error("error while loading: " + e);
-          }
-        })       
-      }      
+      document.document.nodes.forEach(function(section) {   
+        var refAuthorg = section.data.get("authorg");
+        var refSubmission = section.data.get("submission");
+        var refRevision = section.data.get("revision");
+        var index = section.data.get("index");
+        if(refAuthorg && refSubmission && refRevision) {
+          dispatch(setReference(refAuthorg, refSubmission, refRevision, authorgAddress, submissionHash, revisionHash, index));
+          if (firstLevel) {
+            dispatch(loadPost(refAuthorg, refSubmission, refRevision, undefined, -1, false));
+          }              
+        }
+
+      })       
+    }      
 
       dispatch(loadUserData(authorgAddress));
       getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
@@ -266,6 +270,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
       })
       dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
       dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash));
+      dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash))
     })
   }
 }
@@ -283,7 +288,6 @@ export const getReactions = (authorgAddress, submissionHash, revisionHash, appro
 }
 
 export const loadAuthorgBioReactions = (authorgAddress, revisionHash, approvedAuthorgReactions) => (dispatch) => {
-  console.log("loadAuthorgBioReactions");
   getAuthorgBioReactions(authorgAddress, revisionHash, approvedAuthorgReactions).then((reactions) => {
     dispatch(setAuthorgBioRevisionReactions(authorgAddress, revisionHash, reactions.revisionReactionReactors))
   })
@@ -327,6 +331,8 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
           })
         }
       })
+      dispatch(loadResponseRequestsCreated(authorgAddress));
+      dispatch(loadResponseRequestsReceived(authorgAddress));
     }
   }
 }
