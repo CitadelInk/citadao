@@ -4,6 +4,7 @@ import getPostData from './getPostData';
 import setPostData from './setPostData';
 import setupWeb3 from './networkActions';
 import router from './routerActions';
+import responseRequestActions from './responseRequestActions';
 
 export default {
   ...uiActions,
@@ -11,5 +12,6 @@ export default {
   ...getPostData,
   ...setPostData,
   ...setupWeb3,
-  ...router
+  ...router,
+  ...responseRequestActions
 };

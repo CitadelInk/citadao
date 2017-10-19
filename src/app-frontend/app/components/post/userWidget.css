@@ -3,6 +3,10 @@
   background-color:#B0E0E6;
 }
 
+.secondaryDiv {
+  background-color:#BCE7A8;
+}
+
 .basicInfo {
   display:flex;
 }

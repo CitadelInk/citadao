@@ -1,0 +1,15 @@
+.style {
+	background:#FFFFFF;
+	position:relative;
+	width:90%;
+	margin-left:auto;
+	margin-right:auto;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+
+.embededPostStyle {
+	position:relative;
+	margin:5px;
+	border: 1px solid gray;
+}
