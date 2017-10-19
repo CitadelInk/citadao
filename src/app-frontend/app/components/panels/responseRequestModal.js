@@ -40,7 +40,7 @@ class ResponseRequestModal extends Component {
 	}
 
 	handleClose(e) {
-		this.setState({open: false});
+		this.setState({open: false, innerOpen: false});
 	};
 
 	handleSubmit(e) {
@@ -68,7 +68,7 @@ class ResponseRequestModal extends Component {
 		var users;
 		if(this.props.users){
 			var instance = this;
-			users = this.props.users.map(function(key) {
+			users = Array.from(this.props.users.values()).map(function(key) {
 				return (<UserWidget key={key} authorg={key} value={key} onClick={instance.setPickedUser}/>)
 			})
 		}
@@ -85,7 +85,7 @@ class ResponseRequestModal extends Component {
 
 		return (
 			<div>
-			<FlatButton label="Request Response" onClick={this.handleOpen} />
+			<span onClick={this.handleOpen} >Request Response</span>
 			<Dialog
 				title="Request Response to Post"
 				actions={actions}
@@ -95,16 +95,16 @@ class ResponseRequestModal extends Component {
 			>
 			<div>
 				{ this.state.selectedUser && <UserWidget key={this.state.selectedUser} authorg={this.state.selectedUser} />}
-				{ this.state.selectedUser && <TextField hintText="" id="selectedUserBountyValue" value={this.state.bountyValue} onChange={this.handleBountyValueChanged}/>}
+				{ this.state.selectedUser && <TextField floatingLabelText="Bounty in ETH" id="selectedUserBountyValue" value={this.state.bountyValue} onChange={this.handleBountyValueChanged}/>}
 				<FlatButton label="Pick User" onClick={this.handleInnerOpen} />
 				<Dialog
 					title="Pick user to ask for response"
-					actions={actions}
 					modal={false}
 					open={this.state.innerOpen}
 					onRequestClose={this.handleClose}
 				>
 					<div>
+						This list includes users you follow, users that follow you, and users mentioned in the post.
 						{users}		
 					</div>
 				</Dialog>

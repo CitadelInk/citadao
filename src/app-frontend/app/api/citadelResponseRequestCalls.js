@@ -4,9 +4,9 @@ export const requestResponse = (account, recipientUser, postUser, postSubmission
   return new Promise((res, rej) => {
     appContracts.CitadelResponseRequest.deployed()
     .then((instance) => {
-      instance.submitResponseRequest.sendTransaction(recipientUser, postUser, postSubmission, postRevision, {from : account, value : bounty, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
-        //var followEvent = instance.AuthorgFollowed({_authorgFollowed : authorg, _follower : account});
-        res({tx_id/*, followEvent*/})    
+      instance.submitResponseRequest.sendTransaction(recipientUser, postUser, postSubmission, postRevision, {from : account, value : bounty, gas : 1000000, gasPrice : 1000000000}).then((tx_id) => {
+        var event = instance.ResponseRequestCreated({_offererUser : account, _recipientUser : recipientUser});
+        res({tx_id, event})    
       });
     });
   });
@@ -16,9 +16,21 @@ export const collectBounty = (account, offererUser, postUser, postSubmission, po
   return new Promise((res, rej) => {
     appContracts.CitadelResponseRequest.deployed()
     .then((instance) => {
-      instance.collectResponseRequestBounty.sendTransaction(offererUser, postUser, postSubmission, postRevision, {from : account, gas : 3000000, gasPrice : 1000000000}).then((tx_id) => {
-        //var followEvent = instance.AuthorgFollowed({_authorgFollowed : authorg, _follower : account});
-        res({tx_id/*, followEvent*/})    
+      instance.collectResponseRequestBounty.sendTransaction(offererUser, postUser, postSubmission, postRevision, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+        var event = instance.ResponseRequestBountyCollected({_offererUser : offererUser, _recipientUser : account});
+        res({tx_id, event})    
+      });
+    });
+  });
+} 
+
+export const withdrawBounty = (account, recipientUser, postUser, postSubmission, postRevision) => {
+  return new Promise((res, rej) => {
+    appContracts.CitadelResponseRequest.deployed()
+    .then((instance) => {
+      instance.refundResponseRequestBounty.sendTransaction(recipientUser, postUser, postSubmission, postRevision, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+        var event = instance.ResponseRequestBountyRefunded({_offererUser : account, _recipientUser : recipientUser});
+        res({tx_id, event})    
       });
     });
   });
@@ -73,7 +85,7 @@ export const getResponseRequestReceipt = (postUser, postSubmission, postRevision
     appContracts.CitadelResponseRequest.deployed()
     .then((instance) => {
       instance.getReceipt(postUser, postSubmission, postRevision, offererUser, recipientUser).then((result) => {
-        res({exists : result[0], timestamp : result[1], bounty : result[2], collected : result[3]});
+        res({exists : result[0], timestamp : result[1], bounty : result[2], collected : result[3], completed : result[4], withdrawn : result[5]});
       })
     })
   })

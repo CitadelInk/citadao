@@ -6,10 +6,15 @@ import {
   getPostResponseRequestOfferers,
   getResponseRequestReceipt,
   collectBounty,
+  withdrawBounty,
   checkUserReferenceAgainstPost,
   checkCitadelUserReferenceAgainstPost,
   getCitadelResponseRequestInkAddress
 } from '../api/citadelResponseRequestCalls'
+
+import {
+  loadPost
+} from './getPostData'
 
 
 export const SET_REVISION_REQUEST_RESPONSE_KEYS = "SET_REVISION_REQUEST_RESPONSE_KEYS";
@@ -21,11 +26,10 @@ export const setRevisionRequestResponseKeys = (authAdd, subHash, revHash, reques
 }
 
 export const SET_REVISION_REQUEST_RESPONSE_RECEIPT = "SET_REVISION_REQUEST_RESPONSE_RECEIPT";
-export const setRevisionResponseRequestReceipt = (authAdd, subHash, revHash, offerer, recipient, exists, timestamp, bounty, collected) => {
-  console.log("1 set revision resonse request receipt")
+export const setRevisionResponseRequestReceipt = (authAdd, subHash, revHash, offerer, recipient, exists, timestamp, bounty, collected, completed, withdrawn) => {
   return {
     type: SET_REVISION_REQUEST_RESPONSE_RECEIPT,
-    data: {authAdd, subHash, revHash, offerer, recipient, receipt: {exists, timestamp, bounty, collected}}
+    data: {authAdd, subHash, revHash, offerer, recipient, receipt: {exists, timestamp, bounty, collected, completed, withdrawn}}
   }
 }
 
@@ -35,32 +39,23 @@ export const submitResponseRequest = (recipientUser, postUser, postSubmission, p
   if (!account) {
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
-    console.log("lets send this shit. recipientUser: " + recipientUser);
-    console.log("lets send this shit. postUser: " + postUser);
-    console.log("lets send this shit. postSubmission: " + postSubmission);
-    console.log("lets send this shit. postRevision: " + postRevision);
-    console.log("lets send this shit. bountyValue: " + bountyValue);
-
-
     var convertedBounty = web3.toWei(bountyValue, "ether");
 
     return requestResponse(account, recipientUser, postUser, postSubmission, postRevision, convertedBounty).then(function(resulty) {
-      /*var hasReloaded = false;
-      resulty.reactionEvent.watch(function(error,result){
+      var hasReloaded = false;
+      resulty.event.watch(function(error,result){
         if (!error && result.transactionHash === resulty.tx_id) {
-          dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions));
+          dispatch(loadPost(postUser, postSubmission, postRevision, undefined, true, true));
           hasReloaded = true;
         }
       });
       setTimeout(function() {
         if (!hasReloaded) {
-          dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions));
+          dispatch(loadPost(postUser, postSubmission, postRevision, undefined, true, true));
         }
       }, 3000);
     }).catch(function(e) {
       console.error("error - " + e);
-    });*/
-    console.log("request response resulty: " + resulty);
     });
   }
 }
@@ -72,22 +67,45 @@ export const collectResponseRequestBounty = (offererUser, postUser, postSubmissi
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
     return collectBounty(account, offererUser, postUser, postSubmission, postRevision).then(function(resulty) {
-      /*var hasReloaded = false;
-      resulty.reactionEvent.watch(function(error,result){
+      var hasReloaded = false;
+      resulty.event.watch(function(error,result){
         if (!error && result.transactionHash === resulty.tx_id) {
-          dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions));
+          dispatch(loadRequestResponse(postUser, postSubmission, postRevision, offererUser, account));
           hasReloaded = true;
         }
       });
       setTimeout(function() {
         if (!hasReloaded) {
-          dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions));
+          dispatch(loadRequestResponse(postUser, postSubmission, postRevision, offererUser, account));
         }
       }, 3000);
     }).catch(function(e) {
       console.error("error - " + e);
-    });*/
-    console.log("request response resulty: " + resulty);
+    });
+  }
+}
+
+export const withdrawResponseRequestBounty = (recipientUser, postUser, postSubmission, postRevision) => (dispatch, getState) => {
+  const {wallet} = getState().core;
+  const account = wallet.get('account');
+  if (!account) {
+    alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
+  } else {
+    return withdrawBounty(account, recipientUser, postUser, postSubmission, postRevision).then(function(resulty) {
+      var hasReloaded = false;
+      resulty.event.watch(function(error,result){
+        if (!error && result.transactionHash === resulty.tx_id) {
+          dispatch(loadRequestResponse(postUser, postSubmission, postRevision, account, recipientUser));
+          hasReloaded = true;
+        }
+      });
+      setTimeout(function() {
+        if (!hasReloaded) {
+          dispatch(loadRequestResponse(postUser, postSubmission, postRevision, account, recipientUser));
+        }
+      }, 3000);
+    }).catch(function(e) {
+      console.error("error - " + e);
     });
   }
 }
@@ -124,9 +142,13 @@ export const loadPostResponseRequests = (postUser, postSubmission, postRevision)
   })
 }
 
-export const loadRequestResponse = (postUser, postSubmission, postRevision, offerer, recipient) => (dispatch) => {
+export const loadRequestResponse = (postUser, postSubmission, postRevision, offerer, recipient) => (dispatch, getState) => {
+  const {network, wallet} = getState().core;
+  var account = wallet.get('account');
   getResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient).then((result) => {
-    dispatch(setRevisionResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient, result.exists, result.timestamp, result.bounty, result.collected))
+    var convertedBounty = network.web3.fromWei(result.bounty, "ether");
+    console.log("converted bounty = " + convertedBounty);
+    dispatch(setRevisionResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient, result.exists, result.timestamp, convertedBounty, result.collected, result.completed, result.withdrawn))
   })
 }
 
@@ -135,6 +157,7 @@ export default {
   submitResponseRequest,
   loadPostResponseRequests,
   collectResponseRequestBounty,
+  withdrawResponseRequestBounty,
   checkIfUserReferencesPost,
   checkCitadelIfUserReferencesPost,
   checkCitadelResponseRequestInkAddress,
