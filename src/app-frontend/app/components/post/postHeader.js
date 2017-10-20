@@ -150,7 +150,6 @@ class PostHeader extends Component {
 							}
 							if (revision.refKeys) {
 								revision.refKeys.forEach(function(value) {
-									console.log("ref key map value.authorgAddress - " + value.authAdd);
 									usersInPotentialResponseRequestList.delete(value.authAdd);
 								})
 							}
@@ -167,7 +166,7 @@ class PostHeader extends Component {
 						var bioSubmission = authorg.bioSubmission;
 						var bioRevHashes = bioSubmission.revisions;
 						revHash = "1";
-						if (bioRevHashes.length > 0) {
+						if (bioRevHashes && bioRevHashes.length > 0) {
 							revHash = bioRevHashes[bioRevHashes.length - 1];
 						}
 						if (this.props.bio) {
@@ -326,9 +325,12 @@ class PostHeader extends Component {
 	getRevision() {
 		var submission = this.getSubmission();
 		var revisionHashes = this.getRevisionHashes();
-		var index = revisionHashes.length - 1;
-		if(this.props.revision) {
-			index = revisionHashes.indexOf(this.props.revision)
+		var index;
+		if (revisionHashes) {
+			index = revisionHashes.length - 1;
+			if(this.props.revision) {
+				index = revisionHashes.indexOf(this.props.revision)
+			}
 		}
 
 		return submission.revisions[revisionHashes[index]];		
