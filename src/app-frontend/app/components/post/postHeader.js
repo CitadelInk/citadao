@@ -94,7 +94,8 @@ class PostHeader extends Component {
 
 					if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
 						canRevise = true;
-					} else if(!this.props.embeded) {
+					} 
+					if(!this.props.embeded) {
 						canRequestResponse = true;
 					}
 
