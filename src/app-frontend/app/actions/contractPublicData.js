@@ -198,7 +198,7 @@ export const giveEther = (amount, callback) => (dispatch, getState) => {
   var url = network.web3.currentProvider.host;
   // hacky bullshit!!!
   if (url == undefined) {
-    url = window.location.href.replace("8080", "8545")
+    url = window.location.href.replace(".ink", ".ink:8545")
   }
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-type", "application/json");
