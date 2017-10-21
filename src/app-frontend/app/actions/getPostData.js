@@ -233,30 +233,30 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
       dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
     }
     dispatch(addPostKey(authorgAddress, submissionHash, revisionHash, timestamp));
+    dispatch(loadUserData(authorgAddress));
     return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
-    dispatch(setRevisionSwarmData(authorgAddress, 
-                                  submissionHash, 
-                                  revisionHash, 
-                                  result.revisionSwarmTitle, 
-                                  result.revisionSwarmText))
-    var document = State.fromJSON(result.revisionSwarmText)
-    if(document) {
-      document.document.nodes.forEach(function(section) {   
-        var refAuthorg = section.data.get("authorg");
-        var refSubmission = section.data.get("submission");
-        var refRevision = section.data.get("revision");
-        var index = section.data.get("index");
-        if(refAuthorg && refSubmission && refRevision) {
-          dispatch(setReference(refAuthorg, refSubmission, refRevision, authorgAddress, submissionHash, revisionHash, index));
-          if (firstLevel) {
-            dispatch(loadPost(refAuthorg, refSubmission, refRevision, undefined, -1, false));
-          }              
-        }
+      dispatch(setRevisionSwarmData(authorgAddress, 
+                                    submissionHash, 
+                                    revisionHash, 
+                                    result.revisionSwarmTitle, 
+                                    result.revisionSwarmText))
+        var document = State.fromJSON(result.revisionSwarmText)
+        if(document) {
+          document.document.nodes.forEach(function(section) {   
+            var refAuthorg = section.data.get("authorg");
+            var refSubmission = section.data.get("submission");
+            var refRevision = section.data.get("revision");
+            var index = section.data.get("index");
+            if(refAuthorg && refSubmission && refRevision) {
+              dispatch(setReference(refAuthorg, refSubmission, refRevision, authorgAddress, submissionHash, revisionHash, index));
+              if (firstLevel) {
+                dispatch(loadPost(refAuthorg, refSubmission, refRevision, undefined, -1, false));
+              }              
+            }
 
-      })       
-    }      
+          })       
+        }      
 
-      dispatch(loadUserData(authorgAddress));
       getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
         dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
         if (focusedPost) {
@@ -270,7 +270,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
       })
       dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
       dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash));
-      dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash))
+      dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash));
     })
   }
 }

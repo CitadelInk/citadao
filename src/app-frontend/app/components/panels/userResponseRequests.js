@@ -23,39 +23,41 @@ class UserResponseRequests extends Component {
 		var posts;
 
 		//console.log("user response requests.")
-		if (this.props.received) {
+		if (user) {
+			if (this.props.received) {
 
-			var receipts = user.responseRequestsReceivedKeys;
-			
-			if (receipts){
-				posts = receipts.map(function(key, index) {
-					var key2 = key + "-" + key.offerer + "-" + key.postUser + "-" + key.postSubmission + "-" + key.postRevision;
-					return (<ResponseRequestWidgetContainer 
-							showPost={true}
-							key={key2} 
-							postUser={key.postUser} 
-							postSubmission={key.postSubmission} 
-							postRevision={key.postRevision} 
-							offerer={key.offerer}
-							recipient={userAccount}/>)
-				})
-			}
-		} else {
+				var receipts = user.responseRequestsReceivedKeys;
+				
+				if (receipts){
+					posts = receipts.map(function(key, index) {
+						var key2 = key + "-" + key.offerer + "-" + key.postUser + "-" + key.postSubmission + "-" + key.postRevision;
+						return (<ResponseRequestWidgetContainer 
+								showPost={true}
+								key={key2} 
+								postUser={key.postUser} 
+								postSubmission={key.postSubmission} 
+								postRevision={key.postRevision} 
+								offerer={key.offerer}
+								recipient={userAccount}/>)
+					})
+				}
+			} else  {
 
-			var receipts = user.responseRequestsCreatedKeys;
-			
-			if (receipts){
-				posts = receipts.map(function(key, index) {
-					var key2 = key.recipient + "-" + key.postUser + "-" + key.postSubmission + "-" + key.postRevision + "-" + userAccount;
-					return (<ResponseRequestWidgetContainer 
-							showPost={true}
-							key={key2} 
-							postUser={key.postUser} 
-							postSubmission={key.postSubmission} 
-							postRevision={key.postRevision} 
-							offerer={userAccount}
-							recipient={key.recipient}/>)
-				})
+				var receipts = user.responseRequestsCreatedKeys;
+				
+				if (receipts){
+					posts = receipts.map(function(key, index) {
+						var key2 = key.recipient + "-" + key.postUser + "-" + key.postSubmission + "-" + key.postRevision + "-" + userAccount;
+						return (<ResponseRequestWidgetContainer 
+								showPost={true}
+								key={key2} 
+								postUser={key.postUser} 
+								postSubmission={key.postSubmission} 
+								postRevision={key.postRevision} 
+								offerer={userAccount}
+								recipient={key.recipient}/>)
+					})
+				}
 			}
 		}
 		return (

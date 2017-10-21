@@ -32,7 +32,7 @@ class PostWidgetContainer extends Component {
 	
 	widgetClicked(e) {
 		this.props.dispatch(
-			push("/post/authorg/" + this.props.authorg + "/sub/" + this.props.submission + "/rev/" + this.props.revision)
+			gotoPost(this.props.authorg, this.props.submission, this.props.revision)
 		);
 		e.stopPropagation();
 	}
