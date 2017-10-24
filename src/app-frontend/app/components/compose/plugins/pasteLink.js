@@ -1,4 +1,3 @@
-import isUrl from 'is-url'
 import toPascal from 'to-pascal-case'
 
 /**
@@ -10,6 +9,10 @@ import toPascal from 'to-pascal-case'
  *   @property {String} collapseTo
  * @return {Object}
  */
+
+var matcher = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
+
+
 
 function PasteLink(options = {}) {
   const {
@@ -36,8 +39,9 @@ function PasteLink(options = {}) {
     onPaste(e, paste, change) {
       const { state } = change
       if (paste.type !== 'text' && paste.type !== 'html') return
-      if (!isUrl(paste.text)) return
-      console.log("yes is paste");
+      console.log("paste.text: " + paste.text);
+      console.log("matcher.text(paste.text): " + matcher.test(paste.text));
+      if (!matcher.test(paste.text)) return
       const { text } = paste
 
       if (state.isCollapsed) {
