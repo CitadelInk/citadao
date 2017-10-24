@@ -230,7 +230,6 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
     } else {
       dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
     }
-    dispatch(addPostKey(authorgAddress, submissionHash, revisionHash, timestamp));
     dispatch(loadUserData(authorgAddress));
     getRevisionFromSwarm(revisionHash, network.web3).then(result => {
       dispatch(setRevisionSwarmData(authorgAddress, 
@@ -384,6 +383,7 @@ export const getNext10Posts = () => (dispatch, getState) => {
   for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
     var index = totalPostCount - i - 1;
     getPostKey(index).then((result) => {
+      dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));
       dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp))
       
     })
