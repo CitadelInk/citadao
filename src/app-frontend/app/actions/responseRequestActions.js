@@ -153,6 +153,7 @@ export const loadPostResponseRequests = (postUser, postSubmission, postRevision)
     if (result.offerers && result.recipients && result.offerers.length === result.recipients.length) {
       dispatch(setRevisionRequestResponseKeys(postUser, postSubmission, postRevision, result.offerers, result.recipients));
       for(var i = 0; i < result.offerers.length; i++) {
+        //console.log("dispatch load. postUser: " + postUser + " - offerer: " + result.offerers[i]);
         dispatch(loadRequestResponse(postUser, postSubmission, postRevision, result.offerers[i], result.recipients[i]));
       }
     }
@@ -160,10 +161,12 @@ export const loadPostResponseRequests = (postUser, postSubmission, postRevision)
 }
 
 export const loadRequestResponse = (postUser, postSubmission, postRevision, offerer, recipient) => (dispatch, getState) => {
+  //console.log("loadRequestResponse - postRev: " + postRevision + " - offerer: " + offerer);
   const {network, wallet} = getState().core;
   var account = wallet.get('account');
   getResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient).then((result) => {
     var convertedBounty = network.web3.fromWei(result.bounty, "ether");
+    //console.log("bounty: " + convertedBounty);
     dispatch(setRevisionResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient, result.exists, result.timestamp, convertedBounty, result.collected, result.completed, result.withdrawn))
     dispatch(loadUserData(offerer));
     dispatch(loadUserData(recipient));
@@ -179,7 +182,7 @@ export const loadResponseRequestsReceived = (user) => (dispatch) => {
       receiptKeys.push(key);
       dispatch(loadRequestResponse(result.postUsers[i], result.postSubmissions[i], result.postRevisions[i], result.offerers[i], user));
     }
-    dispatch(setUserResponseRequestsReceived(user, receiptKeys));
+    dispatch(setUserResponseRequestsReceived(user, receiptKeys.reverse()));
   })
 }
 
@@ -191,7 +194,7 @@ export const loadResponseRequestsCreated = (user) => (dispatch) => {
       receiptKeys.push(key);
       dispatch(loadRequestResponse(result.postUsers[i], result.postSubmissions[i], result.postRevisions[i], user, result.recipients[i]));
     }
-    dispatch(setUserResponseRequestsCreated(user, receiptKeys));
+    dispatch(setUserResponseRequestsCreated(user, receiptKeys.reverse()));
   })
 }
 
