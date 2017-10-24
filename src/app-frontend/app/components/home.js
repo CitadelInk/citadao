@@ -100,10 +100,14 @@ class Home extends Component {
 							</div>
 						</TabPanel>
 						<TabPanel>
-							<UserResponseRequests user={thisUserAccount} received />
+							<div className={styles.postList} >
+								<UserResponseRequests user={thisUserAccount} received />
+							</div>
 						</TabPanel>
 						<TabPanel>
-							<UserResponseRequests user={thisUserAccount} created />
+						<div className={styles.postList} >
+								<UserResponseRequests user={thisUserAccount} created />
+							</div>
 						</TabPanel>
 					</Tabs>	
 				</div>	
