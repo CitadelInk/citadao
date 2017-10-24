@@ -73,11 +73,10 @@ class ResponseRequestWidgetContainer extends Component {
 					if (revisionsData) {
 						var revisionData = revisionsData[this.props.postRevision];
 						if (revisionData) {
-							//timestamp = revisionData.timestamp;
 							if (revisionData.offerersToRecipients) {
-								var recipientMap = revisionData.offerersToRecipients[this.props.offerer];
+								var recipientMap = revisionData.offerersToRecipients.get(this.props.offerer);
 								if (recipientMap) {
-									var receipt = recipientMap[this.props.recipient];
+									var receipt = recipientMap.get(this.props.recipient);
 									if (receipt) {
 										exists = receipt.exists;
 										bounty = receipt.bounty + "";

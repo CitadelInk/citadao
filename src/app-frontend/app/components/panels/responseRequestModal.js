@@ -40,7 +40,7 @@ class ResponseRequestModal extends Component {
 	}
 
 	handleClose(e) {
-		this.setState({open: false, innerOpen: false});
+		this.setState({open: false, innerOpen: false, selectedUser: undefined, bountyValue: .01});
 	};
 
 	handleSubmit(e) {
