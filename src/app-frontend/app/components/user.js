@@ -41,7 +41,7 @@ class User extends Component {
 		const user = this.props.router.params["account"];
 		const auth = this.props.auths[user];
 
-		const usingUser = this.props.wallet.get('user');
+		const usingUser = this.props.wallet.get('account');
 		const usingAuth = this.props.auths[usingUser];
 		var flabel = "";
 		var followButton;
@@ -63,10 +63,10 @@ class User extends Component {
 
 		if (followers) {
 			if (user && !followers || (followers && !followers.includes(usingUser))) {
-				flabel = "Follow " + user;
+				flabel = "Follow User";
 				followButton = <RaisedButton secondary label={flabel} onClick={this.onFollowClicked}/>;
 			} else if (user && followedUsers) {
-				flabel = "Following " + user;
+				flabel = "Following User";
 				followButton = <RaisedButton disabled label={flabel}/>;
 			}
 		}
@@ -102,7 +102,7 @@ class User extends Component {
 				</div>
 
 				<div className={styles.posts} ref={el => this.scrollDiv = el}>
-					{showButton && followButton}<br/>
+					{showButton && <center>{followButton}</center>}
 					<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedUserTabIndex : tabIndex}))}>
 						<TabList className={styles.tabList} >
 							<div className={styles.tabListDiv}>

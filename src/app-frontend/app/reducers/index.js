@@ -220,15 +220,15 @@ const revs = (state = {}, action) => {
         stateOfferersToRecipients = state[revHash].offerersToRecipients;
       }
       if (!stateOfferersToRecipients) {
-        stateOfferersToRecipients = Map();
+        stateOfferersToRecipients = new Map();
       }
 
-      if (!stateOfferersToRecipients[offerer]) {
-        stateOfferersToRecipients[offerer] = Map();
+      var offererOffers = stateOfferersToRecipients.get(offerer);
+      if (!offererOffers) {
+        offererOffers = new Map();
       }
-
-      stateOfferersToRecipients[offerer][recipient] = action.data.receipt;
-
+      offererOffers = offererOffers.set(recipient, action.data.receipt);
+      stateOfferersToRecipients = stateOfferersToRecipients.set(offerer, offererOffers);
 
 
       return Object.assign({}, state, {

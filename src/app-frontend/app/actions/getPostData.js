@@ -213,9 +213,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
         if (revisionsData) {
           var revisionData = revisionsData[revisionHash];
           if (revisionData && revisionData.loadStarted) {
-            if (!focusedPost) { // ok to reload focusedPost again to get the new goodies
               alreadyLoaded = true;
-            } 
           }
         }					
       }			
@@ -234,7 +232,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
     }
     dispatch(addPostKey(authorgAddress, submissionHash, revisionHash, timestamp));
     dispatch(loadUserData(authorgAddress));
-    return getRevisionFromSwarm(revisionHash, network.web3).then(result => {
+    getRevisionFromSwarm(revisionHash, network.web3).then(result => {
       dispatch(setRevisionSwarmData(authorgAddress, 
                                     submissionHash, 
                                     revisionHash, 
@@ -255,24 +253,25 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
             }
 
           })       
-        }      
-
-      getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
-        dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
-        if (focusedPost) {
-          for(var i = 0; i < refs.count; i++) {
-            getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
-              dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
-              dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, false));
-            })
-          }
-        }
+        }     
       })
-      dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
-      dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash));
-      dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash));
+  } 
+  if (!alreadyLoaded || focusedPost) {
+    getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
+      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
+      if (focusedPost) {
+        for(var i = 0; i < refs.count; i++) {
+          getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
+            dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
+            dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, false));
+          })
+        }
+        dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash));
+      }
     })
-  }
+    dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
+    dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash));
+  }  
 }
 
 export const loadSubmissionRevisionHashList = (authorgAddress, submissionHash) => (dispatch) => {
