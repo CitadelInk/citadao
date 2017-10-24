@@ -96,7 +96,7 @@ class Header extends Component {
 			<span><Link 
 				href = {"/user/" + account}
 				onClick = {this.gotoAccountPageClicked}
-			><u>View This Account</u></Link> - </span>
+			><u>View This Account</u></Link></span>
 		);
 		/*const gotoDebugPage = (
 			<span><Link href="/debug"><u>View Debug Page</u></Link></span>

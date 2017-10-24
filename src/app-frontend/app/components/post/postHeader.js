@@ -95,7 +95,7 @@ class PostHeader extends Component {
 					if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
 						canRevise = true;
 					} 
-					if(this.props.focusedPost) {
+					if(this.props.focusedPost && !this.props.bio) {
 						canRequestResponse = true;
 					}
 
@@ -151,6 +151,7 @@ class PostHeader extends Component {
 							}
 							if (revision.refKeys) {
 								revision.refKeys.forEach(function(value) {
+									console.log("remove user from potential response request list: " + value.authAdd);
 									usersInPotentialResponseRequestList.delete(value.authAdd);
 								})
 							}
@@ -159,6 +160,7 @@ class PostHeader extends Component {
 					
 
 					usersInPotentialResponseRequestList.delete(this.props.wallet.get('account'));
+					usersInPotentialResponseRequestList.delete(this.props.authorg);
 
 					//console.log("map of users: " + usersInPotentialResponseRequestList)
 
