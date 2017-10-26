@@ -22,9 +22,9 @@ class GraphVisualization extends Component{
       case 2:
         return 10;
       case 3:
-        return 19;
+        return 15;
       case 4:
-        return 27;
+        return 37;
     }
   }
   render() {

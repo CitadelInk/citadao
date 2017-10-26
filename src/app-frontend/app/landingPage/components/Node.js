@@ -28,7 +28,6 @@ class Node extends Component{
     return <g>
       {surrounding}
       <circle className={styles.node} cx={this.props.x} cy={this.props.y} r="3"/>
-      <text className={styles.text} x={this.props.x} y={this.props.y}>{this.props.index}</text>
     </g>
   }
 }

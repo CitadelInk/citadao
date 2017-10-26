@@ -10,9 +10,11 @@ class Edge extends Component{
       line0: this.props.currentLayer === 0,
       line1: this.props.currentLayer === 1,
       line2: this.props.currentLayer === 2,
+      line3: this.props.currentLayer === 3,
       [this.props.className]: true
     });
     const secondsFromStart = Math.floor((Date.now() - this.props.svgStartTime) / 1000);
+    const animation = this.props.noAnimation ? null : <animate attributeName="stroke-dashoffset" from={-350} to={700} dur="5s" begin={`${secondsFromStart}s`}/>;
     return <g>
       <line
         className={lineStyles}
@@ -23,7 +25,7 @@ class Edge extends Component{
         strokeDasharray={1000}
         strokeDashoffset={0}
       >
-        <animate attributeName="stroke-dashoffset" from={-350} to={700} dur="5s" begin={`${secondsFromStart}s`}/>
+        {animation}
       </line>
     </g>;
   }
