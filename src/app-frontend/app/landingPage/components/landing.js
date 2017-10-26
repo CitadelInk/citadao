@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './landing.css';
 import classNames from 'classnames/bind';
-import { RaisedButton } from 'material-ui';
+import { RaisedButton, FlatButton } from 'material-ui';
 import appActions from '../../actions';
 import { landingHeight, landingAddSection } from '../actions';
 import ScrollController from '../helpers/scrollController';
@@ -10,6 +10,7 @@ import ScrollElement from './ScrollElement';
 import { Card } from 'material-ui';
 import inkIcon from './inkIcon.png';
 import citadelIcon from './citadelIconLong.png';
+import { Dialog } from 'material-ui';
 
 
 const {
@@ -27,12 +28,17 @@ var durationFn = function(deltaTop) {
 class Landing extends Component {
 	constructor(props) {
 	  super(props);
+	  this.handleClose = this.handleClose.bind(this);
 	  this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+	  this.state = {
+		open: this.props.showMetaMaskOnLoad
+	}
   }	
 	
 	componentDidMount() {
 		this.scrollController = new ScrollController(this.props.dispatch.bind(this));
 		this.props.dispatch(landingHeight(this.contianer.clientHeight));
+
 	}
 
 	componentWillUnmount() {
@@ -44,7 +50,15 @@ class Landing extends Component {
 	}
 
 	tryCitadelClicked(e) {
-		this.props.dispatch(gotoHomePage());
+		if (this.props.network.isConnected) {
+			this.props.dispatch(gotoHomePage());
+		} else {
+			this.setState({open : true});
+		}
+	}
+
+	handleClose(e) {
+		this.setState({open : false});
 	}
 
 	render() {
@@ -68,8 +82,26 @@ class Landing extends Component {
 			"element": true
 		})
 
+		const actions = [
+			<FlatButton
+			label="I'll do that later"
+			onClick={this.handleClose}
+			/>,
+		];
+
 		 return (
 			<div className={styles.bodyStyle}>
+				<Dialog
+					title="Install MetaMask to use prototype"
+					actions={actions}
+					modal={false}
+					open={this.state.open}
+					onRequestClose={this.handleClose}
+				><p>In order to use the prototype, you must use the Google Chrome browser with the MetaMask extension installed.
+					Once it is installed and set-up, please set the network to 'Custom RPC' with URL = 'http://citadel.ink:8545' and refresh the page.
+				</p>
+				<a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">Click here to install MetaMask</a>
+				</Dialog>
 				<div className={styles.scrollContainer} ref={contianer => this.contianer = contianer} style={{top: this.props.scrollPos}}>
 					<div className={styles.headerStyle}>
 						<div className={navDivClassnames} id="bs-example-navbar-collapse-1">
@@ -164,10 +196,11 @@ class Landing extends Component {
 
 
 const mapStateToProps = state => {
-	const { landing } = state.core;
+	const { landing, network } = state.core;
   
 	return { 
-		scrollPos: landing.get('top')
+		scrollPos: landing.get('top'),
+		network
 	};
 };
 
