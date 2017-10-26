@@ -66,9 +66,16 @@ class App extends Component {
       
     } else {
       return (
-        <div className="app">         
-          <Landing />
-        </div>
+        <Fragment forRoute="/">
+          <div className="app">  
+            <Fragment forRoute="/landing">
+                <Landing />
+            </Fragment>
+            <Fragment forNoMatch>
+             <Landing showMetaMaskOnLoad={true} />
+            </Fragment>
+          </div>
+        </Fragment>
       );
     }
 
