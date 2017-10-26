@@ -87,7 +87,7 @@ class Landing extends Component {
 					</GraphVisualization>
 					<div className={styles.containerStyle}>
 					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="citadel.ink">
-						<Card className={styles.cardStyle}>
+						<div className={styles.cardStyle}>
 							<div className={styles.citadelLogo}>
 								<img src={citadelIcon} height="100" />
 							</div>							
@@ -95,8 +95,8 @@ class Landing extends Component {
 								A native Web 3 public social network, built on the ink protocol, 
 								that gives users tools for better discussions and respects their attention.
 							</p>
-						</Card>
-						<Card className={styles.cardStyle}>
+						</div>
+						<div className={styles.cardStyle}>
 							<div className={styles.inkLogo}><img src={inkIcon} height="100" /></div>
 							<p className={styles.pStyle}>
 								A protocol for decentralized social networks that links 
@@ -105,48 +105,48 @@ class Landing extends Component {
 								and responses) with a simple economic incentive 
 								to discourage adding low quality content, raising signal:noise.
 							</p>
-						</Card>
+						</div>
 					</ScrollElement>
 
 					
 
 					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="problem cause solution">
-							<Card className={styles.cardStyle}>
+							<div className={styles.cardStyle}>
 							<span className={styles.citadelH2Style}>Problem</span><br/>
 							<span className={styles.bulletSpan}>Censorship</span><br/>
 							<span className={styles.bulletSpan}h4>Disinformation</span><br/>
 							<span className={styles.bulletSpan}h4>Echo Chambers & Noise</span><br/>
 							<span className={styles.bulletSpan}>Toxic Discourse</span><br/>
-							</Card>
-							<Card className={styles.cardStyle}>
+							</div>
+							<div className={styles.cardStyle}>
 							<span className={styles.citadelH2Style}>Cause</span><br/>
 							<span className={styles.bulletSpan}>Centralization</span><br/>
 							<span className={styles.bulletSpan}>Destructive Economic Model</span><br/>
-							</Card>
-							<Card className={styles.cardStyle}>
+							</div>
+							<div className={styles.cardStyle}>
 							<span className={styles.citadelH2Style}>Solution</span><br/>
 							<span className={styles.bulletSpan}>Decentralize</span><br/>
 							<span className={styles.bulletSpan}>New Economic Model</span><br/>
 							<span className={styles.bulletSpan}>Better Tools</span><br/>
-							</Card>
+							</div>
 					</ScrollElement>
 
 					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="ecosystem diagram">
-						<Card className={styles.cardStyle}>
+						<div className={styles.cardStyle}>
 							<span className={styles.bulletSpan}>Diagram 1 - ecosystem</span><br/>
-						</Card>
+						</div>
 					</ScrollElement>
 
 					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="tools">
-						<Card className={styles.cardStyle}>
+						<div className={styles.cardStyle}>
 							<span className={styles.bulletSpan}>Reference</span><br/>
-						</Card>
-						<Card className={styles.cardStyle}>
+						</div>
+						<div className={styles.cardStyle}>
 							<span className={styles.bulletSpan}>Reactions</span><br/>
-						</Card>
-						<Card className={styles.cardStyle}>
+						</div>
+						<div className={styles.cardStyle}>
 							<span className={styles.bulletSpan}>Request Response/Critique</span><br/>
-						</Card>
+						</div>
 					</ScrollElement>
 
 

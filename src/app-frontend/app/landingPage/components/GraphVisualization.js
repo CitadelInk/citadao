@@ -1,71 +1,38 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styles from "./GraphVisualization.css";
-import coords from "./gridCoords";
 import Node from "./Node";
-import Edge from "./Edge";
+import Edges from "./Edges";
+import { setSvgSize, setStart } from '../actions';
 
-const getSection = (list, top) => {
-  top = Math.abs(top);
-  return list.reduce((acc, item, index) => {
-    if (acc > 0) {
-      return acc;
-    }
-    if (item.top > top) {
-      return index;
-    }
-  }, 0);
-};
+
 
 class GraphVisualization extends Component{
-  edgesFor2() {
-    return [
-      <Edge
-        key={1}
-        x1={coords[0][0] + 120}
-        y1={coords[0][1] + 15}
-        x2={coords[6][0]}
-        y2={coords[6][1] + 15}
-      />
-    ]
+  componentDidMount() {
+    const {width, height} = this.container.getBoundingClientRect();
+    this.props.dispatch(setSvgSize({width, height}));
+    this.props.dispatch(setStart());
   }
-
-  edgesFor3() {
-    return [
-      <Edge
-        key={1}
-        x1={coords[0][0] + 120}
-        y1={coords[0][1] + 15}
-        x2={coords[6][0]}
-        y2={coords[6][1] + 15}
-      />,
-      <Edge
-        key={2}
-        x1={coords[6][0] + 120}
-        y1={coords[6][1] + 15}
-        x2={coords[9][0]}
-        y2={coords[9][1] + 15}
-      />
-    ]
-  }
-
-  render() {
-    let edges;
-    switch (getSection(this.props.sections, this.props.top)) {
+  getActiveNode() {
+    switch (this.props.selected) {
+      case 0:
+        return 0;
       case 1:
-        edges = [];
-        break;
+        return 3;
       case 2:
-        edges = this.edgesFor2();
-        break;
+        return 10;
       case 3:
-      default:
-        edges = this.edgesFor3();
+        return 19;
+      case 4:
+        return 27;
     }
+  }
+  render() {
+    const activeNode = this.getActiveNode();
     return <div className={this.props.className}>
-      <svg width="100%" height="100%">
-        {coords.map((item, index) => <Node key={index} x={item[0]} y={item[1]} />)}
-        {edges}
+      <svg ref={container => this.container = container} width="100%" height="100%">
+        <Edges nodes={this.props.points} selected={this.props.selected} />
+        {this.props.points.map((item, index) => <Node key={index} active={index === activeNode} x={item[0]} y={item[1]} index={index} />)}
       </svg>
     </div>
   }
@@ -75,8 +42,11 @@ const mapStateToProps = state => {
   const { landing } = state.core;
   
   return {
+    svgContainerSize: landing.get('svgContainerSize'),
     sections: landing.get('sections'), 
-    top: landing.get('top')
+    top: landing.get('top'),
+    selected: landing.get('selected'),
+    points: landing.get('points')
   };
 };
 
