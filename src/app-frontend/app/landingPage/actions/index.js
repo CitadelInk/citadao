@@ -1,5 +1,6 @@
 import scrollTo from '../helpers/animatedScroll';
 import {getPoints} from './points';
+import Hammer from 'hammerjs';
 
 export const LANDING_SCROLL = "LANDING_SCROLL";
 export const LANDING_SECTION = "LANDING_SECTION";
@@ -50,6 +51,22 @@ export const landingSection = (delta) => (dispatch, getState) => {
   });
 };
 
+export const landingSectionTouch = (direction) => (dispatch, getState) => {
+  const {landing} = getState().core;
+  const sections = landing.get('sections');
+  let selected = landing.get('selected');
+  if (direction === Hammer.DIRECTION_UP) {
+    selected = Math.min(sections.size - 1, ++selected);
+  } else if (direction === Hammer.DIRECTION_DOWN) {
+    selected = Math.min(0, --selected);
+  }
+  dispatch({
+    type: SET_SECTION,
+    data: selected
+  });
+  scrollTo(landing.get('top'), sections.get(selected).top, SCROLL_TIMEOUT, dispatch);
+};
+
 export const landingHeight = (height) => {
   return {
     type: LANDING_HEIGHT,
@@ -74,7 +91,6 @@ export const landingSetTop = (data) => {
 
 export const setSvgSize = (data) => {
   const points = getPoints(data.width, data.height);
-  console.log(points);
   return {
     type: SET_SVG_SIZE,
     data: {

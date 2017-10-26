@@ -29,6 +29,5 @@ const sortPoints = (points) => {
 export const getPoints = (width, height) => {
   const timesX = Math.ceil(width/TILE_SIZE[0]);
   const timesY = Math.ceil(height/TILE_SIZE[1]);
-  console.log(timesX, timesY)
   return sortPoints(buildPoints(timesX, timesY));
 };

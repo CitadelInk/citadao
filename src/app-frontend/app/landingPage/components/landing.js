@@ -10,6 +10,8 @@ import ScrollElement from './ScrollElement';
 import { Card } from 'material-ui';
 import inkIcon from './inkIcon.png';
 import citadelIcon from './citadelIconLong.png';
+import Hammer from 'hammerjs';
+import {landingSectionTouch} from '../actions';
 
 import GraphVisualization from './GraphVisualization';
 
@@ -29,15 +31,26 @@ class Landing extends Component {
 	constructor(props) {
 	  super(props);
 	  this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+		this.hammer = new Hammer(document.body);
+		this.hammer.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
+	  this.handleSwipe = this.handleSwipe.bind(this);
   }	
 	
 	componentDidMount() {
 		this.scrollController = new ScrollController(this.props.dispatch.bind(this));
+		this.hammer.on('swipe', this.handleSwipe);
 		this.props.dispatch(landingHeight(this.contianer.clientHeight));
 	}
 
+
 	componentWillUnmount() {
-		this.ScrollController.cleanUp();
+		this.scrollController.cleanUp();
+		this.scrollController = null;
+		this.hammer.off('swipe', this.handleSwipe);
+	}
+
+	handleSwipe(e) {
+		this.props.dispatch(landingSectionTouch(e.direction));
 	}
 
 	handleSetActive(to) {
