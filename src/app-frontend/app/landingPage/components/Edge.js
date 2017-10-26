@@ -28,7 +28,7 @@ class Edge extends Component{
   animation() {
     const secondsFromStart = Math.floor((Date.now() - this.props.svgStartTime) / 1000);
 
-    return this.state.animate ? <animate
+    return <animate
       ref={anim => this.anim = anim}
       attributeName="stroke-dashoffset"
       from={600}
@@ -36,7 +36,7 @@ class Edge extends Component{
       dur="5s"
       onend={this.onend}
       begin={`${secondsFromStart}s`}
-    /> : null;
+    />;
   }
 
   render() {
