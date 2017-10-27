@@ -1,0 +1,9 @@
+.node{
+  opacity: 0.6;
+  fill: transparent;
+  stroke: #50E3C2;
+}
+
+.text{
+  stroke: #50E3C2;
+}
