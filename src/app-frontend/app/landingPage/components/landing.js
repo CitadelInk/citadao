@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styles from './landing.css';
 import classNames from 'classnames/bind';
 import { RaisedButton } from 'material-ui';
+import { FlatButton } from 'material-ui';
 import appActions from '../../actions';
 import { landingHeight, landingAddSection } from '../actions';
 import ScrollController from '../helpers/scrollController';
@@ -18,6 +19,7 @@ import img from './infographic.png';
 import post from './LongformPost.png';
 import respond from './ReferencePostV2.png';
 import takeAction from './BountyPostV2.png';
+import { Dialog } from 'material-ui';
 
 import GraphVisualization from './GraphVisualization';
 
@@ -36,18 +38,22 @@ var durationFn = function(deltaTop) {
 
 class Landing extends Component {
 	constructor(props) {
-	  super(props);
-	  this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+	 	super(props);
+		this.handleClose = this.handleClose.bind(this);
+		this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+		this.state = {
+			open: this.props.showMetaMaskOnLoad
+		}
 		this.hammer = new Hammer(document.body);
 		this.hammer.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
-	  this.handleSwipe = this.handleSwipe.bind(this);
-	  this.nav1 = this.nav1.bind(this);
-	  this.nav2 = this.nav2.bind(this);
-	  this.nav3 = this.nav3.bind(this);
-	  this.nav4 = this.nav4.bind(this);
-	  this.nav5 = this.nav5.bind(this);
-	  this.nav6 = this.nav6.bind(this);
-	  this.onCitadelWhitepaperClicked = this.onCitadelWhitepaperClicked.bind(this);
+		this.handleSwipe = this.handleSwipe.bind(this);
+		this.nav1 = this.nav1.bind(this);
+		this.nav2 = this.nav2.bind(this);
+		this.nav3 = this.nav3.bind(this);
+		this.nav4 = this.nav4.bind(this);
+		this.nav5 = this.nav5.bind(this);
+		this.nav6 = this.nav6.bind(this);
+		this.onCitadelWhitepaperClicked = this.onCitadelWhitepaperClicked.bind(this);
   }	
 	
 	componentDidMount() {
@@ -67,12 +73,20 @@ class Landing extends Component {
 		this.props.dispatch(landingSectionTouch(e.direction));
 	}
 
+	handleClose(e) {
+		this.setState({open : false});
+	}
+
 	handleSetActive(to) {
 	  console.log(to);
 	}
 
 	tryCitadelClicked(e) {
-		this.props.dispatch(gotoHomePage());
+		if (this.props.network.isConnected) {
+			this.props.dispatch(gotoHomePage());
+		} else {
+			this.setState({open : true});
+		}
 	}
 
 	onMediumClicked(e) {
@@ -84,12 +98,17 @@ class Landing extends Component {
 	}
 	onCitadelWhitepaperClicked(e) {
 		//http://citadel.ink/post/authorg/0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe/sub/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459/rev/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459
-		this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459"))
+		if (this.props.network.isConnected) {
+			this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459"))
+		} else {
+			this.setState({open : true})
+		}
 	}
+
 	onEmailClicked(e) {
 		window.location.href = "mailto:team@citadel.ink";
 	}
-	
+
 	problemSection() {
 
 		if (this.props.svgContainerSize.width > 450) {
@@ -362,8 +381,26 @@ class Landing extends Component {
 			"element": true
 		})
 
+		const actions = [
+			<FlatButton
+			label="I'll do that later"
+			onClick={this.handleClose}
+			/>,
+		];
+
 		 return (
 			<div className={styles.bodyStyle}>
+					<Dialog
+						title="Install MetaMask to use prototype"
+						actions={actions}
+						modal={false}
+						open={this.state.open}
+						onRequestClose={this.handleClose}
+					><p>In order to use the prototype, you must use the Google Chrome browser with the MetaMask extension installed.
+						Once it is installed and set-up, please set the network to 'Custom RPC' with URL = 'http://citadel.ink:8545' and refresh the page.
+					</p>
+					<a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">Click here to install MetaMask</a>
+					</Dialog>
 				<div className={styles.scrollContainer} ref={contianer => this.contianer = contianer} style={{top: this.props.scrollPos}}>
 					<div className={styles.headerStyle}>
 						<div className={navDivClassnames} id="bs-example-navbar-collapse-1">
@@ -455,12 +492,13 @@ class Landing extends Component {
 
 
 const mapStateToProps = state => {
-	const { landing } = state.core;
+	const { landing, network } = state.core;
   
 	return {
 		svgContainerSize: landing.get('svgContainerSize'),
 		scrollPos: landing.get('top'),
-		selected: landing.get('selected')
+		selected: landing.get('selected'),
+		network
 	};
 };
 
