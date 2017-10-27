@@ -18,7 +18,7 @@ export default (state = Map({
   selected: 0,
   goingToSection: false,
   points: [],
-  svgContainerSize: {width: 1500, height: 800}
+  svgContainerSize: {width: window.innerWidth, height: 800}
 }), action) => {
   switch (action.type) {
     case LANDING_HEIGHT:

@@ -34,7 +34,6 @@ class Edge extends Component{
       from={600}
       to={0}
       dur="5s"
-      onend={this.onend}
       begin={`${secondsFromStart}s`}
     />;
   }

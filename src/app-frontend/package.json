@@ -29,7 +29,7 @@
     "compression-webpack-plugin": "^0.3.2",
     "cross-os": "^1.1.2",
     "express": "^4.15.3",
-    "file-loader": "^0.11.2",
+    "file-loader": "^1.1.5",
     "hammerjs": "^2.0.8",
     "immutable": "^3.8.1",
     "is-url": "^1.2.2",

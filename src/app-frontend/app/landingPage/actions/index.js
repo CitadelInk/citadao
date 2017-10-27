@@ -16,6 +16,7 @@ export const SCROLL_TIMEOUT = 1000;
 const decideSelected = (delta, top, sections, selected) => {
   top = Math.abs(top);
   let newSelection = selected;
+  console.log(sections.size);
   if (delta < 0 && selected > 0) {
     newSelection = selected - 1;
   } else if (delta > 0 && selected < sections.size - 1) {
@@ -44,7 +45,7 @@ export const landingSection = (delta) => (dispatch, getState) => {
     type: SET_SECTION,
     data: selected
   })
-  scrollTo(landing.get('top'), landing.getIn(['sections', selected]).top, SCROLL_TIMEOUT, dispatch);
+  scrollTo(landing.get('top'), landing.getIn(['sections', selected]).top - 65, SCROLL_TIMEOUT, dispatch);
   dispatch({
     type: LANDING_SECTION,
     data: selected
@@ -64,8 +65,18 @@ export const landingSectionTouch = (direction) => (dispatch, getState) => {
     type: SET_SECTION,
     data: selected
   });
-  scrollTo(landing.get('top'), sections.get(selected).top, SCROLL_TIMEOUT, dispatch);
+  scrollTo(landing.get('top'), sections.get(selected).top - 65, SCROLL_TIMEOUT, dispatch);
 };
+
+export const landingSectionNav = (selected) => (dispatch, getState) => {
+  const {landing} = getState().core;
+  const sections = landing.get('sections');
+  dispatch({
+    type: SET_SECTION,
+    data: selected
+  });
+  scrollTo(landing.get('top'), sections.get(selected).top - 65, SCROLL_TIMEOUT, dispatch);
+}
 
 export const landingHeight = (height) => {
   return {

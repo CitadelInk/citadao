@@ -24,6 +24,7 @@ class GraphVisualization extends Component{
       case 3:
         return 15;
       case 4:
+      default:
         return 37;
     }
   }

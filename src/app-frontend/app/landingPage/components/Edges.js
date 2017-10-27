@@ -144,6 +144,7 @@ export default class Edges extends Component{
       case 3:
         return this.renderScreen3();
       case 4:
+      default:
         return this.renderScreen4();
     }
   }
