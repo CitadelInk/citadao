@@ -15,6 +15,9 @@ import {landingSectionTouch, landingSectionNav} from '../actions';
 import GreyPen from './greypen';
 import GreyCastle from './greycastle';
 import img from './infographic.png';
+import post from './LongformPost.png';
+import respond from './ReferencePostV2.png';
+import takeAction from './BountyPostV2.png';
 
 import GraphVisualization from './GraphVisualization';
 
@@ -150,6 +153,46 @@ class Landing extends Component {
 		}
 	}
 
+	toolsSection(elementClassnames) {
+		if (this.props.svgContainerSize.width > 450) {
+			return <ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="tools">
+				<div className={styles.cardStyle}>
+					<h2>Respond</h2>
+					<img src={respond}/>
+				</div>
+				<div className={styles.cardStyle}>
+					<h2>Post</h2>
+					<img src={post}/>
+				</div>
+				<div className={styles.cardStyle}>
+					<h2>Take Action</h2>
+					<img src={takeAction}/>
+				</div>
+			</ScrollElement>;
+		} else {
+			return [
+				<ScrollElement key="respond" addToScroll={landingAddSection} className={elementClassnames} name="respond">
+					<div className={styles.cardStyle}>
+						<h2>Respond</h2>
+						<img src={respond}/>
+					</div>
+				</ScrollElement>,
+				<ScrollElement key="post" addToScroll={landingAddSection} className={elementClassnames} name="post">
+					<div className={styles.cardStyle}>
+						<h2>Post</h2>
+						<img src={post}/>
+					</div>
+				</ScrollElement>,
+				<ScrollElement key="takeAction" addToScroll={landingAddSection} className={elementClassnames} name="takeAction">
+					<div className={styles.cardStyle}>
+						<h2>Take Action</h2>
+						<img src={takeAction}/>
+					</div>
+				</ScrollElement>
+			];
+		}
+	}
+
 	active1() {
 		return this.props.selected === 0;
 	}
@@ -164,7 +207,7 @@ class Landing extends Component {
 		if (this.props.svgContainerSize.width > 450) {
 			return this.props.selected === 2;
 		} else {
-			return this.props.selected >= 4 && this.props.selected < 7;
+			return this.props.selected >= 4 && this.props.selected < 8;
 		}
 	}
 	active4() {
@@ -327,17 +370,7 @@ class Landing extends Component {
 						</div>
 					</ScrollElement>
 
-					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="tools">
-						<div className={styles.cardStyle}>
-							<span className={styles.bulletSpan}>Reference</span><br/>
-						</div>
-						<div className={styles.cardStyle}>
-							<span className={styles.bulletSpan}>Reactions</span><br/>
-						</div>
-						<div className={styles.cardStyle}>
-							<span className={styles.bulletSpan}>Request Response/Critique</span><br/>
-						</div>
-					</ScrollElement>
+					{this.toolsSection(elementClassnames)}
 
 
 					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="more info">

@@ -16,7 +16,6 @@ export const SCROLL_TIMEOUT = 1000;
 const decideSelected = (delta, top, sections, selected) => {
   top = Math.abs(top);
   let newSelection = selected;
-  console.log(sections.size);
   if (delta < 0 && selected > 0) {
     newSelection = selected - 1;
   } else if (delta > 0 && selected < sections.size - 1) {

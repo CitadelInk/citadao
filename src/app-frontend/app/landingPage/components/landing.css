@@ -165,7 +165,7 @@
 }
 
 .image{
-	max-height: 75vh;
+	max-height: 70vh;
 }
 
 .pStyle {
@@ -210,6 +210,7 @@
 	position: relative;
 	margin:25px;
 	padding:30px;
+	min-width: 300px;
 	background-color: rgba(0,0,0,0.4);
 }
 
