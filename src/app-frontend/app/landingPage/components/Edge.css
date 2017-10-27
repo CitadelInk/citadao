@@ -1,0 +1,25 @@
+.line{
+  fill: transparent;
+  stroke: #50E3C2;
+  stroke-width: 1px;
+}
+
+.line3{
+  opacity: 0.09;
+  stroke-width: 1px;
+}
+
+.line2{
+  opacity: 0.15;
+  stroke-width: 1px;
+}
+
+.line1{
+  opacity: 0.35;
+  stroke-width: 1px;
+}
+
+.line0{
+  opacity: 0.6;
+  stroke-width: 2px;
+}
