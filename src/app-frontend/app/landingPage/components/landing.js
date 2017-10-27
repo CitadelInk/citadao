@@ -44,6 +44,8 @@ class Landing extends Component {
 	  this.nav2 = this.nav2.bind(this);
 	  this.nav3 = this.nav3.bind(this);
 	  this.nav4 = this.nav4.bind(this);
+	  this.nav5 = this.nav5.bind(this);
+	  this.nav6 = this.nav6.bind(this);
   }	
 	
 	componentDidMount() {
@@ -129,7 +131,7 @@ class Landing extends Component {
 						 in which users are measured are measured by the amount of time they spend focused on ads,
 						  forces modern social networks to make decisions that hurt the user experience in favor of the advertiser experience.
 						   In order to increase profits from ads, they track user data to perform <strong>targeted advertising</strong> and implement designs that maximize "screen minutes" at the expense of productive thought and discussion.
-						    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain centralized,
+						    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain <strong>centralized</strong>,
 						     allowing them to rigidly control the experience of users, subjecting them to lab-tested algorithms created to benefit advertisers, not users.
 					</p>
 					</div>
@@ -142,7 +144,7 @@ class Landing extends Component {
 							 we are able to create a new type of relationship between network and user,
 							  one in which private user data cannot be collected and sold or abused;
 							   in which the attention economy is abandoned in favor of the <strong>intention economy</strong>.
-							    Smart Contracts on the Ethereum blockchain allow us to introduce <strong>economic friction</strong>
+							    Smart Contracts on the Ethereum blockchain allow us to introduce <strong>economic friction </strong>
 							     to reduce the success of influence ops and bad actors,
 							      while a tipping and bounty system rewards users that participate in good faith.
 							       <strong>Better tools</strong> for sourcing and proving claims will allow users to more easily evaluate what they read and determine what they trust.
@@ -212,9 +214,23 @@ class Landing extends Component {
 	}
 	active4() {
 		if (this.props.svgContainerSize.width > 450) {
-			return this.props.selected > 2;
+			return this.props.selected === 3;
 		} else {
-			return this.props.selected > 7;
+			return this.props.selected >= 7 && this.props.selected < 8;
+		}
+	}
+	active5() {
+		if (this.props.svgContainerSize.width > 450) {
+			return this.props.selected === 4;
+		} else {
+			return this.props.selected >= 8 && this.props.selected < 9;
+		}
+	}
+	active6() {
+		if (this.props.svgContainerSize.width > 450) {
+			return this.props.selected === 5;
+		} else {
+			return this.props.selected >= 9;
 		}
 	}
 
@@ -236,6 +252,20 @@ class Landing extends Component {
 			this.props.dispatch(landingSectionNav(3));
 		} else {
 			this.props.dispatch(landingSectionNav(8));
+		}
+	}
+	nav5() {
+		if (this.props.svgContainerSize.width > 450) {
+			this.props.dispatch(landingSectionNav(4));
+		} else {
+			this.props.dispatch(landingSectionNav(9));
+		}
+	}
+	nav6() {
+		if (this.props.svgContainerSize.width > 450) {
+			this.props.dispatch(landingSectionNav(5));
+		} else {
+			this.props.dispatch(landingSectionNav(10));
 		}
 	}
 
@@ -300,6 +330,14 @@ class Landing extends Component {
 			liStyle: true,
 			active: this.active4()
 		});
+		const liClassName5 = cx({
+			liStyle: true,
+			active: this.active5()
+		});
+		const liClassName6 = cx({
+			liStyle: true,
+			active: this.active6()
+		});
 
 		var elementStyle = styles.elementStyle;
 		var elementClassnames = cx({
@@ -316,8 +354,10 @@ class Landing extends Component {
 								<li className={styles.topLogo}><GreyCastle size={70} /></li>
 								<li onClick={this.nav1} className={`${liClassName1} ${styles.websiteName}`}>C I T A D E L .ink</li>
 								<li onClick={this.nav2} className={liClassName2}>Why?</li>
-								<li onClick={this.nav3} className={liClassName3}>Tools</li>
-								<li onClick={this.nav4} className={liClassName4}>More Info</li>
+								<li onClick={this.nav3} className={liClassName3}>Ecosystem</li>
+								<li onClick={this.nav4} className={liClassName4}>Tools</li>
+								<li onClick={this.nav5} className={liClassName5}>More Info</li>
+								<li onClick={this.nav6} className={liClassName6}>Whitepaper</li>
 								<li className={styles.alphaStyle}>
 									<button
 										className={styles.ctaDesktop}
@@ -339,7 +379,7 @@ class Landing extends Component {
 					<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="citadel.ink">
 						<div className={`${styles.cardStyle} ${styles.titleCard}`}>
 							<h2>
-								<GreyPen size={80} /> <span>ink</span>
+								<GreyCastle size={80} /> <span>CITADEL</span>
 							</h2>
 							<p className={styles.pStyle}>
 								A native Web 3 public social network, built on the ink protocol, 
@@ -348,7 +388,7 @@ class Landing extends Component {
 						</div>
 						<div className={`${styles.cardStyle} ${styles.titleCard}`}>
 						<h2>
-								<GreyCastle size={80} /> <span>CITADEL</span>
+								<GreyPen size={80} /> <span><i>ink</i></span>
 						</h2>
 							<p className={styles.pStyle}>
 								A protocol for decentralized social networks that links 
@@ -375,6 +415,17 @@ class Landing extends Component {
 
 					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="more info">
 						<div className={`${styles.cardStyle} ${styles.emailForm}`} dangerouslySetInnerHTML={this.createEmailMarkup()} />
+					</ScrollElement>
+
+					<ScrollElement addToScroll={landingAddSection} className={elementClassnames} name="white paper">
+						<div className={`${styles.cardStyle} ${styles.whitepaper}`}>
+							<h2>Whitepaper</h2>
+							<p className={styles.pStyle}>
+							<a href="">Read Whitepaper on Medium</a><br/>
+							<a href="">Download whitepaper as PDF</a><br/>
+							<a href="">Read Whitepaper on Citadel.ink</a> (requires metamask)
+							</p>
+						</div>
 					</ScrollElement>
 					</div>
 				</div>
