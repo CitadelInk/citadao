@@ -23,7 +23,8 @@ import GraphVisualization from './GraphVisualization';
 
 const {
 	navigatePage,
-	gotoHomePage
+	gotoHomePage,
+	gotoPost
 } = appActions;
 
 let cx = classNames.bind(styles);
@@ -46,6 +47,7 @@ class Landing extends Component {
 	  this.nav4 = this.nav4.bind(this);
 	  this.nav5 = this.nav5.bind(this);
 	  this.nav6 = this.nav6.bind(this);
+	  this.onCitadelWhitepaperClicked = this.onCitadelWhitepaperClicked.bind(this);
   }	
 	
 	componentDidMount() {
@@ -73,6 +75,21 @@ class Landing extends Component {
 		this.props.dispatch(gotoHomePage());
 	}
 
+	onMediumClicked(e) {
+		window.open("https://medium.com/@team_59584/ink-citadel-dcf71be07b5", "_blank");
+	}
+
+	onPdfClicked(e) {
+		window.open("https://www.scribd.com/document/362777832/Citadel-White-Paper-10-27-17", "_blank");
+	}
+	onCitadelWhitepaperClicked(e) {
+		//http://citadel.ink/post/authorg/0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe/sub/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459/rev/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459
+		this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459"))
+	}
+	onEmailClicked(e) {
+		window.location.href = "mailto:team@citadel.ink";
+	}
+	
 	problemSection() {
 
 		if (this.props.svgContainerSize.width > 450) {
@@ -421,9 +438,11 @@ class Landing extends Component {
 						<div className={`${styles.cardStyle} ${styles.whitepaper}`}>
 							<h2>Whitepaper</h2>
 							<p className={styles.pStyle}>
-							<a href="">Read Whitepaper on Medium</a><br/>
-							<a href="">Download whitepaper as PDF</a><br/>
-							<a href="">Read Whitepaper on Citadel.ink</a> (requires metamask)
+							<span onClick={this.onMediumClicked}><u>Read Whitepaper on Medium</u></span><br/>
+							<span onClick={this.onPdfClicked}><u>Download whitepaper as PDF</u></span><br/>
+							<span onClick={this.onCitadelWhitepaperClicked}><u>Read Whitepaper on Citadel.ink</u></span> (requires metamask)<br/>
+							-----------------------------<br/>
+							<span onClick={this.onEmailClicked}><u>Email team@citadel.ink</u></span>
 							</p>
 						</div>
 					</ScrollElement>
