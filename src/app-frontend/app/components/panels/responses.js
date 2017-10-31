@@ -19,6 +19,13 @@ class Responses extends Component {
 				bottom:'0'
 		}
 		var instance = this;
+
+		var responses = this.props.responses;
+
+		if (this.props.wallet.get('selectedResponses')) {
+			responses = this.props.wallet.get('selectedResponses');
+		}
+
 		var posts = this.props.responses.map(function(responseHash) {
 			var submission = instance.props.submissions.get(responseHash);
 			if (submission) {

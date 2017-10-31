@@ -181,13 +181,6 @@ export const handleQuickStart = () => (dispatch, getState) => {
   }, 2000); 
 }
 
-export const handleViewResponses = (responses) => (dispatch) => {
-  //responses.map((response) => {
-    //dispatch(loadPost(response, false))
-  //})
-  return dispatch(setWalletData({selectedResponses : responses}))
-}
-
 export const giveEther = (amount, callback) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   var ethamount =  network.web3.toWei(amount, 'ether')
@@ -198,7 +191,7 @@ export const giveEther = (amount, callback) => (dispatch, getState) => {
   var url = network.web3.currentProvider.host;
   // hacky bullshit!!!
   if (url == undefined) {
-    url = window.location.href.replace(".ink", ".ink:8545")
+    url = window.location.href.replace("8080", "8545")
   }
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-type", "application/json");
@@ -231,7 +224,6 @@ export default {
   setBuyPrice,
   handleBuySubmit,
   setSelectedAccount,
-  handleViewResponses,
   giveEther,
   handleQuickStart
 };
