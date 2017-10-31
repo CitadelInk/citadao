@@ -17,10 +17,15 @@ class Posts extends Component {
 			width:'100%',
 			margin:'auto'
 		}
+
+		var postos = this.props.postKeys;
+		var selectedResponses = this.props.wallet.get('selectedResponses');
+		if (this.props.isResponses && selectedResponses) {
+			postos = selectedResponses;
+		}
 			
-		var posts = this.props.postKeys.map(function(key) {
+		var posts = postos.map(function(key) {
 			var key2 = key.authAdd + "-" + key.submissionHash + "-" + key.revisionHash;
-			//console.log("key2: " + key2);
 			return (<PostWidgetContainer key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
 		})
 		return (

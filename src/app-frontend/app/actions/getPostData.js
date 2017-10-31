@@ -60,7 +60,7 @@ export const SET_REFERENCE = "SET_REFERENCE";
 export const setReference = (authAdd, subHash, revHash, refAuthAdd, refSubHash, refRevHash, index) => {
   return {
     type: SET_REFERENCE,
-    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, index : index, refKey: {authorgAddress : refAuthAdd, submissionHash : refSubHash, revisionHash : refRevHash}}
+    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, index : index, refKey: {authAdd : refAuthAdd, submissionHash : refSubHash, revisionHash : refRevHash}}
   }
 }
 
@@ -184,6 +184,14 @@ export const setRevisionHashes = (authAdd, subHash, revisionHashes) => {
   }
 }
 
+export const SET_SELECTED_RESPONSES = "SET_SELECTED_RESPONSES";
+export const setSelectedResponses = (responses) => {
+  return {
+    type: SET_SELECTED_RESPONSES,
+    data: {responses}
+  }
+}
+
 export const initializeNeededPosts = () => (dispatch, getState) => {
   const {ui} = getState().core;
   const {router} = getState();
@@ -222,6 +230,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
 
 
   if (!alreadyLoaded) {
+    console.warn("load post. revHash: " + revisionHash + " - focused: " + focusedPost);
     dispatch(setLoadStarted(authorgAddress, submissionHash, revisionHash));
     if (!timestamp) {
       getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
@@ -256,6 +265,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
       })
   } 
   if (!alreadyLoaded || focusedPost) {
+    console.warn("focusedly load post. revHash: " + revisionHash + " - focused: " + focusedPost);
     getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
       dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
       if (focusedPost) {
@@ -301,13 +311,16 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
     }
   }
 
+
   if (!userLoadStarted || focusedUser) {
+    console.warn("loadUserData authorgAddress: " + authorgAddress);
     dispatch(setNameLoadStarted(authorgAddress));
     getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
       dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
       dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions))
     });
     if (focusedUser) {
+      console.warn("focusedly loadUserData authorgAddress: " + authorgAddress);
       getAccountPostKeyCount(authorgAddress).then((result) => {
         dispatch(setAuthorgPostKeyCount(authorgAddress, result.count));
         dispatch(setAuthorgPostKeysLoadedCount(authorgAddress, 0));
@@ -401,7 +414,7 @@ export const setSelectedBioRevision = (selectedRevision) => (dispatch, getState)
 };
 
 export const handleViewResponses = (responses) => (dispatch) => {
-  return dispatch(setWalletData({selectedResponses : responses}))
+  return dispatch(setSelectedResponses(responses))
 }
 
 export default {
@@ -424,6 +437,7 @@ export default {
   SET_REVISION_TIME,
   SET_AUTHORG_BIO_REVISION_REACTIONS,
   SET_REVISION_HASHES,
+  SET_SELECTED_RESPONSES,
   loadPost,
   handleViewResponses,
   getReactions,
