@@ -54,7 +54,7 @@ class PostExtrasPanel extends Component {
 		var responses = "no responses... yet!";
 		if (keys.length > 0) {
 			responses = (			
-				<Posts postKeys={keys.slice().reverse()} />
+				<Posts isResponses={true} postKeys={keys.slice().reverse()} />
 			)
 		}
 

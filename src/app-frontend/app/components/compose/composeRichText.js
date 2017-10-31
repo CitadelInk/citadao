@@ -167,7 +167,7 @@ class ComposeRichText extends React.Component {
    }
 
    componentWillMount() {
-     this.state = {input: this.getState()};
+     this.setState({input: this.getState()});
    }
 
    componentWillUnmount() {

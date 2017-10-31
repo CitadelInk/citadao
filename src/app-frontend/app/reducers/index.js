@@ -34,7 +34,8 @@ const {
   SET_REVISION_REQUEST_RESPONSE_KEYS,
   SET_REVISION_REQUEST_RESPONSE_RECEIPT,
   SET_USER_RESPONSE_REQUESTS_CREATED,
-  SET_USER_RESPONSE_REQUESTS_RECEIVED
+  SET_USER_RESPONSE_REQUESTS_RECEIVED,
+  SET_SELECTED_RESPONSES
 } = actions;
 
 const network = (state = Map({
@@ -72,7 +73,7 @@ const wallet = (state = Map({
   bioAvatarImage: null,
   tokenCitadelComptroller: '',
   postTextInput: State.fromJSON(initialState),
-  selectedResponses: [],
+  selectedResponses: null,
   totalPostCount:0,
   numPostsLoaded:0,
   selectedTabIndex: 0,
@@ -83,6 +84,8 @@ const wallet = (state = Map({
   reviseSubmissionInput:State.fromJSON(initialState)
 }), action) => {
   switch (action.type) {
+    case SET_SELECTED_RESPONSES:
+      return state.set('selectedResponses', action.data.responses)
     case SET_WALLET_DATA:
       return state.merge(action.data);
     default:
@@ -257,7 +260,7 @@ const revs = (state = {}, action) => {
       if (sectionRefKeyMap.get(action.data.index)) {
         existingReferences = sectionRefKeyMap.get(action.data.index);
         for(var i = 0; i < existingReferences.length; i++) {
-          if (existingReferences[i].authorgAddress == action.data.refKey.authorgAddress) {
+          if (existingReferences[i].authAdd == action.data.refKey.authAdd) {
             if (existingReferences[i].submissionHash == action.data.refKey.submissionHash) {
               if (existingReferences[i].revisionHash == action.data.refKey.revisionHash) {
                 alreadyReferenced = true;
@@ -313,6 +316,7 @@ const subs = (state = {}, action) => {
 }
 
 const auths = (state = {}, action) => {
+  console.log("action.type: " + action.type);
   if (action.data) {
     let authAdd = action.data.authAdd;
     var stateAuth = state[authAdd];

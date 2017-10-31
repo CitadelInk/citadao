@@ -47,7 +47,7 @@ export const gotoHomePage = () => dispatch => {
 }
 
 export const clearUISpecifics = () => dispatch => {
-  dispatch(setWalletData({selectedReactionHash : ''}))
+  dispatch(setWalletData({selectedReactionHash : '', selectedResponses : null}))
 } 
 
 export const setBuyMore = (active) => dispatch => {
