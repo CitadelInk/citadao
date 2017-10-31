@@ -58,7 +58,7 @@ export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, we
           var submissionEvent = instance.RevisionPosted({_authorg : account});
           var t1 = performance.now();
           console.log("post took " + (t1 - t0) + " milliseconds.")
-          res({tx_id, submissionEvent, revHash});  
+          res({tx_id, submissionEvent, revHash, subHash});  
         }).catch(rej);
       });
     });

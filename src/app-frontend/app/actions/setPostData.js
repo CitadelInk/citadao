@@ -147,7 +147,7 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
           dispatch(loadPost(account, revisionSubmissionHash, resulty.revHash, undefined, true, true))
         } else {
           console.log("initialize needed posts")
-          dispatch(initializeNeededPosts())
+          dispatch(loadPost(account, resulty.subHash, resulty.revHash, undefined, true, true))
         }
         hasReloaded = true;
       };
