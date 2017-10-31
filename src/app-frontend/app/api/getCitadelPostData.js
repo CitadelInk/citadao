@@ -2,6 +2,7 @@ import appContracts from 'app-contracts'
 
 
 export const getRevisionReactions = (authorgAddress, revisionHash, submissionHash, reactions) => {
+  var t0 = performance.now();
   var keys =  Array.from(reactions.keys());
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed().then((instance) => {
@@ -15,6 +16,8 @@ export const getRevisionReactions = (authorgAddress, revisionHash, submissionHas
         revisionReactionReactors.map((result) => {
           totalReactions += result.reactionReactors.length;
         })
+        var t1 = performance.now();
+        console.log("getRevisionReactions took " + (t1 - t0) + " milliseconds.")
         res ({
           revisionReactionReactors: revisionReactionReactors,
           reactionCount : totalReactions
@@ -26,6 +29,7 @@ export const getRevisionReactions = (authorgAddress, revisionHash, submissionHas
 
 
 export const getAuthorgBioReactions = (authorgAddress, bioRevisionHash, reactions) => {
+  var t0 = performance.now();
   var keys =  Array.from(reactions.keys());
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed().then((instance) => {
@@ -39,6 +43,8 @@ export const getAuthorgBioReactions = (authorgAddress, bioRevisionHash, reaction
         revisionReactionReactors.map((result) => {
           totalReactions += result.reactionReactors.length;
         })
+        var t1 = performance.now();
+        console.log("getAuthorgBioReactions took " + (t1 - t0) + " milliseconds.")
         res ({
           revisionReactionReactors: revisionReactionReactors,
           reactionCount : totalReactions
@@ -49,9 +55,12 @@ export const getAuthorgBioReactions = (authorgAddress, bioRevisionHash, reaction
 }
 
 export const getFollowers = (authorgAddress) => {
+  var t0 = performance.now();
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed().then((instance) => {
       instance.getFollowers(authorgAddress).then((followers) => {
+        var t1 = performance.now();
+        console.log("getFollowers took " + (t1 - t0) + " milliseconds.")
         res ({followers});
       })
     })
@@ -59,9 +68,12 @@ export const getFollowers = (authorgAddress) => {
 }
 
 export const getAuthorgsFollowing = (authorgAddress) => {
+  var t0 = performance.now();
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed().then((instance) => {
       instance.getFollowedUsers(authorgAddress).then((authorgsFollowing) => {
+        var t1 = performance.now();
+        console.log("getAuthorgsFollowing took " + (t1 - t0) + " milliseconds.")
         res ({authorgsFollowing});
       })
     })

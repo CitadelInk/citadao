@@ -1,6 +1,7 @@
 import appContracts from 'app-contracts'
 
 export const getApprovedReactions = (web3) => {
+  var t0 = performance.now();
   return new Promise((res, rej) =>{
     appContracts.Citadel.deployed()
     .then((instance) => {
@@ -9,6 +10,8 @@ export const getApprovedReactions = (web3) => {
       ])
       .then(([approvedReactionHashes]) => {
         getReactionValues(approvedReactionHashes, web3).then((approvedReactions) => {
+          var t1 = performance.now();
+          console.log("getApprovedReactions took " + (t1 - t0) + " milliseconds.")
           res({approvedReactions : approvedReactions.reactions});
         })
       })
@@ -17,6 +20,7 @@ export const getApprovedReactions = (web3) => {
 }
 
 export const getApprovedAuthorgReactions = (web3) => {
+  var t0 = performance.now();
   return new Promise((res, rej) =>{
     appContracts.Citadel.deployed()
     .then((instance) => {
@@ -25,6 +29,8 @@ export const getApprovedAuthorgReactions = (web3) => {
       ])
       .then(([approvedReactionHashes]) => {
         getReactionValues(approvedReactionHashes, web3).then((approvedReactions) => { 
+          var t1 = performance.now();
+          console.log("getApprovedAuthorgReactions took " + (t1 - t0) + " milliseconds.")
           res({approvedAuthorgReactions : approvedReactions.reactions});
         })
       })
@@ -33,6 +39,7 @@ export const getApprovedAuthorgReactions = (web3) => {
 }
 
 export const getReactionValues = (approvedReactionHashes, web3) => {
+  var t0 = performance.now();
   return new Promise((res, rej) => {
     var promises = approvedReactionHashes.map(hash => {
       return getReactionValue(hash, web3)
@@ -42,18 +49,23 @@ export const getReactionValues = (approvedReactionHashes, web3) => {
       values.map(result => {
         reactions.set(result.reactionHash, result.reactionValue);
       })
+      var t1 = performance.now();
+      console.log("getReactionValues took " + (t1 - t0) + " milliseconds.")
       res({reactions : reactions});
     })
   })  
 }
 
 export const getReactionValue = (reactionHash, web3) => {
+  var t0 = performance.now();
   return new Promise((res, rej) => {
     const bzzAddress = reactionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
       // prolly want to handle errors
       const jsonBio = JSON.parse(reactionManifest)
       web3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
+        var t1 = performance.now();
+        console.log("getReactionValue took " + (t1 - t0) + " milliseconds.")
         res({
           reactionHash: reactionHash, reactionValue: reaction
         });
