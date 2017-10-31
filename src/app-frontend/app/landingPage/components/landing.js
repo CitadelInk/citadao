@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styles from './landing.css';
 import classNames from 'classnames/bind';
 import { RaisedButton } from 'material-ui';
+import { FlatButton } from 'material-ui';
 import appActions from '../../actions';
 import { landingHeight, landingAddSection } from '../actions';
 import ScrollController from '../helpers/scrollController';
@@ -18,6 +19,7 @@ import img from './infographic.png';
 import post from './LongformPost.png';
 import respond from './ReferencePostV2.png';
 import takeAction from './BountyPostV2.png';
+import { Dialog } from 'material-ui';
 
 import GraphVisualization from './GraphVisualization';
 
@@ -36,18 +38,22 @@ var durationFn = function(deltaTop) {
 
 class Landing extends Component {
 	constructor(props) {
-	  super(props);
-	  this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+	 	super(props);
+		this.handleClose = this.handleClose.bind(this);
+		this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+		this.state = {
+			open: this.props.showMetaMaskOnLoad
+		}
 		this.hammer = new Hammer(document.body);
 		this.hammer.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
-	  this.handleSwipe = this.handleSwipe.bind(this);
-	  this.nav1 = this.nav1.bind(this);
-	  this.nav2 = this.nav2.bind(this);
-	  this.nav3 = this.nav3.bind(this);
-	  this.nav4 = this.nav4.bind(this);
-	  this.nav5 = this.nav5.bind(this);
-	  this.nav6 = this.nav6.bind(this);
-	  this.onCitadelWhitepaperClicked = this.onCitadelWhitepaperClicked.bind(this);
+		this.handleSwipe = this.handleSwipe.bind(this);
+		this.nav1 = this.nav1.bind(this);
+		this.nav2 = this.nav2.bind(this);
+		this.nav3 = this.nav3.bind(this);
+		this.nav4 = this.nav4.bind(this);
+		this.nav5 = this.nav5.bind(this);
+		this.nav6 = this.nav6.bind(this);
+		this.onCitadelWhitepaperClicked = this.onCitadelWhitepaperClicked.bind(this);
   }	
 	
 	componentDidMount() {
@@ -67,12 +73,20 @@ class Landing extends Component {
 		this.props.dispatch(landingSectionTouch(e.direction));
 	}
 
+	handleClose(e) {
+		this.setState({open : false});
+	}
+
 	handleSetActive(to) {
 	  console.log(to);
 	}
 
 	tryCitadelClicked(e) {
-		this.props.dispatch(gotoHomePage());
+		if (this.props.network.isConnected) {
+			this.props.dispatch(gotoHomePage());
+		} else {
+			this.setState({open : true});
+		}
 	}
 
 	onMediumClicked(e) {
@@ -84,39 +98,40 @@ class Landing extends Component {
 	}
 	onCitadelWhitepaperClicked(e) {
 		//http://citadel.ink/post/authorg/0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe/sub/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459/rev/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459
-		this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459"))
+		if (this.props.network.isConnected) {
+			this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459"))
+		} else {
+			this.setState({open : true})
+		}
 	}
+
 	onEmailClicked(e) {
 		window.location.href = "mailto:team@citadel.ink";
 	}
-	
+
 	problemSection() {
 
-		if (this.props.svgContainerSize.width > 450) {
+		const problem = (
+			<p className={styles.pStyle}>Modern social networks suffer from <strong>censorship</strong> from authoritarian governments or corporations.
+				 They are vulnerable to the spread of <strong>disinformation</strong> via bad actors.
+				 They often form into <strong>echo chambers</strong> that simply reinforce already held opinions and any dissent is lost in the <strong>noise</strong> of responses.
+				 When disagreements are had, unhealthy communication encounters no friction and discourse turns <strong>toxic</strong>.
+			</p>
+		);
 
-			return (<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="problem cause solution">
-					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
-					<h2>Problem</h2>
-					<p className={styles.pStyle}>Modern social networks suffer from <strong>censorship</strong> from authoritarian governments or corporations.
-					 They are vulnerable to the spread of <strong>disinformation</strong> via bad actors.
-					 They often form into <strong>echo chambers</strong> that simply reinforce already held opinions and any dissent is lost in the <strong>noise</strong> of responses.
-					 When disagreements are had, unhealthy communication encounters no friction and discourse turns <strong>toxic</strong>.
-					</p>
-					</div>
-					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
-					<h2>Cause</h2>
-					<p className={styles.pStyle}>
-						A reliance on the <strong>attention economy</strong>,
-						 in which users are measured are measured by the amount of time they spend focused on ads,
-						  forces modern social networks to make decisions that hurt the user experience in favor of the advertiser experience.
-						   In order to increase profits from ads, they track user data to perform <strong>targeted advertising</strong> and implement designs that maximize "screen minutes" at the expense of productive thought and discussion.
-						    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain centralized,
-						     allowing them to rigidly control the experience of users, subjecting them to lab-tested algorithms created to benefit advertisers, not users.
-					</p>
-					</div>
-					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
-					<h2>Solution</h2>
-						<p className={styles.pStyle}>
+		const cause = (
+			<p className={styles.pStyle}>
+				A reliance on the <strong>attention economy</strong>,
+				 in which users are measured by the amount of time they spend focused on ads,
+				  forces modern social networks to make decisions that hurt the user experience in favor of the advertiser experience.
+				   In order to increase profits from ads, they track user data to perform <strong>targeted advertising</strong> and implement designs that maximize "screen minutes" at the expense of productive thought and discussion.
+				    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain centralized,
+				     allowing them to rigidly control the experience of users, subjecting them to lab-tested algorithms created to benefit advertisers, not users.
+			</p>
+		);
+
+		const solution = (
+			<p className={styles.pStyle}>
 							As a <strong>decentralized</strong> social network on the Ethereum blockchain,
 							 we are able to create a new type of relationship between network and user,
 							  one in which private user data cannot be collected and sold or abused;
@@ -126,6 +141,22 @@ class Landing extends Component {
 							      while a tipping and bounty system rewards users that participate in good faith.
 							       <strong>Better tools</strong> for sourcing and proving claims will allow users to more easily evaluate what they read and determine what they trust.
 						</p>
+		)
+
+		if (this.props.svgContainerSize.width > 450) {
+
+			return (<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="problem cause solution">
+					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
+					<h2>Problem</h2>
+						{problem}
+					</div>
+					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
+					<h2>Cause</h2>
+						{cause}
+					</div>
+					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
+					<h2>Solution</h2>
+						{solution}
 					</div>
 			</ScrollElement>);
 		} else {
@@ -133,39 +164,19 @@ class Landing extends Component {
 				(<ScrollElement key="problem" addToScroll={landingAddSection} className={styles.elementStyle} name="problem">
 					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
 					<h2>Problem</h2>
-					<p className={styles.pStyle}>Modern social networks suffer from <strong>censorship</strong> from authoritarian governments or corporations.
-					 They are vulnerable to the spread of <strong>disinformation</strong> via bad actors.
-					 They often form into <strong>echo chambers</strong> that simply reinforce already held opinions and any dissent is lost in the <strong>noise</strong> of responses.
-					 When disagreements are had, unhealthy communication encounters no friction and discourse turns <strong>toxic</strong>.
-					</p>
+					{problem}
 					</div>
 				</ScrollElement>),
 				(<ScrollElement key="cause" addToScroll={landingAddSection} className={styles.elementStyle} name="cause">
 					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
 					<h2>Cause</h2>
-					<p className={styles.pStyle}>
-						A reliance on the <strong>attention economy</strong>,
-						 in which users are measured are measured by the amount of time they spend focused on ads,
-						  forces modern social networks to make decisions that hurt the user experience in favor of the advertiser experience.
-						   In order to increase profits from ads, they track user data to perform <strong>targeted advertising</strong> and implement designs that maximize "screen minutes" at the expense of productive thought and discussion.
-						    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain <strong>centralized</strong>,
-						     allowing them to rigidly control the experience of users, subjecting them to lab-tested algorithms created to benefit advertisers, not users.
-					</p>
+					{cause}
 					</div>
 				</ScrollElement>),
 				(<ScrollElement key="solution" addToScroll={landingAddSection} className={styles.elementStyle} name="solution">
 					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
 					<h2>Solution</h2>
-						<p className={styles.pStyle}>
-							As a <strong>decentralized</strong> social network on the Ethereum blockchain,
-							 we are able to create a new type of relationship between network and user,
-							  one in which private user data cannot be collected and sold or abused;
-							   in which the attention economy is abandoned in favor of the <strong>intention economy</strong>.
-							    Smart Contracts on the Ethereum blockchain allow us to introduce <strong>economic friction </strong>
-							     to reduce the success of influence ops and bad actors,
-							      while a tipping and bounty system rewards users that participate in good faith.
-							       <strong>Better tools</strong> for sourcing and proving claims will allow users to more easily evaluate what they read and determine what they trust.
-						</p>
+						{solution}
 					</div>
 				</ScrollElement>)
 			];
@@ -226,21 +237,21 @@ class Landing extends Component {
 		if (this.props.svgContainerSize.width > 450) {
 			return this.props.selected === 2;
 		} else {
-			return this.props.selected >= 4 && this.props.selected < 8;
+			return this.props.selected === 4;
 		}
 	}
 	active4() {
 		if (this.props.svgContainerSize.width > 450) {
 			return this.props.selected === 3;
 		} else {
-			return this.props.selected >= 7 && this.props.selected < 8;
+			return this.props.selected > 4 && this.props.selected <= 7;
 		}
 	}
 	active5() {
 		if (this.props.svgContainerSize.width > 450) {
 			return this.props.selected === 4;
 		} else {
-			return this.props.selected >= 8 && this.props.selected < 9;
+			return this.props.selected === 8;
 		}
 	}
 	active6() {
@@ -362,8 +373,26 @@ class Landing extends Component {
 			"element": true
 		})
 
+		const actions = [
+			<FlatButton
+			label="I'll do that later"
+			onClick={this.handleClose}
+			/>,
+		];
+
 		 return (
 			<div className={styles.bodyStyle}>
+					<Dialog
+						title="Install MetaMask to use prototype"
+						actions={actions}
+						modal={false}
+						open={this.state.open}
+						onRequestClose={this.handleClose}
+					><p>In order to use the prototype, you must use the Google Chrome browser with the MetaMask extension installed.
+						Once it is installed and set-up, please set the network to 'Custom RPC' with URL = 'http://citadel.ink:8545' and refresh the page.
+					</p>
+					<a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">Click here to install MetaMask</a>
+					</Dialog>
 				<div className={styles.scrollContainer} ref={contianer => this.contianer = contianer} style={{top: this.props.scrollPos}}>
 					<div className={styles.headerStyle}>
 						<div className={navDivClassnames} id="bs-example-navbar-collapse-1">
@@ -380,11 +409,6 @@ class Landing extends Component {
 										className={styles.ctaDesktop}
 										onClick={this.tryCitadelClicked}>
 											Try the Citadel Prototype Now!
-									</button>
-									<button
-										className={styles.ctaMobile}
-										onClick={this.tryCitadelClicked}>
-											Try Citadel!
 									</button>
 								</li>
 							</ul>
@@ -455,12 +479,13 @@ class Landing extends Component {
 
 
 const mapStateToProps = state => {
-	const { landing } = state.core;
+	const { landing, network } = state.core;
   
 	return {
 		svgContainerSize: landing.get('svgContainerSize'),
 		scrollPos: landing.get('top'),
-		selected: landing.get('selected')
+		selected: landing.get('selected'),
+		network
 	};
 };
 
