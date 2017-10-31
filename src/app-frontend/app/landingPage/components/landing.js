@@ -111,31 +111,27 @@ class Landing extends Component {
 
 	problemSection() {
 
-		if (this.props.svgContainerSize.width > 450) {
+		const problem = (
+			<p className={styles.pStyle}>Modern social networks suffer from <strong>censorship</strong> from authoritarian governments or corporations.
+				 They are vulnerable to the spread of <strong>disinformation</strong> via bad actors.
+				 They often form into <strong>echo chambers</strong> that simply reinforce already held opinions and any dissent is lost in the <strong>noise</strong> of responses.
+				 When disagreements are had, unhealthy communication encounters no friction and discourse turns <strong>toxic</strong>.
+			</p>
+		);
 
-			return (<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="problem cause solution">
-					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
-					<h2>Problem</h2>
-					<p className={styles.pStyle}>Modern social networks suffer from <strong>censorship</strong> from authoritarian governments or corporations.
-					 They are vulnerable to the spread of <strong>disinformation</strong> via bad actors.
-					 They often form into <strong>echo chambers</strong> that simply reinforce already held opinions and any dissent is lost in the <strong>noise</strong> of responses.
-					 When disagreements are had, unhealthy communication encounters no friction and discourse turns <strong>toxic</strong>.
-					</p>
-					</div>
-					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
-					<h2>Cause</h2>
-					<p className={styles.pStyle}>
-						A reliance on the <strong>attention economy</strong>,
-						 in which users are measured are measured by the amount of time they spend focused on ads,
-						  forces modern social networks to make decisions that hurt the user experience in favor of the advertiser experience.
-						   In order to increase profits from ads, they track user data to perform <strong>targeted advertising</strong> and implement designs that maximize "screen minutes" at the expense of productive thought and discussion.
-						    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain centralized,
-						     allowing them to rigidly control the experience of users, subjecting them to lab-tested algorithms created to benefit advertisers, not users.
-					</p>
-					</div>
-					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
-					<h2>Solution</h2>
-						<p className={styles.pStyle}>
+		const cause = (
+			<p className={styles.pStyle}>
+				A reliance on the <strong>attention economy</strong>,
+				 in which users are measured by the amount of time they spend focused on ads,
+				  forces modern social networks to make decisions that hurt the user experience in favor of the advertiser experience.
+				   In order to increase profits from ads, they track user data to perform <strong>targeted advertising</strong> and implement designs that maximize "screen minutes" at the expense of productive thought and discussion.
+				    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain centralized,
+				     allowing them to rigidly control the experience of users, subjecting them to lab-tested algorithms created to benefit advertisers, not users.
+			</p>
+		);
+
+		const solution = (
+			<p className={styles.pStyle}>
 							As a <strong>decentralized</strong> social network on the Ethereum blockchain,
 							 we are able to create a new type of relationship between network and user,
 							  one in which private user data cannot be collected and sold or abused;
@@ -145,6 +141,22 @@ class Landing extends Component {
 							      while a tipping and bounty system rewards users that participate in good faith.
 							       <strong>Better tools</strong> for sourcing and proving claims will allow users to more easily evaluate what they read and determine what they trust.
 						</p>
+		)
+
+		if (this.props.svgContainerSize.width > 450) {
+
+			return (<ScrollElement addToScroll={landingAddSection} className={styles.elementStyle} name="problem cause solution">
+					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
+					<h2>Problem</h2>
+						{problem}
+					</div>
+					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
+					<h2>Cause</h2>
+						{cause}
+					</div>
+					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
+					<h2>Solution</h2>
+						{solution}
 					</div>
 			</ScrollElement>);
 		} else {
@@ -152,39 +164,19 @@ class Landing extends Component {
 				(<ScrollElement key="problem" addToScroll={landingAddSection} className={styles.elementStyle} name="problem">
 					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
 					<h2>Problem</h2>
-					<p className={styles.pStyle}>Modern social networks suffer from <strong>censorship</strong> from authoritarian governments or corporations.
-					 They are vulnerable to the spread of <strong>disinformation</strong> via bad actors.
-					 They often form into <strong>echo chambers</strong> that simply reinforce already held opinions and any dissent is lost in the <strong>noise</strong> of responses.
-					 When disagreements are had, unhealthy communication encounters no friction and discourse turns <strong>toxic</strong>.
-					</p>
+					{problem}
 					</div>
 				</ScrollElement>),
 				(<ScrollElement key="cause" addToScroll={landingAddSection} className={styles.elementStyle} name="cause">
 					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
 					<h2>Cause</h2>
-					<p className={styles.pStyle}>
-						A reliance on the <strong>attention economy</strong>,
-						 in which users are measured are measured by the amount of time they spend focused on ads,
-						  forces modern social networks to make decisions that hurt the user experience in favor of the advertiser experience.
-						   In order to increase profits from ads, they track user data to perform <strong>targeted advertising</strong> and implement designs that maximize "screen minutes" at the expense of productive thought and discussion.
-						    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain <strong>centralized</strong>,
-						     allowing them to rigidly control the experience of users, subjecting them to lab-tested algorithms created to benefit advertisers, not users.
-					</p>
+					{cause}
 					</div>
 				</ScrollElement>),
 				(<ScrollElement key="solution" addToScroll={landingAddSection} className={styles.elementStyle} name="solution">
 					<div className={`${styles.cardStyle} ${styles.problemSection}`}>
 					<h2>Solution</h2>
-						<p className={styles.pStyle}>
-							As a <strong>decentralized</strong> social network on the Ethereum blockchain,
-							 we are able to create a new type of relationship between network and user,
-							  one in which private user data cannot be collected and sold or abused;
-							   in which the attention economy is abandoned in favor of the <strong>intention economy</strong>.
-							    Smart Contracts on the Ethereum blockchain allow us to introduce <strong>economic friction </strong>
-							     to reduce the success of influence ops and bad actors,
-							      while a tipping and bounty system rewards users that participate in good faith.
-							       <strong>Better tools</strong> for sourcing and proving claims will allow users to more easily evaluate what they read and determine what they trust.
-						</p>
+						{solution}
 					</div>
 				</ScrollElement>)
 			];
@@ -245,21 +237,21 @@ class Landing extends Component {
 		if (this.props.svgContainerSize.width > 450) {
 			return this.props.selected === 2;
 		} else {
-			return this.props.selected >= 4 && this.props.selected < 8;
+			return this.props.selected === 4;
 		}
 	}
 	active4() {
 		if (this.props.svgContainerSize.width > 450) {
 			return this.props.selected === 3;
 		} else {
-			return this.props.selected >= 7 && this.props.selected < 8;
+			return this.props.selected > 4 && this.props.selected <= 7;
 		}
 	}
 	active5() {
 		if (this.props.svgContainerSize.width > 450) {
 			return this.props.selected === 4;
 		} else {
-			return this.props.selected >= 8 && this.props.selected < 9;
+			return this.props.selected === 8;
 		}
 	}
 	active6() {
@@ -417,11 +409,6 @@ class Landing extends Component {
 										className={styles.ctaDesktop}
 										onClick={this.tryCitadelClicked}>
 											Try the Citadel Prototype Now!
-									</button>
-									<button
-										className={styles.ctaMobile}
-										onClick={this.tryCitadelClicked}>
-											Try Citadel!
 									</button>
 								</li>
 							</ul>

@@ -143,8 +143,10 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
       var hasReloaded = false;
       var update = function(revisionSubmissionHash = undefined) {
         if (revisionSubmissionHash) {
+          console.log("load revised post.")
           dispatch(loadPost(account, revisionSubmissionHash, resulty.revHash, undefined, true, true))
         } else {
+          console.log("initialize needed posts")
           dispatch(initializeNeededPosts())
         }
         hasReloaded = true;
