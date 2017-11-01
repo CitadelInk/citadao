@@ -35,6 +35,16 @@ class Home extends Component {
 		} 
 	}
 
+	componentWillUnmount() {
+		if (this.scrollDiv) {
+			this.scrollDiv.removeEventListener('scroll', this.handleAllPostsScroll);
+		} 
+
+		if (this.streamScrollDiv) {
+			this.streamScrollDiv.removeEventListener('scroll', this.handleStreamScroll);
+		} 
+	}
+
 	render() {
 		var selectedIndex = this.props.wallet.get('selectedHomeTabIndex');
 
