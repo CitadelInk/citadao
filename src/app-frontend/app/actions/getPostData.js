@@ -246,7 +246,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
             var index = section.data.get("index");
             if(refAuthorg && refSubmission && refRevision) {
               dispatch(setReference(refAuthorg, refSubmission, refRevision, authorgAddress, submissionHash, revisionHash, index));
-              if (firstLevel) {
+              if (firstLevel && !alreadyLoadedSet.has(refAuthorg + "-" + refSubmission + "-" + refRevision)) {
                 dispatch(loadPost(refAuthorg, refSubmission, refRevision, undefined, false, false));
               }              
             }
@@ -287,7 +287,9 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
 export const asyncLoadRef = (authorgAddress, submissionHash, revisionHash, index) => (dispatch) => {
   getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
     dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
-    dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false));
+    if(!alreadyLoadedSet.has(refAuthorg + "-" + refSubmission + "-" + refRevision)) {
+      dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false));
+    }
   })
 }
 
