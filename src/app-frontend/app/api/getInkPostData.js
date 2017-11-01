@@ -2,8 +2,8 @@ import appContracts from 'app-contracts'
 
 // do this differently once we have cache/infinite scrolling
 export const getTotalPostCount = () => {
-  var t0 = performance.now();
   return new Promise((res, rej) =>{
+    var t0 = performance.now();
     appContracts.Ink.deployed()
     .then((instance) => {
       instance.getTotalAuthSubRevKeyCount().then((count) => {
@@ -16,8 +16,8 @@ export const getTotalPostCount = () => {
 }
 
 export const getPostKey = (index) => {
-  var t0 = performance.now();
   return new Promise((res,rej) => {
+    var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
       instance.getAuthSubRevKey(index).then((results) => {
         var t1 = performance.now();
@@ -29,8 +29,8 @@ export const getPostKey = (index) => {
 }
 
 export const getAccountPostKeyCount = (account) => {
-  var t0 = performance.now();
   return new Promise((res, rej) => {
+    var t0 = performance.now();
     appContracts.Ink.deployed()
     .then((instance) => {
       instance.getPostKeyCountForAuthorg(account).then((count) => {
@@ -41,8 +41,8 @@ export const getAccountPostKeyCount = (account) => {
 }
 
 export const getAuthorgPostKey = (account, index) => {
-  var t0 = performance.now();
   return new Promise((res,rej) => {
+    var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
       instance.getAuthorgPostKey(account, index).then((results) => {
         var t1 = performance.now();
@@ -54,8 +54,8 @@ export const getAuthorgPostKey = (account, index) => {
 }
 
 export const getAccountInfo = (account, web3, specificRev = undefined) => {
-  var t0 = performance.now();
    return new Promise((res, rej) => {
+    var t0 = performance.now();
     appContracts.Ink.deployed()
     .then((instance) => {
       Promise.all([
@@ -106,8 +106,8 @@ export const getAccountInfo = (account, web3, specificRev = undefined) => {
 }
 
 export const getReactionValue = (reactionHash, web3) => {
-  var t0 = performance.now();
   return new Promise((res, rej) => {
+    var t0 = performance.now();
     const bzzAddress = reactionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, reactionManifest) => {
       // prolly want to handle errors
@@ -124,8 +124,8 @@ export const getReactionValue = (reactionHash, web3) => {
 }
 
 export const getAccountBioRevision = (revisionHash, web3) => {
-  var t0 = performance.now();
   return new Promise((res, rej) => {
+    var t0 = performance.now();
     const bzzAddress = revisionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, bio) => {
       // prolly want to handle errors
@@ -145,8 +145,8 @@ var totalCalls = 0;
 
 // once we add revisioning, will need to get specific revision (default likely most recent?)
 export const getRevisionFromSwarm = (revisionHash, web3) => {
-  var t0 = performance.now();
   return new Promise((res, rej) => {
+    var t0 = performance.now();
     const bzzAddress = revisionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, revision) => {
       const manifest = JSON.parse(revision)
@@ -168,8 +168,8 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
 }
 
 export const getNumReferences = (authorgAddress, submissionHash, revisionHash) => {
-  var t0 = performance.now();
   return new Promise((res, rej) => {
+    var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
       instance.getNumberReferencesForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash).then((count) => {
         var t1 = performance.now();
@@ -196,8 +196,8 @@ export const getNumReferences = (authorgAddress, submissionHash, revisionHash) =
 }*/
 
 export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, index) => {
-  var t0 = performance.now();
   return new Promise((res, rej) => {
+    var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
       instance.getReferenceForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash, index).then((refKey) => {
         var t1 = performance.now();
@@ -209,8 +209,8 @@ export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, in
 }
 
 export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
-  var t0 = performance.now();
   return new Promise((res, rej) => {
+    var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
       instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
         var t1 = performance.now();
@@ -222,8 +222,8 @@ export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) =>
 }
 
 export const getSubmissionRevisions = (authorgAddress, submissionHash) => {
-  var t0 = performance.now();
   return new Promise((res, rej) => {
+    var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
       instance.getSubmissionRevisions(authorgAddress, submissionHash).then((revisionHashes) => {
         var t1 = performance.now();

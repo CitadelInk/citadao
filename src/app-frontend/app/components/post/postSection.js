@@ -111,7 +111,7 @@ class PostSection extends Component {
 	}
 
 	onMouseMove(e) {
-		const decoratedComponentDiv = findDOMNode(this.refs.decoratedComponent)
+		const decoratedComponentDiv = this.decoratedComponent;
 
 		this.setState({
 			isHoveringOver: isMouseOverElement({ elem: decoratedComponentDiv, e })
@@ -160,7 +160,7 @@ class PostSection extends Component {
 		}
 
 		return (			
-			<div ref={'decoratedComponent'} className={styles.sectionDiv}>
+			<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
 				{section}
 				{showActions && 
 					actions
