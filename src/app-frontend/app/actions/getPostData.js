@@ -230,7 +230,9 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
     } else {
       dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
     }
-    dispatch(loadUserData(authorgAddress));
+    if (!userLoadStartedSet.has(authorgAddress + "")) {
+      dispatch(loadUserData(authorgAddress));
+    }
     getRevisionFromSwarm(revisionHash, network.web3).then(result => {
       dispatch(setRevisionSwarmData(authorgAddress, 
                                     submissionHash, 
