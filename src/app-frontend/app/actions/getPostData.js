@@ -12,7 +12,8 @@ import {
   getAccountPostKeyCount,
   getAuthorgPostKey,
   getRevisionTime,
-  getSubmissionRevisions
+  getSubmissionRevisions,
+  //getAllReferences
 } from '../api/getInkPostData'
 
 import {
@@ -206,32 +207,21 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
   }
 }
 
+var alreadyLoadedSet = new Set();
+
 
 export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   const {approvedReactions, network, auths} = getState().core;
   var alreadyLoaded = false;
   var authorgData = auths[authorgAddress];
   var keys = [];
-  if (authorgData) {
-    var submissionsData = authorgData.submissions;
-    if (submissionsData) {
-      var submissionData = submissionsData[submissionHash];
-      if (submissionData) {
-        var revisionsData = submissionData.revisions;
-        if (revisionsData) {
-          var revisionData = revisionsData[revisionHash];
-          if (revisionData && revisionData.loadStarted) {
-              alreadyLoaded = true;
-          }
-        }					
-      }			
-    }		
-  }
+
+  alreadyLoaded = alreadyLoadedSet.has({authorgAddress, submissionHash, revisionHash});
 
 
   if (!alreadyLoaded) {
     console.warn("load post. revHash: " + revisionHash + " - focused: " + focusedPost);
-    dispatch(setLoadStarted(authorgAddress, submissionHash, revisionHash));
+    alreadyLoadedSet.add({authorgAddress, submissionHash, revisionHash});
     if (!timestamp) {
       getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
         dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
@@ -256,7 +246,7 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
             if(refAuthorg && refSubmission && refRevision) {
               dispatch(setReference(refAuthorg, refSubmission, refRevision, authorgAddress, submissionHash, revisionHash, index));
               if (firstLevel) {
-                dispatch(loadPost(refAuthorg, refSubmission, refRevision, undefined, -1, false));
+                dispatch(loadPost(refAuthorg, refSubmission, refRevision, undefined, false, false));
               }              
             }
 
@@ -265,15 +255,25 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
       })
   } 
   if (!alreadyLoaded || focusedPost) {
-    console.warn("focusedly load post. revHash: " + revisionHash + " - focused: " + focusedPost);
+    /*getAllReferences(authorgAddress, submissionHash, revisionHash).then((result) => {
+      var length = 0;
+      if (result.postTimestamps) {
+        length = result.postTimestamps.length;
+      }
+      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, length));
+      if (focusedPost) {
+        for(var i = 0; i < length; i++) {
+          dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.postUsers[i], result.postSubHashes[i], result.postRevHashes[i], result.postTimestamps[i]))
+          dispatch(loadPost(result.postUsers[i], result.postSubHashes[i], result.postRevHashes[i], result.postTimestamps[i], true, false));
+        }
+        dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash));
+      }
+    })*/
     getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
       dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
       if (focusedPost) {
         for(var i = 0; i < refs.count; i++) {
-          getReferenceKey(authorgAddress, submissionHash, revisionHash, i).then((result) => {
-            dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
-            dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, false));
-          })
+          dispatch(asyncLoadRef(authorgAddress, submissionHash, revisionHash, i));
         }
         dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash));
       }
@@ -281,6 +281,13 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
     dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
     dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash));
   }  
+}
+
+export const asyncLoadRef = (authorgAddress, submissionHash, revisionHash, index) => (dispatch) => {
+  getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
+    dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
+    dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false));
+  })
 }
 
 export const loadSubmissionRevisionHashList = (authorgAddress, submissionHash) => (dispatch) => {
@@ -301,20 +308,18 @@ export const loadAuthorgBioReactions = (authorgAddress, revisionHash, approvedAu
   })
 }
 
+var userLoadStartedSet = new Set();
+
 export const loadUserData = (authorgAddress, focusedUser = false, userAccount = false, specificRev = undefined) => (dispatch, getState) => {
   const {auths, network, approvedAuthorgReactions} = getState().core;
   var userLoadStarted = false;
   var authorgData = auths [authorgAddress];
-  if (authorgData) {
-    if (authorgData.userLoadStarted || authorgData.name) {
-      userLoadStarted = true;
-    }
-  }
+  userLoadStarted = userLoadStartedSet.has(authorgAddress);
 
 
   if (!userLoadStarted || focusedUser) {
     console.warn("loadUserData authorgAddress: " + authorgAddress);
-    dispatch(setNameLoadStarted(authorgAddress));
+    userLoadStartedSet.add(authorgAddress);
     getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
       dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
       dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions))
@@ -350,7 +355,8 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
 
 export const initializeTestTypedRevisions = () => dispatch => {
   getTotalPostCount().then((result) => {
-    dispatch(setWalletData({totalPostCount : result.totalPostCount, numPostsLoaded : 0}));
+    numPostsLoaded = 0;
+    dispatch(setWalletData({totalPostCount : result.totalPostCount}));
     dispatch(getNext10Posts());
   });
 }
@@ -386,24 +392,24 @@ export const getNext10AuthorgPosts = (account) => (dispatch, getState) => {
     dispatch(setAuthorgPostKeysLoadedCount(account, numPostsLoaded2 + postsLoaded));
 }
 
+var numPostsLoaded = 0;
+
 export const getNext10Posts = () => (dispatch, getState) => {
+  console.log("getNext10Posts.")
   const {wallet} = getState().core;
 
-  var numPostsLoaded2 = wallet.get('numPostsLoaded');
   var totalPostCount = wallet.get('totalPostCount');
   
   var postsLoaded = 0;
-  for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
+  for(var i = numPostsLoaded; i < numPostsLoaded + 10 && i < totalPostCount; i++) {
     var index = totalPostCount - i - 1;
     getPostKey(index).then((result) => {
       dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));
       dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp))
       
     })
-    postsLoaded++;
+    numPostsLoaded++;
   }
-
-  dispatch(setWalletData({numPostsLoaded : numPostsLoaded2 + postsLoaded}))
 }
 
 export const setSelectedBioRevision = (selectedRevision) => (dispatch, getState) => {
