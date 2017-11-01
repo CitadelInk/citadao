@@ -400,7 +400,6 @@ export const getNext10Posts = () => (dispatch, getState) => {
   const {wallet} = getState().core;
 
   var totalPostCount = wallet.get('totalPostCount');
-  
   var postsLoaded = 0;
   for(var i = numPostsLoaded; i < numPostsLoaded + 10 && i < totalPostCount; i++) {
     var index = totalPostCount - i - 1;
@@ -409,8 +408,9 @@ export const getNext10Posts = () => (dispatch, getState) => {
       dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp))
       
     })
-    numPostsLoaded++;
+    postsLoaded++;
   }
+  numPostsLoaded += postsLoaded;
 }
 
 export const setSelectedBioRevision = (selectedRevision) => (dispatch, getState) => {
