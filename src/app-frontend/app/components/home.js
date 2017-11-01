@@ -14,7 +14,7 @@ let cx = classNames.bind(styles);
 import actions from '../actions';
 
 const {
-	getNext10Posts,
+	getNext10PostsWrapper,
 	setWalletData
 } = actions;
 
@@ -137,7 +137,7 @@ class Home extends Component {
 
 		
 		if(divPos >= maxHeight - 200) {
-			this.props.dispatch(getNext10Posts());
+			this.props.dispatch(getNext10PostsWrapper());
 		}		
 	}
 

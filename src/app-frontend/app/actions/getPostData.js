@@ -362,8 +362,14 @@ export const initializeTestTypedRevisions = () => dispatch => {
   getTotalPostCount().then((result) => {
     numPostsLoaded = 0;
     dispatch(setWalletData({totalPostCount : result.totalPostCount}));
-    dispatch(getNext10Posts());
+    dispatch(getNextXPosts(10));
   });
+}
+
+export const getNext10Wrapper = () => dispatch => {
+  if (currentlyLoadingPosts === 0) {
+    dispatch(getNextXPosts(2));
+  }
 }
 
 export const getNextFollowingPosts = () => (dispatch, getState) => {
@@ -398,16 +404,19 @@ export const getNext10AuthorgPosts = (account) => (dispatch, getState) => {
 }
 
 var numPostsLoaded = 0;
+var currentlyLoadingPosts = 0;
 
-export const getNext10Posts = () => (dispatch, getState) => {
+export const getNextXPosts = (x) => (dispatch, getState) => {
   console.log("getNext10Posts.")
   const {wallet} = getState().core;
 
   var totalPostCount = wallet.get('totalPostCount');
   var postsLoaded = 0;
-  for(var i = numPostsLoaded; i < numPostsLoaded + 10 && i < totalPostCount; i++) {
+  for(var i = numPostsLoaded; i < numPostsLoaded + x && i < totalPostCount; i++) {
+    currentlyLoadingPosts++;
     var index = totalPostCount - i - 1;
     getPostKey(index).then((result) => {
+      currentlyLoadingPosts--;
       dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));
       dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));      
     })
@@ -451,5 +460,6 @@ export default {
   loadPost,
   handleViewResponses,
   getReactions,
-  getNext10Posts
+  getNextXPosts,
+  getNext10Wrapper
 };
