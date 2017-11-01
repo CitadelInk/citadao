@@ -16,7 +16,8 @@ import {
 
 import {
   loadUserData,
-  loadPost
+  loadMiniUserData,
+  doUnfocusedLoad
 } from './getPostData'
 
 
@@ -168,9 +169,9 @@ export const loadRequestResponse = (postUser, postSubmission, postRevision, offe
     var convertedBounty = network.web3.fromWei(result.bounty, "ether");
     //console.log("bounty: " + convertedBounty);
     dispatch(setRevisionResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient, result.exists, result.timestamp, convertedBounty, result.collected, result.completed, result.withdrawn))
-    dispatch(loadUserData(offerer));
-    dispatch(loadUserData(recipient));
-    dispatch(loadPost(postUser, postSubmission, postRevision));
+    dispatch(loadMiniUserData(offerer));
+    dispatch(loadMiniUserData(recipient));
+    dispatch(doUnfocusedLoad(postUser, postSubmission, postRevision));
   })
 }
 

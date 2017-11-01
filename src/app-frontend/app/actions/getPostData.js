@@ -197,141 +197,196 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
   const {ui} = getState().core;
   const {router} = getState();
   if(router.result.title === 'Home') {
-    dispatch(initializeTestTypedRevisions());
+    return dispatch(initializeTestTypedRevisions());
   } else if (router.result.title === 'Post') {
     if (Object.keys(router.params).length == 3) {
-      dispatch(loadPost(router.params["authorg"], router.params["subHash"], router.params["revHash"], undefined, true, true));
+      return dispatch(doFocusedLoad(router.params["authorg"], router.params["subHash"], router.params["revHash"], undefined, true));
     }
   } else if (router.result.title === 'Account') {
-    dispatch(loadUserData(router.params["account"], true, false, router.params["revHash"]));
+    return dispatch(loadUserData(router.params["account"], true, false, router.params["revHash"]));
   }
 }
 
+export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+  const {network} = getState().core;
+  console.warn("load post. revHash: " + revisionHash);
+  alreadyLoadedSet.add(authorgAddress + "-" + submissionHash + "-" + revisionHash);
+
+  return new Promise((res, rej) => {
+    getRevisionFromSwarm(revisionHash, network.web3).then(result => {
+      var document = State.fromJSON(result.revisionSwarmText)
+      if(document) {
+        dispatch(setRevisionSwarmData(authorgAddress, 
+          submissionHash, 
+          revisionHash, 
+          result.revisionSwarmTitle, 
+          result.revisionSwarmText));
+
+        var references = [];
+        var refLoadPromises = [];
+        document.document.nodes.forEach(function(section) {   
+          var refAuthorg = section.data.get("authorg");
+          var refSubmission = section.data.get("submission");
+          var refRevision = section.data.get("revision");
+          var index = section.data.get("index");
+          if(refAuthorg && refSubmission && refRevision) {
+            dispatch(setReference(refAuthorg, refSubmission, refRevision, authorgAddress, submissionHash, revisionHash, index));
+            references.push({refAuthorg, refSubmission, refRevision, index});
+            if (firstLevel && !alreadyLoadedSet.has(refAuthorg + "-" + refSubmission + "-" + refRevision)) {
+              refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false, false)));
+            }           
+          }  
+        })
+        Promise.all(refLoadPromises).then(() => {
+          var timePromise = [];
+          if (!timestamp) {
+            timePromise.push(getRevisionTime(authorgAddress, submissionHash, revisionHash))
+          }
+          Promise.all(timePromise).then((time) => {
+            if (time && time.length > 0) {
+              timestamp = time[0].timestamp;
+            }
+            dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
+
+            var userPromise = [];
+            if (!userLoadStartedSet.has(authorgAddress + "")) {
+              userPromise.push(dispatch(loadMiniUserData(authorgAddress)));
+            }
+            Promise.all(userPromise).then(() => {
+              res({result, references, time})
+            })
+          })
+        })
+      }       
+    })
+  })
+}
+
+export const doUpdateLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+  const {approvedReactions} = getState().core;
+  var promiseList = [];
+  return new Promise((res, rej) => {
+    Promise.all([
+      dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions)),
+      dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash)),
+      getNumReferences(authorgAddress, submissionHash, revisionHash)
+    ]).then((refs) => {
+      console.warn("doUpdateLoad: " + refs[2]);
+      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs[2].count));
+      res({count : refs.count});
+    })
+  })
+}
+
+export const doUnfocusedLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+  return new Promise((res, rej) => {
+
+    var promiseList = [];
+    if (!alreadyLoadedSet.has(authorgAddress + "-" + submissionHash + "-" + revisionHash)) {
+      promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, firstLevel)));
+      promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, firstLevel)));
+    }
+
+    Promise.all(
+     promiseList
+    ).then(() => {
+      console.log("all done?")
+      res({done : true})
+    })
+  })
+  
+}
 var alreadyLoadedSet = new Set();
 
-
-export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
-  const {approvedReactions, network, auths} = getState().core;
-  var alreadyLoaded = false;
-  var authorgData = auths[authorgAddress];
-  var keys = [];
-
-  alreadyLoaded = alreadyLoadedSet.has(authorgAddress + "-" + submissionHash + "-" + revisionHash);
-
-
-
-  if (!alreadyLoaded) {
-    console.warn("load post. revHash: " + revisionHash + " - focused: " + focusedPost);
-    alreadyLoadedSet.add(authorgAddress + "-" + submissionHash + "-" + revisionHash);
-    if (!timestamp) {
-      getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
-        dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
-      })
-    } else {
-      dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
-    }
-    if (!userLoadStartedSet.has(authorgAddress + "")) {
-      dispatch(loadUserData(authorgAddress));
-    }
-    getRevisionFromSwarm(revisionHash, network.web3).then(result => {
-      dispatch(setRevisionSwarmData(authorgAddress, 
-                                    submissionHash, 
-                                    revisionHash, 
-                                    result.revisionSwarmTitle, 
-                                    result.revisionSwarmText))
-        var document = State.fromJSON(result.revisionSwarmText)
-        if(document) {
-          document.document.nodes.forEach(function(section) {   
-            var refAuthorg = section.data.get("authorg");
-            var refSubmission = section.data.get("submission");
-            var refRevision = section.data.get("revision");
-            var index = section.data.get("index");
-            if(refAuthorg && refSubmission && refRevision) {
-              dispatch(setReference(refAuthorg, refSubmission, refRevision, authorgAddress, submissionHash, revisionHash, index));
-              if (firstLevel && !alreadyLoadedSet.has(refAuthorg + "-" + refSubmission + "-" + refRevision)) {
-                dispatch(loadPost(refAuthorg, refSubmission, refRevision, undefined, false, false));
-              }              
-            }
-
-          })       
-        }     
-      })
-  } 
-  if (!alreadyLoaded || focusedPost) {
-    /*getAllReferences(authorgAddress, submissionHash, revisionHash).then((result) => {
-      var length = 0;
-      if (result.postTimestamps) {
-        length = result.postTimestamps.length;
-      }
-      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, length));
-      if (focusedPost) {
-        for(var i = 0; i < length; i++) {
-          dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.postUsers[i], result.postSubHashes[i], result.postRevHashes[i], result.postTimestamps[i]))
-          dispatch(loadPost(result.postUsers[i], result.postSubHashes[i], result.postRevHashes[i], result.postTimestamps[i], true, false));
-        }
-        dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash));
-      }
-    })*/
+export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
+  return new Promise((res, rej) =>{
     getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
-      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs.count));
-      if (focusedPost) {
-        for(var i = 0; i < refs.count; i++) {
-          dispatch(asyncLoadRef(authorgAddress, submissionHash, revisionHash, i));
-        }
-        dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash));
+      var refPromises = [];
+      for(var i = 0; i < refs.count; i++) {
+        refPromises.push(dispatch(asyncLoadRef(authorgAddress, submissionHash, revisionHash, i)));
       }
-    })
-    dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions));
-    dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash));
-  }  
+      Promise.all([...refPromises, dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash))])
+      .then(() => {
+        res({done : true})
+      })
+    })    
+  }) 
+}
+
+export const doFocusedLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+  return new Promise((res, rej) => {
+    getNumReferences(authorgAddress, submissionHash, revisionHash).then((refCount) => {
+      var promiseList = [];
+      if (!alreadyLoadedSet.has(authorgAddress + "-" + submissionHash + "-" + revisionHash)) {
+        promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
+      }
+      promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
+      promiseList.push(dispatch(doDetailLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)))
+  
+      Promise.all(
+       promiseList
+      ).then(() => {
+        console.log()
+        res({done : true})
+      })
+    })    
+  })
+  
 }
 
 export const asyncLoadRef = (authorgAddress, submissionHash, revisionHash, index) => (dispatch) => {
-  getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
+  return getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
     dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
-    if(!alreadyLoadedSet.has(refAuthorg + "-" + refSubmission + "-" + refRevision)) {
-      dispatch(loadPost(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false));
+    if(!alreadyLoadedSet.has(result.refAuthAdd + "-" + result.refSubHash + "-" + result.refRevHash)) {
+      dispatch(doUnfocusedLoad(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false));
     }
   })
 }
 
 export const loadSubmissionRevisionHashList = (authorgAddress, submissionHash) => (dispatch) => {
-  getSubmissionRevisions(authorgAddress, submissionHash).then((result) => {
+  return getSubmissionRevisions(authorgAddress, submissionHash).then((result) => {
     dispatch(setRevisionHashes(authorgAddress, submissionHash, result.revisionHashes))
   })
 }
 
 export const getReactions = (authorgAddress, submissionHash, revisionHash, approvedReactions) => (dispatch) => {
-  getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
+  return getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
     dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
   })
 }
 
 export const loadAuthorgBioReactions = (authorgAddress, revisionHash, approvedAuthorgReactions) => (dispatch) => {
-  getAuthorgBioReactions(authorgAddress, revisionHash, approvedAuthorgReactions).then((reactions) => {
+  return getAuthorgBioReactions(authorgAddress, revisionHash, approvedAuthorgReactions).then((reactions) => {
     dispatch(setAuthorgBioRevisionReactions(authorgAddress, revisionHash, reactions.revisionReactionReactors))
   })
 }
-
 var userLoadStartedSet = new Set();
 
-export const loadUserData = (authorgAddress, focusedUser = false, userAccount = false, specificRev = undefined) => (dispatch, getState) => {
-  const {auths, network, approvedAuthorgReactions} = getState().core;
-  var userLoadStarted = false;
-  var authorgData = auths [authorgAddress];
-  userLoadStarted = userLoadStartedSet.has(authorgAddress + "");
+export const loadMiniUserData = (authorgAddress) => (dispatch, getState) => {
+  userLoadStartedSet.add(authorgAddress + "");
+  const {network, approvedAuthorgReactions} = getState().core;
 
+  return new Promise((res, rej) => {
+      console.warn("loadUserData authorgAddress: " + authorgAddress);
+      getAccountInfo(authorgAddress, network.web3).then((info) => {
+        dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
+        dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions));
+        res({done : true})
+      });    
+  })
+}
 
-  if (!userLoadStarted || focusedUser) {
-    console.warn("loadUserData authorgAddress: " + authorgAddress);
-    userLoadStartedSet.add(authorgAddress + "");
-    getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
-      dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
-      dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions))
-    });
-    if (focusedUser) {
-      console.warn("focusedly loadUserData authorgAddress: " + authorgAddress);
-      getAccountPostKeyCount(authorgAddress).then((result) => {
+export const loadUserData = (authorgAddress, focusedUser , userAccount = false, specificRev = undefined) => (dispatch, getState) => {
+  userLoadStartedSet.add(authorgAddress + "");
+  const {network, approvedAuthorgReactions} = getState().core;
+
+  return new Promise((res, rej) => {
+      var promise1 = getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
+        dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
+        dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions));
+      });    
+
+      var promise2 = getAccountPostKeyCount(authorgAddress).then((result) => {
         dispatch(setAuthorgPostKeyCount(authorgAddress, result.count));
         dispatch(setAuthorgPostKeysLoadedCount(authorgAddress, 0));
         dispatch(getNext10AuthorgPosts(authorgAddress));
@@ -340,7 +395,7 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
         dispatch(setAuthorgFollowers(authorgAddress, result.followers));
         if (result.followers) {
           result.followers.forEach(function(authorg) {
-            dispatch(loadUserData(authorg));
+            dispatch(loadMiniUserData(authorg));
           })
         }
       })
@@ -354,27 +409,33 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
       })
       dispatch(loadResponseRequestsCreated(authorgAddress));
       dispatch(loadResponseRequestsReceived(authorgAddress));
-    }
-  }
+      Promise.all([promise1, promise2]).then(() => {
+        res({done : true})
+      })
+    })
 }
 
 export const initializeTestTypedRevisions = () => dispatch => {
-  getTotalPostCount().then((result) => {
-    numPostsLoaded = 0;
-    dispatch(setWalletData({totalPostCount : result.totalPostCount}));
-    dispatch(getNextXPosts(10));
+  return new Promise((res, rej) => {
+    getTotalPostCount().then((result) => {
+      numPostsLoaded = 0;
+      dispatch(setWalletData({totalPostCount : result.totalPostCount}));
+      dispatch(getNextXPosts(10)).then(() => {
+        res({done:true})
+      })
+    });
   });
 }
 
 export const getNext10PostsWrapper = () => dispatch => {
   if (currentlyLoadingPosts === 0) {
-    dispatch(getNextXPosts(2));
+    return dispatch(getNextXPosts(2));
   }
 }
 
 export const getNextFollowingPosts = () => (dispatch, getState) => {
   const {wallet} = getState().core;
-  getAuthorgsFollowing(wallet.get('account')).then((result) => {
+  return getAuthorgsFollowing(wallet.get('account')).then((result) => {
     dispatch(getNextPostsFromUsers(result.authorgsFollowing))
   })
 }
@@ -395,12 +456,15 @@ export const getNext10AuthorgPosts = (account) => (dispatch, getState) => {
     for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
       var index = totalPostCount - i - 1;
       getAuthorgPostKey(account, index).then((result) => {
-        dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));
+        dispatch(doUnfocusedLoad(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp)).then((result2) => {
+          console.log("post loaded - references: " + result2.references)
+          dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));      
+        });      
       })
       postsLoaded++;
     }
   
-    dispatch(setAuthorgPostKeysLoadedCount(account, numPostsLoaded2 + postsLoaded));
+    return dispatch(setAuthorgPostKeysLoadedCount(account, numPostsLoaded2 + postsLoaded));
 }
 
 var numPostsLoaded = 0;
@@ -408,29 +472,34 @@ var currentlyLoadingPosts = 0;
 
 export const getNextXPosts = (count) => (dispatch, getState) => {
   console.log("getNext10Posts.")
-  const {wallet} = getState().core;
+  const {wallet, network} = getState().core;
 
   var totalPostCount = wallet.get('totalPostCount');
   var postsLoaded = 0;
+  var postLoadPromises = [];
   for(var i = numPostsLoaded; i < (numPostsLoaded + count) && i < totalPostCount; i++) {
     currentlyLoadingPosts++;
     var index = totalPostCount - i - 1;
-    getPostKey(index).then((result) => {
-      currentlyLoadingPosts--;
-      dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));
-      dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));      
-    })
+    postLoadPromises.push(dispatch(loadPostByIndex(index)))
     postsLoaded++;
   }
   numPostsLoaded += postsLoaded;
+  return Promise.all(postLoadPromises)
 }
 
-export const setSelectedBioRevision = (selectedRevision) => (dispatch, getState) => {
-  const {network} = getState().core;
-  return getAccountBioRevision(selectedRevision, network.web3).then((revision) => {
-    return dispatch(setWalletData({selectedBioRevision : selectedRevision, selectedBioRevisionValue : revision}))
+export const loadPostByIndex = (index) => (dispatch) => {
+  return new Promise((res, rej) => {
+    getPostKey(index).then((result) => {
+      currentlyLoadingPosts--;
+      dispatch(doUnfocusedLoad(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp)).then((result2) => {
+        console.log("post loaded")
+        dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));   
+        res({done:true})   
+      });      
+    })
   })
-};
+  
+}
 
 export const handleViewResponses = (responses) => (dispatch) => {
   return dispatch(setSelectedResponses(responses))
@@ -457,7 +526,8 @@ export default {
   SET_AUTHORG_BIO_REVISION_REACTIONS,
   SET_REVISION_HASHES,
   SET_SELECTED_RESPONSES,
-  loadPost,
+  doFocusedLoad,
+  doUnfocusedLoad,
   handleViewResponses,
   getReactions,
   getNextXPosts,
