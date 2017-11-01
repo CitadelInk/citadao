@@ -366,7 +366,7 @@ export const initializeTestTypedRevisions = () => dispatch => {
   });
 }
 
-export const getNext10Wrapper = () => dispatch => {
+export const getNext10PostsWrapper = () => dispatch => {
   if (currentlyLoadingPosts === 0) {
     dispatch(getNextXPosts(2));
   }
@@ -406,13 +406,13 @@ export const getNext10AuthorgPosts = (account) => (dispatch, getState) => {
 var numPostsLoaded = 0;
 var currentlyLoadingPosts = 0;
 
-export const getNextXPosts = (x) => (dispatch, getState) => {
+export const getNextXPosts = (count) => (dispatch, getState) => {
   console.log("getNext10Posts.")
   const {wallet} = getState().core;
 
   var totalPostCount = wallet.get('totalPostCount');
   var postsLoaded = 0;
-  for(var i = numPostsLoaded; i < numPostsLoaded + x && i < totalPostCount; i++) {
+  for(var i = numPostsLoaded; i < (numPostsLoaded + count) && i < totalPostCount; i++) {
     currentlyLoadingPosts++;
     var index = totalPostCount - i - 1;
     getPostKey(index).then((result) => {
@@ -461,5 +461,5 @@ export default {
   handleViewResponses,
   getReactions,
   getNextXPosts,
-  getNext10Wrapper
+  getNext10PostsWrapper
 };
