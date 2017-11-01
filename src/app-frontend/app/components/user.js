@@ -32,6 +32,10 @@ class User extends Component {
 		this.scrollDiv.addEventListener('scroll', this.handleScroll);
 	}
 
+	componentWillUnmount() {
+		this.scrollDiv.removeEventListener('scroll', this.handleScroll);
+	}
+
 	onFollowClicked() {
 		const user = this.props.router.params["account"];
 		this.props.dispatch(follow(user));

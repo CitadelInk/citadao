@@ -405,8 +405,7 @@ export const getNext10Posts = () => (dispatch, getState) => {
     var index = totalPostCount - i - 1;
     getPostKey(index).then((result) => {
       dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));
-      dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp))
-      
+      dispatch(loadPost(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));      
     })
     postsLoaded++;
   }
