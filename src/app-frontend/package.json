@@ -13,7 +13,7 @@
     "config": "cross-os configInternal",
     "configInternal": {
       "darwin": "echo {'\"Server\"':$(ip route get 1 | awk '{print $NF;exit}' | sed -e 's/^/\"/' | sed -e 's/$/\"/')} > ./app/config.json",
-      "win32": "FIX ME",
+      "win32": "echo {\"Server\":\"localhost\"} > ./app/config.json",
       "linux": "echo {'\"Server\"':$(ip route get 1 | awk '{print $NF;exit}' | sed -e 's/^/\"/' | sed -e 's/$/\"/')} > ./app/config.json"
     },
     "start": "yarn run config && webpack-dev-server --hot --history-api-fallback --open --host 0.0.0.0",
@@ -47,7 +47,8 @@
     "slate-react": "^0.1.1",
     "to-pascal-case": "^1.0.0",
     "truffle-contract": "^2.0.5",
-    "url-loader": "^0.5.9"
+    "url-loader": "^0.5.9",
+    "app-contracts": "^0.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -69,6 +70,6 @@
     "webpack": "^3.7.1",
     "webpack-config-utils": "^2.3.0",
     "webpack-dev-server": "^2.9.2",
-    "script-ext-html-webpack-plugin" : "^1.8.5"
+    "script-ext-html-webpack-plugin": "^1.8.5"
   }
 }
