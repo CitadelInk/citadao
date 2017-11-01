@@ -141,6 +141,8 @@ export const getAccountBioRevision = (revisionHash, web3) => {
   });
 }
 
+var totalCalls = 0;
+
 // once we add revisioning, will need to get specific revision (default likely most recent?)
 export const getRevisionFromSwarm = (revisionHash, web3) => {
   var t0 = performance.now();
@@ -151,6 +153,8 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
       web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
         var revJson = JSON.parse(rev)
         var t1 = performance.now();
+        totalCalls++;
+        console.log("total getRevisionFromSwarm calls: " + totalCalls);
         console.log("getRevisionFromSwarm took " + (t1 - t0) + " milliseconds.")
         res ({
           revisionSwarmHash: revisionHash, 
@@ -175,6 +179,21 @@ export const getNumReferences = (authorgAddress, submissionHash, revisionHash) =
     })
   })
 }
+
+/*export const getAllReferences = (authorgAddress, submissionHash, revisionHash) => {
+  var t0 = performance.now();
+  return new Promise((res, rej) => {
+    appContracts.Ink.deployed().then((instance) => {
+      instance.getAllReferencesForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash).then((result) => {
+        var t1 = performance.now();
+        console.log("getAllReferences took " + (t1 - t0) + " milliseconds.")
+        console.log("getAllReferences result: " + result)
+        console.log("getAllReferences timestamps: " + [...result[3]])
+        res({postUsers : result[0], postSubHashes : result[1], postRevHashes : result[2], postTimestamps : result[3]})
+      })
+    })
+  })
+}*/
 
 export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, index) => {
   var t0 = performance.now();
