@@ -10,7 +10,7 @@ import {
 } from './contractPublicData';
 
 import {
-  doFocusedLoad,
+  loadPost,
   loadUserData,
   initializeTestTypedRevisions
 } from './getPostData';
@@ -37,7 +37,7 @@ export const gotoUserPageRev  = (user, rev) => dispatch =>  {
 
 export const gotoPost = (authorg, subHash, revHash) => (dispatch) => {
   dispatch(clearUISpecifics());
-  dispatch(doFocusedLoad(authorg, subHash, revHash, undefined, true, true))
+  dispatch(loadPost(authorg, subHash, revHash, undefined, true, true))
   return dispatch(push("/post/authorg/" + authorg + "/sub/" + subHash + "/rev/" + revHash))
 }
 

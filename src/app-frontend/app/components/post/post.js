@@ -23,5 +23,10 @@ class Post extends Component {
 	}
 }
 
+const mapStateToProps = state => {
+  const { wallet, submissions } = state.core;
 
-export default (Post)
+  return {wallet, submissions };
+}
+
+export default connect(mapStateToProps)(Post)
