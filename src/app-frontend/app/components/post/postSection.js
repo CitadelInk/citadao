@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import React, { PureComponent as Component } from 'react';
+import { findDOMNode } from 'react-dom';
+
 import { connect } from 'react-redux';
 import PostSectionActions from './postSectionActions';
 import Post from './post';
@@ -11,9 +13,17 @@ import { Card } from 'material-ui';
 import { push } from 'redux-little-router';
 
 import actions from '../../actions';
+
 const {
 	gotoPost
 } = actions;
+
+const isMouseOverElement = ({ elem, e }) => {
+  const { pageY, pageX } = e
+  const { left, right, bottom, top } = elem.getBoundingClientRect()
+
+  return pageX > left && pageX < right && pageY > top && pageY < bottom
+}
 
 /**
  * Define the default node type.
@@ -86,6 +96,26 @@ class PostSection extends Component {
 	 constructor(props) {
 		 super(props);
 		 this.widgetClicked = this.widgetClicked.bind(this);
+		 this.onMouseMove = this.onMouseMove.bind(this);
+		 this.state = {
+			 isHoveringOver: false
+		 }
+	}
+
+	componentDidMount() {
+		document.body.addEventListener('mousemove', this.onMouseMove)
+	}
+
+	componentWillUnmount() {
+		document.body.removeEventListener('mousemove', this.onMouseMove)
+	}
+
+	onMouseMove(e) {
+		const decoratedComponentDiv = this.decoratedComponent;
+
+		this.setState({
+			isHoveringOver: isMouseOverElement({ elem: decoratedComponentDiv, e })
+		})
 	}
 
 
@@ -124,14 +154,13 @@ class PostSection extends Component {
 		}
 
 		var section = (<div onClick={() => this.widgetClicked(reference)} className={styles.editor}><Editor readOnly state={state} schema={schema} /></div>);
-		var actions = (<PostSectionActions sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
-		
-		if (reference || !this.props.focusedPost) {
+		var actions = (<PostSectionActions showClipboard={this.state.isHoveringOver} sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
+		if(reference || !this.props.focusedPost) {
 			showActions = false;
 		}
 
 		return (			
-			<div  className={styles.sectionDiv}>
+			<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
 				{section}
 				{showActions && 
 					actions
