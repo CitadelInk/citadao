@@ -216,12 +216,13 @@ export const loadPost = (authorgAddress, submissionHash, revisionHash, timestamp
   var authorgData = auths[authorgAddress];
   var keys = [];
 
-  alreadyLoaded = alreadyLoadedSet.has({authorgAddress, submissionHash, revisionHash});
+  alreadyLoaded = alreadyLoadedSet.has(authorgAddress + "-" + submissionHash + "-" + revisionHash);
+
 
 
   if (!alreadyLoaded) {
     console.warn("load post. revHash: " + revisionHash + " - focused: " + focusedPost);
-    alreadyLoadedSet.add({authorgAddress, submissionHash, revisionHash});
+    alreadyLoadedSet.add(authorgAddress + "-" + submissionHash + "-" + revisionHash);
     if (!timestamp) {
       getRevisionTime(authorgAddress, submissionHash, revisionHash).then((revisionTime) => {
         dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, revisionTime.timestamp))
@@ -314,12 +315,12 @@ export const loadUserData = (authorgAddress, focusedUser = false, userAccount = 
   const {auths, network, approvedAuthorgReactions} = getState().core;
   var userLoadStarted = false;
   var authorgData = auths [authorgAddress];
-  userLoadStarted = userLoadStartedSet.has(authorgAddress);
+  userLoadStarted = userLoadStartedSet.has(authorgAddress + "");
 
 
   if (!userLoadStarted || focusedUser) {
     console.warn("loadUserData authorgAddress: " + authorgAddress);
-    userLoadStartedSet.add(authorgAddress);
+    userLoadStartedSet.add(authorgAddress + "");
     getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
       dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
       dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions))
