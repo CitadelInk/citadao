@@ -97,17 +97,20 @@ export const addNewApprovedReaction = () => (dispatch, getState) => {
 
 export const initializeContract = () => (dispatch, getState) => {
   const {network} = getState().core;
-  return Promise.all([
-    getAdvancedTokenPublicData(),
-    getInkPublicData(),
-    getApprovedReactions(network.web3),
-    getApprovedAuthorgReactions(network.web3)
-  ]).then(([token, ink, reactions, authorgReactions]) => {
-    dispatch(setWalletData({...token, ...ink}));
-    dispatch(setApprovedReactions(reactions.approvedReactions));
-    dispatch(setApprovedAuthorgReactions(authorgReactions.approvedAuthorgReactions));
-    dispatch(initializeNeededPosts());
-  });
+    return new Promise((res, rej) => { Promise.all([
+      getAdvancedTokenPublicData(),
+      getInkPublicData(),
+      getApprovedReactions(network.web3),
+      getApprovedAuthorgReactions(network.web3)
+    ]).then(([token, ink, reactions, authorgReactions]) => {
+      dispatch(setWalletData({...token, ...ink}));
+      dispatch(setApprovedReactions(reactions.approvedReactions));
+      dispatch(setApprovedAuthorgReactions(authorgReactions.approvedAuthorgReactions));
+      dispatch(initializeNeededPosts()).then(() => {
+        res({done : true})
+      })
+    });
+  })
 };
 
 export const initializeAccounts = (web3) => dispatch => {

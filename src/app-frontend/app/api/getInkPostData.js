@@ -58,10 +58,8 @@ export const getAccountInfo = (account, web3, specificRev = undefined) => {
     var t0 = performance.now();
     appContracts.Ink.deployed()
     .then((instance) => {
-      Promise.all([
-        instance.getBioRevisions(account)]
-      )      
-      .then(([result]) => {
+      instance.getBioRevisions(account) 
+      .then((result) => {
         var bioRevisions = result[0];
         var timestamps = result[1];
         if(bioRevisions !== null) {
@@ -129,10 +127,12 @@ export const getAccountBioRevision = (revisionHash, web3) => {
     const bzzAddress = revisionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, bio) => {
       // prolly want to handle errors
-      const jsonBio = JSON.parse(bio)
+      const jsonBio = JSON.parse(bio);
+      var t1 = performance.now();
+      console.log("bio revision manifest retrieved after " + (t1 - t0) + " milliseconds. num manifest entries = " + (jsonBio.entries.length))
       web3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
-        var t1 = performance.now();
-        console.log("getAccountBioRevision took " + (t1 - t0) + " milliseconds.")
+        var t2 = performance.now();
+        console.log("getAccountBioRevision took " + (t2 - t0) + " milliseconds.")
         res({
           selectedBioRevision: bioText
         });
@@ -149,13 +149,15 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
     var t0 = performance.now();
     const bzzAddress = revisionHash.substring(2);
     web3.bzz.retrieve(bzzAddress, (error, revision) => {
-      const manifest = JSON.parse(revision)
+      const manifest = JSON.parse(revision);
+      var t1 = performance.now();
+      console.log("revision manifest retrieved after " + (t1 - t0) + " milliseconds. num manifest entries = " + (manifest.entries.length))
       web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
         var revJson = JSON.parse(rev)
-        var t1 = performance.now();
+        var t2 = performance.now();
         totalCalls++;
         console.log("total getRevisionFromSwarm calls: " + totalCalls);
-        console.log("getRevisionFromSwarm took " + (t1 - t0) + " milliseconds.")
+        console.log("getRevisionFromSwarm took " + (t2 - t0) + " milliseconds.")
         res ({
           revisionSwarmHash: revisionHash, 
           revisionSwarmAuthorgHash: revJson.authorg, 

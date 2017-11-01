@@ -19,7 +19,7 @@ import {
   initializeNeededPosts,
   loadAuthorgBioReactions,
   loadUserData,
-  loadPost
+  doFocusedLoad
 } from './getPostData'
 
 
@@ -144,10 +144,10 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
       var update = function(revisionSubmissionHash = undefined) {
         if (revisionSubmissionHash) {
           console.log("load revised post.")
-          dispatch(loadPost(account, revisionSubmissionHash, resulty.revHash, undefined, true, true))
+          dispatch(doFocusedLoad(account, revisionSubmissionHash, resulty.revHash, undefined, true, true))
         } else {
           console.log("initialize needed posts")
-          dispatch(loadPost(account, resulty.subHash, resulty.revHash, undefined, true, true))
+          dispatch(doFocusedLoad(account, resulty.subHash, resulty.revHash, undefined, true, true))
         }
         hasReloaded = true;
       };
