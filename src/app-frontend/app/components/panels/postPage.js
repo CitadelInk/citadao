@@ -84,7 +84,7 @@ class PostPage extends Component {
 
 							if (revisionData.sectionRefKeyPostsLoaded == revisionData.refCount) {
 								responseMap = revisionData.sectionRefKeyMap;
-							} else if (revisionData.refCount) {
+							} else if (revisionData.refCount && revisionData.refCount > 0) {
 								focusedLoadDone = false;
 							}
 							if (revisionData.refKeys) {
