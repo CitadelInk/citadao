@@ -35,7 +35,8 @@ const {
   SET_REVISION_REQUEST_RESPONSE_RECEIPT,
   SET_USER_RESPONSE_REQUESTS_CREATED,
   SET_USER_RESPONSE_REQUESTS_RECEIVED,
-  SET_SELECTED_RESPONSES
+  SET_SELECTED_RESPONSES,
+  ADD_EMBEDED_POST_KEY_MAPPING
 } = actions;
 
 const network = (state = Map({
@@ -279,6 +280,20 @@ const revs = (state = {}, action) => {
           sectionRefKeyMap: sectionMap
         })
       });
+    case ADD_EMBEDED_POST_KEY_MAPPING:
+      var embededPostMap;
+      if(state[revHash]) { 
+        embededPostMap = state[revHash].embededPostTextMap;
+      }
+      if (!embededPostMap) {
+        embededPostMap = new Map();
+      }
+      var newMap = embededPostMap.set(action.data.embKey, action.data.embResult )
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          embededPostTextMap: newMap
+        })
+      });
     case SET_REVISION_HASHES:
       return Object.assign({}, state, {
         revisionHashes: action.data.revisionHashes
@@ -297,6 +312,7 @@ const subs = (state = {}, action) => {
     case SET_REVISION_SWARM_DATA:
     case SET_LOAD_STARTED:
     case SET_REFERENCE:
+    case ADD_EMBEDED_POST_KEY_MAPPING:
     case SET_REVISION_HASHES:
     case SET_REVISION_REQUEST_RESPONSE_KEYS:
     case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
@@ -331,6 +347,7 @@ const auths = (state = {}, action) => {
       case SET_REVISION_SWARM_DATA:
       case SET_LOAD_STARTED:
       case SET_REFERENCE:
+      case ADD_EMBEDED_POST_KEY_MAPPING:
       case SET_REVISION_HASHES:
       case SET_REVISION_REQUEST_RESPONSE_KEYS:
       case SET_REVISION_REQUEST_RESPONSE_RECEIPT:

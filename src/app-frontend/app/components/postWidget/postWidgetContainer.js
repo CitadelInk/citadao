@@ -23,7 +23,7 @@ class PostWidgetContainer extends Component {
 		return (			
 			<div className={styles.style} onClick={this.widgetClicked}>
 				<Card>
- 				<Post authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} timestamp={this.props.timestamp} focusedPost={false} />
+ 				<Post embededPostTextMap={this.props.embededPostTextMap} text={this.props.text} responseMap={this.props.responseMap} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} timestamp={this.props.timestamp} focusedPost={false} />
 				</Card>
 			</div>
 		);
@@ -39,9 +39,9 @@ class PostWidgetContainer extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet } = state.core;
+  const { } = state.core;
 
-  return {wallet };
+  return { };
 }
 
 export default connect(mapStateToProps)(PostWidgetContainer)
