@@ -21,7 +21,6 @@ class PostSectionActions extends Component {
 
 
 	render() {
-
 		var mentions = (<span> </span>);
 		if(this.props.sectionResponses && this.props.sectionResponses.length > 0) {
 			mentions = (<span className={styles.mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>)
@@ -31,7 +30,10 @@ class PostSectionActions extends Component {
 				"authorg" : this.props.authorg,
 				"submissionHash" : this.props.submissionHash,
 				"revisionHash" : this.props.revisionHash,
-				"sectionIndex" : this.props.sectionIndex
+				"sectionIndex" : this.props.sectionIndex,
+				"text" : this.props.section,
+				"name" : this.props.authorgName,
+				"avatar" : this.props.authorgAvatar
 			}
 		}
 	

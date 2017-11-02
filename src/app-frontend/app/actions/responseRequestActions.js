@@ -132,20 +132,20 @@ export const withdrawResponseRequestBounty = (recipientUser, postUser, postSubmi
 
 export const checkCitadelIfUserReferencesPost = (recipientUser, originalPostUser, originalPostSubmission, originalPostRevision) => (dispatch, getState) => {
     return checkCitadelUserReferenceAgainstPost(recipientUser, originalPostUser, originalPostSubmission, originalPostRevision).then(function(resulty) {
-      console.log("checkCitadelUserReferenceAgainstPost result - " + resulty);
+      //console.log("checkCitadelUserReferenceAgainstPost result - " + resulty);
     })
   
 }
 
 export const checkIfUserReferencesPost = (recipientUser, originalPostUser, originalPostSubmission, originalPostRevision) => (dispatch) => {
   return checkUserReferenceAgainstPost(recipientUser, originalPostUser, originalPostSubmission, originalPostRevision).then(function(resulty) {
-    console.log("checkUserReferenceAgainstPost result - " + resulty);
+    //console.log("checkUserReferenceAgainstPost result - " + resulty);
   })
 }
 
 export const checkCitadelResponseRequestInkAddress = () => (dispatch) => {
   return getCitadelResponseRequestInkAddress().then(function(resulty) {
-    console.log("getCitadelResponseRequestInkAddress result - " + resulty);
+    //console.log("getCitadelResponseRequestInkAddress result - " + resulty);
   })
 }
 
@@ -162,12 +162,10 @@ export const loadPostResponseRequests = (postUser, postSubmission, postRevision)
 }
 
 export const loadRequestResponse = (postUser, postSubmission, postRevision, offerer, recipient) => (dispatch, getState) => {
-  //console.log("loadRequestResponse - postRev: " + postRevision + " - offerer: " + offerer);
   const {network, wallet} = getState().core;
   var account = wallet.get('account');
   getResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient).then((result) => {
     var convertedBounty = network.web3.fromWei(result.bounty, "ether");
-    //console.log("bounty: " + convertedBounty);
     dispatch(setRevisionResponseRequestReceipt(postUser, postSubmission, postRevision, offerer, recipient, result.exists, result.timestamp, convertedBounty, result.collected, result.completed, result.withdrawn))
     dispatch(loadMiniUserData(offerer));
     dispatch(loadMiniUserData(recipient));

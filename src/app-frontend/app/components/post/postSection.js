@@ -62,6 +62,10 @@ const schema = {
         return (
 					<div width="100%" className={styles.embededPostStyle}>
 						<Post width="100%" {...props.attributes}
+						timestamp={props.node.data.get('timestamp')}
+						revisionHashes={props.node.data.get('revHashes')}
+						authorgName={props.node.data.get('authorgName')}
+						authorgAvatar={props.node.data.get('authorgAvatar')}
 						embeded={true}
 						text={props.node.data.get('text')}
 						authorg={props.node.data.get('authorg')} 
@@ -93,65 +97,51 @@ const schema = {
 
 class PostSection extends Component {
 
-
 	 constructor(props) {
 		 super(props);
 		 this.widgetClicked = this.widgetClicked.bind(this);
-		 this.onMouseMove = this.onMouseMove.bind(this);
 		 this.state = {
 			 isHoveringOver: true
 		 }
 	}
 
-	componentDidMount() {
-		if (this.props.focusedPost) {
-		//	document.body.addEventListener('mousemove', this.onMouseMove)
-		}
-	}
-
-	componentWillUnmount() {
-		if (this.props.focusedPost) {
-		//	document.body.removeEventListener('mousemove', this.onMouseMove)
-		}
-	}
-
-	onMouseMove(e) {
-		const decoratedComponentDiv = this.decoratedComponent;
-
-		this.setState({
-			isHoveringOver: isMouseOverElement({ elem: decoratedComponentDiv, e })
-		})
-	}
-
 
 	render() {
-		//console.log("section render")
 		var reference = false;
 
 		var node = this.props.section;
-		var authorg = node.data.get("authorg");
-		var submission = node.data.get("submission");
-		var revision = node.data.get("revision");
+		if (node.data.get)  {
+			var authorg = node.data.get("authorg");
+			var submission = node.data.get("submission");
+			var revision = node.data.get("revision");
 
-		var index = node.data.get("index");
+			var index = node.data.get("index");
 
-		if (authorg && submission && revision) {
-			var embKey = authorg + "-" + submission + "-" + revision;
-			if (this.props.embededPostTextMap) {
-				var embText = this.props.embededPostTextMap.get(embKey);
+			if (authorg && submission && revision) {
+				var embKey = authorg + "-" + submission + "-" + revision;
+				if (this.props.embededPostTextMap) {
+					var embText = this.props.embededPostTextMap.get(embKey).text;
+					var embAuthorgName = this.props.embededPostTextMap.get(embKey).name;
+					var embAuthorgAvatar = this.props.embededPostTextMap.get(embKey).avatar;
+					var embTimestamp = this.props.embededPostTextMap.get(embKey).timestamp;
+					var embRevHashes = this.props.embededPostTextMap.get(embKey).revisionHashes;
 
-				if (embText) {
-					var newState = State.fromJSON(embText);
-					if (newState.document && newState.document.nodes) {
-						var embNodeText = newState.document.nodes.get(index);
+					if (embText) {
+						var newState = State.fromJSON(embText);
+						if (newState.document && newState.document.nodes) {
+							var embNodeText = newState.document.nodes.get(index);
+							
+			
+							var nodeData = node.data.set('text', embNodeText);
+							nodeData = nodeData.set('authorgName', embAuthorgName);
+							nodeData = nodeData.set('authorgAvatar', embAuthorgAvatar);
+							nodeData = nodeData.set('timestamp', embTimestamp);
+							nodeData = nodeData.set('revHashes', embRevHashes);
+
+							node = node.set('data', nodeData);
+						}
 						
-		
-						var nodeData = node.data;
-						var newNodeData = nodeData.set('text', embNodeText);
-
-						node = node.set('data', newNodeData);
 					}
-					
 				}
 			}
 		}
@@ -168,7 +158,7 @@ class PostSection extends Component {
 		var reference;
 
 		var section = (<div onClick={() => this.widgetClicked(reference)} className={styles.editor}><Editor readOnly state={state} schema={schema} /></div>);
-		var actions = (<PostSectionActions showClipboard={this.state.isHoveringOver} sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
+		var actions = (<PostSectionActions showClipboard={this.state.isHoveringOver} section={this.props.section} authorgName={this.props.authorgName} authorgAvatar={this.props.authorgAvatar} sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
 		if(this.props.focusedPost){
 			try {
 				if(state.document && state.document.text && state.document.text !== "" && state.document.text.trim() != "") {

@@ -57,7 +57,7 @@ export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, we
         instance.submitRevisionWithReferences.sendTransaction(subHash, revHash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
           var submissionEvent = instance.RevisionPosted({_authorg : account});
           var t1 = performance.now();
-          console.log("post took " + (t1 - t0) + " milliseconds.")
+          console.debug("post took " + (t1 - t0) + " milliseconds.")
           res({tx_id, submissionEvent, revHash, subHash});  
         }).catch(rej);
       });

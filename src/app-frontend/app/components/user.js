@@ -95,7 +95,7 @@ class User extends Component {
 
 		var selectedIndex = this.props.wallet.get('selectedUserTabIndex');
 
-		var tabNames = ["Bio", "Posts", "RR Received", "RR Created", "Followers - " + numFollowers, "Follows - " + numFollowedUsers];
+		var tabNames = ["Bio", "Posts", "Bounties Received", "Bounties Created", "Followers - " + numFollowers, "Follows - " + numFollowedUsers];
 
 
 
