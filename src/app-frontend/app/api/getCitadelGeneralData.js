@@ -11,7 +11,7 @@ export const getApprovedReactions = (web3) => {
       .then(([approvedReactionHashes]) => {
         getReactionValues(approvedReactionHashes, web3).then((approvedReactions) => {
           var t1 = performance.now();
-          console.log("getApprovedReactions took " + (t1 - t0) + " milliseconds.")
+          console.debug("getApprovedReactions took " + (t1 - t0) + " milliseconds.")
           res({approvedReactions : approvedReactions.reactions});
         })
       })
@@ -30,7 +30,7 @@ export const getApprovedAuthorgReactions = (web3) => {
       .then(([approvedReactionHashes]) => {
         getReactionValues(approvedReactionHashes, web3).then((approvedReactions) => { 
           var t1 = performance.now();
-          console.log("getApprovedAuthorgReactions took " + (t1 - t0) + " milliseconds.")
+          console.debug("getApprovedAuthorgReactions took " + (t1 - t0) + " milliseconds.")
           res({approvedAuthorgReactions : approvedReactions.reactions});
         })
       })
@@ -50,7 +50,7 @@ export const getReactionValues = (approvedReactionHashes, web3) => {
         reactions.set(result.reactionHash, result.reactionValue);
       })
       var t1 = performance.now();
-      console.log("getReactionValues took " + (t1 - t0) + " milliseconds.")
+      console.debug("getReactionValues took " + (t1 - t0) + " milliseconds.")
       res({reactions : reactions});
     })
   })  
@@ -65,7 +65,7 @@ export const getReactionValue = (reactionHash, web3) => {
       const jsonBio = JSON.parse(reactionManifest)
       web3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
         var t1 = performance.now();
-        console.log("getReactionValue took " + (t1 - t0) + " milliseconds.")
+        console.debug("getReactionValue took " + (t1 - t0) + " milliseconds.")
         res({
           reactionHash: reactionHash, reactionValue: reaction
         });

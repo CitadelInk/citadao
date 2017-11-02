@@ -70,7 +70,7 @@ class PostExtrasPanel extends Component {
 
 		var selectedIndex = this.state.selectedTabIndex;
 
-		var tabNames = ["Referencers - " + keys.length, "Response Requests - " + responseRequestOfferers.length];
+		var tabNames = ["Referencers - " + keys.length, "Bounties - " + responseRequestOfferers.length];
 		
 		return(
 			<Tabs className={styles.tabs} selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({selectedTabIndex : tabIndex})}>

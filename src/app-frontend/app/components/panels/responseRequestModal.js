@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import UserList from './userList';
+import { State } from 'slate';
 const {
 	submitResponseRequest
 } = actions;
@@ -65,10 +66,56 @@ class ResponseRequestModal extends Component {
 	}
 
 	render() {
+		var usersInPotentialResponseRequestList;
 		var users;
-		if(this.props.users){
+		if (this.state.open && this.props.text) {
+			usersInPotentialResponseRequestList = new Set();
+			var currentAccount = this.props.wallet.get('account');
+			var currentUser = this.props.auths[currentAccount];
+
+			if (currentUser) {
+				var currentUserFollowers = currentUser.followers;
+				var currentUserFollowingUsers = currentUser.authorgsFollowed;
+				if (currentUserFollowers) {
+					currentUserFollowers.forEach((user) => {
+						usersInPotentialResponseRequestList.add(user);
+					});
+				}
+				if (currentUserFollowingUsers) {
+					currentUserFollowingUsers.forEach((user) => {
+						usersInPotentialResponseRequestList.add(user);
+					});
+				}
+			}
+
+			var state = State.fromJSON(this.props.text);
+			if (state.document && state.document.nodes) {
+				
+				var instance = this;
+
+				state.document.nodes.map((section, i) => {
+					var refAuthorg = section.data.get("authorg");							
+					if(refAuthorg) {
+						usersInPotentialResponseRequestList.add(refAuthorg);
+					}	
+				});
+			}
+			
+
+			if (this.props.refKeys) {
+				this.props.refKeys.forEach(function(value) {
+					usersInPotentialResponseRequestList.delete(value.authAdd);
+				})
+			}
+
+			usersInPotentialResponseRequestList.delete(currentAccount);
+			usersInPotentialResponseRequestList.delete(this.props.authorg);
+		}
+
+
+		if(usersInPotentialResponseRequestList){
 			var instance = this;
-			users = Array.from(this.props.users.values()).map(function(key) {
+			users = Array.from(usersInPotentialResponseRequestList.values()).map(function(key) {
 				return (<UserWidget secondary={true} key={key} authorg={key} value={key} onClick={instance.setPickedUser}/>)
 			})
 		}
@@ -87,7 +134,7 @@ class ResponseRequestModal extends Component {
 			<div>
 			<span onClick={this.handleOpen} >Request Response</span>
 			<Dialog
-				title="Request Response to Post"
+				title="Create Bounty on Post"
 				actions={actions}
 				modal={false}
 				open={this.state.open}

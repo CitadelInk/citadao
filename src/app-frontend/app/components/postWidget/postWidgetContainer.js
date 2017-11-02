@@ -19,11 +19,10 @@ class PostWidgetContainer extends Component {
 
 
 	render() {
-			
 		return (			
 			<div className={styles.style} onClick={this.widgetClicked}>
 				<Card>
- 				<Post embededPostTextMap={this.props.embededPostTextMap} text={this.props.text} responseMap={this.props.responseMap} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} timestamp={this.props.timestamp} focusedPost={false} />
+ 				<Post revisionHashes={this.props.revisionHashes} authorgName={this.props.authorgName} authorgAvatar={this.props.authorgAvatar} submissionValue={this.props.submissionValue} embededPostTextMap={this.props.embededPostTextMap} text={this.props.text} responseMap={this.props.responseMap} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} timestamp={this.props.timestamp} focusedPost={false} />
 				</Card>
 			</div>
 		);
