@@ -99,19 +99,19 @@ class PostSection extends Component {
 		 this.widgetClicked = this.widgetClicked.bind(this);
 		 this.onMouseMove = this.onMouseMove.bind(this);
 		 this.state = {
-			 isHoveringOver: false
+			 isHoveringOver: true
 		 }
 	}
 
 	componentDidMount() {
 		if (this.props.focusedPost) {
-			document.body.addEventListener('mousemove', this.onMouseMove)
+		//	document.body.addEventListener('mousemove', this.onMouseMove)
 		}
 	}
 
 	componentWillUnmount() {
 		if (this.props.focusedPost) {
-			document.body.removeEventListener('mousemove', this.onMouseMove)
+		//	document.body.removeEventListener('mousemove', this.onMouseMove)
 		}
 	}
 
@@ -125,6 +125,7 @@ class PostSection extends Component {
 
 
 	render() {
+		//console.log("section render")
 		var reference = false;
 
 		var node = this.props.section;
