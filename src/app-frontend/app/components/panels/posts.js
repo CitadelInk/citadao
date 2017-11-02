@@ -35,6 +35,7 @@ class Posts extends Component {
 			var embededPostTextMap;		
 			var authorgName = "";
 			var authorgAvatar;
+			var revisionHashes;
 			
 			if (authorg) {
 
@@ -61,6 +62,8 @@ class Posts extends Component {
 					submission = submissions[key.submissionHash];
 					if (submission) {
 						revisions = submission.revisions;
+						revisionHashes = revisions.revisionHashes;
+						console.warn("REVISION HASHES: " + revisionHashes);
 					}
 				}		
 				
@@ -81,7 +84,7 @@ class Posts extends Component {
 				}			
 			}
 
-			return (<PostWidgetContainer authorgName={authorgName} authorgAvatar={authorgAvatar} submissionValue={submission} embededPostTextMap={embededPostTextMap} text={text} responseMap={responseMap} key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
+			return (<PostWidgetContainer revisionHashes={revisionHashes} authorgName={authorgName} authorgAvatar={authorgAvatar} submissionValue={submission} embededPostTextMap={embededPostTextMap} text={text} responseMap={responseMap} key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
 		})
 		return (
 			

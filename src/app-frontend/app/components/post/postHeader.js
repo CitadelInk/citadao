@@ -23,10 +23,7 @@ class PostHeader extends Component {
 		this.infoButtonClicked = this.infoButtonClicked.bind(this);
 		this.navigateNextRev = this.navigateNextRev.bind(this);
 		this.navigatePreviousRev = this.navigatePreviousRev.bind(this);
-		this.getRevisionHashes = this.getRevisionHashes.bind(this);
 		this.onReviseClicked = this.onReviseClicked.bind(this);
-		this.getSubmission = this.getSubmission.bind(this);
-		this.getRevision = this.getRevision.bind(this);
 
 		this.state = {showDetails : false};
 	}
@@ -38,109 +35,48 @@ class PostHeader extends Component {
 		var avatar = this.props.authorgAvatar;
 		var timestamp = this.props.timestamp;
 		var revText = "";
+		var submission;
+		var revisions;
 
-		//var currentUserAccount = this.props.wallet.get('account');
-		//var currentUser = this.props.auths[currentUserAccount];
-		//var currentUserFollowers;
-		//var currentUserFollowingUsers;
-		//var usersInPotentialResponseRequestList = new Set();
+		var revisionHashes = this.props.revisionHashes;
+		var notFirst = false;
+		var notLast = false;
+		var canRevise = false;
+		var canRequestResponse = false;
+		var revHash;
+		var text;
+		var responseMap;
 
-			var submission;
-			var revisions;
-
-			var revisionHashes = [];
-			var notFirst = false;
-			var notLast = false;
-			var canRevise = false;
-			var canRequestResponse = false;
-			var revHash;
-			var text;
-			var responseMap;
-
-			if (this.props.revisionHashes) {					
-				var index = revisionHashes.length - 1;
-				if(this.props.revision) {
-					index = revisionHashes.indexOf(this.props.revision)
-				}
-				revText = "rev " + (index + 1) + " of " + revisionHashes.length;
-				notFirst = (index !== 0);
-				notLast = (index !== (revisionHashes.length - 1));
+		if (revisionHashes) {					
+			var index = revisionHashes.length - 1;
+			if(this.props.revision) {
+				index = revisionHashes.indexOf(this.props.revision)
 			}
-					//if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
-					//	canRevise = true;
-					//} 
-					/*
-					if(this.props.focusedPost && !this.props.bio) {
-						canRequestResponse = true;
-					}*/
+			revText = "rev " + (index + 1) + " of " + revisionHashes.length;
+			notFirst = (index !== 0);
+			notLast = (index !== (revisionHashes.length - 1));
+		}
 
-
-						/*if (this.props.focusedPost && revision.text) {
-							if (currentUser) {
-								currentUserFollowers = currentUser.followers;
-								currentUserFollowingUsers = currentUser.authorgsFollowed;
-								if (currentUserFollowers) {
-									//usersInPotentialResponseRequestList.push(...currentUserFollowers);
-									currentUserFollowers.forEach((user) => {
-										usersInPotentialResponseRequestList.add(user);
-									});
-								}
-								if (currentUserFollowingUsers) {
-									//usersInPotentialResponseRequestList.push(...currentUserFollowingUsers);
-									currentUserFollowingUsers.forEach((user) => {
-										usersInPotentialResponseRequestList.add(user);
-									});
-								}
-							}
-
-							text = revision.text;
-							if (text) {
-							var state = State.fromJSON(text);
-								if (state.document && state.document.nodes) {
-									
-									var instance = this;
-
-									//console.log("nodes size: " + state.document.nodes.size);
-									state.document.nodes.map((section, i) => {
-									//	console.log("check section - section: " + section)
-										var refAuthorg = section.data.get("authorg");							
-						
-										if(refAuthorg) {
-											//console.log("refAuthorg: " + refAuthorg);
-											usersInPotentialResponseRequestList.add(refAuthorg);
-										}	
-									});
-								}
-							}*/
-
-
-							/*text = revision.text;
-							if (revision.sectionRefKeyMap) {
-								responseMap = revision.sectionRefKeyMap;
-							}*/
-							/*if (revision.refKeys) {
-								revision.refKeys.forEach(function(value) {
-									//console.log("for rev: " + this.props.revision + " - remove user from potential response request list: " + value.authAdd);
-									usersInPotentialResponseRequestList.delete(value.authAdd);
-								})
-							}*/
-						//}
-			//		}
+		if (this.props.focusedPost) {
+			if(this.props.authorg === this.props.wallet.get('account')) {
+				canRevise = true;
+			} 
+			if (!this.props.bio) {
+				canRequestResponse = true;
+			}
+		}
 					
 
-					//usersInPotentialResponseRequestList.delete(this.props.wallet.get('account'));
-					//usersInPotentialResponseRequestList.delete(this.props.authorg);
+		/*text = revision.text;
+		if (revision.sectionRefKeyMap) {
+			responseMap = revision.sectionRefKeyMap;
+		}*/
 
-
-								//avatar = bioRevision.image;
 
 		if (timestamp) {
 			var date = new Date(timestamp * 1000);
 			time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
 		} 
-			//}
-					
-		
 
 		var details;
 
@@ -209,6 +145,7 @@ class PostHeader extends Component {
 				</div>
 	
 				<div className={styles.reviseDiv}>
+				{ canRequestResponse && <ResponseRequestModal refKeys={this.props.responseMap} text={this.props.text} postAuthorg={this.props.authorg} postSubmission={this.props.submission} postRevision={this.props.revision}/>}
 					</div>			
 				<div className={infoTextDiv}>
 					<span className={styles.infoText} onClick={this.infoButtonClicked}>{detailText}</span>
@@ -220,7 +157,6 @@ class PostHeader extends Component {
  			</div>
 		);
 	}
-	//{ canRequestResponse && <ResponseRequestModal users={usersInPotentialResponseRequestList} postAuthorg={this.props.authorg} postSubmission={this.props.submission} postRevision={this.props.revision}/>}
 				
 
 	authorgNameClicked(e) {
@@ -236,7 +172,8 @@ class PostHeader extends Component {
 	}
 
 	navigatePreviousRev(e) {
-		var revisionHashes = this.getRevisionHashes();
+		var revisionHashes = this.props.revisionHashes;
+
 		var index = revisionHashes.length - 1;
 		if(this.props.revision) {
 			index = revisionHashes.indexOf(this.props.revision)
@@ -252,7 +189,7 @@ class PostHeader extends Component {
 	}
 
 	navigateNextRev(e) {
-		var revisionHashes = this.getRevisionHashes();
+		var revisionHashes = this.props.revisionHashes;
 		var index = revisionHashes.length - 1;
 		if(this.props.revision) {
 			index = revisionHashes.indexOf(this.props.revision)
@@ -268,52 +205,16 @@ class PostHeader extends Component {
 	}
 
 	onReviseClicked(e) {
-		var revision = this.getRevision();
-		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, reviseSubmissionInput : State.fromJSON(revision.text), selectedTabIndex : 2}));
+		var revision = this.props.text;
+		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, reviseSubmissionInput : State.fromJSON(revision), selectedTabIndex : 2}));
 		e.stopPropagation();
-	}
-
-	getRevision() {
-		var submission = this.getSubmission();
-		var revisionHashes = this.getRevisionHashes();
-		var index;
-		if (revisionHashes) {
-			index = revisionHashes.length - 1;
-			if(this.props.revision) {
-				index = revisionHashes.indexOf(this.props.revision)
-			}
-		}
-
-		return submission.revisions[revisionHashes[index]];		
-	}
-
-	getSubmission() {
-		return this.props.submissionValue;
-	}
-
-	getRevisionHashes() {
-		var submission = this.getSubmission();
-		var revisionHashes;
-		var revisions;
-		if (submission) {
-			revisions = submission.revisions;
-		}
-
-		if (this.props.bio) {
-			revisions = submission;
-			revisionHashes = revisions.revisions;
-		} else if(revisions) {
-			revisionHashes = revisions.revisionHashes;
-		}	
-
-		return revisionHashes;
 	}
 }
 
 const mapStateToProps = state => {
-  const {  } = state.core;
+  const { wallet } = state.core;
 
-  return { };
+  return { wallet };
 }
 
 export default connect(mapStateToProps)(PostHeader)

@@ -42,6 +42,7 @@ class PostPage extends Component {
 		var authorgName = "";
 		var authorgAvatar;
 		var focusedLoadDone = false;
+		var revisionHashes;
 
 		if (authorgData) {
 			if(authorgData.bioSubmission) {
@@ -69,6 +70,7 @@ class PostPage extends Component {
 				submissionData = submissionsData[submission];
 				if (submissionData) {
 					var revisionsData = submissionData.revisions;
+					revisionHashes = revisionsData.revisionHashes;
 					if (revisionsData) {
 						var revisionData = revisionsData[revision];
 						if (revisionData) {
@@ -76,9 +78,10 @@ class PostPage extends Component {
 							timestamp = revisionData.timestamp;
 							focusedLoadDone = revisionData.focusedLoadDone;
 
+
 							if (revisionData.sectionRefKeyPostsLoaded == revisionData.refCount) {
 								responseMap = revisionData.sectionRefKeyMap;
-							} else {
+							} else if (revisionData.refCount && revisionData.sectionRefKeyPostsLoaded) {
 								focusedLoadDone = false;
 							}
 							if (revisionData.refKeys) {
@@ -98,6 +101,7 @@ class PostPage extends Component {
 				<div className={styles.post}>
 					<Card>
 						<Post 
+							revisionHashes={revisionHashes}
 							authorgAvatar={authorgAvatar}
 							authorgName={authorgName}
 							submissionValue={submissionData}

@@ -47,18 +47,14 @@ function PasteRef(options = {}) {
 
   return {
     onPaste(e, paste, change) {
-      //console.warn("ref on paste")
       const { state } = change
       if (paste.type !== 'text' && paste.type !== 'html') return
       const { text, target } = paste
 
       try {
-        //console.warn("try parse.")
         var json = JSON.parse(text);
-        //console.warn("parsed")
         if (!json.reference) return;
         var section = json.reference.text;
-        console.warn("section: " + Block.create(section))
         change.call(wrapRef, json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, json.reference.sectionIndex, Block.create(section), json.reference.name, json.reference.avatar);
       } catch (e) {
         console.log("caught - e: " + e);
