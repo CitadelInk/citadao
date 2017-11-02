@@ -24,9 +24,44 @@ class Posts extends Component {
 			postos = selectedResponses;
 		}
 			
+		var auths = this.props.auths;
+
 		var posts = postos.map(function(key) {
 			var key2 = key.authAdd + "-" + key.submissionHash + "-" + key.revisionHash;
-			return (<PostWidgetContainer key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
+			var authorg = auths[key.authAdd];
+			var text = ["loading"];
+			var submission;
+			var responseMap;
+			var embededPostTextMap;			
+			
+			if (authorg) {
+				var revisions;
+				var submissions = authorg.submissions;
+				if (submissions) {
+					submission = submissions[key.submissionHash];
+					if (submission) {
+						revisions = submission.revisions;
+					}
+				}		
+				
+				if (revisions) {
+					var revision = revisions[key.revisionHash];
+					if (revision) {
+						if (revision.text) {
+							text = revision.text;
+
+							if (revision.sectionRefKeyMap) {
+								responseMap = revision.sectionRefKeyMap;
+							}
+							if (revision.embededPostTextMap) {
+								embededPostTextMap = revision.embededPostTextMap;
+							}
+						}
+					}					
+				}			
+			}
+
+			return (<PostWidgetContainer embededPostTextMap={embededPostTextMap} text={text} responseMap={responseMap} key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
 		})
 		return (
 			

@@ -4,6 +4,7 @@ import PostSection from './postSection';
 import {State} from 'slate';
 import styles from './postBody.css';
 import classNames from 'classnames/bind';
+import { List } from 'immutable';
 let cx = classNames.bind(styles);
 
 
@@ -21,79 +22,51 @@ class PostBody extends Component {
 			bodyClassName = styles.focusedBody;
 		}
 
-		var authorg = this.props.auths[this.props.authorg];
-		var text = ["loading"];
-		var responseMap;
-		
-		
-		
-		if (authorg) {
-			var revisions;
-			
-			if (this.props.bio) {
-				var submission = authorg.bioSubmission;
-				revisions = submission;
+		var state;
+		if (this.props.text) {
+			if (this.props.embeded) {
+				state = this.props.text;
 			} else {
-				var submissions = authorg.submissions;
-				if (submissions) {
-					submission = submissions[this.props.submission];
-					if (submission) {
-						revisions = submission.revisions;
-					}
-				}
+				state = State.fromJSON(this.props.text);
 			}
-			
-			if (revisions) {
-				var revision = revisions[this.props.revision];
-				if (revision) {
-					if (revision.text) {
-						text = revision.text;
-						if (revision.sectionRefKeyMap) {
-							responseMap = revision.sectionRefKeyMap;
-						}
-					}
-				}					
-			}			
-		}		
+		}
 
-		var state = State.fromJSON(text);
 		
 		var body = "loading";
 		var responses = [];
 		var focusedPost = this.props.focusedPost;
 
-		if(revision) {
-			if (this.props.embeded) {
-				var index = this.props.sectionIndex;
-				if(!index) {
-					index = 0;
-				}
+		
+		if (this.props.embeded) {
+			var index = this.props.sectionIndex;
+			if(!index) {
+				index = 0;
+			}
 
-				var nodeArray = Array.from(state.document.nodes);
-				text = nodeArray[index];
-				
-				if (text) {
-					if (responseMap) {
-						responses = responseMap.get(this.props.sectionIndex);
-					}
-					if (!responses) {
-						responses = [];
-					}
-					body = <PostSection key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={text} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
+
+			if (state) {
+
+
+				if (this.props.responseMap) {
+					responses = this.props.responseMap.get(this.props.sectionIndex);
 				}
-			} else {	
-				if (state.document && state.document.nodes) {
-				
-					var instance = this;
-					body = state.document.nodes.map((section, i) => {		
-						if (responseMap) {
-							responses = responseMap.get(i);
-						}		
-									
-						return (<PostSection key={"post-body-" + i} sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
-						
-					});
+				if (!responses) {
+					responses = [];
 				}
+				body = <PostSection embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={state} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
+			}
+		} else {
+			if(state && state.document && state.document.nodes) {	
+				var instance = this;
+				var nodes = state.document.nodes;
+				body = nodes.map((section, i) => {		
+					if (this.props.responseMap) {
+						responses = this.props.responseMap.get(i);
+					}		
+								
+					return (<PostSection embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + i} sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
+					
+				});
 			}
 		}
 
@@ -104,9 +77,7 @@ class PostBody extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, auths } = state.core;
-
-  return {wallet, auths };
+  return { };
 }
 
 export default connect(mapStateToProps)(PostBody)

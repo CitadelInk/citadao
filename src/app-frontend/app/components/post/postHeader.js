@@ -47,9 +47,7 @@ class PostHeader extends Component {
 		var usersInPotentialResponseRequestList = new Set();
 
 		//console.log("usersInPotentialResponseRequestList: " + usersInPotentialResponseRequestList);
-
 		if (authorg) {
-
 			var submission;
 			var revisions;
 
@@ -151,7 +149,7 @@ class PostHeader extends Component {
 							}
 							if (revision.refKeys) {
 								revision.refKeys.forEach(function(value) {
-									console.log("remove user from potential response request list: " + value.authAdd);
+									console.log("for rev: " + this.props.revision + " - remove user from potential response request list: " + value.authAdd);
 									usersInPotentialResponseRequestList.delete(value.authAdd);
 								})
 							}

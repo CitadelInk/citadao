@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PostSectionActions from './postSectionActions';
 import Post from './post';
 import { Editor } from 'slate-react';
-import { State, Document } from 'slate';
+import { State, Document, Data, Block } from 'slate';
 import initialState from './state.json';
 import { List } from 'immutable';
 import styles from './postSection.css';
@@ -61,8 +61,9 @@ const schema = {
 				
         return (
 					<div width="100%" className={styles.embededPostStyle}>
-						<Post width="100%" {...props.attributes} 
+						<Post width="100%" {...props.attributes}
 						embeded={true}
+						text={props.node.data.get('text')}
 						authorg={props.node.data.get('authorg')} 
 						submission={props.node.data.get('submission')} 
 						revision={props.node.data.get('revision')} 
@@ -103,11 +104,15 @@ class PostSection extends Component {
 	}
 
 	componentDidMount() {
-		document.body.addEventListener('mousemove', this.onMouseMove)
+		if (this.props.focusedPost) {
+			document.body.addEventListener('mousemove', this.onMouseMove)
+		}
 	}
 
 	componentWillUnmount() {
-		document.body.removeEventListener('mousemove', this.onMouseMove)
+		if (this.props.focusedPost) {
+			document.body.removeEventListener('mousemove', this.onMouseMove)
+		}
 	}
 
 	onMouseMove(e) {
@@ -122,7 +127,35 @@ class PostSection extends Component {
 	render() {
 		var reference = false;
 
-		var nodesList = List([this.props.section])
+		var node = this.props.section;
+		var authorg = node.data.get("authorg");
+		var submission = node.data.get("submission");
+		var revision = node.data.get("revision");
+
+		var index = node.data.get("index");
+
+		if (authorg && submission && revision) {
+			var embKey = authorg + "-" + submission + "-" + revision;
+			if (this.props.embededPostTextMap) {
+				var embText = this.props.embededPostTextMap.get(embKey);
+
+				if (embText) {
+					var newState = State.fromJSON(embText);
+					if (newState.document && newState.document.nodes) {
+						var embNodeText = newState.document.nodes.get(index);
+						
+		
+						var nodeData = node.data;
+						var newNodeData = nodeData.set('text', embNodeText);
+
+						node = node.set('data', newNodeData);
+					}
+					
+				}
+			}
+		}
+
+		var nodesList = List([node])
 		var state = new State({
 			document: new Document({
 				nodes: nodesList
@@ -133,29 +166,30 @@ class PostSection extends Component {
 		var text = "";
 		var reference;
 
-		try {
-			if(state.document && state.document.text && state.document.text !== "" && state.document.text.trim() != "") {
-				text = state.document.text;
-			} else {
-				var authorg = this.props.section.data.get("authorg");
-				var submission = this.props.section.data.get("submission");
-				var revision = this.props.section.data.get("revision");
-				var index = this.props.section.data.get("index");
-
-
-				if(authorg) {
-					reference = {authorg:authorg, submission:submission, revision:revision, index:index}
-				}	
-				showActions = false;
-
-			}
-		} catch(e) {
-			//console.error("error while checking reference")
-		}
-
 		var section = (<div onClick={() => this.widgetClicked(reference)} className={styles.editor}><Editor readOnly state={state} schema={schema} /></div>);
 		var actions = (<PostSectionActions showClipboard={this.state.isHoveringOver} sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
-		if(reference || !this.props.focusedPost) {
+		if(this.props.focusedPost){
+			try {
+				if(state.document && state.document.text && state.document.text !== "" && state.document.text.trim() != "") {
+					text = state.document.text;
+				} else {
+					var authorg = this.props.section.data.get("authorg");
+					var submission = this.props.section.data.get("submission");
+					var revision = this.props.section.data.get("revision");
+					var index = this.props.section.data.get("index");
+	
+	
+					if(authorg) {
+						reference = {authorg:authorg, submission:submission, revision:revision, index:index}
+					}	
+					showActions = false;
+	
+				}
+			} catch(e) {
+				//console.error("error while checking reference")
+			}
+	
+		} else {
 			showActions = false;
 		}
 
@@ -179,9 +213,7 @@ class PostSection extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, auths } = state.core;
-
-  return {wallet, auths };
+  return { };
 }
 
 export default connect(mapStateToProps)(PostSection)
