@@ -61,7 +61,10 @@ const schema = {
       return (
         <div className={styles.embededPostStyle}>
         <Post {...props.attributes} 
+        authorgName={props.node.data.get('name')}
+        authorgAvatar={props.node.data.get('avatar')}
         embeded={true}
+        text={props.node.data.get('text')}
         authorg={props.node.data.get('authorg')} 
         submission={props.node.data.get('submission')} 
         revision={props.node.data.get('revision')} 
@@ -120,19 +123,21 @@ const schema = {
 }
 
 const plugins = [
-  PasteLink({
-    type: 'link',
-    hrefProperty: 'url',
-    collapseTo: 'end'
-  }),
   PasteRef({
     type: 'ref',
     authorgAddress: 'authorg',
     submissionHash: 'submission',
     revisionHash: 'revision',
+    authorgName: 'name',
+    authorgAvatar: 'avatar',
     collapseTo: 'end',
     collapseWhat: 'next'
-  })
+  }),
+  PasteLink({
+    type: 'link',
+    hrefProperty: 'url',
+    collapseTo: 'end'
+  })  
 ]
 
 /**

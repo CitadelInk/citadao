@@ -33,7 +33,7 @@ class PostBody extends Component {
 
 		
 		var body = "loading";
-		var responses = [];
+		var responses = null;
 		var focusedPost = this.props.focusedPost;
 
 		
@@ -51,9 +51,9 @@ class PostBody extends Component {
 					responses = this.props.responseMap.get(this.props.sectionIndex);
 				}
 				if (!responses) {
-					responses = [];
+				//	responses = [];
 				}
-				body = <PostSection embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={state} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
+				body = <PostSection authorgAvatar={this.props.authorgAvatar} authorgName={this.props.authorgName} embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={state} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
 			}
 		} else {
 			if(state && state.document && state.document.nodes) {	
@@ -64,7 +64,7 @@ class PostBody extends Component {
 						responses = this.props.responseMap.get(i);
 					}		
 								
-					return (<PostSection embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + i} sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
+					return (<PostSection authorgAvatar={this.props.authorgAvatar} authorgName={this.props.authorgName} embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + i} sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
 					
 				});
 			}

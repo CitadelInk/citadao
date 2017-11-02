@@ -32,9 +32,29 @@ class Posts extends Component {
 			var text = ["loading"];
 			var submission;
 			var responseMap;
-			var embededPostTextMap;			
+			var embededPostTextMap;		
+			var authorgName = "";
+			var authorgAvatar;
 			
 			if (authorg) {
+
+
+				if(authorg.bioSubmission) {
+					var bioSubmission = authorg.bioSubmission;
+					var bioRevHashes = bioSubmission.revisions;
+					var revHash = "1";
+					if (bioRevHashes && bioRevHashes.length > 0) {
+						revHash = bioRevHashes[bioRevHashes.length - 1];
+					}
+					var bioRevision = bioSubmission[revHash];
+					if (bioRevision) {
+						authorgName = bioRevision.name;
+						if (bioRevision.image) {
+							authorgAvatar = bioRevision.image;
+						}
+					}
+				}
+
 				var revisions;
 				var submissions = authorg.submissions;
 				if (submissions) {
@@ -61,7 +81,7 @@ class Posts extends Component {
 				}			
 			}
 
-			return (<PostWidgetContainer embededPostTextMap={embededPostTextMap} text={text} responseMap={responseMap} key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
+			return (<PostWidgetContainer authorgName={authorgName} authorgAvatar={authorgAvatar} submissionValue={submission} embededPostTextMap={embededPostTextMap} text={text} responseMap={responseMap} key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
 		})
 		return (
 			

@@ -36,7 +36,9 @@ const {
   SET_USER_RESPONSE_REQUESTS_CREATED,
   SET_USER_RESPONSE_REQUESTS_RECEIVED,
   SET_SELECTED_RESPONSES,
-  ADD_EMBEDED_POST_KEY_MAPPING
+  ADD_EMBEDED_POST_KEY_MAPPING,
+  SET_FOCUSED_POST_LOAD_FINISHED,
+  SET_FOCUSED_POST_LOAD_BEGIN
 } = actions;
 
 const network = (state = Map({
@@ -248,11 +250,16 @@ const revs = (state = {}, action) => {
       });
     case SET_REFERENCE:
       var sectionRefKeyMap;
+      var refsLoaded;
       if(state[revHash]){ 
         sectionRefKeyMap = state[revHash].sectionRefKeyMap;
+        refsLoaded = state[revHash].sectionRefKeyPostsLoaded;
       }
       if (!sectionRefKeyMap) {
         sectionRefKeyMap = new Map();
+      }
+      if (!refsLoaded) {
+        refsLoaded = 0;
       }
 
       // TODO: refactor this to be a set so we don't have to do this stupid loop
@@ -270,14 +277,16 @@ const revs = (state = {}, action) => {
           }
         }
       }
+      
       if (!alreadyReferenced) {
+        refsLoaded = refsLoaded + 1;
         existingReferences.push(action.data.refKey);
       }
-      
       var sectionMap = sectionRefKeyMap.set(action.data.index, existingReferences);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
-          sectionRefKeyMap: sectionMap
+          sectionRefKeyMap: sectionMap,
+          sectionRefKeyPostsLoaded : refsLoaded
         })
       });
     case ADD_EMBEDED_POST_KEY_MAPPING:
@@ -294,6 +303,18 @@ const revs = (state = {}, action) => {
           embededPostTextMap: newMap
         })
       });
+    case SET_FOCUSED_POST_LOAD_BEGIN:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          focusedLoadDone: false
+        })
+      });
+    case SET_FOCUSED_POST_LOAD_FINISHED:
+        return Object.assign({}, state, {
+          [revHash]: Object.assign({}, state[revHash], {
+            focusedLoadDone: true
+          })
+        });
     case SET_REVISION_HASHES:
       return Object.assign({}, state, {
         revisionHashes: action.data.revisionHashes
@@ -316,6 +337,7 @@ const subs = (state = {}, action) => {
     case SET_REVISION_HASHES:
     case SET_REVISION_REQUEST_RESPONSE_KEYS:
     case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+    case SET_FOCUSED_POST_LOAD_FINISHED:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
       if (!stateSub) {
@@ -351,6 +373,7 @@ const auths = (state = {}, action) => {
       case SET_REVISION_HASHES:
       case SET_REVISION_REQUEST_RESPONSE_KEYS:
       case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+      case SET_FOCUSED_POST_LOAD_FINISHED:
         return {
           ...state,
           [authAdd]: {

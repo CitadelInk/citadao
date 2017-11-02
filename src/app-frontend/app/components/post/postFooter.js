@@ -30,26 +30,14 @@ class PostFooter extends Component {
 		var reactionButtons = ("");
 
 		var approvedReactions;
-		var authorg = this.props.auths[this.props.authorg];
-		var submission;
-		var revisions;
-
-		if (authorg) {
-			var submissions;
-			if (this.props.bio) {
-				approvedReactions = this.props.approvedAuthorgReactions;
-				submission = authorg.bioSubmission;
-				revisions = submission;
-			} else {
-				approvedReactions = this.props.approvedReactions;
-				var submissions = authorg.submissions;
-				if (submissions) {
-					submission = submissions[this.props.submission];
-					if (submission) {
-						revisions = submission.revisions;
-					}
-				}
-			} 
+		if (this.props.bio) {
+			approvedReactions = this.props.approvedAuthorgReactions;
+		} else { 
+			approvedReactions = this.props.approvedReactions; 
+		}
+		
+		if (this.props.submissionValue) {
+			var revisions = this.props.submissionValue.revisions;
 
 			if (revisions) {
 				var revision = revisions[this.props.revision];
@@ -75,7 +63,7 @@ class PostFooter extends Component {
 					}
 				}
 			}					
-				
+			
 		}
 
 		
@@ -90,9 +78,9 @@ class PostFooter extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, approvedReactions, approvedAuthorgReactions, auths } = state.core;
+  const { wallet, approvedReactions, approvedAuthorgReactions } = state.core;
 
-  return {wallet, approvedReactions, approvedAuthorgReactions, auths };
+  return {wallet, approvedReactions, approvedAuthorgReactions };
 }
 
 export default connect(mapStateToProps)(PostFooter)

@@ -41,6 +41,22 @@ export const addPostKey = (authorgAddress, submissionHash, revisionHash, timesta
   }
 }
 
+export const SET_FOCUSED_POST_LOAD_BEGIN = "SET_FOCUSED_POST_LOAD_BEGIN";
+export const setFocusedPostLoadBegin = (authAdd, subHash, revHash) => {
+  return {
+    type: SET_FOCUSED_POST_LOAD_BEGIN,
+    data: {authAdd, subHash, revHash}
+  }
+}
+
+export const SET_FOCUSED_POST_LOAD_FINISHED = "SET_FOCUSED_POST_LOAD_FINISHED";
+export const setFocusedPostLoadFinished = (authAdd, subHash, revHash) => {
+  return {
+    type: SET_FOCUSED_POST_LOAD_FINISHED,
+    data: {authAdd, subHash, revHash}
+  }
+}
+
 export const SET_SUBMISSIONS = "SET_SUBMISSIONS";
 export const setSubmissions = (data) => {
   return {
@@ -261,9 +277,7 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
               timestamp = time[0].timestamp;
             }
 
-            var userPromise = [];
-            userPromise.push(dispatch(loadMiniUserData(authorgAddress)));
-            Promise.all(userPromise).then(() => {
+            dispatch(loadMiniUserData(authorgAddress)).then((userResult) => {
               dispatch(setRevisionSwarmData(authorgAddress, 
                 submissionHash, 
                 revisionHash, 
@@ -275,10 +289,10 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
               })
               if (results) {
                 results.forEach(function(promiseResult) {
-                  dispatch(addEmbededPostMapping(authorgAddress, submissionHash, revisionHash, promiseResult.postKey, promiseResult.result.revisionSwarmText))
+                  dispatch(addEmbededPostMapping(authorgAddress, submissionHash, revisionHash, promiseResult.postKey, {text : promiseResult.result.revisionSwarmText, name : promiseResult.userResult.name, avatar : promiseResult.userResult.avatar}))
                 })
               }
-              res({result, references, time})
+              res({result, userResult, references, time})
             })
           })
         })
@@ -321,7 +335,7 @@ export const doUnfocusedLoad = (authorgAddress, submissionHash, revisionHash, ti
     Promise.all(
      [...promiseList]
     ).then(([basicResult, updateResult]) => {
-      res({result : basicResult.result, postKey : key})
+      res({result : basicResult.result, userResult : basicResult.userResult, postKey : key})
     })
   })
   unfocusedLoadPromises.set(key, promise);
@@ -331,6 +345,7 @@ export const doUnfocusedLoad = (authorgAddress, submissionHash, revisionHash, ti
 export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   return new Promise((res, rej) =>{
     getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
+      dispatch(setAuthSubRevReferenceCount(refs));
       var refPromises = [];
       for(var i = 0; i < refs.count; i++) {
         refPromises.push(dispatch(asyncLoadRef(authorgAddress, submissionHash, revisionHash, i)));
@@ -345,19 +360,18 @@ export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, times
 
 export const doFocusedLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
   return new Promise((res, rej) => {
-    getNumReferences(authorgAddress, submissionHash, revisionHash).then((refCount) => {
-      var promiseList = [];
-      promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
-      promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
-      promiseList.push(dispatch(doDetailLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)))
-  
-      Promise.all(
-       promiseList
-      ).then(() => {
-        console.log()
-        res({done : true})
-      })
-    })    
+    dispatch(setFocusedPostLoadBegin(authorgAddress, submissionHash, revisionHash));
+    var promiseList = [];
+    promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
+    promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
+    promiseList.push(dispatch(doDetailLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)))
+
+    Promise.all(
+      promiseList
+    ).then(() => {
+      dispatch(setFocusedPostLoadFinished(authorgAddress, submissionHash, revisionHash));
+      res({done : true})
+    })
   })
   
 }
@@ -401,7 +415,7 @@ export const loadMiniUserData = (authorgAddress) => (dispatch, getState) => {
       console.warn("loadUserData authorgAddress: " + authorgAddress);
       getAccountInfo(authorgAddress, network.web3).then((info) => {
         dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
-        res({done : true})
+        res({name : info.revisionBio.name, avatar : info.revisionBio.image})
       });    
   })
   loadMiniUserDataPromises.set(authorgAddress +"", promise);
@@ -559,6 +573,8 @@ export default {
   SET_SELECTED_RESPONSES,
   SET_EMBEDED_POST_KEYS,
   ADD_EMBEDED_POST_KEY_MAPPING,
+  SET_FOCUSED_POST_LOAD_BEGIN,
+  SET_FOCUSED_POST_LOAD_FINISHED,
   doFocusedLoad,
   doUnfocusedLoad,
   handleViewResponses,

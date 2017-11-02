@@ -33,21 +33,18 @@ class PostHeader extends Component {
 
 
 	render() {
-		var name = "loading...";
+		var name = this.props.authorgName;
 		var time = "...";
-		var authorg = this.props.auths[this.props.authorg];
-		var avatar = placeholder;
+		var avatar = this.props.authorgAvatar;
 		var timestamp = this.props.timestamp;
 		var revText = "";
 
-		var currentUserAccount = this.props.wallet.get('account');
-		var currentUser = this.props.auths[currentUserAccount];
-		var currentUserFollowers;
-		var currentUserFollowingUsers;
-		var usersInPotentialResponseRequestList = new Set();
+		//var currentUserAccount = this.props.wallet.get('account');
+		//var currentUser = this.props.auths[currentUserAccount];
+		//var currentUserFollowers;
+		//var currentUserFollowingUsers;
+		//var usersInPotentialResponseRequestList = new Set();
 
-		//console.log("usersInPotentialResponseRequestList: " + usersInPotentialResponseRequestList);
-		if (authorg) {
 			var submission;
 			var revisions;
 
@@ -60,52 +57,25 @@ class PostHeader extends Component {
 			var text;
 			var responseMap;
 
-			if (this.props.bio) {
-				submission = authorg.bioSubmission;
-				revisions = submission;
-				if (revisions) {
-					revisionHashes = revisions.revisions;
+			if (this.props.revisionHashes) {					
+				var index = revisionHashes.length - 1;
+				if(this.props.revision) {
+					index = revisionHashes.indexOf(this.props.revision)
 				}
-			} else {
-				var submissions = authorg.submissions;
-				if (submissions) {
-					submission = submissions[this.props.submission];
-					if (submission) {
-						revisions = submission.revisions;
-						if(revisions) {
-							revisionHashes = revisions.revisionHashes;
-						}
-					}
-				}
+				revText = "rev " + (index + 1) + " of " + revisionHashes.length;
+				notFirst = (index !== 0);
+				notLast = (index !== (revisionHashes.length - 1));
 			}
-			
-			if (submission) {
-
-				if (revisionHashes) {					
-					var index = revisionHashes.length - 1;
-					if(this.props.revision) {
-						index = revisionHashes.indexOf(this.props.revision)
-					}
-					revText = "rev " + (index + 1) + " of " + revisionHashes.length;
-					notFirst = (index !== 0);
-					notLast = (index !== (revisionHashes.length - 1));
-
-					if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
-						canRevise = true;
-					} 
+					//if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
+					//	canRevise = true;
+					//} 
+					/*
 					if(this.props.focusedPost && !this.props.bio) {
 						canRequestResponse = true;
-					}
-
-					var revision = revisions[revisionHashes[index]];
-					if (revision) {
+					}*/
 
 
-						if (!timestamp) {
-							timestamp = revision.timestamp;
-						}
-
-						if (this.props.focusedPost && revision.text) {
+						/*if (this.props.focusedPost && revision.text) {
 							if (currentUser) {
 								currentUserFollowers = currentUser.followers;
 								currentUserFollowingUsers = currentUser.authorgsFollowed;
@@ -141,57 +111,36 @@ class PostHeader extends Component {
 										}	
 									});
 								}
-							}
+							}*/
 
 
+							/*text = revision.text;
 							if (revision.sectionRefKeyMap) {
 								responseMap = revision.sectionRefKeyMap;
-							}
-							if (revision.refKeys) {
+							}*/
+							/*if (revision.refKeys) {
 								revision.refKeys.forEach(function(value) {
 									//console.log("for rev: " + this.props.revision + " - remove user from potential response request list: " + value.authAdd);
 									usersInPotentialResponseRequestList.delete(value.authAdd);
 								})
-							}
-						}
-					}
+							}*/
+						//}
+			//		}
 					
 
-					usersInPotentialResponseRequestList.delete(this.props.wallet.get('account'));
-					usersInPotentialResponseRequestList.delete(this.props.authorg);
-
-					//console.log("map of users: " + usersInPotentialResponseRequestList)
+					//usersInPotentialResponseRequestList.delete(this.props.wallet.get('account'));
+					//usersInPotentialResponseRequestList.delete(this.props.authorg);
 
 
-					if(authorg.bioSubmission) {
-						var bioSubmission = authorg.bioSubmission;
-						var bioRevHashes = bioSubmission.revisions;
-						revHash = "1";
-						if (bioRevHashes && bioRevHashes.length > 0) {
-							revHash = bioRevHashes[bioRevHashes.length - 1];
-						}
-						if (this.props.bio) {
-							if(this.props.revision) {
-								revHash = this.props.revision;
-							}
-						}
-						var bioRevision = bioSubmission[revHash];
-						if (bioRevision) {
-							name = bioRevision.name;
-							if (bioRevision.image) {
-								avatar = bioRevision.image;
-							}
-						}
-					}
-				}
+								//avatar = bioRevision.image;
 
-				if (timestamp) {
-					var date = new Date(timestamp * 1000);
-					time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
-				} 
-			}
+		if (timestamp) {
+			var date = new Date(timestamp * 1000);
+			time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
+		} 
+			//}
 					
-		}
+		
 
 		var details;
 
@@ -260,8 +209,7 @@ class PostHeader extends Component {
 				</div>
 	
 				<div className={styles.reviseDiv}>
-					{ canRequestResponse && <ResponseRequestModal users={usersInPotentialResponseRequestList} postAuthorg={this.props.authorg} postSubmission={this.props.submission} postRevision={this.props.revision}/>}
-				</div>			
+					</div>			
 				<div className={infoTextDiv}>
 					<span className={styles.infoText} onClick={this.infoButtonClicked}>{detailText}</span>
 				</div>
@@ -272,6 +220,8 @@ class PostHeader extends Component {
  			</div>
 		);
 	}
+	//{ canRequestResponse && <ResponseRequestModal users={usersInPotentialResponseRequestList} postAuthorg={this.props.authorg} postSubmission={this.props.submission} postRevision={this.props.revision}/>}
+				
 
 	authorgNameClicked(e) {
 		e.stopPropagation();
@@ -338,28 +288,7 @@ class PostHeader extends Component {
 	}
 
 	getSubmission() {
-		var authorg = this.props.auths[this.props.authorg];
-		var submission;
-		var revisions;
-
-		var revisionHashes = [];
-		var notFirst = false;
-		var notLast = false;
-
-		if (this.props.bio) {
-			submission = authorg.bioSubmission;
-			revisions = submission;
-			if (revisions) {
-				revisionHashes = revisions.revisions;
-			}
-		} else {
-			var submissions = authorg.submissions;
-			if (submissions) {
-				submission = submissions[this.props.submission];
-			}
-		}
-
-		return submission;
+		return this.props.submissionValue;
 	}
 
 	getRevisionHashes() {
@@ -382,9 +311,9 @@ class PostHeader extends Component {
 }
 
 const mapStateToProps = state => {
-  const { wallet, auths } = state.core;
+  const {  } = state.core;
 
-  return {wallet, auths };
+  return { };
 }
 
 export default connect(mapStateToProps)(PostHeader)

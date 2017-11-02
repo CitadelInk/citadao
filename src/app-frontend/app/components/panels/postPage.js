@@ -34,15 +34,39 @@ class PostPage extends Component {
 		var post = "loading...";
 		var text;
 		var timestamp = undefined;
-		var responseMap = [];
-		
-
+		var responseMap = null;
+		var embededPostTextMap;	
+		var submissionData;
 		var authorgData = this.props.auths[authorg];
-		var keys = [];
+		var keys = null;
+		var authorgName = "";
+		var authorgAvatar;
+		var focusedLoadDone = false;
+
 		if (authorgData) {
+			if(authorgData.bioSubmission) {
+				var bioSubmission = authorgData.bioSubmission;
+				var bioRevHashes = bioSubmission.revisions;
+				var revHash = "1";
+				if (bioRevHashes && bioRevHashes.length > 0) {
+					revHash = bioRevHashes[bioRevHashes.length - 1];
+				}
+				if (this.props.bio) {
+					if(this.props.revision) {
+						revHash = this.props.revision;
+					}
+				}
+				var bioRevision = bioSubmission[revHash];
+				if (bioRevision) {
+					authorgName = bioRevision.name;
+					if (bioRevision.image) {
+						authorgAvatar = bioRevision.image;
+					}
+				}
+			}
 			var submissionsData = authorgData.submissions;
 			if (submissionsData) {
-				var submissionData = submissionsData[submission];
+				submissionData = submissionsData[submission];
 				if (submissionData) {
 					var revisionsData = submissionData.revisions;
 					if (revisionsData) {
@@ -50,9 +74,18 @@ class PostPage extends Component {
 						if (revisionData) {
 							text = revisionData.text;
 							timestamp = revisionData.timestamp;
-							responseMap = revisionData.sectionRefKeyMap;
+							focusedLoadDone = revisionData.focusedLoadDone;
+
+							if (revisionData.sectionRefKeyPostsLoaded == revisionData.refCount) {
+								responseMap = revisionData.sectionRefKeyMap;
+							} else {
+								focusedLoadDone = false;
+							}
 							if (revisionData.refKeys) {
 								keys = revisionData.refKeys;
+							}
+							if (revisionData.embededPostTextMap) {
+								embededPostTextMap = revisionData.embededPostTextMap;
 							}
 						}
 					}					
@@ -60,12 +93,16 @@ class PostPage extends Component {
 			}		
 		}
 
-		if (submission) {
+		if (submission && focusedLoadDone) {
 			post = (			
 				<div className={styles.post}>
 					<Card>
 						<Post 
+							authorgAvatar={authorgAvatar}
+							authorgName={authorgName}
+							submissionValue={submissionData}
 							text={text}
+							embededPostTextMap={embededPostTextMap}
 							responseMap={responseMap}
 							authorg={authorg} 
 							submission={submission} 
