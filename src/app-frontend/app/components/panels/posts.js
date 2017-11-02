@@ -63,7 +63,6 @@ class Posts extends Component {
 					if (submission) {
 						revisions = submission.revisions;
 						revisionHashes = revisions.revisionHashes;
-						console.warn("REVISION HASHES: " + revisionHashes);
 					}
 				}		
 				

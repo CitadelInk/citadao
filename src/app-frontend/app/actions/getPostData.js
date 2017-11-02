@@ -241,62 +241,61 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
 
 export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
   const {network} = getState().core;
-  console.warn("load post. revHash: " + revisionHash);
 
   return new Promise((res, rej) => {
-    getRevisionFromSwarm(revisionHash, network.web3).then(result => {
-      var document = State.fromJSON(result.revisionSwarmText)
-      if(document) {
-        
+    getSubmissionRevisions(authorgAddress, submissionHash).then((revHashResult) => {
+    var revisionHashes = revHashResult.revisionHashes;
+      getRevisionFromSwarm(revisionHash, network.web3).then(result => {
+        var document = State.fromJSON(result.revisionSwarmText)
+        if(document) {
+          
 
-        var references = [];
-        var refLoadPromises = [];
-        document.document.nodes.forEach(function(section) {   
-          var refAuthorg = section.data.get("authorg");
-          var refSubmission = section.data.get("submission");
-          var refRevision = section.data.get("revision");
-          var index = section.data.get("index");
-          if(refAuthorg && refSubmission && refRevision) {
-            references.push({refAuthorg, refSubmission, refRevision, index});
-            if (firstLevel) {
-              refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false, false)));
-            }           
-          }  
-        })
-        Promise.all(refLoadPromises).then((results) => {
-         
-          var timePromise = [];
-          if (!timestamp) {
-            timePromise.push(getRevisionTime(authorgAddress, submissionHash, revisionHash))
-          }
-          var t0 = performance.now();
-          Promise.all(timePromise).then((time) => {
-            var t1 = performance.now();
-            console.warn("time promise took " + (t1 - t0) + " milliseconds.")
-            if (time && time.length > 0) {
-              timestamp = time[0].timestamp;
+          var references = [];
+          var refLoadPromises = [];
+          document.document.nodes.forEach(function(section) {   
+            var refAuthorg = section.data.get("authorg");
+            var refSubmission = section.data.get("submission");
+            var refRevision = section.data.get("revision");
+            var index = section.data.get("index");
+            if(refAuthorg && refSubmission && refRevision) {
+              references.push({refAuthorg, refSubmission, refRevision, index});
+              if (firstLevel) {
+                refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false, false)));
+              }           
+            }  
+          })
+          Promise.all(refLoadPromises).then((results) => {
+          
+            var timePromise = [];
+            if (!timestamp) {
+              timePromise.push(getRevisionTime(authorgAddress, submissionHash, revisionHash))
             }
-
-            dispatch(loadMiniUserData(authorgAddress)).then((userResult) => {
-              dispatch(setRevisionSwarmData(authorgAddress, 
-                submissionHash, 
-                revisionHash, 
-                result.revisionSwarmTitle, 
-                result.revisionSwarmText));
-              dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
-              references.forEach(function(ref) {
-                dispatch(setReference(ref.refAuthorg, ref.refSubmission, ref.refRevision, authorgAddress, submissionHash, revisionHash, ref.index));
-              })
-              if (results) {
-                results.forEach(function(promiseResult) {
-                  dispatch(addEmbededPostMapping(authorgAddress, submissionHash, revisionHash, promiseResult.postKey, {text : promiseResult.result.revisionSwarmText, name : promiseResult.userResult.name, avatar : promiseResult.userResult.avatar}))
-                })
+            Promise.all(timePromise).then((time) => {
+              if (time && time.length > 0) {
+                timestamp = time[0].timestamp;
               }
-              res({result, userResult, references, time})
+
+              dispatch(loadMiniUserData(authorgAddress)).then((userResult) => {
+                dispatch(setRevisionSwarmData(authorgAddress, 
+                  submissionHash, 
+                  revisionHash, 
+                  result.revisionSwarmTitle, 
+                  result.revisionSwarmText));
+                dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
+                references.forEach(function(ref) {
+                  dispatch(setReference(ref.refAuthorg, ref.refSubmission, ref.refRevision, authorgAddress, submissionHash, revisionHash, ref.index));
+                })
+                if (results) {
+                  results.forEach(function(promiseResult) {
+                    dispatch(addEmbededPostMapping(authorgAddress, submissionHash, revisionHash, promiseResult.postKey, {text : promiseResult.result.revisionSwarmText, name : promiseResult.userResult.name, avatar : promiseResult.userResult.avatar, timestamp : promiseResult.timestamp, revisionHashes : promiseResult.revisionHashes}))
+                  })
+                }
+                res({result, userResult, revisionHashes, references, timestamp})
+              })
             })
           })
-        })
-      }       
+        }       
+      })
     })
   })
 }
@@ -327,15 +326,14 @@ export const doUnfocusedLoad = (authorgAddress, submissionHash, revisionHash, ti
   var promise = new Promise((res, rej) => {
 
     var promiseList = [];
-    //if (!alreadyLoadedSet.has(authorgAddress + "-" + submissionHash + "-" + revisionHash)) {
-      promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, firstLevel)));
-      promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, firstLevel)));
-    //}
+    promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, firstLevel)));
+    promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, firstLevel)));
 
     Promise.all(
      [...promiseList]
     ).then(([basicResult, updateResult]) => {
-      res({result : basicResult.result, userResult : basicResult.userResult, postKey : key})
+      //TODO: get rev hashes via doUpdateLoad instead of crap I added to doBasicLoad
+      res({result : basicResult.result, userResult : basicResult.userResult, postKey : key, timestamp : basicResult.timestamp, revisionHashes : basicResult.revisionHashes})
     })
   })
   unfocusedLoadPromises.set(key, promise);
@@ -412,7 +410,7 @@ export const loadMiniUserData = (authorgAddress) => (dispatch, getState) => {
   const {network, approvedAuthorgReactions} = getState().core;
 
   var promise = new Promise((res, rej) => {
-      console.warn("loadUserData authorgAddress: " + authorgAddress);
+      console.info("loadUserData authorgAddress: " + authorgAddress);
       getAccountInfo(authorgAddress, network.web3).then((info) => {
         dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
         res({name : info.revisionBio.name, avatar : info.revisionBio.image})

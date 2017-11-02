@@ -8,7 +8,7 @@ export const getTotalPostCount = () => {
     .then((instance) => {
       instance.getTotalAuthSubRevKeyCount().then((count) => {
         var t1 = performance.now();
-        console.log("getTotalPostCount took " + (t1 - t0) + " milliseconds.")
+        console.debug("getTotalPostCount took " + (t1 - t0) + " milliseconds.")
         res({totalPostCount : count});
       });
     });
@@ -21,7 +21,7 @@ export const getPostKey = (index) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getAuthSubRevKey(index).then((results) => {
         var t1 = performance.now();
-        console.log("getPostKey took " + (t1 - t0) + " milliseconds.")
+        console.debug("getPostKey took " + (t1 - t0) + " milliseconds.")
         res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
       })
     })
@@ -46,7 +46,7 @@ export const getAuthorgPostKey = (account, index) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getAuthorgPostKey(account, index).then((results) => {
         var t1 = performance.now();
-        console.log("getAuthorgPostKey took " + (t1 - t0) + " milliseconds.")
+        console.debug("getAuthorgPostKey took " + (t1 - t0) + " milliseconds.")
         res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
       })
     })
@@ -73,7 +73,7 @@ export const getAccountInfo = (account, web3, specificRev = undefined) => {
             .then((data) => {
               var revision = JSON.parse(data.selectedBioRevision.toString());
               var t1 = performance.now();
-              console.log("getAccountInfo took " + (t1 - t0) + " milliseconds.")
+              console.debug("getAccountInfo took " + (t1 - t0) + " milliseconds.")
               res({
                 authorg : account,
                 bioRevisionHashes : bioRevisions,
@@ -112,7 +112,7 @@ export const getReactionValue = (reactionHash, web3) => {
       const jsonBio = JSON.parse(reactionManifest)
       web3.bzz.retrieve(jsonBio.entries[0].hash, (error, reaction) => {
         var t1 = performance.now();
-        console.log("getReactionValue took " + (t1 - t0) + " milliseconds.")
+        console.debug("getReactionValue took " + (t1 - t0) + " milliseconds.")
         res({
           reactionHash: reactionHash, reactionValue: reaction
         });
@@ -129,10 +129,10 @@ export const getAccountBioRevision = (revisionHash, web3) => {
       // prolly want to handle errors
       const jsonBio = JSON.parse(bio);
       var t1 = performance.now();
-      console.log("bio revision manifest retrieved after " + (t1 - t0) + " milliseconds. num manifest entries = " + (jsonBio.entries.length))
+      console.debug("bio revision manifest retrieved after " + (t1 - t0) + " milliseconds. num manifest entries = " + (jsonBio.entries.length))
       web3.bzz.retrieve(jsonBio.entries[0].hash, (error, bioText) => {
         var t2 = performance.now();
-        console.log("getAccountBioRevision took " + (t2 - t0) + " milliseconds.")
+        console.debug("getAccountBioRevision took " + (t2 - t0) + " milliseconds.")
         res({
           selectedBioRevision: bioText
         });
@@ -151,13 +151,13 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
     web3.bzz.retrieve(bzzAddress, (error, revision) => {
       const manifest = JSON.parse(revision);
       var t1 = performance.now();
-      console.log("revision manifest retrieved after " + (t1 - t0) + " milliseconds. num manifest entries = " + (manifest.entries.length))
+      console.debug("revision manifest retrieved after " + (t1 - t0) + " milliseconds. num manifest entries = " + (manifest.entries.length))
       web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
         var revJson = JSON.parse(rev)
         var t2 = performance.now();
         totalCalls++;
-        console.log("total getRevisionFromSwarm calls: " + totalCalls);
-        console.log("getRevisionFromSwarm took " + (t2 - t0) + " milliseconds.")
+        console.debug("total getRevisionFromSwarm calls: " + totalCalls);
+        console.debug("getRevisionFromSwarm took " + (t2 - t0) + " milliseconds.")
         res ({
           revisionSwarmHash: revisionHash, 
           revisionSwarmAuthorgHash: revJson.authorg, 
@@ -175,7 +175,7 @@ export const getNumReferences = (authorgAddress, submissionHash, revisionHash) =
     appContracts.Ink.deployed().then((instance) => {
       instance.getNumberReferencesForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash).then((count) => {
         var t1 = performance.now();
-        console.log("getNumReferences took " + (t1 - t0) + " milliseconds.")
+        console.debug("getNumReferences took " + (t1 - t0) + " milliseconds.")
         res({count : count})
       })
     })
@@ -203,7 +203,7 @@ export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, in
     appContracts.Ink.deployed().then((instance) => {
       instance.getReferenceForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash, index).then((refKey) => {
         var t1 = performance.now();
-        console.log("getReferenceKey took " + (t1 - t0) + " milliseconds.")
+        console.debug("getReferenceKey took " + (t1 - t0) + " milliseconds.")
         res({refAuthAdd : refKey[0], refSubHash : refKey[1], refRevHash : refKey[2], timestamp : refKey[3]})
       })
     })
@@ -216,7 +216,7 @@ export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) =>
     appContracts.Ink.deployed().then((instance) => {
       instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
         var t1 = performance.now();
-        console.log("getRevisionTime took " + (t1 - t0) + " milliseconds.")
+        console.debug("getRevisionTime took " + (t1 - t0) + " milliseconds.")
         res({timestamp : timestamp})
       })
     })
@@ -229,7 +229,7 @@ export const getSubmissionRevisions = (authorgAddress, submissionHash) => {
     appContracts.Ink.deployed().then((instance) => {
       instance.getSubmissionRevisions(authorgAddress, submissionHash).then((revisionHashes) => {
         var t1 = performance.now();
-        console.log("getSubmissionRevisions took " + (t1 - t0) + " milliseconds.")
+        console.debug("getSubmissionRevisions took " + (t1 - t0) + " milliseconds.")
         res({revisionHashes : revisionHashes})
       })
     })

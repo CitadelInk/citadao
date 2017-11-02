@@ -62,6 +62,8 @@ const schema = {
         return (
 					<div width="100%" className={styles.embededPostStyle}>
 						<Post width="100%" {...props.attributes}
+						timestamp={props.node.data.get('timestamp')}
+						revisionHashes={props.node.data.get('revHashes')}
 						authorgName={props.node.data.get('authorgName')}
 						authorgAvatar={props.node.data.get('authorgAvatar')}
 						embeded={true}
@@ -121,6 +123,8 @@ class PostSection extends Component {
 					var embText = this.props.embededPostTextMap.get(embKey).text;
 					var embAuthorgName = this.props.embededPostTextMap.get(embKey).name;
 					var embAuthorgAvatar = this.props.embededPostTextMap.get(embKey).avatar;
+					var embTimestamp = this.props.embededPostTextMap.get(embKey).timestamp;
+					var embRevHashes = this.props.embededPostTextMap.get(embKey).revisionHashes;
 
 					if (embText) {
 						var newState = State.fromJSON(embText);
@@ -131,6 +135,8 @@ class PostSection extends Component {
 							var nodeData = node.data.set('text', embNodeText);
 							nodeData = nodeData.set('authorgName', embAuthorgName);
 							nodeData = nodeData.set('authorgAvatar', embAuthorgAvatar);
+							nodeData = nodeData.set('timestamp', embTimestamp);
+							nodeData = nodeData.set('revHashes', embRevHashes);
 
 							node = node.set('data', nodeData);
 						}

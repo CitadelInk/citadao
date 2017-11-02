@@ -354,7 +354,7 @@ const subs = (state = {}, action) => {
 }
 
 const auths = (state = {}, action) => {
-  console.log("action.type: " + action.type);
+  console.debug("action.type: " + action.type);
   if (action.data) {
     let authAdd = action.data.authAdd;
     var stateAuth = state[authAdd];
