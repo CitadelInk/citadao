@@ -149,7 +149,7 @@ class PostHeader extends Component {
 							}
 							if (revision.refKeys) {
 								revision.refKeys.forEach(function(value) {
-									console.log("for rev: " + this.props.revision + " - remove user from potential response request list: " + value.authAdd);
+									//console.log("for rev: " + this.props.revision + " - remove user from potential response request list: " + value.authAdd);
 									usersInPotentialResponseRequestList.delete(value.authAdd);
 								})
 							}

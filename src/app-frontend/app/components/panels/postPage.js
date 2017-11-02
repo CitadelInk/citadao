@@ -32,7 +32,9 @@ class PostPage extends Component {
 		const submission = this.props.router.params["subHash"];
 		const revision = this.props.router.params["revHash"];
 		var post = "loading...";
+		var text;
 		var timestamp = undefined;
+		var responseMap = [];
 		
 
 		var authorgData = this.props.auths[authorg];
@@ -46,7 +48,9 @@ class PostPage extends Component {
 					if (revisionsData) {
 						var revisionData = revisionsData[revision];
 						if (revisionData) {
+							text = revisionData.text;
 							timestamp = revisionData.timestamp;
+							responseMap = revisionData.sectionRefKeyMap;
 							if (revisionData.refKeys) {
 								keys = revisionData.refKeys;
 							}
@@ -61,6 +65,8 @@ class PostPage extends Component {
 				<div className={styles.post}>
 					<Card>
 						<Post 
+							text={text}
+							responseMap={responseMap}
 							authorg={authorg} 
 							submission={submission} 
 							revision={revision} 
