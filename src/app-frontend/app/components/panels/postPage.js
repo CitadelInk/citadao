@@ -77,9 +77,6 @@ class PostPage extends Component {
 							text = revisionData.text;
 							timestamp = revisionData.timestamp;
 							focusedLoadDone = revisionData.focusedLoadDone;
-							//console.log("focusedLoadDone: " + focusedLoadDone);
-							//console.log("revisionData.sectionRefKeyPostsLoaded: " + revisionData.sectionRefKeyPostsLoaded);
-							//console.log("revisionData.refCount: " + revisionData.refCount);
 
 
 							if (revisionData.sectionRefKeyPostsLoaded == revisionData.refCount) {
