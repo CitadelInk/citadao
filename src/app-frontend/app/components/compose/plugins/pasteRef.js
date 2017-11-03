@@ -52,10 +52,10 @@ function PasteRef(options = {}) {
       const { text, target } = paste
 
       try {
-        var json = JSON.parse(text);
-        if (!json.reference) return;
-        var section = json.reference.text;
-        change.call(wrapRef, json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, json.reference.sectionIndex, Block.create(section), json.reference.name, json.reference.avatar);
+        //var json = JSON.parse(text);
+        //if (!json.reference) return;
+        //var section = json.reference.text;
+        //change.call(wrapRef, json.reference.authorg, json.reference.submissionHash, json.reference.revisionHash, json.reference.sectionIndex, Block.create(section), json.reference.name, json.reference.avatar);
       } catch (e) {
         console.log("caught - e: " + e);
         return;

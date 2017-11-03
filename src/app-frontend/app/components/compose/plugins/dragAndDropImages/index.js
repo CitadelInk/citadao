@@ -1,4 +1,3 @@
-
 import Promise from 'es6-promise'
 import isImage from 'is-image'
 import isUrl from 'is-url'
@@ -29,7 +28,7 @@ function DropOrPasteImages(options = {}) {
   }
 
   if (!insertImage) {
-    throw new Error('You must supply an `insertImage` function.')
+   // throw new Error('You must supply an `insertImage` function.')
   }
 
   /**
@@ -42,6 +41,7 @@ function DropOrPasteImages(options = {}) {
    */
 
   function asyncApplyChange(change, editor, file) {
+    console.warn("asyncApply change: " + change);
     return Promise
       .resolve(insertImage(change, file))
       .then(() => {
@@ -59,7 +59,7 @@ function DropOrPasteImages(options = {}) {
    * @return {State}
    */
 
-  function onInsert(event, change, editor) {
+  function onInsert(event, editor, change) {
     console.warn("onInstert event=" + event);
     console.warn("onInstert change=" + change);
     console.warn("onInstert editor=" + editor);
@@ -82,6 +82,11 @@ function DropOrPasteImages(options = {}) {
    */
 
   function onInsertFiles(event, change, editor, transfer) {
+    console.warn("onInsterFiles");
+    console.warn("event.insertBock = " + event.insertBlock);
+    console.warn("change.insertBock = " + change.insertBlock);
+    console.warn("editor.insertBock = " + editor.insertBlock);
+    console.warn("transfer.insertBock = " + transfer.insertBlock);
     const { target, files } = transfer
 
     for (const file of files) {
@@ -91,10 +96,16 @@ function DropOrPasteImages(options = {}) {
       }
 
       if (target) {
+        console.warn("select target: " + target);
         change.select(target)
       }
 
-      asyncApplyChange(change, editor, file)
+      //asyncApplyChange(c, editor, file)
+      change.insertBlock({
+        type: 'image',
+        isVoid: true,
+        data: {file}
+      })
     }
 
     return true
@@ -111,6 +122,7 @@ function DropOrPasteImages(options = {}) {
    */
 
   function onInsertHtml(event, change, editor, transfer) {
+    console.warn("onInsterHtml");
     const { html, target } = transfer
     const parser = new DOMParser()
     const doc = parser.parseFromString(html, 'text/html')
@@ -128,8 +140,13 @@ function DropOrPasteImages(options = {}) {
     loadImageFile(src, (err, file) => {
       if (err) return
       const c = editor.value.change()
-      if (target) c.select(target)
-      asyncApplyChange(c, editor, file)
+      if (target) c.select(target)      
+      //asyncApplyChange(c, editor, file)
+      c.insertBlock({
+        type: 'image',
+        isVoid: true,
+        data: {file}
+      })
     })
 
     return true
@@ -146,6 +163,7 @@ function DropOrPasteImages(options = {}) {
    */
 
   function onInsertText(event, change, editor, transfer) {
+    console.warn("onInsterText");
     const { text, target } = transfer
     if (!isUrl(text)) return
     if (!isImage(text)) return
@@ -154,7 +172,12 @@ function DropOrPasteImages(options = {}) {
       if (err) return
       const c = editor.value.change()
       if (target) c.select(target)
-      asyncApplyChange(c, editor, file)
+      //asyncApplyChange(c, editor, file)
+      c.insertBlock({
+        type: 'image',
+        isVoid: true,
+        data: {file}
+      })
     })
 
     return true

@@ -99,13 +99,17 @@ const schema = {
     // Rule to insert a paragraph block if the document is empty.
     {
       match: (node) => {
+        console.log("1 match");
         return node.kind == 'document'
       },
       validate: (document) => {
+        console.log("1 validate");
         return document.nodes.size ? null : true
       },
       normalize: (change, document) => {
+        console.warn("2 1 normalzie key: " + document.key)
         const block = Block.create(defaultBlock)
+        console.warn("1 normalzie key: " + document.key)
         change.insertNodeByKey(document.key, 0, block)
       }
     },
@@ -113,14 +117,18 @@ const schema = {
     // the last one in the document.
     {
       match: (node) => {
+        console.log("2 match");
         return node.kind == 'document'
       },
       validate: (document) => {
+        console.log("2 validate");
         const lastNode = document.nodes.last()
         return lastNode && lastNode.isVoid ? true : null
       },
       normalize: (change, document) => {
+        console.warn("2 2 normalzie key: " + document.key)
         const block = Block.create(defaultBlock)
+        console.warn("2 normalzie key: " + document.key)
         change.insertNodeByKey(document.key, document.nodes.size, block)
       }
     }
@@ -140,13 +148,14 @@ const plugins = [
   }),
   InsertImages({
     extensions: ['png'],
-    insertImage: (transform, file) => {
+    /*insertImage: (transform, file) => {
+      console.warn("insertImage transform: " + transform.insertBlock);
       return transform.insertBlock({
         type: 'image',
         isVoid: true,
         data: { file }
       })
-    }
+    }*/
   }),
   PasteLink({
     type: 'link',
@@ -249,10 +258,11 @@ class ComposeRichText extends React.Component {
    * @return {Change}
    */
   onKeyDown(e, data, change) {
-      if (!data.isMod) return
+
+      if (!e.metaKey) return
       let mark
 
-      switch (data.key) {
+      switch (e.key) {
         case 'b':
           mark = 'bold'
           break

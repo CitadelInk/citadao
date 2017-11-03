@@ -157,7 +157,7 @@ class PostSection extends Component {
 		var text = "";
 		var reference;
 
-		var section = (<div onClick={() => this.widgetClicked(reference)} className={styles.editor}><Editor readOnly state={state} schema={schema} /></div>);
+	var section = (<div/>);//(<div onClick={() => this.widgetClicked(reference)} className={styles.editor}><Editor readOnly state={state} schema={schema} /></div>);
 		var actions = (<PostSectionActions showClipboard={this.state.isHoveringOver} section={this.props.section} authorgName={this.props.authorgName} authorgAvatar={this.props.authorgAvatar} sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
 		if(this.props.focusedPost){
 			try {
