@@ -14,8 +14,8 @@
     "ethereumjs-testrpc": "git+https://git@github.com/wackoisgod/testrpc.git",
     "fs-extra-promise": "^1.0.1",
     "is-port-reachable": "^2.0.0",
-    "truffle": "^3.4.9",
-    "truffle-contract": "^2.0.5"
+    "truffle": "^4.0.0",
+    "truffle-contract": "^3.0.1"
   },
   "scripts": {
     "compile": "cross-os compileInternal",
@@ -48,7 +48,6 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "chai-as-promised": "^6.0.0",
     "cross-os": "^1.1.2"
   }
 }
