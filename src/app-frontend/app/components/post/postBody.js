@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSection from './postSection';
-import {State} from 'slate';
+import {State, Block} from 'slate';
 import styles from './postBody.css';
 import classNames from 'classnames/bind';
 import { List } from 'immutable';
@@ -25,7 +25,7 @@ class PostBody extends Component {
 		var state;
 		if (this.props.text) {
 			if (this.props.embeded) {
-				state = this.props.text;
+				state = Block.fromJSON(this.props.text);
 			} else {
 				state = State.fromJSON(this.props.text);
 			}
