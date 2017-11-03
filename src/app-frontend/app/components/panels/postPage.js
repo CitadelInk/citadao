@@ -118,12 +118,6 @@ class PostPage extends Component {
 			);
 		}
 
-		var responses = "no responses... yet!";
-		if (keys && keys.length > 0) {
-			responses = (			
-				<Posts postKeys={keys.slice().reverse()} />
-			)
-		}
 		
 
 		return(

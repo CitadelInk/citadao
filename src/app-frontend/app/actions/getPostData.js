@@ -500,7 +500,6 @@ export const getNext10AuthorgPosts = (account) => (dispatch, getState) => {
       var index = totalPostCount - i - 1;
       getAuthorgPostKey(account, index).then((result) => {
         dispatch(doUnfocusedLoad(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp)).then((result2) => {
-          console.log("post loaded - references: " + result2.references)
           dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));      
         });      
       })
