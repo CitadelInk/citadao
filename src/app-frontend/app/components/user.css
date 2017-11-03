@@ -7,6 +7,7 @@
 	z-index:900;
 	display:flex;
 	overflow-x:hidden;
+	overflow-y:hidden;
 }
 
 .empty {
@@ -20,7 +21,7 @@
 .posts {
 	position:relative;
 	width:33%;
-	overflow-y:scroll;
+	overflow-y:hidden;
 	overflow-x:hidden;
 	bottom:0px;
 	float:right;
@@ -28,16 +29,13 @@
 
 .compose {
 	position:relative;
-	bottom:0px;
-	overflow-y:scroll;
-	overflow-x:hidden;
 	width:34%;
 	float:left;
 }
 		
 .tabList {
 	border-bottom: 1px solid #aaa;
-	margin: 0 0 10px;
+	margin: 0 0 0px;
 	padding: 0;
   }
 
