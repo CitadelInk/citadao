@@ -287,9 +287,7 @@ const revs = (state = {}, action) => {
         existingReferences.push(action.data.refKey);
       }
       var setKey = action.data.refKey.authAdd + "-" + action.data.refKey.submissionHash + "-" + action.data.refKey.revisionHash;
-      console.warn("setKey: " + setKey);
       if (!refKeySet.has(setKey)) {
-        console.warn("no has so add setKey: " + setKey);
         refKeySet.add(setKey);
         refsLoaded = refsLoaded + 1;
       }
