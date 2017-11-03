@@ -23,6 +23,8 @@ class Home extends Component {
 		super(props);
 		this.handleAllPostsScroll = this.handleAllPostsScroll.bind(this);
 		this.handleStreamScroll = this.handleStreamScroll.bind(this);
+		this.state = { width: '0', height: '0' };
+		this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
 	}
 
 	componentDidMount() {
@@ -33,6 +35,8 @@ class Home extends Component {
 		if (this.streamScrollDiv) {
 			this.streamScrollDiv.addEventListener('scroll', this.handleStreamScroll);
 		} 
+		this.updateWindowDimensions();
+		window.addEventListener('resize', this.updateWindowDimensions);
 	}
 
 	componentWillUnmount() {
@@ -43,6 +47,11 @@ class Home extends Component {
 		if (this.streamScrollDiv) {
 			this.streamScrollDiv.removeEventListener('scroll', this.handleStreamScroll);
 		} 
+		window.removeEventListener('resize', this.updateWindowDimensions);
+	}
+
+	updateWindowDimensions() {
+		this.setState({ width: window.innerWidth, height: window.innerHeight });
 	}
 
 	render() {
@@ -77,7 +86,15 @@ class Home extends Component {
 		}
 
 		var tabNames = ["All Posts", "Stream", "Bounties Received - " + bountiesReceivedCount, "Bounties Created - " + bountiesCreatedCount];
-		
+		var height = 0;
+		if (this.tabListDiv) {
+			height = this.state.height - this.tabListDiv.clientHeight - 60;
+		}
+		var postListStyle = {
+			'position':'relative',
+			'maxHeight':height,
+			'overflowY':'scroll',
+		}
 		return (
 			<div className={styles.page}>
 				<div className={styles.compose}>
@@ -86,7 +103,7 @@ class Home extends Component {
 				<div className={styles.posts}>
 					<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedHomeTabIndex : tabIndex}))}>
 						<TabList className={styles.tabList} >
-							<div className={styles.tabListDiv}>
+							<div className={styles.tabListDiv} ref={el => this.tabListDiv = el}>
 							{
 							tabNames.map(function(name, index) {
 								var selected = cx({
@@ -100,22 +117,22 @@ class Home extends Component {
 						</TabList>
 
 						<TabPanel>		
-							<div className={styles.postList} ref={el => this.scrollDiv = el}>										
+							<div style={postListStyle} ref={el => this.scrollDiv = el}>										
 								<Posts postKeys={this.props.postKeys} onScroll={this.handleAllPostsScroll}/>	
 							</div>
 						</TabPanel>
 						<TabPanel>
-							<div className={styles.postList} ref={el => this.streamScrollDiv = el}>
+							<div style={postListStyle} ref={el => this.streamScrollDiv = el}>
 								<Posts postKeys={followingAuthorgPostKeys} onScroll={this.handleStreamScroll}/>	
 							</div>
 						</TabPanel>
 						<TabPanel>
-							<div className={styles.postList} >
+							<div style={postListStyle} >
 								<UserResponseRequests user={thisUserAccount} received />
 							</div>
 						</TabPanel>
 						<TabPanel>
-						<div className={styles.postList} >
+						<div style={postListStyle} >
 								<UserResponseRequests user={thisUserAccount} created />
 							</div>
 						</TabPanel>

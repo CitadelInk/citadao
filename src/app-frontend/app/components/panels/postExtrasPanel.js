@@ -12,8 +12,24 @@ let cx = classNames.bind(styles);
 class PostExtrasPanel extends Component {
 	 constructor(props) {
 		 super(props);
-		 this.state = {selectedTabIndex : 0}
-	}
+		 this.state = {selectedTabIndex : 0, image: null, width: '0', height: '0' };
+		 this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+	 }
+ 
+ 
+	 updateWindowDimensions() {
+		 this.setState({ width: window.innerWidth, height: window.innerHeight });
+	 }
+ 
+ 
+	 componentDidMount() {
+		 this.updateWindowDimensions();
+		 window.addEventListener('resize', this.updateWindowDimensions);
+	 }
+ 
+	 componentWillUnmount() {
+		 window.removeEventListener('resize', this.updateWindowDimensions);
+	 }
 
 
 	render() {
@@ -71,11 +87,20 @@ class PostExtrasPanel extends Component {
 		var selectedIndex = this.state.selectedTabIndex;
 
 		var tabNames = ["Mentions - " + keys.length, "Bounties - " + responseRequestOfferers.length];
+		var height = 0;
+		if (this.tabListDiv) {
+			height = this.state.height - 60 - this.tabListDiv.clientHeight;
+		}
+		var style = {
+			'position' : 'relative',
+			'height' : height,
+			'overflow-y' : 'scroll'
+		}
 		
 		return(
 			<Tabs className={styles.tabs} selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({selectedTabIndex : tabIndex})}>
 				<TabList className={styles.tabList} >
-					<div className={styles.tabListDiv}>
+					<div className={styles.tabListDiv} ref={el => this.tabListDiv = el}>
 						{
 							tabNames.map(function(name, index) {
 								var selected = cx({
@@ -89,10 +114,14 @@ class PostExtrasPanel extends Component {
 				</TabList>
 
 				<TabPanel>
-					{responses}
+					<div style={style}>
+						{responses}
+					</div>
 				</TabPanel>
 				<TabPanel>
-					{responseRequests}
+					<div style={style}>
+						{responseRequests}
+					</div>
 				</TabPanel>
 			</Tabs>
 		);

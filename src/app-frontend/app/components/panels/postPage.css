@@ -1,20 +1,19 @@
 .page {
 	background:#FFFFFF;
 	width:100%;
-	position: absolute;
+	position: fixed;
 	top:60px;
 	bottom:0px;
 	z-index:900;
 	display:flex;
 	overflow-x:hidden;
 	overflow-y:hidden;
-	margin:2px;
 }
 
 .responses {
-	position:relative;
+	position:fixed;
 	width:33%;
-	overflow-y:scroll;
+	overflow-y:hidden;
 	overflow-x:hidden;
 	height:100%;
 	float:right;
@@ -26,12 +25,11 @@
 	width:33%;
 	overflow-y:scroll;
 	overflow-x:hidden;
-	bottom:0px;
 	float:left;
-	top:10px;
 }
 
 .post {
+	position:relative;
 	width:90%;
 	margin:auto;
 	top:10px;
