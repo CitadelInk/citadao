@@ -10,6 +10,7 @@ import actions from '../../actions';
 import { RaisedButton } from 'material-ui';
 import PasteLink from './plugins/pasteLink';
 import PasteRef from './plugins/pasteRef';
+import InsertImages from './plugins/dragAndDropImages';
 import Post from '../post/post';
 
 const {
@@ -71,6 +72,10 @@ const schema = {
         sectionIndex={props.node.data.get('index')}/>
         </div>
       )
+    },
+    'image' :  (props) => {
+      console.warn("yeah image.")
+      return <Image {...props}/>
     }
   },
   marks: {
@@ -132,6 +137,16 @@ const plugins = [
     authorgAvatar: 'avatar',
     collapseTo: 'end',
     collapseWhat: 'next'
+  }),
+  InsertImages({
+    extensions: ['png'],
+    insertImage: (transform, file) => {
+      return transform.insertBlock({
+        type: 'image',
+        isVoid: true,
+        data: { file }
+      })
+    }
   }),
   PasteLink({
     type: 'link',
@@ -468,7 +483,7 @@ class ComposeRichText extends React.Component {
           <Editor
             state={this.state.input}
             onChange={this.onChange}
-            onKeyDown={this.onKeyDown}
+            onKeyDown={this.onKeyDown}   
             schema={schema}
             placeholder={'Compose post...'}
             plugins={plugins}
@@ -500,3 +515,40 @@ const mapStateToProps = state => {
 }
   
 export default connect(mapStateToProps)(ComposeRichText)
+
+/**
+ * Image node renderer.
+ *
+ * @type {Component}
+ */
+
+class Image extends React.Component {
+  
+    
+  constructor(props) {
+    super(props);
+    this.state = {}
+  }
+  
+    componentDidMount() {
+      const { node } = this.props
+      const { data } = node
+      const file = data.get('file')
+      this.load(file)
+    }
+  
+    load(file) {
+      const reader = new FileReader()
+      reader.addEventListener('load', () => this.setState({ src: reader.result }))
+      reader.readAsDataURL(file)
+    }
+  
+    render() {
+      const { attributes } = this.props
+      const { src } = this.state
+      return src
+        ? <img {...attributes} src={src} />
+        : <span>Loading...</span>
+    }
+  
+  }
