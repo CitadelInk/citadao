@@ -1,16 +1,16 @@
 
 import { Editor } from 'slate-react';
-import { Block, State } from 'slate';
+import InsertImages from './plugins/dragAndDropImages/'
+import { Value } from 'slate';
+
 import React from 'react';
 import { connect } from 'react-redux';
-import initialState from './state.json';
-import styles from './composeRichText.css';
-import classNames from 'classnames/bind';
+import initialValue from './state.json';
+import { isKeyHotkey } from 'is-hotkey';
 import actions from '../../actions';
 import { RaisedButton } from 'material-ui';
-import PasteLink from './plugins/pasteLink';
-import PasteRef from './plugins/pasteRef';
-import Post from '../post/post';
+import styles from './composeRichText.css';
+import classNames from 'classnames/bind';
 
 const {
 	setWalletData,
@@ -21,124 +21,45 @@ const {
 
 let cx = classNames.bind(styles);
 
+// Add the plugin to your set of plugins...
+const plugins = [
+  InsertImages({
+    extensions: ['png'],
+    insertImage: (transform, file, editor) => {
+      const reader = new FileReader()
+      reader.addEventListener('load', () => {
+        var res = reader.result;
+        console.warn("res: " + res);
+        transform.insertBlock({
+          type: 'image',
+          isVoid: true,
+          data: { res }
+        })
+        editor.onChange(transform)
+      })
+      reader.readAsDataURL(file)      
+    }
+  })
+]
+
 /**
  * Define the default node type.
+ *
+ * @type {String}
  */
 
 const DEFAULT_NODE = 'paragraph'
 
-const defaultBlock = {
-  type: DEFAULT_NODE,
-  isVoid: false,
-  data: {}
-}
-
 /**
- * Define a schema.
+ * Define hotkey matchers.
  *
- * @type {Object}
+ * @type {Function}
  */
 
-const schema = {
-  nodes: {
-    'paragraph': (props) => {
-      return <p className={styles.p} {...props.attributes}>{props.children}</p>
-    },
-    'block-quote': props => <blockquote className={styles.blockquote} {...props.attributes}>{props.children}</blockquote>,
-    'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
-    'heading-one': props => <h1 className={styles.h1} {...props.attributes}>{props.children}</h1>,
-    'heading-two': props => <h2 className={styles.h2}  {...props.attributes}>{props.children}</h2>,
-    'list-item': props => <li {...props.attributes}>{props.children}</li>,
-    'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
-    link: (props) => {
-        return (
-          <a {...props.attributes} href={props.node.data.get('url')}>
-            {props.children}
-          </a>
-        )
-    },
-    ref: (props) => {
-      return (
-        <div className={styles.embededPostStyle}>
-        <Post {...props.attributes} 
-        authorgName={props.node.data.get('name')}
-        authorgAvatar={props.node.data.get('avatar')}
-        embeded={true}
-        text={props.node.data.get('text')}
-        authorg={props.node.data.get('authorg')} 
-        submission={props.node.data.get('submission')} 
-        revision={props.node.data.get('revision')} 
-        sectionIndex={props.node.data.get('index')}/>
-        </div>
-      )
-    }
-  },
-  marks: {
-    bold: {
-      fontWeight: 'bold'
-    },
-    code: {
-      fontFamily: 'monospace',
-      backgroundColor: '#eee',
-      padding: '3px',
-      borderRadius: '4px'
-    },
-    italic: {
-      fontStyle: 'italic'
-    },
-    underlined: {
-      textDecoration: 'underline'
-    }
-  },
-  rules: [
-    // Rule to insert a paragraph block if the document is empty.
-    {
-      match: (node) => {
-        return node.kind == 'document'
-      },
-      validate: (document) => {
-        return document.nodes.size ? null : true
-      },
-      normalize: (change, document) => {
-        const block = Block.create(defaultBlock)
-        change.insertNodeByKey(document.key, 0, block)
-      }
-    },
-    // Rule to insert a paragraph below a void node (the image) if that node is
-    // the last one in the document.
-    {
-      match: (node) => {
-        return node.kind == 'document'
-      },
-      validate: (document) => {
-        const lastNode = document.nodes.last()
-        return lastNode && lastNode.isVoid ? true : null
-      },
-      normalize: (change, document) => {
-        const block = Block.create(defaultBlock)
-        change.insertNodeByKey(document.key, document.nodes.size, block)
-      }
-    }
-  ]
-}
-
-const plugins = [
-  PasteRef({
-    type: 'ref',
-    authorgAddress: 'authorg',
-    submissionHash: 'submission',
-    revisionHash: 'revision',
-    authorgName: 'name',
-    authorgAvatar: 'avatar',
-    collapseTo: 'end',
-    collapseWhat: 'next'
-  }),
-  PasteLink({
-    type: 'link',
-    hrefProperty: 'url',
-    collapseTo: 'end'
-  })  
-]
+const isBoldHotkey = isKeyHotkey('mod+b')
+const isItalicHotkey = isKeyHotkey('mod+i')
+const isUnderlinedHotkey = isKeyHotkey('mod+u')
+const isCodeHotkey = isKeyHotkey('mod+`')
 
 /**
  * The rich text example.
@@ -149,43 +70,28 @@ const plugins = [
 class ComposeRichText extends React.Component {
 
   /**
-   * Deserialize the initial editor state.
+   * Deserialize the initial editor value.
    *
    * @type {Object}
    */
 
-   constructor(props) {
-     super(props);
-	  this.hasMark = this.hasMark.bind(this);
-	  this.hasBlock = this.hasBlock.bind(this);
-	  this.onChange = this.onChange.bind(this);
-	  this.onKeyDown = this.onKeyDown.bind(this);
-	  this.onClickMark = this.onClickMark.bind(this);
-	  this.onClickBlock = this.onClickBlock.bind(this);
-	  this.renderToolbar = this.renderToolbar.bind(this);
-	  this.renderMarkButton = this.renderMarkButton.bind(this);
-	  this.renderBlockButton = this.renderBlockButton.bind(this);
-	  this.renderEditor = this.renderEditor.bind(this);
-	  this.getState = this.getState.bind(this);
-	  this.renderSubmitPostButton = this.renderSubmitPostButton.bind(this);
-	  this.handleSubmitPost = this.handleSubmitPost.bind(this);
+   state = {
+     value : Value.fromJSON(initialValue)
    }
+  componentWillMount = () => {
+    this.setState({value: this.getState()});
+  }
 
-   componentWillMount() {
-     this.setState({input: this.getState()});
+  componentWillUnmount = () => {
+   var state = this.state.value;
+   if (this.props.bio) {
+     this.props.dispatch(setWalletData({bioTextInput : state}));
+   } else if (this.props.submission) {
+     this.props.dispatch(setWalletData({reviseSubmissionInput : state}));
+   } else {
+     this.props.dispatch(setWalletData({postTextInput : state}));
    }
-
-   componentWillUnmount() {
-    var state = this.state.input;
-    if (this.props.bio) {
-      this.props.dispatch(setWalletData({bioTextInput : state}));
-    } else if (this.props.submission) {
-      this.props.dispatch(setWalletData({reviseSubmissionInput : state}));
-    } else {
-      this.props.dispatch(setWalletData({postTextInput : state}));
-    }
-   }
- 
+  }
 
   /**
    * Check if the current selection has a mark with `type` in it.
@@ -194,10 +100,10 @@ class ComposeRichText extends React.Component {
    * @return {Boolean}
    */
 
-  hasMark(type) {
-    const state = this.state.input;
-    if (state && state.activeMarks) {
-      return state.activeMarks.some(mark => mark.type == type)
+  hasMark = (type) => {
+    const { value } = this.state
+    if (value && value.activeMarks) {
+      return value.activeMarks.some(mark => mark.type == type)
     }
   }
 
@@ -208,129 +114,121 @@ class ComposeRichText extends React.Component {
    * @return {Boolean}
    */
 
-  hasBlock(type) {
-	  const state = this.state.input;
-	  if (state && state.blocks) {
-	  	return state.blocks.some(node => node.type == type)
-	  } 
+  hasBlock = (type) => {
+    const { value } = this.state
+    if (value && value.activeMarks) {
+      return value.blocks.some(node => node.type == type)
+    }
   }
 
   /**
-   * On change, save the new `state`.
+   * On change, save the new `value`.
    *
    * @param {Change} change
    */
-  onChange({ state }) {
-    this.setState({input : state});
-  }
 
+  onChange = ({ value }) => {
+    console.log("on change value: " + value);
+    this.setState({ value })
+  }
 
   /**
    * On key down, if it's a formatting command toggle a mark.
    *
-   * @param {Event} e
-   * @param {Object} data
+   * @param {Event} event
    * @param {Change} change
    * @return {Change}
    */
-  onKeyDown(e, data, change) {
-      if (!data.isMod) return
-      let mark
 
-      switch (data.key) {
-        case 'b':
-          mark = 'bold'
-          break
-        case 'i':
-          mark = 'italic'
-          break
-        case 'u':
-          mark = 'underlined'
-          break
-        case '`':
-          mark = 'code'
-          break
-        default:
-          return
-      }
+  onKeyDown = (event, change) => {
+    let mark
 
-    e.preventDefault()
-    change.toggleMark(mark)    
+    if (isBoldHotkey(event)) {
+      mark = 'bold'
+    } else if (isItalicHotkey(event)) {
+      mark = 'italic'
+    } else if (isUnderlinedHotkey(event)) {
+      mark = 'underlined'
+    } else if (isCodeHotkey(event)) {
+      mark = 'code'
+    } else {
+      return
+    }
+
+    event.preventDefault()
+    change.toggleMark(mark)
     return true
   }
 
   /**
    * When a mark button is clicked, toggle the current mark.
    *
-   * @param {Event} e
+   * @param {Event} event
    * @param {String} type
    */
 
-  onClickMark(e, type) {
-    e.preventDefault()
-    const state = this.state.input;
-    if (state) {
-      const change = state.change().toggleMark(type)
-      this.onChange(change)
-    }
+  onClickMark = (event, type) => {
+    event.preventDefault()
+    const { value } = this.state
+    const change = value.change().toggleMark(type)
+    this.onChange(change)
   }
 
   /**
    * When a block button is clicked, toggle the block type.
    *
-   * @param {Event} e
+   * @param {Event} event
    * @param {String} type
    */
 
-  onClickBlock(e, type) {
-    e.preventDefault()
-    const state = this.state.input;
-    if (state && state.blocks) {
-      const change = state.change()
-      const { document } = state
+  onClickBlock = (event, type) => {
+    event.preventDefault()
+    const { value } = this.state
+    const change = value.change()
+    const { document } = value
 
-      // Handle everything but list buttons.
-      if (type != 'bulleted-list' && type != 'numbered-list') {
-        const isActive = this.hasBlock(type)
-        const isList = this.hasBlock('list-item')
+    // Handle everything but list buttons.
+    if (type != 'bulleted-list' && type != 'numbered-list') {
+      const isActive = this.hasBlock(type)
+      const isList = this.hasBlock('list-item')
 
-        if (isList) {
-          change
-            .setBlock(isActive ? DEFAULT_NODE : type)
-            .unwrapBlock('bulleted-list')
-            .unwrapBlock('numbered-list')
-        }
-
-        else {
-          change
-            .setBlock(isActive ? DEFAULT_NODE : type)
-        }
+      if (isList) {
+        change
+          .setBlock(isActive ? DEFAULT_NODE : type)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list')
       }
 
-      // Handle the extra wrapping required for list buttons.
       else {
-        const isList = this.hasBlock('list-item')
-        const isType = state.blocks.some((block) => {
-          return !!document.getClosest(block.key, parent => parent.type == type)
-        })
-
-        if (isList && isType) {
-          change
-            .setBlock(DEFAULT_NODE)
-            .unwrapBlock('bulleted-list')
-            .unwrapBlock('numbered-list')
-        } else if (isList) {
-          change
-            .unwrapBlock(type == 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
-            .wrapBlock(type)
-        } else {
-          change
-            .setBlock('list-item')
-            .wrapBlock(type)
-        }
+        change
+          .setBlock(isActive ? DEFAULT_NODE : type)
       }
-      this.onChange(change)
     }
+
+    // Handle the extra wrapping required for list buttons.
+    else {
+      const isList = this.hasBlock('list-item')
+      const isType = value.blocks.some((block) => {
+        return !!document.getClosest(block.key, parent => parent.type == type)
+      })
+
+      if (isList && isType) {
+        change
+          .setBlock(DEFAULT_NODE)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list')
+      } else if (isList) {
+        change
+          .unwrapBlock(type == 'bulleted-list' ? 'numbered-list' : 'bulleted-list')
+          .wrapBlock(type)
+      } else {
+        change
+          .setBlock('list-item')
+          .wrapBlock(type)
+      }
+    }
+
+    this.onChange(change)
   }
 
   /**
@@ -341,10 +239,10 @@ class ComposeRichText extends React.Component {
 
   render() {
     return (
-        <div className={styles.richTextContainer}>
-          {this.renderToolbar()}
-          {this.renderEditor()}
-        </div>
+      <div className={styles.richTextContainer}>
+        {this.renderToolbar()}
+        {this.renderEditor()}
+      </div>
     )
   }
 
@@ -354,34 +252,35 @@ class ComposeRichText extends React.Component {
    * @return {Element}
    */
 
-  renderToolbar() {
-	var menu = styles.menu;
-	var toolbarMenu = styles.toolbarMenu;
-	var classNames = cx({
-		menu: true,
-		toolbarMenu:true
-	})
+  renderToolbar = () => {
+    var menu = styles.menu;
+    var toolbarMenu = styles.toolbarMenu;
+    var classNames = cx({
+      menu: true,
+      toolbarMenu:true
+    })
     return (
       <div className={styles.toolbarContainer}>
-		  <div className={classNames}>
-			{this.renderMarkButton('bold', 'format_bold')}
-			{this.renderMarkButton('italic', 'format_italic')}
-			{this.renderMarkButton('underlined', 'format_underlined')}
-			{this.renderMarkButton('code', 'code')}
-			{this.renderBlockButton('heading-one', 'looks_one')}
-			{this.renderBlockButton('heading-two', 'looks_two')}
-			{this.renderBlockButton('block-quote', 'format_quote')}
-			{this.renderBlockButton('numbered-list', 'format_list_numbered')}
-			{this.renderBlockButton('bulleted-list', 'format_list_bulleted')}
-		</div>
-		<div className={styles.postButton}>
-			{this.renderSubmitPostButton()}
-		</div>
+        <div className={classNames}>
+          {this.renderMarkButton('bold', 'format_bold')}
+          {this.renderMarkButton('italic', 'format_italic')}
+          {this.renderMarkButton('underlined', 'format_underlined')}
+          {this.renderMarkButton('code', 'code')}
+          {this.renderBlockButton('heading-one', 'looks_one')}
+          {this.renderBlockButton('heading-two', 'looks_two')}
+          {this.renderBlockButton('block-quote', 'format_quote')}
+          {this.renderBlockButton('numbered-list', 'format_list_numbered')}
+          {this.renderBlockButton('bulleted-list', 'format_list_bulleted')}
+        </div>
+        <div className={styles.postButton}>
+          {this.renderSubmitPostButton()}
+        </div>
       </div>
     )
   }
 
-  renderSubmitPostButton() {
+
+  renderSubmitPostButton = () => {
     var btnText = "Submit Post";
     if(this.props.bio) {
       btnText = "Submit Bio";
@@ -392,9 +291,10 @@ class ComposeRichText extends React.Component {
   }
 
 
-	handleSubmitPost(e) {
-    var input = this.state.input;
+	handleSubmitPost = (e) => {
+    var input = this.state.value;
     if(input) {
+      console.log("input: " + input);
       console.log(JSON.stringify(input));
       if(this.props.bio) {
         this.props.dispatch(submitBio(input));
@@ -414,9 +314,9 @@ class ComposeRichText extends React.Component {
    * @return {Element}
    */
 
-  renderMarkButton(type, icon) {
+  renderMarkButton = (type, icon) => {
     const isActive = this.hasMark(type)
-    const onMouseDown = e => this.onClickMark(e, type)
+    const onMouseDown = event => this.onClickMark(event, type)
 
     return (
       <span className={styles.button} onMouseDown={onMouseDown} data-active={isActive}>
@@ -433,9 +333,9 @@ class ComposeRichText extends React.Component {
    * @return {Element}
    */
 
-  renderBlockButton(type, icon) {
+  renderBlockButton = (type, icon) => {
     const isActive = this.hasBlock(type)
-    const onMouseDown = e => this.onClickBlock(e, type)
+    const onMouseDown = event => this.onClickBlock(event, type)
 
     return (
       <span className={styles.button} onMouseDown={onMouseDown} data-active={isActive}>
@@ -450,7 +350,7 @@ class ComposeRichText extends React.Component {
    * @return {Element}
    */
 
-  renderEditor() {
+  renderEditor = () => {
     var style = {
       'maxHeight' : this.props.height,
       'position':'relative',
@@ -466,12 +366,13 @@ class ComposeRichText extends React.Component {
       <div style={outerStyle}>
         <div style={style}>
           <Editor
-            state={this.state.input}
+            placeholder="Enter some rich text..."
+            plugins={plugins}
+            value={this.state.value}
             onChange={this.onChange}
             onKeyDown={this.onKeyDown}
-            schema={schema}
-            placeholder={'Compose post...'}
-            plugins={plugins}
+            renderNode={this.renderNode}
+            renderMark={this.renderMark}
             spellCheck
           />
         </div>
@@ -479,7 +380,46 @@ class ComposeRichText extends React.Component {
     )
   }
 
-  getState() {
+  /**
+   * Render a Slate node.
+   *
+   * @param {Object} props
+   * @return {Element}
+   */
+
+  renderNode = (props) => {
+    const { attributes, children, node } = props
+    switch (node.type) {
+      case 'block-quote': return <blockquote {...attributes}>{children}</blockquote>
+      case 'bulleted-list': return <ul {...attributes}>{children}</ul>
+      case 'heading-one': return <h1 {...attributes}>{children}</h1>
+      case 'heading-two': return <h2 {...attributes}>{children}</h2>
+      case 'list-item': return <li {...attributes}>{children}</li>
+      case 'numbered-list': return <ol {...attributes}>{children}</ol>
+      case 'image': {
+        return <img src={node.data.get('res')}/>
+      }
+    }
+  }
+
+  /**
+   * Render a Slate mark.
+   *
+   * @param {Object} props
+   * @return {Element}
+   */
+
+  renderMark = (props) => {
+    const { children, mark } = props
+    switch (mark.type) {
+      case 'bold': return <strong>{children}</strong>
+      case 'code': return <code>{children}</code>
+      case 'italic': return <em>{children}</em>
+      case 'underlined': return <u>{children}</u>
+    }
+  }
+
+  getState = () => {
     var input;
     if(this.props.bio) {
       input = this.props.wallet.get('bioTextInput');
@@ -492,6 +432,10 @@ class ComposeRichText extends React.Component {
   }
 
 }
+
+/**
+ * Export.
+ */
 
 const mapStateToProps = state => {
 	const { wallet } = state.core;

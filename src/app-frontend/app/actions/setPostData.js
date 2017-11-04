@@ -138,7 +138,10 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
       }
     })
 
+    
     var postJson = {"authorg" : account, "text" : postTextInput}
+    console.warn("lets put on swarm: " + JSON.stringify(postJson));
+
     return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3, revisionSubmissionHash).then(function(resulty) {
       var hasReloaded = false;
       var update = function(revisionSubmissionHash = undefined) {

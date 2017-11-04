@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSection from './postSection';
-import {State, Block} from 'slate';
+import {Value, Block} from 'slate';
 import styles from './postBody.css';
 import classNames from 'classnames/bind';
 import { List } from 'immutable';
@@ -27,15 +27,17 @@ class PostBody extends Component {
 			if (this.props.embeded) {
 				state = Block.fromJSON(this.props.text);
 			} else {
-				state = State.fromJSON(this.props.text);
+				state = Value.fromJSON(this.props.text);
 			}
 		}
+		console.log("state: " + state);
 
 		
 		var body = "loading";
 		var responses = null;
 		var focusedPost = this.props.focusedPost;
 
+		console.info("pb0")
 		
 		if (this.props.embeded) {
 			var index = this.props.sectionIndex;
@@ -56,10 +58,13 @@ class PostBody extends Component {
 				body = <PostSection authorgAvatar={this.props.authorgAvatar} authorgName={this.props.authorgName} embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={state} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
 			}
 		} else {
-			if(state && state.document && state.document.nodes) {	
+			console.info("pb1")
+			if(state && state.document.nodes) {	
+				console.info("pb2")
 				var instance = this;
 				var nodes = state.document.nodes;
 				body = nodes.map((section, i) => {		
+					console.info("pb3 - section: " + section)
 					if (this.props.responseMap) {
 						responses = this.props.responseMap.get(i);
 					}		

@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { Map, List } from 'immutable';
 import actions from '../actions';
 import initialState from '../components/compose/state.json';
-import {State} from 'slate';
+import { Value } from 'slate';
 import landing from '../landingPage/reducers';
 const {
   SET_WALLET_DATA,
@@ -72,10 +72,10 @@ const wallet = (state = Map({
   bioRevisions: [],
   bioRevisionsByAccount: {},
   bioNameInput: '',
-  bioTextInput: State.fromJSON(initialState),
+  bioTextInput: Value.fromJSON(initialState),
   bioAvatarImage: null,
   tokenCitadelComptroller: '',
-  postTextInput: State.fromJSON(initialState),
+  postTextInput: Value.fromJSON(initialState),
   selectedResponses: null,
   totalPostCount:0,
   numPostsLoaded:0,
@@ -84,7 +84,7 @@ const wallet = (state = Map({
   selectedHomeTabIndex:0,
   selectedReactionHash:'',
   reviseSubmissionHash:null,
-  reviseSubmissionInput:State.fromJSON(initialState)
+  reviseSubmissionInput:Value.fromJSON(initialState)
 }), action) => {
   switch (action.type) {
     case SET_SELECTED_RESPONSES:
@@ -162,6 +162,8 @@ const revs = (state = {}, action) => {
         })
       });
     case SET_REVISION_SWARM_DATA:
+      var test = Value.fromJSON(action.data.swarmRevText);
+      console.log("set revision swarm data: " + test);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           title: action.data.swarmRevTitle,

@@ -1,6 +1,6 @@
 import appContracts from 'app-contracts';
 import localWeb3 from "../helpers/web3Helper";
-import { State } from 'slate';
+import { Value } from 'slate';
 
 import {
   getRevisionFromSwarm,
@@ -246,7 +246,8 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
     getSubmissionRevisions(authorgAddress, submissionHash).then((revHashResult) => {
     var revisionHashes = revHashResult.revisionHashes;
       getRevisionFromSwarm(revisionHash, network.web3).then(result => {
-        var document = State.fromJSON(result.revisionSwarmText)
+        var document = Value.fromJSON(result.revisionSwarmText)
+        console.log("immediately from swarm: " + document);
         if(document) {
           
 
@@ -276,6 +277,7 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
               }
 
               dispatch(loadMiniUserData(authorgAddress)).then((userResult) => {
+                console.log("set revision swarm text: " + result.revisionSwarmText)
                 dispatch(setRevisionSwarmData(authorgAddress, 
                   submissionHash, 
                   revisionHash, 
