@@ -1,4 +1,6 @@
 import toPascal from 'to-pascal-case'
+import { getEventTransfer } from 'slate-react'
+import isUrl from 'is-url'
 
 /**
  * A Slate plugin to add soft breaks on return.
@@ -36,20 +38,21 @@ function PasteLink(options = {}) {
   }
 
   return {
-    onPaste(e, paste, change) {
-      const { state } = change
-      if (paste.type !== 'text' && paste.type !== 'html') return
-      console.log("paste.text: " + paste.text);
-      console.log("matcher.text(paste.text): " + matcher.test(paste.text));
-      if (!matcher.test(paste.text)) return
-      const { text } = paste
+    onPaste(event, change, editor) {
+      const transfer = getEventTransfer(event)
+      const { text, target } = transfer
 
-      if (state.isCollapsed) {
-        const { startOffset } = state
+      if (!matcher.test(text)) return
+
+      const { value } = editor
+
+
+      if (value.isCollapsed) {
+        const { startOffset } = value
         change.insertText(text).moveOffsetsTo(startOffset, startOffset + text.length)
       }
 
-      else if (hasLinks(state)) {
+      else if (hasLinks(value)) {
         change.call(unwrapLink)
       }
 

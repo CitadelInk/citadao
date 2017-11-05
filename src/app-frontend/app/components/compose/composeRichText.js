@@ -11,6 +11,9 @@ import actions from '../../actions';
 import { RaisedButton } from 'material-ui';
 import styles from './composeRichText.css';
 import classNames from 'classnames/bind';
+import PasteLink from './plugins/pasteLink';
+import PasteRef from './plugins/pasteRef';
+import Post from '../post/post';
 
 const {
 	setWalletData,
@@ -39,7 +42,17 @@ const plugins = [
       })
       reader.readAsDataURL(file)      
     }
-  })
+  }),
+  PasteRef({
+    type: 'ref',
+    collapseTo: 'end',
+    collapseWhat: 'next'
+  }),
+  PasteLink({
+    type: 'link',
+    hrefProperty: 'url',
+    collapseTo: 'end'
+  })  
 ]
 
 /**
@@ -128,7 +141,6 @@ class ComposeRichText extends React.Component {
    */
 
   onChange = ({ value }) => {
-    console.log("on change value: " + value);
     this.setState({ value })
   }
 
@@ -398,6 +410,30 @@ class ComposeRichText extends React.Component {
       case 'numbered-list': return <ol {...attributes}>{children}</ol>
       case 'image': {
         return <img src={node.data.get('res')}/>
+      }
+      case 'link': {
+        return (
+          <a {...props.attributes} href={props.node.data.get('url')}>
+            {props.children}
+          </a>
+        )
+      }
+      case 'ref': {
+        return (
+          <div className={styles.embededPostStyle}>
+          <Post {...props.attributes} 
+            authorgName={props.node.data.get('name')}
+            authorgAvatar={props.node.data.get('avatar')}
+            embeded={true}
+            text={props.node.data.get('text')}
+            authorg={props.node.data.get('authorg')} 
+            submission={props.node.data.get('submission')} 
+            revision={props.node.data.get('revision')} 
+            sectionIndex={props.node.data.get('index')}
+            timestamp={props.node.data.get('timestamp')}
+            revisionHashes={props.node.data.get('revHashes')}/>
+          </div>
+        )
       }
     }
   }

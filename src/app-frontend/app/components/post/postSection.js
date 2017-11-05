@@ -25,82 +25,6 @@ const isMouseOverElement = ({ elem, e }) => {
   return pageX > left && pageX < right && pageY > top && pageY < bottom
 }
 
-/**
- * Define the default node type.
- */
-
-const DEFAULT_NODE = 'paragraph'
-
-/**
- * Define a schema.
- *
- * @type {Object}
- */
-
-const schema = {document: {
-	nodes: [
-		{ types: ['paragraph',
-							'image',
-							'ref', 
-							'list-item',
-							'heading-one',
-							'heading-two',
-							'numbered-list', 
-							'block-quote',
-							'bulleted-list']}
-	]
-	},
-	blocks: [{
-		'paragraph': (props) => {
-			return <p className={styles.p} {...props.attributes}>{props.children}</p>
-		},
-		'block-quote': props => <blockquote className={styles.blockquote} {...props.attributes}>{props.children}</blockquote>,
-		'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
-		'heading-one': props => <h1 className={styles.h1} {...props.attributes}>{props.children}</h1>,
-		'heading-two': props => <h2 className={styles.h2}  {...props.attributes}>{props.children}</h2>,
-		'list-item': props => <li {...props.attributes}>{props.children}</li>,
-		'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
-		link: (props) => {
-				return (
-					<a {...props.attributes} href={props.node.data.get('url')}>
-						{props.children}
-					</a>
-				)
-		},
-		ref: (props) => {
-			return (
-				<div className={styles.embededPostStyle}>
-				<Post {...props.attributes} 
-				authorgName={props.node.data.get('name')}
-				authorgAvatar={props.node.data.get('avatar')}
-				embeded={true}
-				text={props.node.data.get('text')}
-				authorg={props.node.data.get('authorg')} 
-				submission={props.node.data.get('submission')} 
-				revision={props.node.data.get('revision')} 
-				sectionIndex={props.node.data.get('index')}/>
-				</div>
-			)
-		}
-	}],
-	marks: {
-		bold: {
-			fontWeight: 'bold'
-		},
-		code: {
-			fontFamily: 'monospace',
-			backgroundColor: '#eee',
-			padding: '3px',
-			borderRadius: '4px'
-		},
-		italic: {
-			fontStyle: 'italic'
-		},
-		underlined: {
-			textDecoration: 'underline'
-		}
-	}
-}
 
 class PostSection extends Component {
 
@@ -117,7 +41,7 @@ class PostSection extends Component {
 		var reference = false;
 
 		var node = this.props.section;
-		/*if (node.data.get)  {
+		if (node.data.get)  {
 			var authorg = node.data.get("authorg");
 			var submission = node.data.get("submission");
 			var revision = node.data.get("revision");
@@ -140,11 +64,10 @@ class PostSection extends Component {
 							
 			
 							var nodeData = node.data.set('text', embNodeText);
-							nodeData = nodeData.set('authorgName', embAuthorgName);
-							nodeData = nodeData.set('authorgAvatar', embAuthorgAvatar);
+							nodeData = nodeData.set('name', embAuthorgName);
+							nodeData = nodeData.set('avatar', embAuthorgAvatar);
 							nodeData = nodeData.set('timestamp', embTimestamp);
 							nodeData = nodeData.set('revHashes', embRevHashes);
-
 							node = node.set('data', nodeData);
 						}
 						
@@ -152,7 +75,7 @@ class PostSection extends Component {
 				}
 			}
 		}
-*/
+
 
 		var nodesList = List([node])
 		var state = new Value({
@@ -167,7 +90,6 @@ class PostSection extends Component {
 		var text = "";
 		var reference;
 
-		console.log("put state in editor: " + state);
 		var section = (
 			<div onClick={() => this.widgetClicked(reference)} className={styles.editor}>
 				<Editor 
@@ -176,7 +98,18 @@ class PostSection extends Component {
           renderNode={this.renderNode}
           renderMark={this.renderMark} />
 			</div>);
-		var actions = (<PostSectionActions showClipboard={this.state.isHoveringOver} section={this.props.section} authorgName={this.props.authorgName} authorgAvatar={this.props.authorgAvatar} sectionResponses={this.props.sectionResponses} authorg={this.props.authorg} submissionHash={this.props.submissionHash} revisionHash={this.props.revisionHash} sectionIndex={this.props.sectionIndex} />);
+		var actions = (<PostSectionActions 
+							showClipboard={this.state.isHoveringOver} 
+							section={this.props.section} 
+							timestamp={this.props.timestamp} 
+							revisionHashes={this.props.revisionHashes}
+							authorgName={this.props.authorgName} 
+							authorgAvatar={this.props.authorgAvatar} 
+							sectionResponses={this.props.sectionResponses} 
+							authorg={this.props.authorg} 
+							submissionHash={this.props.submissionHash} 
+							revisionHash={this.props.revisionHash} 
+							sectionIndex={this.props.sectionIndex} />);
 		
 		if(this.props.focusedPost){
 			try {
@@ -241,7 +174,31 @@ class PostSection extends Component {
       case 'list-item': return <li {...attributes}>{children}</li>
       case 'numbered-list': return <ol {...attributes}>{children}</ol>
 	  case 'image': return <img src={node.data.get('res')}/>			
-    }
+	  case 'link': {
+        return (
+          <a {...props.attributes} href={props.node.data.get('url')}>
+            {props.children}
+          </a>
+        )
+      }
+      case 'ref': {
+        return (
+          <div className={styles.embededPostStyle}>
+          <Post {...props.attributes} 
+          authorgName={props.node.data.get('name')}
+          authorgAvatar={props.node.data.get('avatar')}
+          embeded={true}
+          text={props.node.data.get('text')}
+          authorg={props.node.data.get('authorg')} 
+          submission={props.node.data.get('submission')} 
+          revision={props.node.data.get('revision')} 
+          sectionIndex={props.node.data.get('index')}
+		  timestamp={props.node.data.get('timestamp')}
+		  revisionHashes={props.node.data.get('revHashes')}/>
+          </div>
+        )
+      }
+	}
   }
 
   /**
@@ -267,44 +224,3 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps)(PostSection)
-
-/**
- * Image node renderer.
- *
- * @type {Component}
- */
-
-class Image extends React.Component {
-	
-		state = {}
-	
-		componentDidMount() {
-			const { node } = this.props
-			const { data } = node
-			const file = data.get('file')
-			//console.warn("2 node: " + node);
-			//console.warn("2 data: " + data);
-			console.warn("2 file: " + file);
-			this.load(file)
-		}
-	
-		load(file) {
-			try {
-				const reader = new FileReader()
-				reader.addEventListener('load', () => this.setState({ src: reader.result }))
-				reader.readAsDataURL(file)
-			} catch (ex) 
-			{
-				console.warn("2 fail: " + ex);
-			}
-		}
-	
-		render() {
-			const { attributes } = this.props
-			const { src } = this.state
-			return src
-				? <img {...attributes} src={src} />
-				: <span>Loading...</span>
-		}
-	
-	}

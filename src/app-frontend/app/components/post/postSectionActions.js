@@ -33,7 +33,9 @@ class PostSectionActions extends Component {
 				"sectionIndex" : this.props.sectionIndex,
 				"text" : this.props.section,
 				"name" : this.props.authorgName,
-				"avatar" : this.props.authorgAvatar
+				"avatar" : this.props.authorgAvatar,
+				"timestamp" : this.props.timestamp,
+				"revHashes" : this.props.revisionHashes
 			}
 		}
 	

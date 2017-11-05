@@ -69,7 +69,20 @@ class PostBody extends Component {
 						responses = this.props.responseMap.get(i);
 					}		
 								
-					return (<PostSection authorgAvatar={this.props.authorgAvatar} authorgName={this.props.authorgName} embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + i} sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
+					return (<PostSection 
+								authorgAvatar={this.props.authorgAvatar} 
+								timestamp={this.props.timestamp}
+								revisionHashes={this.props.revisionHashes}
+								authorgName={this.props.authorgName} 
+								embededPostTextMap={this.props.embededPostTextMap} 
+								key={"post-body-" + i} 
+								sectionResponses={responses} 
+								section={section} 
+								sectionIndex={i} 
+								authorg={instance.props.authorg} 
+								submissionHash={instance.props.submission} 
+								revisionHash={instance.props.revision} 
+								focusedPost={focusedPost}/>);	
 					
 				});
 			}
