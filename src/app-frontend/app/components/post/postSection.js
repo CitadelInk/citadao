@@ -171,16 +171,16 @@ class PostSection extends Component {
         return (
           <div className={styles.embededPostStyle}>
           <Post {...props.attributes} 
-          authorgName={props.node.data.get('name')}
-          authorgAvatar={props.node.data.get('avatar')}
-          embeded={true}
-          text={props.node.data.get('text')}
-          authorg={props.node.data.get('authorg')} 
-          submission={props.node.data.get('submission')} 
-          revision={props.node.data.get('revision')} 
-          sectionIndex={props.node.data.get('index')}
-		  timestamp={props.node.data.get('timestamp')}
-		  revisionHashes={props.node.data.get('revHashes')}/>
+			authorgName={props.node.data.get('name')}
+			authorgAvatar={props.node.data.get('avatar')}
+			embeded={true}
+			text={props.node.data.get('text')}
+			authorg={props.node.data.get('authorg')} 
+			submission={props.node.data.get('submission')} 
+			revision={props.node.data.get('revision')} 
+			sectionIndex={props.node.data.get('index')}
+			timestamp={props.node.data.get('timestamp')}
+			revisionHashes={props.node.data.get('revHashes')}/>
           </div>
         )
       }
