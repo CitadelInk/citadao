@@ -5,7 +5,7 @@ import { Avatar, FlatButton } from 'material-ui';
 import styles from './postHeader.css';
 import { Link, push } from 'redux-little-router';
 import placeholder from '../../images/placeholderprof.jpg';
-import { Document } from 'slate';
+import { Value } from 'slate';
 import ResponseRequestModal from '../panels/responseRequestModal';
 
 const {
@@ -209,7 +209,7 @@ class PostHeader extends Component {
 
 	onReviseClicked(e) {
 		var revision = this.props.text;
-		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, reviseSubmissionInput : Document.fromJSON(revision), selectedTabIndex : 2}));
+		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, reviseSubmissionInput : Value.fromJSON(revision), selectedTabIndex : 2}));
 		e.stopPropagation();
 	}
 }
