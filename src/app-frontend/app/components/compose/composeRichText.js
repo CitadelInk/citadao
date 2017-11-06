@@ -11,9 +11,7 @@ import actions from '../../actions';
 import { RaisedButton } from 'material-ui';
 import styles from './composeRichText.css';
 import classNames from 'classnames/bind';
-import PasteLink from './plugins/pasteLink';
-
-
+import PasteLinkify from 'slate-paste-linkify';
 import PasteRef from './plugins/pasteRef';
 import Post from '../post/post';
 
@@ -48,7 +46,7 @@ const plugins = [
     collapseTo: 'end',
     collapseWhat: 'next'
   }),
-  PasteLink({
+  PasteLinkify({
     type: 'link',
     hrefProperty: 'url',
     collapseTo: 'end'
