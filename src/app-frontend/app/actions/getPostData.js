@@ -247,18 +247,17 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
     var revisionHashes = revHashResult.revisionHashes;
       getRevisionFromSwarm(revisionHash, network.web3).then(result => {
         var resJson = result.revisionSwarmText;
-
         // backwards compatibility with old Slate format
         if (resJson.kind === "state") {
           resJson.kind = "value";
-          if (resJson.nodes) {
-            resJson.nodes.forEach(function(node, index) {
+          if (resJson.document.nodes) {
+            resJson.document.nodes.forEach(function(node, index) {
               if (node.nodes) {
                 node.nodes.forEach(function(innerNode, index) {
                   if (innerNode.kind === "text") {
                     if (innerNode.ranges) {
                       innerNode.ranges.forEach(function(range, index) {
-                        range.kind = "leaf;"
+                        range.kind = "leaf";
                       })
                       innerNode.leaves = innerNode.ranges;
                     }
