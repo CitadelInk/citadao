@@ -94,8 +94,8 @@ class PostSection extends Component {
 				<Editor 
 					readOnly 
 					value={state} 
-          renderNode={this.renderNode}
-          renderMark={this.renderMark} />
+         			renderNode={this.renderNode}
+          			renderMark={this.renderMark} />
 			</div>);
 		var actions = (<PostSectionActions 
 							showClipboard={this.state.isHoveringOver} 
@@ -110,27 +110,14 @@ class PostSection extends Component {
 							revisionHash={this.props.revisionHash} 
 							sectionIndex={this.props.sectionIndex} />);
 		
-		if(this.props.focusedPost){
-			try {
-				if(state.document && state.document.text && state.document.text !== "" && state.document.text.trim() != "") {
-					text = state.document.text;
-				} else {
-					var authorg = this.props.section.data.get("authorg");
-					var submission = this.props.section.data.get("submission");
-					var revision = this.props.section.data.get("revision");
-					var index = this.props.section.data.get("index");
-	
-	
-					if(authorg) {
-						reference = {authorg:authorg, submission:submission, revision:revision, index:index}
-					}	
+		if(this.props.focusedPost){				
+			if(this.props.section.type == "ref") {
+				showActions = false;
+			} else if (this.props.section.type == "paragraph") {
+				if (!state.document || !state.document.text || state.document.text == "" || state.document.text.trim() == "") {
 					showActions = false;
-	
 				}
-			} catch(e) {
-				//console.error("error while checking reference")
-			}
-	
+			}	
 		} else {
 			showActions = false;
 		}
