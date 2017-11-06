@@ -97,7 +97,7 @@ export const addNewApprovedReaction = () => (dispatch, getState) => {
 
 export const initializeContract = () => (dispatch, getState) => {
   const {network} = getState().core;
-  return Promise.all([
+    return new Promise((res, rej) => { Promise.all([
     getAdvancedTokenPublicData(),
     getInkPublicData(),
     getApprovedReactions(network.web3),
@@ -106,14 +106,18 @@ export const initializeContract = () => (dispatch, getState) => {
     dispatch(setWalletData({...token, ...ink}));
     dispatch(setApprovedReactions(reactions.approvedReactions));
     dispatch(setApprovedAuthorgReactions(authorgReactions.approvedAuthorgReactions));
-    dispatch(initializeNeededPosts());
+      dispatch(initializeNeededPosts()).then(() => {
+        res({done : true})
+      })
   });
+  })
 };
 
 export const initializeAccounts = (web3) => dispatch => {
   return new Promise((res, rej) => {
     getAccounts(web3).then((accounts) => {
         var account = accounts.accounts[0];
+        if (account) {
         dispatch(loadUserData(account, true, true));
         Promise.all([
           getEthBalance(account, web3),
@@ -121,6 +125,7 @@ export const initializeAccounts = (web3) => dispatch => {
         ]).then(([ethBalance, inkBalance]) => {
           res({...accounts, account, ethBalance, inkBalance}); 
         })
+        }
       })
   }).then((data) => {
 
@@ -192,9 +197,9 @@ export const giveEther = (amount, callback) => (dispatch, getState) => {
   // hacky bullshit!!!
   if (url == undefined) {
     if (process.env.NODE_ENV === 'production')
-    url = window.location.href.replace(".ink", ".ink:8545")
+     url = window.location.href.replace(".ink", ".ink:8545")
     else
-      url = window.location.href.replace("8080", "8545")
+     url = window.location.href.replace("8080", "8545")
   }
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-type", "application/json");

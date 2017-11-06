@@ -17,7 +17,7 @@ export const getRevisionReactions = (authorgAddress, revisionHash, submissionHas
           totalReactions += result.reactionReactors.length;
         })
         var t1 = performance.now();
-        console.log("getRevisionReactions took " + (t1 - t0) + " milliseconds.")
+        console.debug("getRevisionReactions took " + (t1 - t0) + " milliseconds.")
         res ({
           revisionReactionReactors: revisionReactionReactors,
           reactionCount : totalReactions
@@ -44,7 +44,7 @@ export const getAuthorgBioReactions = (authorgAddress, bioRevisionHash, reaction
           totalReactions += result.reactionReactors.length;
         })
         var t1 = performance.now();
-        console.log("getAuthorgBioReactions took " + (t1 - t0) + " milliseconds.")
+        console.debug("getAuthorgBioReactions took " + (t1 - t0) + " milliseconds.")
         res ({
           revisionReactionReactors: revisionReactionReactors,
           reactionCount : totalReactions
@@ -60,7 +60,7 @@ export const getFollowers = (authorgAddress) => {
     appContracts.Citadel.deployed().then((instance) => {
       instance.getFollowers(authorgAddress).then((followers) => {
         var t1 = performance.now();
-        console.log("getFollowers took " + (t1 - t0) + " milliseconds.")
+        console.debug("getFollowers took " + (t1 - t0) + " milliseconds.")
         res ({followers});
       })
     })
@@ -73,7 +73,7 @@ export const getAuthorgsFollowing = (authorgAddress) => {
     appContracts.Citadel.deployed().then((instance) => {
       instance.getFollowedUsers(authorgAddress).then((authorgsFollowing) => {
         var t1 = performance.now();
-        console.log("getAuthorgsFollowing took " + (t1 - t0) + " milliseconds.")
+        console.debug("getAuthorgsFollowing took " + (t1 - t0) + " milliseconds.")
         res ({authorgsFollowing});
       })
     })

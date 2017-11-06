@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { Map, List } from 'immutable';
 import actions from '../actions';
 import initialState from '../components/compose/state.json';
-import {State} from 'slate';
+import { Value } from 'slate';
 import landing from '../landingPage/reducers';
 const {
   SET_WALLET_DATA,
@@ -35,7 +35,10 @@ const {
   SET_REVISION_REQUEST_RESPONSE_RECEIPT,
   SET_USER_RESPONSE_REQUESTS_CREATED,
   SET_USER_RESPONSE_REQUESTS_RECEIVED,
-  SET_SELECTED_RESPONSES
+  SET_SELECTED_RESPONSES,
+  ADD_EMBEDED_POST_KEY_MAPPING,
+  SET_FOCUSED_POST_LOAD_FINISHED,
+  SET_FOCUSED_POST_LOAD_BEGIN
 } = actions;
 
 const network = (state = Map({
@@ -69,10 +72,10 @@ const wallet = (state = Map({
   bioRevisions: [],
   bioRevisionsByAccount: {},
   bioNameInput: '',
-  bioTextInput: State.fromJSON(initialState),
+  bioTextInput: Value.fromJSON(initialState),
   bioAvatarImage: null,
   tokenCitadelComptroller: '',
-  postTextInput: State.fromJSON(initialState),
+  postTextInput: Value.fromJSON(initialState),
   selectedResponses: null,
   totalPostCount:0,
   numPostsLoaded:0,
@@ -81,7 +84,7 @@ const wallet = (state = Map({
   selectedHomeTabIndex:0,
   selectedReactionHash:'',
   reviseSubmissionHash:null,
-  reviseSubmissionInput:State.fromJSON(initialState)
+  reviseSubmissionInput:Value.fromJSON(initialState)
 }), action) => {
   switch (action.type) {
     case SET_SELECTED_RESPONSES:
@@ -159,6 +162,7 @@ const revs = (state = {}, action) => {
         })
       });
     case SET_REVISION_SWARM_DATA:
+      var test = Value.fromJSON(action.data.swarmRevText);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           title: action.data.swarmRevTitle,
@@ -247,11 +251,21 @@ const revs = (state = {}, action) => {
       });
     case SET_REFERENCE:
       var sectionRefKeyMap;
+      var refsLoaded;
+      var refKeySet;
       if(state[revHash]){ 
         sectionRefKeyMap = state[revHash].sectionRefKeyMap;
+        refsLoaded = state[revHash].sectionRefKeyPostsLoaded;
+        refKeySet = state[revHash].refKeySet;
       }
       if (!sectionRefKeyMap) {
         sectionRefKeyMap = new Map();
+      }
+      if (!refsLoaded) {
+        refsLoaded = 0;
+      }
+      if (!refKeySet) {
+        refKeySet = new Set();
       }
 
       // TODO: refactor this to be a set so we don't have to do this stupid loop
@@ -269,16 +283,50 @@ const revs = (state = {}, action) => {
           }
         }
       }
+      
       if (!alreadyReferenced) {
         existingReferences.push(action.data.refKey);
       }
-      
+      var setKey = action.data.refKey.authAdd + "-" + action.data.refKey.submissionHash + "-" + action.data.refKey.revisionHash;
+      if (!refKeySet.has(setKey)) {
+        refKeySet.add(setKey);
+        refsLoaded = refsLoaded + 1;
+      }
+
       var sectionMap = sectionRefKeyMap.set(action.data.index, existingReferences);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
-          sectionRefKeyMap: sectionMap
+          sectionRefKeyMap: sectionMap,
+          sectionRefKeyPostsLoaded : refsLoaded,
+          refKeySet : refKeySet
         })
       });
+    case ADD_EMBEDED_POST_KEY_MAPPING:
+      var embededPostMap;
+      if(state[revHash]) { 
+        embededPostMap = state[revHash].embededPostTextMap;
+      }
+      if (!embededPostMap) {
+        embededPostMap = new Map();
+      }
+      var newMap = embededPostMap.set(action.data.embKey, action.data.embResult )
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          embededPostTextMap: newMap
+        })
+      });
+    case SET_FOCUSED_POST_LOAD_BEGIN:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          focusedLoadDone: false
+        })
+      });
+    case SET_FOCUSED_POST_LOAD_FINISHED:
+        return Object.assign({}, state, {
+          [revHash]: Object.assign({}, state[revHash], {
+            focusedLoadDone: true
+          })
+        });
     case SET_REVISION_HASHES:
       return Object.assign({}, state, {
         revisionHashes: action.data.revisionHashes
@@ -297,9 +345,11 @@ const subs = (state = {}, action) => {
     case SET_REVISION_SWARM_DATA:
     case SET_LOAD_STARTED:
     case SET_REFERENCE:
+    case ADD_EMBEDED_POST_KEY_MAPPING:
     case SET_REVISION_HASHES:
     case SET_REVISION_REQUEST_RESPONSE_KEYS:
     case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+    case SET_FOCUSED_POST_LOAD_FINISHED:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
       if (!stateSub) {
@@ -316,7 +366,7 @@ const subs = (state = {}, action) => {
 }
 
 const auths = (state = {}, action) => {
-  console.log("action.type: " + action.type);
+  console.debug("action.type: " + action.type);
   if (action.data) {
     let authAdd = action.data.authAdd;
     var stateAuth = state[authAdd];
@@ -331,9 +381,11 @@ const auths = (state = {}, action) => {
       case SET_REVISION_SWARM_DATA:
       case SET_LOAD_STARTED:
       case SET_REFERENCE:
+      case ADD_EMBEDED_POST_KEY_MAPPING:
       case SET_REVISION_HASHES:
       case SET_REVISION_REQUEST_RESPONSE_KEYS:
       case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+      case SET_FOCUSED_POST_LOAD_FINISHED:
         return {
           ...state,
           [authAdd]: {

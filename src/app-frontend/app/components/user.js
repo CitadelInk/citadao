@@ -26,10 +26,30 @@ class User extends Component {
 	 constructor(props) {
 		super(props);this.handleScroll = this.handleScroll.bind(this);
 		this.onFollowClicked = this.onFollowClicked.bind(this);
+		this.state = { image: null, width: '0', height: '0' };
+		this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
 	}
 
+
+	updateWindowDimensions() {
+		this.setState({ width: window.innerWidth, height: window.innerHeight });
+	}
+
+
 	componentDidMount() {
-		this.scrollDiv.addEventListener('scroll', this.handleScroll);
+		this.updateWindowDimensions();
+		window.addEventListener('resize', this.updateWindowDimensions);
+		if (this.scrollDiv) {
+			console.warn("ADD")
+			this.scrollDiv.addEventListener('scroll', this.handleScroll);
+		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.updateWindowDimensions);
+		if (this.scrollDiv) {
+			this.scrollDiv.removeEventListener('scroll', this.handleScroll);
+		}
 	}
 
 	onFollowClicked() {
@@ -91,9 +111,24 @@ class User extends Component {
 
 		var selectedIndex = this.props.wallet.get('selectedUserTabIndex');
 
-		var tabNames = ["Bio", "Posts", "RR Received", "RR Created", "Followers - " + numFollowers, "Follows - " + numFollowedUsers];
+		var tabNames = ["Bio", "Posts", "Bounties Received", "Bounties Created", "Followers - " + numFollowers, "Follows - " + numFollowedUsers];
 
+		var height = 0;
+		if (this.tabListDiv) {
+			height = this.state.height - this.buttonDiv.clientHeight - this.tabListDiv.clientHeight - 60;
+		}
 
+		var postsStyle = {
+			'position' : 'relative',
+			'height' : height,
+			'overflowY' : 'scroll',
+			'overflowX' : 'hidden'
+		}
+
+		var postsButtonStyle = {
+			'position' : 'relative',
+			'width' : '100%'
+		}
 
 		return (
 			<div className={styles.page}>
@@ -101,11 +136,14 @@ class User extends Component {
 					<ComposePanel />		
 				</div>
 
-				<div className={styles.posts} ref={el => this.scrollDiv = el}>
-					{showButton && <center>{followButton}</center>}
+				
+				<div className={styles.posts}>
+				<div ref={el => this.buttonDiv = el}>
+					{showButton && <center>{followButton}<br/></center>}
+				</div>
 					<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedUserTabIndex : tabIndex}))}>
 						<TabList className={styles.tabList} >
-							<div className={styles.tabListDiv}>
+							<div className={styles.tabListDiv} ref={el => this.tabListDiv = el}>
 							{
 							tabNames.map(function(name, index) {
 								var selected = cx({
@@ -119,25 +157,36 @@ class User extends Component {
 						</TabList>
 
 						<TabPanel>
+						<div style={postsStyle}>
 							<Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>
+						</div>
 						</TabPanel>
 						<TabPanel>
+						<div style={postsStyle} ref={el => this.scrollDiv = el}>
 							<Posts postKeys={postKeys} onScroll={this.postsScrolled}/>	
+						</div>
 						</TabPanel>
 						<TabPanel>
-							<UserResponseRequests user={user} received />
+						<div style={postsStyle}>
+							<UserResponseRequests user={user} received />	
+						</div>
 						</TabPanel>
 						<TabPanel>
-							<UserResponseRequests user={user} created />
+						<div style={postsStyle}>
+							<UserResponseRequests user={user} created />	
+						</div>
 						</TabPanel>
 						<TabPanel>
-							<UserList users={followers}/>
+						<div style={postsStyle}>
+							<UserList users={followers}/>	
+						</div>
 						</TabPanel>
 						<TabPanel>
-							<UserList users={followedUsers}/>
+						<div style={postsStyle}>
+							<UserList users={followedUsers}/>	
+						</div>
 						</TabPanel>
 					</Tabs>
-
 				</div>
 			</div>
 		);

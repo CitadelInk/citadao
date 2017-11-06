@@ -5,7 +5,7 @@ import { Avatar, FlatButton } from 'material-ui';
 import styles from './postHeader.css';
 import { Link, push } from 'redux-little-router';
 import placeholder from '../../images/placeholderprof.jpg';
-import {State} from 'slate';
+import { Document } from 'slate';
 import ResponseRequestModal from '../panels/responseRequestModal';
 
 const {
@@ -23,177 +23,63 @@ class PostHeader extends Component {
 		this.infoButtonClicked = this.infoButtonClicked.bind(this);
 		this.navigateNextRev = this.navigateNextRev.bind(this);
 		this.navigatePreviousRev = this.navigatePreviousRev.bind(this);
-		this.getRevisionHashes = this.getRevisionHashes.bind(this);
 		this.onReviseClicked = this.onReviseClicked.bind(this);
-		this.getSubmission = this.getSubmission.bind(this);
-		this.getRevision = this.getRevision.bind(this);
 
 		this.state = {showDetails : false};
 	}
 
 
 	render() {
-		var name = "loading...";
+		var name = this.props.authorgName;
 		var time = "...";
-		var authorg = this.props.auths[this.props.authorg];
 		var avatar = placeholder;
+		if (this.props.authorgAvatar) {
+			avatar = this.props.authorgAvatar;
+		}
 		var timestamp = this.props.timestamp;
 		var revText = "";
+		var submission;
+		var revisions;
 
-		var currentUserAccount = this.props.wallet.get('account');
-		var currentUser = this.props.auths[currentUserAccount];
-		var currentUserFollowers;
-		var currentUserFollowingUsers;
-		var usersInPotentialResponseRequestList = new Set();
+		var revisionHashes = this.props.revisionHashes;
+		var notFirst = false;
+		var notLast = false;
+		var canRevise = false;
+		var canRequestResponse = false;
+		var revHash;
+		var text;
+		var responseMap;
 
-		//console.log("usersInPotentialResponseRequestList: " + usersInPotentialResponseRequestList);
-
-		if (authorg) {
-
-			var submission;
-			var revisions;
-
-			var revisionHashes = [];
-			var notFirst = false;
-			var notLast = false;
-			var canRevise = false;
-			var canRequestResponse = false;
-			var revHash;
-			var text;
-			var responseMap;
-
-			if (this.props.bio) {
-				submission = authorg.bioSubmission;
-				revisions = submission;
-				if (revisions) {
-					revisionHashes = revisions.revisions;
-				}
-			} else {
-				var submissions = authorg.submissions;
-				if (submissions) {
-					submission = submissions[this.props.submission];
-					if (submission) {
-						revisions = submission.revisions;
-						if(revisions) {
-							revisionHashes = revisions.revisionHashes;
-						}
-					}
-				}
+		if (revisionHashes) {					
+			var index = revisionHashes.length - 1;
+			if(this.props.revision) {
+				index = revisionHashes.indexOf(this.props.revision)
 			}
-			
-			if (submission) {
-
-				if (revisionHashes) {					
-					var index = revisionHashes.length - 1;
-					if(this.props.revision) {
-						index = revisionHashes.indexOf(this.props.revision)
-					}
-					revText = "rev " + (index + 1) + " of " + revisionHashes.length;
-					notFirst = (index !== 0);
-					notLast = (index !== (revisionHashes.length - 1));
-
-					if(!this.props.embeded && !notLast && this.props.authorg === this.props.wallet.get('account')) {
-						canRevise = true;
-					} 
-					if(this.props.focusedPost && !this.props.bio) {
-						canRequestResponse = true;
-					}
-
-					var revision = revisions[revisionHashes[index]];
-					if (revision) {
-
-
-						if (!timestamp) {
-							timestamp = revision.timestamp;
-						}
-
-						if (this.props.focusedPost && revision.text) {
-							if (currentUser) {
-								currentUserFollowers = currentUser.followers;
-								currentUserFollowingUsers = currentUser.authorgsFollowed;
-								if (currentUserFollowers) {
-									//usersInPotentialResponseRequestList.push(...currentUserFollowers);
-									currentUserFollowers.forEach((user) => {
-										usersInPotentialResponseRequestList.add(user);
-									});
-								}
-								if (currentUserFollowingUsers) {
-									//usersInPotentialResponseRequestList.push(...currentUserFollowingUsers);
-									currentUserFollowingUsers.forEach((user) => {
-										usersInPotentialResponseRequestList.add(user);
-									});
-								}
-							}
-
-							text = revision.text;
-							if (text) {
-							var state = State.fromJSON(text);
-								if (state.document && state.document.nodes) {
-									
-									var instance = this;
-
-									//console.log("nodes size: " + state.document.nodes.size);
-									state.document.nodes.map((section, i) => {
-									//	console.log("check section - section: " + section)
-										var refAuthorg = section.data.get("authorg");							
-						
-										if(refAuthorg) {
-											//console.log("refAuthorg: " + refAuthorg);
-											usersInPotentialResponseRequestList.add(refAuthorg);
-										}	
-									});
-								}
-							}
-
-
-							if (revision.sectionRefKeyMap) {
-								responseMap = revision.sectionRefKeyMap;
-							}
-							if (revision.refKeys) {
-								revision.refKeys.forEach(function(value) {
-									console.log("remove user from potential response request list: " + value.authAdd);
-									usersInPotentialResponseRequestList.delete(value.authAdd);
-								})
-							}
-						}
-					}
-					
-
-					usersInPotentialResponseRequestList.delete(this.props.wallet.get('account'));
-					usersInPotentialResponseRequestList.delete(this.props.authorg);
-
-					//console.log("map of users: " + usersInPotentialResponseRequestList)
-
-
-					if(authorg.bioSubmission) {
-						var bioSubmission = authorg.bioSubmission;
-						var bioRevHashes = bioSubmission.revisions;
-						revHash = "1";
-						if (bioRevHashes && bioRevHashes.length > 0) {
-							revHash = bioRevHashes[bioRevHashes.length - 1];
-						}
-						if (this.props.bio) {
-							if(this.props.revision) {
-								revHash = this.props.revision;
-							}
-						}
-						var bioRevision = bioSubmission[revHash];
-						if (bioRevision) {
-							name = bioRevision.name;
-							if (bioRevision.image) {
-								avatar = bioRevision.image;
-							}
-						}
-					}
-				}
-
-				if (timestamp) {
-					var date = new Date(timestamp * 1000);
-					time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
-				} 
-			}
-					
+			revText = "rev " + (index + 1) + " of " + revisionHashes.length;
+			notFirst = (index !== 0);
+			notLast = (index !== (revisionHashes.length - 1));
 		}
+
+		if (this.props.focusedPost) {
+			if(this.props.authorg === this.props.wallet.get('account')) {
+				canRevise = true;
+			} 
+			if (!this.props.bio) {
+				canRequestResponse = true;
+			}
+		}
+					
+
+		/*text = revision.text;
+		if (revision.sectionRefKeyMap) {
+			responseMap = revision.sectionRefKeyMap;
+		}*/
+
+
+		if (timestamp) {
+			var date = new Date(timestamp * 1000);
+			time = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
+		} 
 
 		var details;
 
@@ -262,8 +148,8 @@ class PostHeader extends Component {
 				</div>
 	
 				<div className={styles.reviseDiv}>
-					{ canRequestResponse && <ResponseRequestModal users={usersInPotentialResponseRequestList} postAuthorg={this.props.authorg} postSubmission={this.props.submission} postRevision={this.props.revision}/>}
-				</div>			
+				{ canRequestResponse && <ResponseRequestModal refKeys={this.props.responseMap} text={this.props.text} postAuthorg={this.props.authorg} postSubmission={this.props.submission} postRevision={this.props.revision}/>}
+					</div>			
 				<div className={infoTextDiv}>
 					<span className={styles.infoText} onClick={this.infoButtonClicked}>{detailText}</span>
 				</div>
@@ -274,6 +160,7 @@ class PostHeader extends Component {
  			</div>
 		);
 	}
+				
 
 	authorgNameClicked(e) {
 		e.stopPropagation();
@@ -288,7 +175,8 @@ class PostHeader extends Component {
 	}
 
 	navigatePreviousRev(e) {
-		var revisionHashes = this.getRevisionHashes();
+		var revisionHashes = this.props.revisionHashes;
+
 		var index = revisionHashes.length - 1;
 		if(this.props.revision) {
 			index = revisionHashes.indexOf(this.props.revision)
@@ -304,7 +192,7 @@ class PostHeader extends Component {
 	}
 
 	navigateNextRev(e) {
-		var revisionHashes = this.getRevisionHashes();
+		var revisionHashes = this.props.revisionHashes;
 		var index = revisionHashes.length - 1;
 		if(this.props.revision) {
 			index = revisionHashes.indexOf(this.props.revision)
@@ -320,73 +208,16 @@ class PostHeader extends Component {
 	}
 
 	onReviseClicked(e) {
-		var revision = this.getRevision();
-		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, reviseSubmissionInput : State.fromJSON(revision.text), selectedTabIndex : 2}));
+		var revision = this.props.text;
+		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, reviseSubmissionInput : Document.fromJSON(revision), selectedTabIndex : 2}));
 		e.stopPropagation();
-	}
-
-	getRevision() {
-		var submission = this.getSubmission();
-		var revisionHashes = this.getRevisionHashes();
-		var index;
-		if (revisionHashes) {
-			index = revisionHashes.length - 1;
-			if(this.props.revision) {
-				index = revisionHashes.indexOf(this.props.revision)
-			}
-		}
-
-		return submission.revisions[revisionHashes[index]];		
-	}
-
-	getSubmission() {
-		var authorg = this.props.auths[this.props.authorg];
-		var submission;
-		var revisions;
-
-		var revisionHashes = [];
-		var notFirst = false;
-		var notLast = false;
-
-		if (this.props.bio) {
-			submission = authorg.bioSubmission;
-			revisions = submission;
-			if (revisions) {
-				revisionHashes = revisions.revisions;
-			}
-		} else {
-			var submissions = authorg.submissions;
-			if (submissions) {
-				submission = submissions[this.props.submission];
-			}
-		}
-
-		return submission;
-	}
-
-	getRevisionHashes() {
-		var submission = this.getSubmission();
-		var revisionHashes;
-		var revisions;
-		if (submission) {
-			revisions = submission.revisions;
-		}
-
-		if (this.props.bio) {
-			revisions = submission;
-			revisionHashes = revisions.revisions;
-		} else if(revisions) {
-			revisionHashes = revisions.revisionHashes;
-		}	
-
-		return revisionHashes;
 	}
 }
 
 const mapStateToProps = state => {
-  const { wallet, auths } = state.core;
+  const { wallet } = state.core;
 
-  return {wallet, auths };
+  return { wallet };
 }
 
 export default connect(mapStateToProps)(PostHeader)

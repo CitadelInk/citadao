@@ -48,10 +48,13 @@ export function setupWeb3() {
         // can't run this in mist as of yet as we are not deployed to a public network
         // SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
         if (typeof mist === "undefined") {
-            dispatch(initializeContract());
+          console.info("lets go initialize contract.")
+            dispatch(initializeContract()).then(() => {
+              console.info("initialize accounts.")
+              dispatch(initializeAccounts(web3Provider));
+            })
         }
   
-        dispatch(initializeAccounts(web3Provider));
     };
   }
 

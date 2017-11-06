@@ -26,7 +26,7 @@ class Compose extends Component {
  
 
 	render() {
-		var height = this.state.height - 170; //total height - header + tabs + name + file picker height
+		var height = this.state.height - 210; //total height - header + tabs + name + file picker height
 		return(
 			<div className={styles.compose}>
 				<UserWidget authorg={this.props.wallet.get('account')}/>

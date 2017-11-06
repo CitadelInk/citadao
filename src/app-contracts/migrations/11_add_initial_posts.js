@@ -13,7 +13,41 @@ module.exports = function (deployer, done, accounts) {
       console.log("getAuthorgPostKey result[0] - " + result[0]);
       console.log("getAuthorgPostKey result[1] - " + result[1]);
       console.log("getAuthorgPostKey result[2] - " + result[2]);
-      const state = {"document":{"data":{},"kind":"document","nodes":[{"data":{"authorg":result[0],"submission":result[1],"revision":result[2],"index":0},"kind":"block","isVoid":true,"type":"ref","nodes":[{"kind":"text","ranges":[{"kind":"range","marks":[],"text":" "}]}]},{"data":{},"kind":"block","isVoid":false,"type":"paragraph","nodes":[{"kind":"text","ranges":[{"kind":"range","marks":[],"text":"Thanks for the great advice! This is what it looks like when you reference a post! It will show up as a mention on that post as well."}]}]}]},"kind":"state"}
+      const state = {
+        "document": {
+          "data":{},
+          "kind":"document",
+          "nodes":[{
+            "data":{
+              "authorg":result[0],
+              "submission":result[1],
+              "revision":result[2],
+              "index":0
+            },
+            "kind":"block",
+            "isVoid":true,
+            "type":"ref",
+            "nodes":[{
+              "kind":"text",
+              "ranges":[{"kind":"range","marks":[],"text":" "}]}
+              ]
+            },
+            {"data":{},
+            "kind":"block",
+            "isVoid":false,
+            "type":"paragraph",
+            "nodes":[{
+              "kind":"text",
+              "ranges":[{
+                "kind":"range",
+                "marks":[],
+                "text":"Thanks for the great advice! This is what it looks like when you reference a post! It will show up as a mention on that post as well."
+              }]
+            }]
+          }]
+        },
+        "kind":"state"
+      }
       
 
       var postJson = {"authorg" : accounts[1], "text" : state}

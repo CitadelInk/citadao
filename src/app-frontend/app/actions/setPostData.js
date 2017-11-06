@@ -19,7 +19,7 @@ import {
   initializeNeededPosts,
   loadAuthorgBioReactions,
   loadUserData,
-  loadPost
+  doFocusedLoad
 } from './getPostData'
 
 
@@ -138,16 +138,19 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
       }
     })
 
+    
     var postJson = {"authorg" : account, "text" : postTextInput}
+    console.warn("lets put on swarm: " + JSON.stringify(postJson));
+
     return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3, revisionSubmissionHash).then(function(resulty) {
       var hasReloaded = false;
       var update = function(revisionSubmissionHash = undefined) {
         if (revisionSubmissionHash) {
           console.log("load revised post.")
-          dispatch(loadPost(account, revisionSubmissionHash, resulty.revHash, undefined, true, true))
+          dispatch(doFocusedLoad(account, revisionSubmissionHash, resulty.revHash, undefined, true, true))
         } else {
           console.log("initialize needed posts")
-          dispatch(loadPost(account, resulty.subHash, resulty.revHash, undefined, true, true))
+          dispatch(doFocusedLoad(account, resulty.subHash, resulty.revHash, undefined, true, true))
         }
         hasReloaded = true;
       };

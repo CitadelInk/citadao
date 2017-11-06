@@ -32,23 +32,63 @@ class PostPage extends Component {
 		const submission = this.props.router.params["subHash"];
 		const revision = this.props.router.params["revHash"];
 		var post = "loading...";
+		var text;
 		var timestamp = undefined;
-		
-
+		var responseMap = null;
+		var embededPostTextMap;	
+		var submissionData;
 		var authorgData = this.props.auths[authorg];
-		var keys = [];
+		var keys = null;
+		var authorgName = "";
+		var authorgAvatar;
+		var focusedLoadDone = false;
+		var revisionHashes;
+
 		if (authorgData) {
+			if(authorgData.bioSubmission) {
+				var bioSubmission = authorgData.bioSubmission;
+				var bioRevHashes = bioSubmission.revisions;
+				var revHash = "1";
+				if (bioRevHashes && bioRevHashes.length > 0) {
+					revHash = bioRevHashes[bioRevHashes.length - 1];
+				}
+				if (this.props.bio) {
+					if(this.props.revision) {
+						revHash = this.props.revision;
+					}
+				}
+				var bioRevision = bioSubmission[revHash];
+				if (bioRevision) {
+					authorgName = bioRevision.name;
+					if (bioRevision.image) {
+						authorgAvatar = bioRevision.image;
+					}
+				}
+			}
 			var submissionsData = authorgData.submissions;
 			if (submissionsData) {
-				var submissionData = submissionsData[submission];
+				submissionData = submissionsData[submission];
 				if (submissionData) {
 					var revisionsData = submissionData.revisions;
+					revisionHashes = revisionsData.revisionHashes;
 					if (revisionsData) {
 						var revisionData = revisionsData[revision];
 						if (revisionData) {
+							text = revisionData.text;
 							timestamp = revisionData.timestamp;
+							focusedLoadDone = revisionData.focusedLoadDone;
+
+
+							if (revisionData.sectionRefKeyPostsLoaded == revisionData.refCount) {
+								responseMap = revisionData.sectionRefKeyMap;
+							} else if (revisionData.refCount && revisionData.refCount > 0) {
+								focusedLoadDone = false;
+							}
 							if (revisionData.refKeys) {
 								keys = revisionData.refKeys;
+							}
+							if (revisionData.embededPostTextMap) {
+								embededPostTextMap = revisionData.embededPostTextMap;
 							}
 						}
 					}					
@@ -56,11 +96,18 @@ class PostPage extends Component {
 			}		
 		}
 
-		if (submission) {
+		if (submission && focusedLoadDone) {
 			post = (			
 				<div className={styles.post}>
 					<Card>
 						<Post 
+							revisionHashes={revisionHashes}
+							authorgAvatar={authorgAvatar}
+							authorgName={authorgName}
+							submissionValue={submissionData}
+							text={text}
+							embededPostTextMap={embededPostTextMap}
+							responseMap={responseMap}
 							authorg={authorg} 
 							submission={submission} 
 							revision={revision} 
@@ -71,12 +118,6 @@ class PostPage extends Component {
 			);
 		}
 
-		var responses = "no responses... yet!";
-		if (keys && keys.length > 0) {
-			responses = (			
-				<Posts postKeys={keys.slice().reverse()} />
-			)
-		}
 		
 
 		return(
