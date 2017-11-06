@@ -27,12 +27,10 @@ let cx = classNames.bind(styles);
 // Add the plugin to your set of plugins...
 const plugins = [
   InsertImages({
-    extensions: ['png'],
     insertImage: (transform, file, editor) => {
       const reader = new FileReader()
       reader.addEventListener('load', () => {
         var res = reader.result;
-        console.warn("res: " + res);
         transform.insertBlock({
           type: 'image',
           isVoid: true,
