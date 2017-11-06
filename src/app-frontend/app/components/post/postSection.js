@@ -80,11 +80,10 @@ class PostSection extends Component {
 		var nodesList = List([node])
 		var state = new Value({
 			document: new Document({
-				key: '123',
+				key: '123', // not sure how to get a correct key, really
 				nodes: nodesList
 			})
 		});
-		//var state = Value.create(node);
 		var showActions = true;
 
 		var text = "";
@@ -93,7 +92,7 @@ class PostSection extends Component {
 		var section = (
 			<div onClick={() => this.widgetClicked(reference)} className={styles.editor}>
 				<Editor 
-					//readOnly 
+					readOnly 
 					value={state} 
           renderNode={this.renderNode}
           renderMark={this.renderMark} />

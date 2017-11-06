@@ -32,7 +32,10 @@ class PostHeader extends Component {
 	render() {
 		var name = this.props.authorgName;
 		var time = "...";
-		var avatar = this.props.authorgAvatar;
+		var avatar = placeholder;
+		if (this.props.authorgAvatar) {
+			avatar = this.props.authorgAvatar;
+		}
 		var timestamp = this.props.timestamp;
 		var revText = "";
 		var submission;
