@@ -1,7 +1,7 @@
 
 import { Editor } from 'slate-react';
 import InsertImages from './plugins/dragAndDropImages/'
-import { Value } from 'slate';
+import { Value, Block } from 'slate';
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,7 +11,7 @@ import actions from '../../actions';
 import { RaisedButton } from 'material-ui';
 import styles from './composeRichText.css';
 import classNames from 'classnames/bind';
-import PasteLink from './plugins/pasteLink';
+import PasteLinkify from 'slate-paste-linkify';
 import PasteRef from './plugins/pasteRef';
 import Post from '../post/post';
 
@@ -46,7 +46,7 @@ const plugins = [
     collapseTo: 'end',
     collapseWhat: 'next'
   }),
-  PasteLink({
+  PasteLinkify({
     type: 'link',
     hrefProperty: 'url',
     collapseTo: 'end'
@@ -60,6 +60,46 @@ const plugins = [
  */
 
 const DEFAULT_NODE = 'paragraph'
+
+const schema = {
+  document: {
+    first: { 
+      types: [
+        'block-quote', 
+        'paragraph', 
+        'bulleted-list', 
+        'heading-one', 
+        'heading-two', 
+        'list-item', 
+        'numbered-list', 
+        'link'
+        ] 
+      },
+    last: { 
+      types: [
+        'block-quote', 
+        'paragraph', 
+        'bulleted-list', 
+        'heading-one', 
+        'heading-two', 
+        'list-item', 
+        'numbered-list', 
+        'link'
+      ] 
+    },
+    normalize: (change, reason, { node, child, index }) => {
+      switch (reason) {
+        case 'first_child_type_invalid': {
+          return change.setNodeByKey(child.key, index == 0 ? 'title' : 'paragraph')
+        }        
+        case 'last_child_type_invalid': {
+          const block = Block.create('paragraph')
+          return change.insertNodeByKey(node.key, node.nodes.size, block)
+        }   
+      }
+    }
+  }
+}
 
 /**
  * Define hotkey matchers.
@@ -383,6 +423,7 @@ class ComposeRichText extends React.Component {
             onKeyDown={this.onKeyDown}
             renderNode={this.renderNode}
             renderMark={this.renderMark}
+            schema={schema}
             spellCheck
           />
         </div>
