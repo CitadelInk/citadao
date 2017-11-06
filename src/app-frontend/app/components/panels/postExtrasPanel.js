@@ -94,7 +94,7 @@ class PostExtrasPanel extends Component {
 		var style = {
 			'position' : 'relative',
 			'height' : height,
-			'overflow-y' : 'scroll'
+			'overflowY' : 'scroll'
 		}
 		
 		return(
