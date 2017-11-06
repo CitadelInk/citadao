@@ -443,6 +443,10 @@ babel-plugin-syntax-async-functions@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-async-functions/-/babel-plugin-syntax-async-functions-6.13.0.tgz#cad9cad1191b5ad634bf30ae0872391e0647be95"
 
+babel-plugin-syntax-class-properties@^6.8.0:
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-syntax-class-properties/-/babel-plugin-syntax-class-properties-6.13.0.tgz#d7eb23b79a317f8543962c505b827c7d6cac27de"
+
 babel-plugin-syntax-exponentiation-operator@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-exponentiation-operator/-/babel-plugin-syntax-exponentiation-operator-6.13.0.tgz#9ee7e8337290da95288201a6a57f4170317830de"
@@ -470,6 +474,15 @@ babel-plugin-transform-async-to-generator@^6.24.1:
     babel-helper-remap-async-to-generator "^6.24.1"
     babel-plugin-syntax-async-functions "^6.8.0"
     babel-runtime "^6.22.0"
+
+babel-plugin-transform-class-properties@^6.24.1:
+  version "6.24.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-class-properties/-/babel-plugin-transform-class-properties-6.24.1.tgz#6a79763ea61d33d36f37b611aa9def81a81b46ac"
+  dependencies:
+    babel-helper-function-name "^6.24.1"
+    babel-plugin-syntax-class-properties "^6.8.0"
+    babel-runtime "^6.22.0"
+    babel-template "^6.24.1"
 
 babel-plugin-transform-es2015-arrow-functions@^6.22.0:
   version "6.22.0"
@@ -1603,6 +1616,10 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+data-uri-regex@^0.1.2:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/data-uri-regex/-/data-uri-regex-0.1.4.tgz#1e1db6c8397eca8a48ecdb55ad1b927ec0bbac2e"
+
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -1905,7 +1922,7 @@ es6-iterator@2, es6-iterator@^2.0.1, es6-iterator@~2.0.1:
     es5-ext "^0.10.14"
     es6-symbol "^3.1"
 
-es6-map@^0.1.3, es6-map@^0.1.4:
+es6-map@^0.1.3:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/es6-map/-/es6-map-0.1.5.tgz#9136e0503dcc06a301690f0bb14ff4e364e949f0"
   dependencies:
@@ -1915,6 +1932,10 @@ es6-map@^0.1.3, es6-map@^0.1.4:
     es6-set "~0.1.5"
     es6-symbol "~3.1.1"
     event-emitter "~0.3.5"
+
+es6-promise@^4.0.5:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.1.1.tgz#8811e90915d9a0dba36274f0b242dbda78f9c92a"
 
 es6-set@~0.1.5:
   version "0.1.5"
@@ -2730,6 +2751,14 @@ ieee754@^1.1.4:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
 
+image-extensions@^1.0.1:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/image-extensions/-/image-extensions-1.1.0.tgz#b8e6bf6039df0056e333502a00b6637a3105d894"
+
+image-to-data-uri@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/image-to-data-uri/-/image-to-data-uri-1.1.0.tgz#23f9d7f17b6562ca6a8145e9779c9a166b829f6e"
+
 immutable@^3.8.1:
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
@@ -2830,6 +2859,12 @@ is-callable@^1.1.1, is-callable@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/is-callable/-/is-callable-1.1.3.tgz#86eb75392805ddc33af71c92a0eedf74ee7604b2"
 
+is-data-uri@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/is-data-uri/-/is-data-uri-0.1.0.tgz#46ee67b63c18c1ffa0bd4dfab2cd2c81c728237f"
+  dependencies:
+    data-uri-regex "^0.1.2"
+
 is-date-object@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/is-date-object/-/is-date-object-1.0.1.tgz#9aa20eb6aeebbff77fbd33e74ca01b33581d3a16"
@@ -2891,6 +2926,16 @@ is-glob@^3.1.0:
 is-hex-prefixed@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-hex-prefixed/-/is-hex-prefixed-1.0.0.tgz#7d8d37e6ad77e5d127148913c573e082d777f554"
+
+is-hotkey@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/is-hotkey/-/is-hotkey-0.1.1.tgz#b279a2fd108391be9aa93c6cb317f50357da549a"
+
+is-image@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/is-image/-/is-image-1.0.1.tgz#6fd51a752a1a111506d060d952118b0b989b426e"
+  dependencies:
+    image-extensions "^1.0.1"
 
 is-in-browser@^1.1.3:
   version "1.1.3"
@@ -3003,6 +3048,10 @@ isobject@^2.0.0:
 isobject@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
+
+isomorphic-base64@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/isomorphic-base64/-/isomorphic-base64-1.0.2.tgz#f426aae82569ba8a4ec5ca73ad21a44ab1ee7803"
 
 isomorphic-fetch@^2.1.1:
   version "2.2.1"
@@ -3406,6 +3455,16 @@ miller-rabin@^4.0.0:
 "mime-db@>= 1.29.0 < 2", mime-db@~1.29.0:
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.29.0.tgz#48d26d235589651704ac5916ca06001914266878"
+
+mime-db@~1.30.0:
+  version "1.30.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.30.0.tgz#74c643da2dd9d6a45399963465b26d5ca7d71f01"
+
+mime-types@^2.1.11:
+  version "2.1.17"
+  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.17.tgz#09d7a393f03e995a79f8af857b70a9e0ab16557a"
+  dependencies:
+    mime-db "~1.30.0"
 
 mime-types@^2.1.12, mime-types@~2.1.11, mime-types@~2.1.15, mime-types@~2.1.7:
   version "2.1.16"
@@ -4381,6 +4440,10 @@ react-hot-loader@^3.1.1:
     redbox-react "^1.3.6"
     source-map "^0.6.1"
 
+react-immutable-proptypes@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-immutable-proptypes/-/react-immutable-proptypes-2.1.0.tgz#023d6f39bb15c97c071e9e60d00d136eac5fa0b4"
+
 react-portal@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/react-portal/-/react-portal-3.1.0.tgz#865c44fb72a1da106c649206936559ce891ee899"
@@ -4916,55 +4979,70 @@ slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
 
-slate-base64-serializer@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/slate-base64-serializer/-/slate-base64-serializer-0.1.1.tgz#e5bb03fdbb04bbbb06b404d0bc671e457ff39b05"
-
-slate-dev-logger@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/slate-dev-logger/-/slate-dev-logger-0.1.2.tgz#9cd57e2e497c5ae634105076d95e517ed42e836e"
-
-slate-plain-serializer@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/slate-plain-serializer/-/slate-plain-serializer-0.1.1.tgz#0c90fca643aa8a440416ff40290f8f7f06bd1091"
+slate-base64-serializer@^0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/slate-base64-serializer/-/slate-base64-serializer-0.2.8.tgz#fef19b2cb799f5bc5f6b987834048d662102a45a"
   dependencies:
-    slate-dev-logger "^0.1.2"
+    isomorphic-base64 "^1.0.2"
 
-slate-prop-types@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/slate-prop-types/-/slate-prop-types-0.1.1.tgz#9c12a80eeddc57207c737b8bf3475edcabd09830"
+slate-dev-logger@^0.1.0, slate-dev-logger@^0.1.32:
+  version "0.1.32"
+  resolved "https://registry.yarnpkg.com/slate-dev-logger/-/slate-dev-logger-0.1.32.tgz#76b73d75a149d0eac0cab134965aca14f7542888"
+
+slate-drop-or-paste-images@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/slate-drop-or-paste-images/-/slate-drop-or-paste-images-0.8.0.tgz#2c363a117688c1b57517ab9cd468c4060e09824e"
   dependencies:
-    slate-dev-logger "^0.1.2"
+    es6-promise "^4.0.5"
+    image-to-data-uri "^1.0.0"
+    is-data-uri "^0.1.0"
+    is-image "^1.0.1"
+    is-url "^1.2.2"
+    mime-types "^2.1.11"
+    slate-dev-logger "^0.1.0"
 
-slate-react@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/slate-react/-/slate-react-0.1.1.tgz#f0cffcd87695da0a21749e501d7dfb10668865a5"
+slate-plain-serializer@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/slate-plain-serializer/-/slate-plain-serializer-0.4.6.tgz#1fa04ff7c9fd74ed5cedcdfdad8120eb4c4cef6a"
+  dependencies:
+    slate-dev-logger "^0.1.32"
+
+slate-prop-types@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/slate-prop-types/-/slate-prop-types-0.4.6.tgz#ff7927430d03fa30bfa44ead5367867b209e5985"
+  dependencies:
+    slate-dev-logger "^0.1.32"
+
+slate-react@^0.10.11:
+  version "0.10.11"
+  resolved "https://registry.yarnpkg.com/slate-react/-/slate-react-0.10.11.tgz#5fbfbf0da2dd726df468d788d2bd81dd578a15a3"
   dependencies:
     debug "^2.3.2"
     get-window "^1.1.1"
+    is-hotkey "^0.1.1"
     is-in-browser "^1.1.3"
     is-window "^1.0.2"
     keycode "^2.1.2"
     prop-types "^15.5.8"
+    react-immutable-proptypes "^2.1.0"
     react-portal "^3.1.0"
     selection-is-backward "^1.0.0"
-    slate-base64-serializer "^0.1.1"
-    slate-dev-logger "^0.1.2"
-    slate-plain-serializer "^0.1.1"
-    slate-prop-types "^0.1.1"
+    slate-base64-serializer "^0.2.8"
+    slate-dev-logger "^0.1.32"
+    slate-plain-serializer "^0.4.6"
+    slate-prop-types "^0.4.6"
 
-slate@^0.24.1:
-  version "0.24.1"
-  resolved "https://registry.yarnpkg.com/slate/-/slate-0.24.1.tgz#ba145925e53b4e3f6b8846d2b61c621d1ef75d5b"
+slate@^0.30.6:
+  version "0.30.6"
+  resolved "https://registry.yarnpkg.com/slate/-/slate-0.30.6.tgz#32a02bbad3c44d9de9f1a17fa2fd831d2f4e7a99"
   dependencies:
     debug "^2.3.2"
     direction "^0.1.5"
-    es6-map "^0.1.4"
     esrever "^0.2.0"
     is-empty "^1.0.0"
     is-plain-object "^2.0.4"
     lodash "^4.17.4"
-    slate-dev-logger "^0.1.2"
+    slate-dev-logger "^0.1.32"
     type-of "^2.0.1"
 
 sntp@1.x.x:

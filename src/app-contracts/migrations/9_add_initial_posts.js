@@ -1,6 +1,25 @@
 //var MyAdvancedToken = artifacts.require('./MyAdvancedToken')
 var Ink = artifacts.require('./Ink.sol')
-const state = {"document":{"data":{},"kind":"document","nodes":[{"data":{},"kind":"block","isVoid":false,"type":"paragraph","nodes":[{"kind":"text","ranges":[{"kind":"range","marks":[],"text":"This is what a test post looks like."}]}]}]},"kind":"state"}
+const state = {
+  "document":{
+    "data":{},
+    "kind":"document",
+    "nodes":[{
+      "data":{},
+      "kind":"block",
+      "isVoid":false,
+      "type":"paragraph",
+      "nodes":[{
+        "kind":"text",
+        "ranges":[{
+          "kind":"range",
+          "marks":[],
+          "text":"This is what a test post looks like."}]
+        }]
+      }]
+    },
+    "kind":"state"
+  }
 
 
 module.exports = function (deployer, done, accounts) {

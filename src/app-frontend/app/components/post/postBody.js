@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSection from './postSection';
-import {State, Block} from 'slate';
+import {Value, Block} from 'slate';
 import styles from './postBody.css';
 import classNames from 'classnames/bind';
 import { List } from 'immutable';
@@ -27,7 +27,7 @@ class PostBody extends Component {
 			if (this.props.embeded) {
 				state = Block.fromJSON(this.props.text);
 			} else {
-				state = State.fromJSON(this.props.text);
+				state = Value.fromJSON(this.props.text);
 			}
 		}
 
@@ -45,8 +45,6 @@ class PostBody extends Component {
 
 
 			if (state) {
-
-
 				if (this.props.responseMap) {
 					responses = this.props.responseMap.get(this.props.sectionIndex);
 				}
@@ -56,7 +54,7 @@ class PostBody extends Component {
 				body = <PostSection authorgAvatar={this.props.authorgAvatar} authorgName={this.props.authorgName} embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={state} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
 			}
 		} else {
-			if(state && state.document && state.document.nodes) {	
+			if(state && state.document.nodes) {	
 				var instance = this;
 				var nodes = state.document.nodes;
 				body = nodes.map((section, i) => {		
@@ -64,7 +62,20 @@ class PostBody extends Component {
 						responses = this.props.responseMap.get(i);
 					}		
 								
-					return (<PostSection authorgAvatar={this.props.authorgAvatar} authorgName={this.props.authorgName} embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + i} sectionResponses={responses} section={section} sectionIndex={i} authorg={instance.props.authorg} submissionHash={instance.props.submission} revisionHash={instance.props.revision} focusedPost={focusedPost}/>);	
+					return (<PostSection 
+								authorgAvatar={this.props.authorgAvatar} 
+								timestamp={this.props.timestamp}
+								revisionHashes={this.props.revisionHashes}
+								authorgName={this.props.authorgName} 
+								embededPostTextMap={this.props.embededPostTextMap} 
+								key={"post-body-" + i} 
+								sectionResponses={responses} 
+								section={section} 
+								sectionIndex={i} 
+								authorg={instance.props.authorg} 
+								submissionHash={instance.props.submission} 
+								revisionHash={instance.props.revision} 
+								focusedPost={focusedPost}/>);	
 					
 				});
 			}
