@@ -6,7 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import UserList from './userList';
-import { State } from 'slate';
+import { Value } from 'slate';
 const {
 	submitResponseRequest
 } = actions;
@@ -88,7 +88,7 @@ class ResponseRequestModal extends Component {
 				}
 			}
 
-			var state = State.fromJSON(this.props.text);
+			var state = Value.fromJSON(this.props.text);
 			if (state.document && state.document.nodes) {
 				
 				var instance = this;
