@@ -38,7 +38,7 @@ class PostSection extends Component {
 
 
 	render() {
-		var reference = false;
+		var reference;
 
 		var node = this.props.section;
 		if (node.data.get)  {
@@ -49,6 +49,7 @@ class PostSection extends Component {
 			var index = node.data.get("index");
 
 			if (authorg && submission && revision) {
+				reference = {authorg, submission, revision};
 				var embKey = authorg + "-" + submission + "-" + revision;
 				if (this.props.embededPostTextMap) {
 					var embText = this.props.embededPostTextMap.get(embKey).text;
@@ -87,7 +88,8 @@ class PostSection extends Component {
 		var showActions = true;
 
 		var text = "";
-		var reference;
+
+
 
 		var section = (
 			<div onClick={() => this.widgetClicked(reference)} className={styles.editor}>
