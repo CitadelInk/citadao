@@ -24,11 +24,13 @@ class GraphVisualization extends Component{
       case 3:
         return 15;
       case 4:
-      default:
         return 37;
+      default:
+        return 52;
     }
   }
   render() {
+    console.log("selected: " + this.props.selected);
     const activeNode = this.getActiveNode();
     return <div className={this.props.className}>
       <svg ref={container => this.container = container} width="100%" height="100%">
