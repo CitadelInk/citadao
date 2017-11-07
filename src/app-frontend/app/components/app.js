@@ -60,6 +60,8 @@ class App extends Component {
             <Fragment forRoute="/landing">
               <Landing />
             </Fragment>
+            <Fragment forRoute="/whitepaper">
+            </Fragment>
           </div>
         </Fragment>
       );
@@ -69,6 +71,8 @@ class App extends Component {
           <div className="app">  
             <Fragment forRoute="/landing">
                 <Landing />
+            </Fragment>
+            <Fragment forRoute="/whitepaper">
             </Fragment>
             <Fragment forNoMatch>
               <Landing showMetaMaskOnLoad={true} />

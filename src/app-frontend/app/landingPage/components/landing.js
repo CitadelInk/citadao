@@ -98,7 +98,7 @@ class Landing extends Component {
 	}
 
 	onPdfClicked(e) {
-		window.open("./citadel_ink_whitepaper_DRAFT_1.pdf", "_blank");
+		window.open("./whitepaper/citadel_ink_whitepaper_DRAFT_1.pdf", "_blank");
 	}
 	onCitadelWhitepaperClicked(e) {
 		//http://citadel.ink/post/authorg/0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe/sub/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459/rev/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459
