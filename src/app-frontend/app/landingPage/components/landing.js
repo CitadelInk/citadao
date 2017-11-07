@@ -41,8 +41,12 @@ class Landing extends Component {
 	 	super(props);
 		this.handleClose = this.handleClose.bind(this);
 		this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+		var shouldOpen = true;
+		if (!this.props.showMetaMaskOnLoad) {
+			shouldOpen = false;
+		}
 		this.state = {
-			open: this.props.showMetaMaskOnLoad
+			open: shouldOpen
 		}
 		this.hammer = new Hammer(document.body);
 		this.hammer.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
@@ -112,36 +116,30 @@ class Landing extends Component {
 	problemSection() {
 
 		const problem = (
-			<p className={styles.pStyle}>
-				<ul>
-					<li>Bad actors spread <strong>disinformation</strong>.</li>
-					<li><strong>Echo chambers</strong> reinforce entrenched opinions and dissent is lost amidst the <strong>noise</strong>.</li>
-					<li>Hostile communication encounters no friction, and discourse turns <strong>toxic</strong>.</li>
-					<li>Our social networks can be <strong>censored</strong> by corporations & authoritarians.</li>
-				</ul>
-			</p>
+			<ul className={styles.pStyle}>
+				<li>Bad actors spread <strong>disinformation</strong>.</li>
+				<li><strong>Echo chambers</strong> reinforce entrenched opinions and dissent is lost amidst the <strong>noise</strong>.</li>
+				<li>Hostile communication encounters no friction, and discourse turns <strong>toxic</strong>.</li>
+				<li>Our social networks can be <strong>censored</strong> by corporations & authoritarians.</li>
+			</ul>
 		);
 
 		const cause = (
-			<p className={styles.pStyle}>
-				<ul>
-					<li>The <strong>attention economy</strong>, where a user’s worth is measured in time exposed to ads.</li>
-					<li>Platforms use <strong>psychological exploits</strong> to form habits in users and maximize time-on-site.</li>
-					<li><strong>Centralized</strong> networks compile valuable private data and <strong>rigidly control</strong> the user experience to ensure that they capture attention.</li>
-				</ul>
-			</p>
+			<ul className={styles.pStyle}>
+				<li>The <strong>attention economy</strong>, where a user’s worth is measured in time exposed to ads.</li>
+				<li>Platforms use <strong>psychological exploits</strong> to form habits in users and maximize time-on-site.</li>
+				<li><strong>Centralized</strong> networks compile valuable private data and <strong>rigidly control</strong> the user experience to ensure that they capture attention.</li>
+			</ul>
 		);
 
 		const solution = (
-			<p className={styles.pStyle}>
-				<ul>
-					<li>A <strong>decentralized</strong> social network on the Ethereum blockchain where private data isn’t collected and sold.</li>
-					<li><strong>Intention economy</strong>, where users participate deliberately.</li>
-					<li>Tipping and bounty systems that <strong>reward good faith users</strong>.</li>
-					<li>Smart contracts that introduce <strong>economic friction</strong> to inhibit bad actors.</li>
-					<li><strong>Better tools</strong> for users seeking trust.</li>
-				</ul>
-			</p>
+			<ul className={styles.pStyle}>
+				<li>A <strong>decentralized</strong> social network on the Ethereum blockchain where private data isn’t collected and sold.</li>
+				<li><strong>Intention economy</strong>, where users participate deliberately.</li>
+				<li>Tipping and bounty systems that <strong>reward good faith users</strong>.</li>
+				<li>Smart contracts that introduce <strong>economic friction</strong> to inhibit bad actors.</li>
+				<li><strong>Better tools</strong> for users seeking trust.</li>
+			</ul>
 		)
 
 		if (this.props.svgContainerSize.width > 450) {

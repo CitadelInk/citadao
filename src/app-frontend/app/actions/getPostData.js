@@ -236,6 +236,8 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
     }
   } else if (router.result.title === 'Account') {
     return dispatch(loadUserData(router.params["account"], true, false, router.params["revHash"]));
+  } else {
+    return dispatch(initializeTestTypedRevisions());
   }
 }
 

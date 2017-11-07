@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 export default class GreyPen extends Component{
   render() {
     return <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-    	 width={this.props.size} height={this.props.size} viewBox="0 0 164.785 164.785" style={{ "enable-background": "new 0 0 164.785 164.785"}}>
+    	 width={this.props.size} height={this.props.size} viewBox="0 0 164.785 164.785" style={{ "enableBackground": "new 0 0 164.785 164.785"}}>
       <path style={{fill:"#000000"}} d="M164.785,82.392c0,45.504-36.889,82.393-82.393,82.393C36.89,164.785,0,127.896,0,82.392
       	C0,36.888,36.89,0,82.393,0C127.896,0,164.785,36.888,164.785,82.392"/>
       <path style={{fill: "#eeeeee"}} d="M109.857,83.9c0,0-19.711,38.331-24.514,59.15V85.487c2.272-1.094,3.849-3.425,3.849-6.129

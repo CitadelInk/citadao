@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 export default class GreyCastle extends Component{
   render() {
     return <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-	 		width={this.props.size} height={this.props.size} viewBox="0 0 164.783 164.784" style={{"enable-background": "new 0 0 164.783 164.784"}}>
+	 		width={this.props.size} height={this.props.size} viewBox="0 0 164.783 164.784" style={{"enableBackground": "new 0 0 164.783 164.784"}}>
 			<path style={{fill:"#000000"}} d="M164.783,82.393c0,45.504-36.889,82.392-82.393,82.392C36.888,164.784,0,127.896,0,82.393
 				S36.888,0,82.391,0C127.895,0,164.783,36.889,164.783,82.393"/>
 			<g>
@@ -14,7 +14,7 @@ export default class GreyCastle extends Component{
 					<clipPath id="SVGID_2_">
 						<use href="#SVGID_1_"  style={{overflow: "visible"}}/>
 					</clipPath>
-					<polygon style={{"clip-path":"url(#SVGID_2_)",fill:"#eeeeee"}} points="82.391,138.474 25.71,105.748 53.259,29.634 		"/>
+					<polygon style={{"clipPath":"url(#SVGID_2_)",fill:"#eeeeee"}} points="82.391,138.474 25.71,105.748 53.259,29.634 		"/>
 				</g>
 			</g>
 			<g>
@@ -25,7 +25,7 @@ export default class GreyCastle extends Component{
 					<clipPath id="SVGID_4_">
 						<use href="#SVGID_3_"  style={{overflow:"visible"}}/>
 					</clipPath>
-					<polygon style={{"clip-path":"url(#SVGID_4_)", fill:"#eeeeee"}} points="82.391,138.474 139.072,105.748 111.523,29.634 		"/>
+					<polygon style={{"clipPath":"url(#SVGID_4_)", fill:"#eeeeee"}} points="82.391,138.474 139.072,105.748 111.523,29.634 		"/>
 				</g>
 			</g>
 			<g>
@@ -36,7 +36,7 @@ export default class GreyCastle extends Component{
 					<clipPath id="SVGID_6_">
 						<use href="#SVGID_5_"  style={{overflow:"visible"}}/>
 					</clipPath>
-					<polygon style={{"clip-path":"url(#SVGID_6_)", fill:"#aaaaaa"}} points="25.711,105.749 82.392,29.633 139.071,105.749 82.392,138.474 		
+					<polygon style={{"clipPath":"url(#SVGID_6_)", fill:"#aaaaaa"}} points="25.711,105.749 82.392,29.633 139.071,105.749 82.392,138.474 		
 						"/>
 				</g>
 			</g>
