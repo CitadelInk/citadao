@@ -97,9 +97,6 @@ class Landing extends Component {
 		window.open("https://medium.com/@team_59584/ink-citadel-dcf71be07b5", "_blank");
 	}
 
-	onPdfClicked(e) {
-		window.open("./whitepaper/citadel_ink_whitepaper_DRAFT_1.pdf", "_blank");
-	}
 	onCitadelWhitepaperClicked(e) {
 		//http://citadel.ink/post/authorg/0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe/sub/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459/rev/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459
 		if (this.props.network.isConnected) {
@@ -462,7 +459,7 @@ class Landing extends Component {
 							<h2>Whitepaper</h2>
 							<p className={styles.pStyle}>
 							<a href="#" style={{"color":"white"}} onClick={this.onMediumClicked}>Read Whitepaper on Medium</a><br/>
-							<a href="#" style={{"color":"white"}} onClick={this.onPdfClicked}><u>Download whitepaper as PDF</u></a><br/>
+							<a href="./whitepaper/citadel_ink_whitepaper_DRAFT_1.pdf" download style={{"color":"white"}}><u>Download whitepaper as PDF</u></a><br/>
 							<a href="#" style={{"color":"white"}} onClick={this.onCitadelWhitepaperClicked}><u>Read Whitepaper on Citadel.ink</u></a> (requires metamask)<br/>
 							-----------------------------<br/>
 							<a href="#" style={{"color":"white"}} onClick={this.onEmailClicked}><u>Email team@citadel.ink</u></a>
