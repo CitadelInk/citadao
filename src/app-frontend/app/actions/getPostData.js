@@ -380,8 +380,9 @@ export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, times
 }
 
 export const doFocusedLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+  console.info("doFocusedLoad - user: " + authorgAddress + " - subHash: " + submissionHash + " - revHash: " + revisionHash);
+  dispatch(setFocusedPostLoadBegin(authorgAddress, submissionHash, revisionHash));
   return new Promise((res, rej) => {
-    dispatch(setFocusedPostLoadBegin(authorgAddress, submissionHash, revisionHash));
     var promiseList = [];
     promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
     promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));

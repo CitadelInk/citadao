@@ -77,8 +77,8 @@ class PostPage extends Component {
 							text = revisionData.text;
 							timestamp = revisionData.timestamp;
 							focusedLoadDone = revisionData.focusedLoadDone;
-
-
+							console.log("focusedLoadDone: " + focusedLoadDone);
+							console.log("revisionData.refCount: " + revisionData.refCount + " - revisionData.sectionRefKeyPostsLoaded: " + revisionData.sectionRefKeyPostsLoaded)							
 							if (revisionData.sectionRefKeyPostsLoaded == revisionData.refCount) {
 								responseMap = revisionData.sectionRefKeyMap;
 							} else if (revisionData.refCount && revisionData.refCount > 0) {
