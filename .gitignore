@@ -1,4 +1,5 @@
 node_modules
 build
 src/app-frontend/app/config.json
+src/app-frontend/public
 yarn-error.log
