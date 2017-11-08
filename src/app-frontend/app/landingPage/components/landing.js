@@ -100,7 +100,7 @@ class Landing extends Component {
 	onCitadelWhitepaperClicked(e) {
 		//http://citadel.ink/post/authorg/0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe/sub/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459/rev/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459
 		if (this.props.network.isConnected) {
-			this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x5709eb58c16e689d752b5468c2ee33b2322c7211ceba2bd33a20eac13b45d548", "0xacad8f493e543112a43df1318829d1ecc3f3ef5a20504a61028e1894ec26cb10"))
+			this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x5709eb58c16e689d752b5468c2ee33b2322c7211ceba2bd33a20eac13b45d548", "0xd84d4f7f394ecc46513696f9434c2905dc711a2fbc48f19dba5919c7e2aab3b0"))
 		} else {
 			this.setState({open : true})
 		}

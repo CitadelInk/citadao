@@ -155,10 +155,10 @@ class PostSection extends Component {
   renderNode = (props) => {
     const { attributes, children, node } = props
     switch (node.type) {
-      case 'block-quote': return <blockquote {...attributes}>{children}</blockquote>
+      case 'block-quote': return <blockquote className={styles.blockquote} {...attributes}>{children}</blockquote>
       case 'bulleted-list': return <ul {...attributes}>{children}</ul>
-      case 'heading-one': return <h1 {...attributes}>{children}</h1>
-      case 'heading-two': return <h2 {...attributes}>{children}</h2>
+      case 'heading-one': return <h1 className={styles.h1} {...attributes}>{children}</h1>
+      case 'heading-two': return <h2 className={styles.h2} {...attributes}>{children}</h2>
       case 'list-item': return <li {...attributes}>{children}</li>
       case 'numbered-list': return <ol {...attributes}>{children}</ol>
 	  case 'image': return <img src={node.data.get('res')}/>			
@@ -185,7 +185,8 @@ class PostSection extends Component {
 			revisionHashes={props.node.data.get('revHashes')}/>
           </div>
         )
-      }
+	  }
+	  case 'paragraph': return <p className={styles.p} {...attributes}>{children}</p>
 	}
   }
 

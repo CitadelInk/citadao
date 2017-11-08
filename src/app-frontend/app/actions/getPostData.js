@@ -400,11 +400,14 @@ export const doFocusedLoad = (authorgAddress, submissionHash, revisionHash, time
 }
 
 export const asyncLoadRef = (authorgAddress, submissionHash, revisionHash, index) => (dispatch) => {
-  return getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
-    dispatch(doUnfocusedLoad(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false)).then(() => {
-      dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
+  return new Promise((res,rej) => {
+    getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
+      dispatch(doUnfocusedLoad(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false)).then(() => {
+        dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
+        res({done:true})
+      })
     })
-  })
+  });
 }
 
 export const loadSubmissionRevisionHashList = (authorgAddress, submissionHash) => (dispatch) => {
