@@ -77,16 +77,16 @@ class PostPage extends Component {
 							text = revisionData.text;
 							timestamp = revisionData.timestamp;
 							focusedLoadDone = revisionData.focusedLoadDone;
-							console.log("focusedLoadDone: " + focusedLoadDone);
-							if (revisionData.sectionRefKeyPostsLoaded == revisionData.refCount) {
-								responseMap = revisionData.sectionRefKeyMap;
-							} else if (revisionData.refCount && revisionData.refCount > 0) {
-								console.warn("revisionData ref counts do not match. revisionData.refCount: " + revisionData.refCount + " - revisionData.sectionRefKeyPostsLoaded: " + revisionData.sectionRefKeyPostsLoaded)							
-								//focusedLoadDone = false;
-							}
 							if (revisionData.refKeys) {
 								keys = revisionData.refKeys;
 							}
+
+							if (keys && keys.length == revisionData.refCount) {
+								responseMap = revisionData.sectionRefKeyMap;
+							} else if (revisionData.refCount && revisionData.refCount > 0 && keys) {
+								focusedLoadDone = false;
+							}
+
 							if (revisionData.embededPostTextMap) {
 								embededPostTextMap = revisionData.embededPostTextMap;
 							}

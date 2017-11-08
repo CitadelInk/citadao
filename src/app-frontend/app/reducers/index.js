@@ -252,20 +252,15 @@ const revs = (state = {}, action) => {
     case SET_REFERENCE:
       var sectionRefKeyMap;
       var refsLoaded;
-      var revRefKeySet;
       if(state[revHash]){ 
         sectionRefKeyMap = state[revHash].sectionRefKeyMap;
         refsLoaded = state[revHash].sectionRefKeyPostsLoaded;
-        revRefKeySet = state[revHash].refKeySet;
       }
       if (!sectionRefKeyMap) {
         sectionRefKeyMap = new Map();
       }
       if (!refsLoaded) {
         refsLoaded = 0;
-      }
-      if (!revRefKeySet) {
-        revRefKeySet = new Map();
       }
 
       // TODO: refactor this to be a set so we don't have to do this stupid loop
@@ -287,22 +282,12 @@ const revs = (state = {}, action) => {
       if (!alreadyReferenced) {
         existingReferences.push(action.data.refKey);
       }
-      var setKey = action.data.refKey.authAdd + "-" + action.data.refKey.submissionHash + "-" + action.data.refKey.revisionHash;
-      console.log("check setKey: " + setKey);
-      console.log("revRefKeySet: " + revRefKeySet);
-      if (!revRefKeySet.get(setKey)) {
-        console.log("add 1 more")
-        revRefKeySet = revRefKeySet.set(setKey, true);
-        refsLoaded = refsLoaded + 1;
-      }
-      console.log("now revRefKeySet: " + revRefKeySet);
 
       var sectionMap = sectionRefKeyMap.set(action.data.index, existingReferences);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           sectionRefKeyMap: sectionMap,
-          sectionRefKeyPostsLoaded : refsLoaded,
-          refKeySet : revRefKeySet
+          sectionRefKeyPostsLoaded : refsLoaded
         })
       });
     case ADD_EMBEDED_POST_KEY_MAPPING:
