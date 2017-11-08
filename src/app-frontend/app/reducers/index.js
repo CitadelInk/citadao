@@ -316,12 +316,14 @@ const revs = (state = {}, action) => {
         })
       });
     case SET_FOCUSED_POST_LOAD_BEGIN:
+      console.log("set focused post load begin. revHash: " + revHash)
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           focusedLoadDone: false
         })
       });
     case SET_FOCUSED_POST_LOAD_FINISHED:
+    console.log("set focused post load finished. revHash: " + revHash)
         return Object.assign({}, state, {
           [revHash]: Object.assign({}, state[revHash], {
             focusedLoadDone: true
@@ -349,6 +351,7 @@ const subs = (state = {}, action) => {
     case SET_REVISION_HASHES:
     case SET_REVISION_REQUEST_RESPONSE_KEYS:
     case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+    case SET_FOCUSED_POST_LOAD_BEGIN:
     case SET_FOCUSED_POST_LOAD_FINISHED:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
@@ -385,6 +388,7 @@ const auths = (state = {}, action) => {
       case SET_REVISION_HASHES:
       case SET_REVISION_REQUEST_RESPONSE_KEYS:
       case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+      case SET_FOCUSED_POST_LOAD_BEGIN:
       case SET_FOCUSED_POST_LOAD_FINISHED:
         return {
           ...state,
