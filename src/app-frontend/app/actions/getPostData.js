@@ -373,6 +373,7 @@ export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, times
       }
       Promise.all([...refPromises, dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash))])
       .then(() => {
+        console.log("doDetailLoad result.")
         res({done : true})
       })
     })    
