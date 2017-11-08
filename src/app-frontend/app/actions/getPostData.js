@@ -283,7 +283,7 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
             if(refAuthorg && refSubmission && refRevision) {
               references.push({refAuthorg, refSubmission, refRevision, index});
               if (firstLevel) {
-                refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false, false)));
+                refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false)));
               }           
             }  
           })

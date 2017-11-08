@@ -55,7 +55,9 @@ class PostExtrasPanel extends Component {
 						if (revisionData) {
 							timestamp = revisionData.timestamp;
 							if (revisionData.refKeys) {
-								keys = revisionData.refKeys;
+								if (revisionData.refKeys.length == revisionData.refCount) {
+									keys = revisionData.refKeys;
+								}
 							}
 							if (revisionData.requestResponseOfferers) {
 								responseRequestOfferers = revisionData.requestResponseOfferers;
