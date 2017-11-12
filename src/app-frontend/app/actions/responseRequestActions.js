@@ -154,7 +154,6 @@ export const loadPostResponseRequests = (postUser, postSubmission, postRevision)
     if (result.offerers && result.recipients && result.offerers.length === result.recipients.length) {
       dispatch(setRevisionRequestResponseKeys(postUser, postSubmission, postRevision, result.offerers, result.recipients));
       for(var i = 0; i < result.offerers.length; i++) {
-        //console.log("dispatch load. postUser: " + postUser + " - offerer: " + result.offerers[i]);
         dispatch(loadRequestResponse(postUser, postSubmission, postRevision, result.offerers[i], result.recipients[i]));
       }
     }

@@ -72,10 +72,8 @@ const wallet = (state = Map({
   bioRevisions: [],
   bioRevisionsByAccount: {},
   bioNameInput: '',
-  bioTextInput: Value.fromJSON(initialState),
   bioAvatarImage: null,
   tokenCitadelComptroller: '',
-  postTextInput: Value.fromJSON(initialState),
   selectedResponses: null,
   totalPostCount:0,
   numPostsLoaded:0,
@@ -84,7 +82,6 @@ const wallet = (state = Map({
   selectedHomeTabIndex:0,
   selectedReactionHash:'',
   reviseSubmissionHash:null,
-  reviseSubmissionInput:Value.fromJSON(initialState)
 }), action) => {
   switch (action.type) {
     case SET_SELECTED_RESPONSES:

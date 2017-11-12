@@ -47,7 +47,11 @@ class BioCompose extends Component {
 					</div>
 				</div>
 				<div className={styles.richTextContainer}>
-					<ComposeRichText bio={true} height={height} />
+					<ComposeRichText 
+						value={this.props.value}
+                  		callback={this.props.callback}
+					  	bio={true} 
+						height={height} />
 				</div>
 			</div>
 		);

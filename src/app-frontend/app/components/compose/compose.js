@@ -30,7 +30,11 @@ class Compose extends Component {
 		return(
 			<div className={styles.compose}>
 				<UserWidget authorg={this.props.wallet.get('account')}/>
-				<ComposeRichText height={height}/>
+				<ComposeRichText 				
+					value={this.props.value}
+                  	callback={this.props.callback}
+					height={height}
+				/>
 			</div>
 		);
 	}

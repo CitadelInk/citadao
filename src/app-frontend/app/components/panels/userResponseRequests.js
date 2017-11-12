@@ -22,7 +22,6 @@ class UserResponseRequests extends Component {
 		var user = this.props.auths[userAccount];
 		var posts;
 
-		//console.log("user response requests.")
 		if (user) {
 			if (this.props.received) {
 
