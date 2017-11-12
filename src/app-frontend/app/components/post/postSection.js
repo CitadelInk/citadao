@@ -96,10 +96,11 @@ class PostSection extends Component {
 				<Editor 
 					readOnly 
 					value={state} 
-         			renderNode={this.renderNode}
-          			renderMark={this.renderMark} />
+         	renderNode={this.renderNode}
+          renderMark={this.renderMark} />
 			</div>);
-		var actions = (<PostSectionActions 
+		var actions = (<PostSectionActions
+              className={styles.actionsSection}
 							showClipboard={this.state.isHoveringOver} 
 							section={this.props.section} 
 							timestamp={this.props.timestamp} 

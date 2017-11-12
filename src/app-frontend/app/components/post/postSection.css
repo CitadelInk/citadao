@@ -6,6 +6,14 @@
   text-align: justify;
 }
 
+.actionsSection{
+  display: none;
+}
+
+.sectionDiv:hover .actionsSection{
+  display: block;
+}
+
 .embededPostStyle {
   position: relative;
   border: 1px solid gray;

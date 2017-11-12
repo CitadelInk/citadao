@@ -42,8 +42,9 @@ class PostSectionActions extends Component {
 		var referenceString = JSON.stringify(referenceJson);
 		const clippy = (
 			<CopyToClipboard text={referenceString}
-				onCopy={() => this.setState({copied: true})}>
-				<span className={styles.responseStyle}>Copy reference to clipboard</span>
+				onCopy={() => this.setState({copied: true})}
+			>
+				<span className={`${styles.responseStyle} ${this.props.className}`}>Copy reference to clipboard</span>
 			</CopyToClipboard>
 		)
 		return (	
