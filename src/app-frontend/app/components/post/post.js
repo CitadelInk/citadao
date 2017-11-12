@@ -25,7 +25,8 @@ class Post extends Component {
 							submission={this.props.submission} 
 							revision={this.props.revision} 
 							timestamp={this.props.timestamp} 
-							focusedPost={this.props.focusedPost} />
+							focusedPost={this.props.focusedPost} 
+							revisionPostCallback={this.props.revisionPostCallback}/>
 				<PostBody authorgAvatar={this.props.authorgAvatar} 
 							revisionHashes={this.props.revisionHashes}
 							timestamp={this.props.timestamp} 

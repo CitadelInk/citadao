@@ -178,7 +178,6 @@ export const setAuthorgPostKeysLoadedCount = (authAdd, loadedCount) => {
 
 export const SET_AUTHORG_FOLLOWS_AUTHORGS = "SET_AUTHORG_FOLLOWS_AUTHORGS";
 export const setAuthorgFollowsAuthorgs = (authAdd, authorgs) => {
-  //console.log("set authorg follows authorgs - " + authorgs);
   return {
     type: SET_AUTHORG_FOLLOWS_AUTHORGS,
     data: {authAdd, authorgs}

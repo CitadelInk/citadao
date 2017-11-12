@@ -121,30 +121,6 @@ const isCodeHotkey = isKeyHotkey('mod+`')
 class ComposeRichText extends React.Component {
 
   /**
-   * Deserialize the initial editor value.
-   *
-   * @type {Object}
-   */
-
-   state = {
-     value : Value.fromJSON(initialValue)
-   }
-  componentWillMount = () => {
-    this.setState({value: this.getState()});
-  }
-
-  componentWillUnmount = () => {
-   var state = this.state.value;
-   if (this.props.bio) {
-     this.props.dispatch(setWalletData({bioTextInput : state}));
-   } else if (this.props.submission) {
-     this.props.dispatch(setWalletData({reviseSubmissionInput : state}));
-   } else {
-     this.props.dispatch(setWalletData({postTextInput : state}));
-   }
-  }
-
-  /**
    * Check if the current selection has a mark with `type` in it.
    *
    * @param {String} type
@@ -152,10 +128,10 @@ class ComposeRichText extends React.Component {
    */
 
   hasMark = (type) => {
-    const { value } = this.state
+    const value = this.props.value;
     if (value && value.activeMarks) {
       return value.activeMarks.some(mark => mark.type == type)
-    }
+    }    
   }
 
   /**
@@ -166,7 +142,7 @@ class ComposeRichText extends React.Component {
    */
 
   hasBlock = (type) => {
-    const { value } = this.state
+    const value = this.props.value;
     if (value && value.activeMarks) {
       return value.blocks.some(node => node.type == type)
     }
@@ -178,8 +154,10 @@ class ComposeRichText extends React.Component {
    * @param {Change} change
    */
 
-  onChange = ({ value }) => {
-    this.setState({ value })
+  onChange = ({value}) => {
+    if (value) {
+      this.props.callback(value)
+    }
   }
 
   /**
@@ -219,7 +197,7 @@ class ComposeRichText extends React.Component {
 
   onClickMark = (event, type) => {
     event.preventDefault()
-    const { value } = this.state
+    const value = this.props.value;
     const change = value.change().toggleMark(type)
     this.onChange(change)
   }
@@ -233,7 +211,7 @@ class ComposeRichText extends React.Component {
 
   onClickBlock = (event, type) => {
     event.preventDefault()
-    const { value } = this.state
+    const value = this.props.value;
     const change = value.change()
     const { document } = value
 
@@ -342,7 +320,7 @@ class ComposeRichText extends React.Component {
 
 
 	handleSubmitPost = (e) => {
-    var input = this.state.value;
+    const input = this.props.value;
     if(input) {
       console.log("input: " + input);
       console.log(JSON.stringify(input));
@@ -412,13 +390,15 @@ class ComposeRichText extends React.Component {
       'height' : this.props.height,
       'backgroundColor' : "#F0F0F0"
     }
+
+    if (this.props.value) {
     return (
       <div style={outerStyle}>
         <div style={style}>
           <Editor
             placeholder="Enter some rich text..."
             plugins={plugins}
-            value={this.state.value}
+            value={this.props.value}
             onChange={this.onChange}
             onKeyDown={this.onKeyDown}
             renderNode={this.renderNode}
@@ -429,6 +409,11 @@ class ComposeRichText extends React.Component {
         </div>
       </div>
     )
+    } else {
+      return (
+        <div/>
+      )
+    }
   }
 
   /**

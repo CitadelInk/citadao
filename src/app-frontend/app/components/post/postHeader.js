@@ -209,7 +209,10 @@ class PostHeader extends Component {
 
 	onReviseClicked(e) {
 		var revision = this.props.text;
-		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, reviseSubmissionInput : Value.fromJSON(revision), selectedTabIndex : 2}));
+		if(this.props.revisionPostCallback) {
+			this.props.revisionPostCallback(Value.fromJSON(revision));
+		}
+		this.props.dispatch(setWalletData({reviseSubmissionHash : this.props.submission, selectedTabIndex : 2}));
 		e.stopPropagation();
 	}
 }
