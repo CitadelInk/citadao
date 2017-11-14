@@ -22,7 +22,7 @@
       "win32": "local_modules.cmd link --force --dir src",
       "linux": "local_modules link --force --dir src"
     },
-    "devsetup": "yarn install && yarn localmod && ( cd src/app-contracts && yarn install ) && ( cd src/app-frontend && yarn install ) && ( cd src/app-bots && yarn install) && ( cd src/app-apiserver && yarn install )",
+    "devsetup": "yarn install && yarn localmod && ( cd src/app-contracts && yarn install ) && ( cd src/app-frontend && yarn install ) && ( cd src/app-bots && yarn install ) && ( cd src/app-apiserver && yarn install )",
     "testrpc": "( cd src/app-contracts && yarn testrpc )"
   },
   "dependencies": {

@@ -1,6 +1,8 @@
 var Ink = artifacts.require('./Ink.sol')
 
 module.exports = function (deployer, done, accounts) {
+  console.log("Ink: " + Ink);
+  console.log("migration Ink.deployed(): " + Ink.deployed());
   Ink.deployed().then(function(instance)  {
     var bioInput = {"name":"Account 1X"}
     web3.bzz.put(JSON.stringify(bioInput), (error, hash) => {

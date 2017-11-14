@@ -2,6 +2,10 @@
   "bots" : [
     {
       "ethAccountIndex" : 2,
+      "twitterUsername" : "realDonaldTrump"
+    },
+    {
+      "ethAccountIndex" : 3,
       "twitterUsername" : "Citadel_dot_ink"
     }
   ]
