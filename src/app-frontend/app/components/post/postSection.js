@@ -11,6 +11,7 @@ import { List } from 'immutable';
 import styles from './postSection.css';
 import { Card } from 'material-ui';
 import { push } from 'redux-little-router';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import actions from '../../actions';
 
@@ -18,22 +19,11 @@ const {
 	gotoPost
 } = actions;
 
-const isMouseOverElement = ({ elem, e }) => {
-  const { pageY, pageX } = e
-  const { left, right, bottom, top } = elem.getBoundingClientRect()
-
-  return pageX > left && pageX < right && pageY > top && pageY < bottom
-}
-
-
 class PostSection extends Component {
 
 	 constructor(props) {
 		 super(props);
 		 this.widgetClicked = this.widgetClicked.bind(this);
-		 this.state = {
-			 isHoveringOver: true
-		 }
 	}
 
 
@@ -96,11 +86,11 @@ class PostSection extends Component {
 				<Editor 
 					readOnly 
 					value={state} 
-         			renderNode={this.renderNode}
-          			renderMark={this.renderMark} />
+         	renderNode={this.renderNode}
+          renderMark={this.renderMark} />
 			</div>);
-		var actions = (<PostSectionActions 
-							showClipboard={this.state.isHoveringOver} 
+		var actions = (<PostSectionActions
+              className={styles.actionsSection}
 							section={this.props.section} 
 							timestamp={this.props.timestamp} 
 							revisionHashes={this.props.revisionHashes}
@@ -124,14 +114,42 @@ class PostSection extends Component {
 			showActions = false;
 		}
 
-		return (			
-			<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
-				{section}
-				{showActions && 
-					actions
+		if (showActions) {
+			var referenceJson = {
+				"reference" : {
+					"authorg" : this.props.authorg,
+					"submissionHash" : this.props.submissionHash,
+					"revisionHash" : this.props.revisionHash,
+					"sectionIndex" : this.props.sectionIndex,
+					"text" : this.props.section,
+					"name" : this.props.authorgName,
+					"avatar" : this.props.authorgAvatar,
+					"timestamp" : this.props.timestamp,
+					"revHashes" : this.props.revisionHashes
 				}
-			</div>
-		);
+			}		
+			var referenceString = JSON.stringify(referenceJson);
+
+			return (
+			<CopyToClipboard text={referenceString}
+											 onCopy={() => this.setState({copied: true})}>
+				<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
+					{section}
+					{showActions && 
+						actions
+					}
+				</div>
+			</CopyToClipboard>);
+		} else {
+			return (			
+				<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
+					{section}
+					{showActions && 
+						actions
+					}
+				</div>
+			);
+		}		
 	}
 
 	widgetClicked(value) {
