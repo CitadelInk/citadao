@@ -1,0 +1,26 @@
+{
+  "name": "app-bots",
+  "version": "0.1.0",
+  "description": "Bots for Citadel.ink prototype",
+  "main": "index.js",
+  "repository": "ssh://git@github.com:citadelink/citadao.git",
+  "contributors": [
+    "Andrew Spiering",
+    "Nick Reynolds"
+  ],
+  "license": "MIT",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=7.6.0"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "slate": "^0.30.6",
+    "slate-react": "^0.10.11",
+    "twit": "^2.2.9",
+    "web3": "0.18.4"
+  }
+}
