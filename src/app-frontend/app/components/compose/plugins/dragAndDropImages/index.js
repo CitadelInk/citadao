@@ -77,7 +77,6 @@ function DropOrPasteImages(options = {}) {
    */
 
   function onInsertFiles(event, change, editor, transfer) {
-    console.warn("on insert files");
     const { target, files } = transfer
 
     for (const file of files) {
@@ -106,8 +105,6 @@ function DropOrPasteImages(options = {}) {
    */
 
   function onInsertHtml(event, change, editor, transfer) {
-    
-    console.warn("onInsertHtml");
     const { html, target } = transfer
     const parser = new DOMParser()
     const doc = parser.parseFromString(html, 'text/html')

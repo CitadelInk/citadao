@@ -4,7 +4,6 @@ import actions from '../../actions';
 import { Block, State, Text } from 'slate';
 import styles from './postSectionActions.css';
 import Clipboard from 'clipboard';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 const {
 	setWalletData,
@@ -25,31 +24,14 @@ class PostSectionActions extends Component {
 		if(this.props.sectionResponses && this.props.sectionResponses.length > 0) {
 			mentions = (<span className={styles.mentionsStyle} onClick={this.onSectionViewReferencingPostsClicked}>{this.props.sectionResponses.length} Mentions. view...</span>)
 		}
-		var referenceJson = {
-			"reference" : {
-				"authorg" : this.props.authorg,
-				"submissionHash" : this.props.submissionHash,
-				"revisionHash" : this.props.revisionHash,
-				"sectionIndex" : this.props.sectionIndex,
-				"text" : this.props.section,
-				"name" : this.props.authorgName,
-				"avatar" : this.props.authorgAvatar,
-				"timestamp" : this.props.timestamp,
-				"revHashes" : this.props.revisionHashes
-			}
-		}
-	
-		var referenceString = JSON.stringify(referenceJson);
+		
 		const clippy = (
-			<CopyToClipboard text={referenceString}
-				onCopy={() => this.setState({copied: true})}>
-				<span className={styles.responseStyle}>Copy reference to clipboard</span>
-			</CopyToClipboard>
+			<span className={`${styles.responseStyle} ${this.props.className}`}>Click to copy reference to clipboard</span>
 		)
 		return (	
 			<div className={styles.actionsStyle}>		
 				{mentions}
-				{this.props.showClipboard && clippy}				
+				{clippy}				
 			</div>
 		);
 	}
