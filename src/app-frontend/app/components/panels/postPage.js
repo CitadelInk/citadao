@@ -77,16 +77,16 @@ class PostPage extends Component {
 							text = revisionData.text;
 							timestamp = revisionData.timestamp;
 							focusedLoadDone = revisionData.focusedLoadDone;
-
-
-							if (revisionData.sectionRefKeyPostsLoaded == revisionData.refCount) {
-								responseMap = revisionData.sectionRefKeyMap;
-							} else if (revisionData.refCount && revisionData.refCount > 0) {
-								focusedLoadDone = false;
-							}
 							if (revisionData.refKeys) {
 								keys = revisionData.refKeys;
 							}
+
+							if (keys && keys.length == revisionData.refCount) {
+								responseMap = revisionData.sectionRefKeyMap;
+							} else if (revisionData.refCount && revisionData.refCount > 0 && keys) {
+								focusedLoadDone = false;
+							}
+
 							if (revisionData.embededPostTextMap) {
 								embededPostTextMap = revisionData.embededPostTextMap;
 							}
@@ -112,7 +112,8 @@ class PostPage extends Component {
 							submission={submission} 
 							revision={revision} 
 							timestamp={timestamp}
-							focusedPost={true} />
+							focusedPost={true} 
+							revisionPostCallback={this.props.revisionPostCallback}/>
 					</Card>
 				</div>
 			);
@@ -123,7 +124,14 @@ class PostPage extends Component {
 		return(
 			<div className={styles.page}>
 				<div className={styles.compose}>
-					<ComposePanel />
+					<ComposePanel 
+						standardPostValue={this.props.standardPostValue}
+						standardPostCallback={this.props.standardPostCallback}
+						bioPostValue={this.props.bioPostValue}
+						bioPostCallback={this.props.bioPostCallback}
+						revisionPostValue={this.props.revisionPostValue}
+						revisionPostCallback={this.props.revisionPostCallback}
+					/>
 				</div>
 				<div className={styles.postContainer}>
 					{post}

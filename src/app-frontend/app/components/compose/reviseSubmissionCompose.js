@@ -44,7 +44,12 @@ class ReviseSubmissionCompose extends Component {
 			<div className={styles.compose}>
 				<UserWidget authorg={this.props.wallet.get('account')}/>
 				<div style={reviseStyle}><span>Revise: {this.props.submission}</span></div>
-				<ComposeRichText height={height} submission={this.props.submission}/>
+				<ComposeRichText 
+					value={this.props.value}
+                  	callback={this.props.callback}
+					height={height} 
+					submission={this.props.submission}
+				/>
 			</div>
 		);
 	}

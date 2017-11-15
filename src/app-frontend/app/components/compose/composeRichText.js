@@ -1,7 +1,7 @@
 
 import { Editor } from 'slate-react';
 import InsertImages from './plugins/dragAndDropImages/'
-import { Value } from 'slate';
+import { Value, Block } from 'slate';
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,7 +11,7 @@ import actions from '../../actions';
 import { RaisedButton } from 'material-ui';
 import styles from './composeRichText.css';
 import classNames from 'classnames/bind';
-import PasteLink from './plugins/pasteLink';
+import PasteLinkify from 'slate-paste-linkify';
 import PasteRef from './plugins/pasteRef';
 import Post from '../post/post';
 
@@ -27,12 +27,10 @@ let cx = classNames.bind(styles);
 // Add the plugin to your set of plugins...
 const plugins = [
   InsertImages({
-    extensions: ['png'],
     insertImage: (transform, file, editor) => {
       const reader = new FileReader()
       reader.addEventListener('load', () => {
         var res = reader.result;
-        console.warn("res: " + res);
         transform.insertBlock({
           type: 'image',
           isVoid: true,
@@ -48,7 +46,7 @@ const plugins = [
     collapseTo: 'end',
     collapseWhat: 'next'
   }),
-  PasteLink({
+  PasteLinkify({
     type: 'link',
     hrefProperty: 'url',
     collapseTo: 'end'
@@ -62,6 +60,46 @@ const plugins = [
  */
 
 const DEFAULT_NODE = 'paragraph'
+
+const schema = {
+  document: {
+    first: { 
+      types: [
+        'block-quote', 
+        'paragraph', 
+        'bulleted-list', 
+        'heading-one', 
+        'heading-two', 
+        'list-item', 
+        'numbered-list', 
+        'link'
+        ] 
+      },
+    last: { 
+      types: [
+        'block-quote', 
+        'paragraph', 
+        'bulleted-list', 
+        'heading-one', 
+        'heading-two', 
+        'list-item', 
+        'numbered-list', 
+        'link'
+      ] 
+    },
+    normalize: (change, reason, { node, child, index }) => {
+      switch (reason) {
+        case 'first_child_type_invalid': {
+          return change.setNodeByKey(child.key, index == 0 ? 'title' : 'paragraph')
+        }        
+        case 'last_child_type_invalid': {
+          const block = Block.create('paragraph')
+          return change.insertNodeByKey(node.key, node.nodes.size, block)
+        }   
+      }
+    }
+  }
+}
 
 /**
  * Define hotkey matchers.
@@ -83,30 +121,6 @@ const isCodeHotkey = isKeyHotkey('mod+`')
 class ComposeRichText extends React.Component {
 
   /**
-   * Deserialize the initial editor value.
-   *
-   * @type {Object}
-   */
-
-   state = {
-     value : Value.fromJSON(initialValue)
-   }
-  componentWillMount = () => {
-    this.setState({value: this.getState()});
-  }
-
-  componentWillUnmount = () => {
-   var state = this.state.value;
-   if (this.props.bio) {
-     this.props.dispatch(setWalletData({bioTextInput : state}));
-   } else if (this.props.submission) {
-     this.props.dispatch(setWalletData({reviseSubmissionInput : state}));
-   } else {
-     this.props.dispatch(setWalletData({postTextInput : state}));
-   }
-  }
-
-  /**
    * Check if the current selection has a mark with `type` in it.
    *
    * @param {String} type
@@ -114,10 +128,10 @@ class ComposeRichText extends React.Component {
    */
 
   hasMark = (type) => {
-    const { value } = this.state
+    const value = this.props.value;
     if (value && value.activeMarks) {
       return value.activeMarks.some(mark => mark.type == type)
-    }
+    }    
   }
 
   /**
@@ -128,7 +142,7 @@ class ComposeRichText extends React.Component {
    */
 
   hasBlock = (type) => {
-    const { value } = this.state
+    const value = this.props.value;
     if (value && value.activeMarks) {
       return value.blocks.some(node => node.type == type)
     }
@@ -140,8 +154,10 @@ class ComposeRichText extends React.Component {
    * @param {Change} change
    */
 
-  onChange = ({ value }) => {
-    this.setState({ value })
+  onChange = ({value}) => {
+    if (value) {
+      this.props.callback(value)
+    }
   }
 
   /**
@@ -181,7 +197,7 @@ class ComposeRichText extends React.Component {
 
   onClickMark = (event, type) => {
     event.preventDefault()
-    const { value } = this.state
+    const value = this.props.value;
     const change = value.change().toggleMark(type)
     this.onChange(change)
   }
@@ -195,7 +211,7 @@ class ComposeRichText extends React.Component {
 
   onClickBlock = (event, type) => {
     event.preventDefault()
-    const { value } = this.state
+    const value = this.props.value;
     const change = value.change()
     const { document } = value
 
@@ -304,7 +320,7 @@ class ComposeRichText extends React.Component {
 
 
 	handleSubmitPost = (e) => {
-    var input = this.state.value;
+    const input = this.props.value;
     if(input) {
       console.log("input: " + input);
       console.log(JSON.stringify(input));
@@ -374,22 +390,30 @@ class ComposeRichText extends React.Component {
       'height' : this.props.height,
       'backgroundColor' : "#F0F0F0"
     }
+
+    if (this.props.value) {
     return (
       <div style={outerStyle}>
         <div style={style}>
           <Editor
             placeholder="Enter some rich text..."
             plugins={plugins}
-            value={this.state.value}
+            value={this.props.value}
             onChange={this.onChange}
             onKeyDown={this.onKeyDown}
             renderNode={this.renderNode}
             renderMark={this.renderMark}
+            schema={schema}
             spellCheck
           />
         </div>
       </div>
     )
+    } else {
+      return (
+        <div/>
+      )
+    }
   }
 
   /**

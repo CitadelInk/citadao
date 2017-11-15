@@ -133,7 +133,14 @@ class User extends Component {
 		return (
 			<div className={styles.page}>
 				<div className={styles.compose}>
-					<ComposePanel />		
+					<ComposePanel 
+						standardPostValue={this.props.standardPostValue}
+						standardPostCallback={this.props.standardPostCallback}
+						bioPostValue={this.props.bioPostValue}
+						bioPostCallback={this.props.bioPostCallback}
+						revisionPostValue={this.props.revisionPostValue}
+						revisionPostCallback={this.props.revisionPostCallback}
+					/>		
 				</div>
 
 				

@@ -2,6 +2,22 @@
   position:relative;
   min-width:100%;
   margin:0px;
+  text-align: justify;
+  border-top: 1px solid #FFFFFF;
+  border-bottom: 1px solid #FFFFFF;  
+}
+
+.sectionDiv:hover {
+  border-top: 1px solid #E0E0E0;
+  border-bottom: 1px solid #E0E0E0;  
+}
+
+.actionsSection{
+  display: none;
+}
+
+.sectionDiv:hover .actionsSection{
+  display: block;
 }
 
 .embededPostStyle {
@@ -21,15 +37,24 @@
 
 
 .p {
-  margin: 10px;
+  margin-left:5px;
+  margin-right:5px;
+  margin-top:10px;
+  margin-bottom: 0px;
 }
 
 .h1 {
-  margin: 10px;
+  margin-left:5px;
+  margin-right:5px;
+  margin-top:10px;
+  margin-bottom: 0px;
 }
 
 .h2 {
-  margin: 10px;
+  margin-left:5px;
+  margin-right:5px;
+  margin-top:10px;
+  margin-bottom: 0px;
 }
 
 .blockquote {

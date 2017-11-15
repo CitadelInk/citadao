@@ -178,7 +178,6 @@ export const setAuthorgPostKeysLoadedCount = (authAdd, loadedCount) => {
 
 export const SET_AUTHORG_FOLLOWS_AUTHORGS = "SET_AUTHORG_FOLLOWS_AUTHORGS";
 export const setAuthorgFollowsAuthorgs = (authAdd, authorgs) => {
-  //console.log("set authorg follows authorgs - " + authorgs);
   return {
     type: SET_AUTHORG_FOLLOWS_AUTHORGS,
     data: {authAdd, authorgs}
@@ -236,6 +235,8 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
     }
   } else if (router.result.title === 'Account') {
     return dispatch(loadUserData(router.params["account"], true, false, router.params["revHash"]));
+  } else {
+    return dispatch(initializeTestTypedRevisions());
   }
 }
 
@@ -281,7 +282,7 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
             if(refAuthorg && refSubmission && refRevision) {
               references.push({refAuthorg, refSubmission, refRevision, index});
               if (firstLevel) {
-                refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false, false)));
+                refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false)));
               }           
             }  
           })
@@ -371,6 +372,7 @@ export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, times
       }
       Promise.all([...refPromises, dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash))])
       .then(() => {
+        console.log("doDetailLoad result.")
         res({done : true})
       })
     })    
@@ -378,8 +380,9 @@ export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, times
 }
 
 export const doFocusedLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+  console.info("doFocusedLoad - user: " + authorgAddress + " - subHash: " + submissionHash + " - revHash: " + revisionHash);
+  dispatch(setFocusedPostLoadBegin(authorgAddress, submissionHash, revisionHash));
   return new Promise((res, rej) => {
-    dispatch(setFocusedPostLoadBegin(authorgAddress, submissionHash, revisionHash));
     var promiseList = [];
     promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
     promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
@@ -396,11 +399,14 @@ export const doFocusedLoad = (authorgAddress, submissionHash, revisionHash, time
 }
 
 export const asyncLoadRef = (authorgAddress, submissionHash, revisionHash, index) => (dispatch) => {
-  return getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
-    dispatch(doUnfocusedLoad(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false)).then(() => {
-      dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
+  return new Promise((res,rej) => {
+    getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
+      dispatch(doUnfocusedLoad(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false)).then(() => {
+        dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
+        res({done:true})
+      })
     })
-  })
+  });
 }
 
 export const loadSubmissionRevisionHashList = (authorgAddress, submissionHash) => (dispatch) => {

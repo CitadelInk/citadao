@@ -11,6 +11,7 @@ import { List } from 'immutable';
 import styles from './postSection.css';
 import { Card } from 'material-ui';
 import { push } from 'redux-little-router';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import actions from '../../actions';
 
@@ -18,27 +19,16 @@ const {
 	gotoPost
 } = actions;
 
-const isMouseOverElement = ({ elem, e }) => {
-  const { pageY, pageX } = e
-  const { left, right, bottom, top } = elem.getBoundingClientRect()
-
-  return pageX > left && pageX < right && pageY > top && pageY < bottom
-}
-
-
 class PostSection extends Component {
 
 	 constructor(props) {
 		 super(props);
 		 this.widgetClicked = this.widgetClicked.bind(this);
-		 this.state = {
-			 isHoveringOver: true
-		 }
 	}
 
 
 	render() {
-		var reference = false;
+		var reference;
 
 		var node = this.props.section;
 		if (node.data.get)  {
@@ -49,6 +39,7 @@ class PostSection extends Component {
 			var index = node.data.get("index");
 
 			if (authorg && submission && revision) {
+				reference = {authorg, submission, revision};
 				var embKey = authorg + "-" + submission + "-" + revision;
 				if (this.props.embededPostTextMap) {
 					var embText = this.props.embededPostTextMap.get(embKey).text;
@@ -87,18 +78,19 @@ class PostSection extends Component {
 		var showActions = true;
 
 		var text = "";
-		var reference;
+
+
 
 		var section = (
 			<div onClick={() => this.widgetClicked(reference)} className={styles.editor}>
 				<Editor 
 					readOnly 
 					value={state} 
-          renderNode={this.renderNode}
+         	renderNode={this.renderNode}
           renderMark={this.renderMark} />
 			</div>);
-		var actions = (<PostSectionActions 
-							showClipboard={this.state.isHoveringOver} 
+		var actions = (<PostSectionActions
+              className={styles.actionsSection}
 							section={this.props.section} 
 							timestamp={this.props.timestamp} 
 							revisionHashes={this.props.revisionHashes}
@@ -110,39 +102,54 @@ class PostSection extends Component {
 							revisionHash={this.props.revisionHash} 
 							sectionIndex={this.props.sectionIndex} />);
 		
-		if(this.props.focusedPost){
-			try {
-				if(state.document && state.document.text && state.document.text !== "" && state.document.text.trim() != "") {
-					text = state.document.text;
-				} else {
-					var authorg = this.props.section.data.get("authorg");
-					var submission = this.props.section.data.get("submission");
-					var revision = this.props.section.data.get("revision");
-					var index = this.props.section.data.get("index");
-	
-	
-					if(authorg) {
-						reference = {authorg:authorg, submission:submission, revision:revision, index:index}
-					}	
+		if(this.props.focusedPost){				
+			if(this.props.section.type == "ref") {
+				showActions = false;
+			} else if (this.props.section.type == "paragraph") {
+				if (!state.document || !state.document.text || state.document.text == "" || state.document.text.trim() == "") {
 					showActions = false;
-	
 				}
-			} catch(e) {
-				//console.error("error while checking reference")
-			}
-	
+			}	
 		} else {
 			showActions = false;
 		}
 
-		return (			
-			<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
-				{section}
-				{showActions && 
-					actions
+		if (showActions) {
+			var referenceJson = {
+				"reference" : {
+					"authorg" : this.props.authorg,
+					"submissionHash" : this.props.submissionHash,
+					"revisionHash" : this.props.revisionHash,
+					"sectionIndex" : this.props.sectionIndex,
+					"text" : this.props.section,
+					"name" : this.props.authorgName,
+					"avatar" : this.props.authorgAvatar,
+					"timestamp" : this.props.timestamp,
+					"revHashes" : this.props.revisionHashes
 				}
-			</div>
-		);
+			}		
+			var referenceString = JSON.stringify(referenceJson);
+
+			return (
+			<CopyToClipboard text={referenceString}
+											 onCopy={() => this.setState({copied: true})}>
+				<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
+					{section}
+					{showActions && 
+						actions
+					}
+				</div>
+			</CopyToClipboard>);
+		} else {
+			return (			
+				<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
+					{section}
+					{showActions && 
+						actions
+					}
+				</div>
+			);
+		}		
 	}
 
 	widgetClicked(value) {
@@ -166,10 +173,10 @@ class PostSection extends Component {
   renderNode = (props) => {
     const { attributes, children, node } = props
     switch (node.type) {
-      case 'block-quote': return <blockquote {...attributes}>{children}</blockquote>
+      case 'block-quote': return <blockquote className={styles.blockquote} {...attributes}>{children}</blockquote>
       case 'bulleted-list': return <ul {...attributes}>{children}</ul>
-      case 'heading-one': return <h1 {...attributes}>{children}</h1>
-      case 'heading-two': return <h2 {...attributes}>{children}</h2>
+      case 'heading-one': return <h1 className={styles.h1} {...attributes}>{children}</h1>
+      case 'heading-two': return <h2 className={styles.h2} {...attributes}>{children}</h2>
       case 'list-item': return <li {...attributes}>{children}</li>
       case 'numbered-list': return <ol {...attributes}>{children}</ol>
 	  case 'image': return <img src={node.data.get('res')}/>			
@@ -184,19 +191,20 @@ class PostSection extends Component {
         return (
           <div className={styles.embededPostStyle}>
           <Post {...props.attributes} 
-          authorgName={props.node.data.get('name')}
-          authorgAvatar={props.node.data.get('avatar')}
-          embeded={true}
-          text={props.node.data.get('text')}
-          authorg={props.node.data.get('authorg')} 
-          submission={props.node.data.get('submission')} 
-          revision={props.node.data.get('revision')} 
-          sectionIndex={props.node.data.get('index')}
-		  timestamp={props.node.data.get('timestamp')}
-		  revisionHashes={props.node.data.get('revHashes')}/>
+			authorgName={props.node.data.get('name')}
+			authorgAvatar={props.node.data.get('avatar')}
+			embeded={true}
+			text={props.node.data.get('text')}
+			authorg={props.node.data.get('authorg')} 
+			submission={props.node.data.get('submission')} 
+			revision={props.node.data.get('revision')} 
+			sectionIndex={props.node.data.get('index')}
+			timestamp={props.node.data.get('timestamp')}
+			revisionHashes={props.node.data.get('revHashes')}/>
           </div>
         )
-      }
+	  }
+	  case 'paragraph': return <p className={styles.p} {...attributes}>{children}</p>
 	}
   }
 

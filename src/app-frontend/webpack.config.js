@@ -89,6 +89,9 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       { from: './server/server.js' }
+    ]),
+    new CopyWebpackPlugin([
+      { from: './whitepaper', to:"whitepaper" }
     ])
   ],
   devServer: {

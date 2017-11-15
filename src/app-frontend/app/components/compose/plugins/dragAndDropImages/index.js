@@ -1,6 +1,9 @@
-
 import Promise from 'es6-promise'
-import isImage from 'is-image'
+import path from 'path';
+
+import imageExtensions from 'image-extensions';
+const exts = new Set(imageExtensions);
+
 import isUrl from 'is-url'
 import logger from 'slate-dev-logger'
 import mime from 'mime-types'
@@ -13,14 +16,12 @@ import { getEventTransfer } from 'slate-react'
  *
  * @param {Object} options
  *   @property {Function} insertImage
- *   @property {Array} extensions (optional)
  * @return {Object} plugin
  */
 
 function DropOrPasteImages(options = {}) {
   let {
-    insertImage,
-    extensions,
+    insertImage
   } = options
 
   if (options.applyTransform) {
@@ -44,9 +45,6 @@ function DropOrPasteImages(options = {}) {
   function asyncApplyChange(change, editor, file) {
     return Promise
       .resolve(insertImage(change, file, editor))
-      //.then(() => {
-      //  editor.onChange(change)
-      //})
   }
 
 
@@ -82,10 +80,9 @@ function DropOrPasteImages(options = {}) {
     const { target, files } = transfer
 
     for (const file of files) {
-      if (extensions) {
-        const ext = mime.extension(file.type)
-        if (!extensions.includes(ext)) continue
-      }
+      var split = file.type.split('/')
+      console.warn("file.type.split('/'): " + split)
+      if (split[0] !== "image" || !exts.has(split[1])) return
 
       if (target) {
         change.select(target)
@@ -117,10 +114,7 @@ function DropOrPasteImages(options = {}) {
 
     const src = firstChild.src
 
-    if (extensions) {
-      const ext = extname(src).slice(1)
-      if (!extensions.includes(ext)) return
-    }
+    if (!exts.has(path.extname(src).slice(1).toLowerCase())) return
 
     loadImageFile(src, (err, file) => {
       if (err) return
@@ -145,7 +139,7 @@ function DropOrPasteImages(options = {}) {
   function onInsertText(event, change, editor, transfer) {
     const { text, target } = transfer
     if (!isUrl(text)) return
-    if (!isImage(text)) return
+    if (!exts.has(path.extname(text).slice(1).toLowerCase())) return
 
     loadImageFile(text, (err, file) => {
       if (err) return

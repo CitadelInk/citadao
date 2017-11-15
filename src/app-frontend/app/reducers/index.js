@@ -72,10 +72,8 @@ const wallet = (state = Map({
   bioRevisions: [],
   bioRevisionsByAccount: {},
   bioNameInput: '',
-  bioTextInput: Value.fromJSON(initialState),
   bioAvatarImage: null,
   tokenCitadelComptroller: '',
-  postTextInput: Value.fromJSON(initialState),
   selectedResponses: null,
   totalPostCount:0,
   numPostsLoaded:0,
@@ -84,7 +82,6 @@ const wallet = (state = Map({
   selectedHomeTabIndex:0,
   selectedReactionHash:'',
   reviseSubmissionHash:null,
-  reviseSubmissionInput:Value.fromJSON(initialState)
 }), action) => {
   switch (action.type) {
     case SET_SELECTED_RESPONSES:
@@ -252,20 +249,15 @@ const revs = (state = {}, action) => {
     case SET_REFERENCE:
       var sectionRefKeyMap;
       var refsLoaded;
-      var refKeySet;
       if(state[revHash]){ 
         sectionRefKeyMap = state[revHash].sectionRefKeyMap;
         refsLoaded = state[revHash].sectionRefKeyPostsLoaded;
-        refKeySet = state[revHash].refKeySet;
       }
       if (!sectionRefKeyMap) {
         sectionRefKeyMap = new Map();
       }
       if (!refsLoaded) {
         refsLoaded = 0;
-      }
-      if (!refKeySet) {
-        refKeySet = new Set();
       }
 
       // TODO: refactor this to be a set so we don't have to do this stupid loop
@@ -287,18 +279,12 @@ const revs = (state = {}, action) => {
       if (!alreadyReferenced) {
         existingReferences.push(action.data.refKey);
       }
-      var setKey = action.data.refKey.authAdd + "-" + action.data.refKey.submissionHash + "-" + action.data.refKey.revisionHash;
-      if (!refKeySet.has(setKey)) {
-        refKeySet.add(setKey);
-        refsLoaded = refsLoaded + 1;
-      }
 
       var sectionMap = sectionRefKeyMap.set(action.data.index, existingReferences);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           sectionRefKeyMap: sectionMap,
-          sectionRefKeyPostsLoaded : refsLoaded,
-          refKeySet : refKeySet
+          sectionRefKeyPostsLoaded : refsLoaded
         })
       });
     case ADD_EMBEDED_POST_KEY_MAPPING:
@@ -316,12 +302,14 @@ const revs = (state = {}, action) => {
         })
       });
     case SET_FOCUSED_POST_LOAD_BEGIN:
+      console.log("set focused post load begin. revHash: " + revHash)
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           focusedLoadDone: false
         })
       });
     case SET_FOCUSED_POST_LOAD_FINISHED:
+    console.log("set focused post load finished. revHash: " + revHash)
         return Object.assign({}, state, {
           [revHash]: Object.assign({}, state[revHash], {
             focusedLoadDone: true
@@ -349,6 +337,7 @@ const subs = (state = {}, action) => {
     case SET_REVISION_HASHES:
     case SET_REVISION_REQUEST_RESPONSE_KEYS:
     case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+    case SET_FOCUSED_POST_LOAD_BEGIN:
     case SET_FOCUSED_POST_LOAD_FINISHED:
       let subHash = action.data.subHash;
       var stateSub = state[subHash];
@@ -385,6 +374,7 @@ const auths = (state = {}, action) => {
       case SET_REVISION_HASHES:
       case SET_REVISION_REQUEST_RESPONSE_KEYS:
       case SET_REVISION_REQUEST_RESPONSE_RECEIPT:
+      case SET_FOCUSED_POST_LOAD_BEGIN:
       case SET_FOCUSED_POST_LOAD_FINISHED:
         return {
           ...state,

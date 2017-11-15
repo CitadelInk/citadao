@@ -112,6 +112,9 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
     var referenceKeyAuthorgs = [];
     var referenceKeySubmissions = [];
     var referenceKeyRevisions = [];
+
+    var referenceKeyMapSet = new Map(); //using map as a set cause sets are weird or something...
+
     postTextInput.document.nodes.map((section) => {
       try {
         if(section.data.get('authorg') 
@@ -123,15 +126,13 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
           var index = section.data.get('index');
         
           var refKey = {authorg:authorg, subHash:submissionHash, revHash:revisionHash}
-          if(referenceKeyAuthorgs.indexOf(authorg) < 0 ) {
-            if(referenceKeySubmissions.indexOf(submissionHash) < 0 ) {
-              if(referenceKeyRevisions.indexOf(revisionHash) < 0 ) {
-                referenceKeyAuthorgs.push(authorg);
-                referenceKeySubmissions.push(submissionHash);
-                referenceKeyRevisions.push(revisionHash);
-              }
-            }
-          }          
+          var refMapSetKey = authorg + "-" + submissionHash + "-" + revisionHash;
+          if (!referenceKeyMapSet.get(refMapSetKey)) {
+            referenceKeyMapSet.set(refMapSetKey, true);
+            referenceKeyAuthorgs.push(authorg);
+            referenceKeySubmissions.push(submissionHash);
+            referenceKeyRevisions.push(revisionHash);
+          }      
         }
       } catch (e) {
         console.error("error when posting: " + e);
@@ -140,8 +141,8 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
 
     
     var postJson = {"authorg" : account, "text" : postTextInput}
-    console.warn("lets put on swarm: " + JSON.stringify(postJson));
-
+    //console.warn("lets put on swarm: " + JSON.stringify(postJson));
+    console.warn("referenceKeyAuthorgs: " + referenceKeyAuthorgs)
     return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3, revisionSubmissionHash).then(function(resulty) {
       var hasReloaded = false;
       var update = function(revisionSubmissionHash = undefined) {

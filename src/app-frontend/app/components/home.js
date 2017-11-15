@@ -98,7 +98,14 @@ class Home extends Component {
 		return (
 			<div className={styles.page}>
 				<div className={styles.compose}>
-					<ComposePanel />		
+					<ComposePanel 					 
+						standardPostValue={this.props.standardPostValue}
+						standardPostCallback={this.props.standardPostCallback}
+						bioPostValue={this.props.bioPostValue}
+						bioPostCallback={this.props.bioPostCallback}
+						revisionPostValue={this.props.revisionPostValue}
+						revisionPostCallback={this.props.revisionPostCallback}
+					/>		
 				</div>
 				<div className={styles.posts}>
 					<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.props.dispatch(setWalletData({selectedHomeTabIndex : tabIndex}))}>

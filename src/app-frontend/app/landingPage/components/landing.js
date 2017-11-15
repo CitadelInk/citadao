@@ -41,8 +41,12 @@ class Landing extends Component {
 	 	super(props);
 		this.handleClose = this.handleClose.bind(this);
 		this.tryCitadelClicked = this.tryCitadelClicked.bind(this);
+		var shouldOpen = true;
+		if (!this.props.showMetaMaskOnLoad) {
+			shouldOpen = false;
+		}
 		this.state = {
-			open: this.props.showMetaMaskOnLoad
+			open: shouldOpen
 		}
 		this.hammer = new Hammer(document.body);
 		this.hammer.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
@@ -93,13 +97,10 @@ class Landing extends Component {
 		window.open("https://medium.com/@team_59584/ink-citadel-dcf71be07b5", "_blank");
 	}
 
-	onPdfClicked(e) {
-		window.open("https://www.scribd.com/document/362777832/Citadel-White-Paper-10-27-17", "_blank");
-	}
 	onCitadelWhitepaperClicked(e) {
 		//http://citadel.ink/post/authorg/0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe/sub/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459/rev/0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459
 		if (this.props.network.isConnected) {
-			this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459", "0x65f2d18fdcb4b6e8f1ab3d6bea2f43cf720165a8981756c1de1c22d5c5d16459"))
+			this.props.dispatch(gotoPost("0xd109a0195fd5fbf8e29c28b23977cfcaa6cc74fe", "0x5709eb58c16e689d752b5468c2ee33b2322c7211ceba2bd33a20eac13b45d548", "0xd84d4f7f394ecc46513696f9434c2905dc711a2fbc48f19dba5919c7e2aab3b0"))
 		} else {
 			this.setState({open : true})
 		}
@@ -112,35 +113,30 @@ class Landing extends Component {
 	problemSection() {
 
 		const problem = (
-			<p className={styles.pStyle}>Modern social networks suffer from <strong>censorship</strong> from authoritarian governments or corporations.
-				 They are vulnerable to the spread of <strong>disinformation</strong> via bad actors.
-				 They often form into <strong>echo chambers</strong> that simply reinforce already held opinions and any dissent is lost in the <strong>noise</strong> of responses.
-				 When disagreements are had, unhealthy communication encounters no friction and discourse turns <strong>toxic</strong>.
-			</p>
+			<ul className={styles.pStyle}>
+				<li>Bad actors spread <strong>disinformation</strong>.</li>
+				<li><strong>Echo chambers</strong> reinforce entrenched opinions and dissent is lost amidst the <strong>noise</strong>.</li>
+				<li>Hostile communication encounters no friction, and discourse turns <strong>toxic</strong>.</li>
+				<li>Our social networks can be <strong>censored</strong> by corporations & authoritarians.</li>
+			</ul>
 		);
 
 		const cause = (
-			<p className={styles.pStyle}>
-				A reliance on the <strong>attention economy</strong>,
-				 in which users are measured by the amount of time they spend focused on ads,
-				  forces modern social networks to make decisions that hurt the user experience in favor of the advertiser experience.
-				   In order to increase profits from ads, they track user data to perform <strong>targeted advertising</strong> and implement designs that maximize "screen minutes" at the expense of productive thought and discussion.
-				    The need to keep user data private (ostensibly to protect user privacy, but also because they need to keep it private in order to profit from it) also forces modern social networks to remain centralized,
-				     allowing them to rigidly control the experience of users, subjecting them to lab-tested algorithms created to benefit advertisers, not users.
-			</p>
+			<ul className={styles.pStyle}>
+				<li>The <strong>attention economy</strong>, where a user’s worth is measured in time exposed to ads.</li>
+				<li>Platforms use <strong>psychological exploits</strong> to form habits in users and maximize time-on-site.</li>
+				<li><strong>Centralized</strong> networks compile valuable private data and <strong>rigidly control</strong> the user experience to ensure that they capture attention.</li>
+			</ul>
 		);
 
 		const solution = (
-			<p className={styles.pStyle}>
-							As a <strong>decentralized</strong> social network on the Ethereum blockchain,
-							 we are able to create a new type of relationship between network and user,
-							  one in which private user data cannot be collected and sold or abused;
-							   in which the attention economy is abandoned in favor of the <strong>intention economy</strong>.
-							    Smart Contracts on the Ethereum blockchain allow us to introduce <strong>economic friction</strong>
-							     to reduce the success of influence ops and bad actors,
-							      while a tipping and bounty system rewards users that participate in good faith.
-							       <strong>Better tools</strong> for sourcing and proving claims will allow users to more easily evaluate what they read and determine what they trust.
-						</p>
+			<ul className={styles.pStyle}>
+				<li>A <strong>decentralized</strong> social network on the Ethereum blockchain where private data isn’t collected and sold.</li>
+				<li><strong>Intention economy</strong>, where users participate deliberately.</li>
+				<li>Tipping and bounty systems that <strong>reward good faith users</strong>.</li>
+				<li>Smart contracts that introduce <strong>economic friction</strong> to inhibit bad actors.</li>
+				<li><strong>Better tools</strong> for users seeking trust.</li>
+			</ul>
 		)
 
 		if (this.props.svgContainerSize.width > 450) {
@@ -462,11 +458,11 @@ class Landing extends Component {
 						<div className={`${styles.cardStyle} ${styles.whitepaper}`}>
 							<h2>Whitepaper</h2>
 							<p className={styles.pStyle}>
-							<span onClick={this.onMediumClicked}><u>Read Whitepaper on Medium</u></span><br/>
-							<span onClick={this.onPdfClicked}><u>Download whitepaper as PDF</u></span><br/>
-							<span onClick={this.onCitadelWhitepaperClicked}><u>Read Whitepaper on Citadel.ink</u></span> (requires metamask)<br/>
+							<a href="#" style={{"color":"white"}} onClick={this.onMediumClicked}>Read Whitepaper on Medium</a><br/>
+							<a href="./whitepaper/citadel_ink_whitepaper_DRAFT_1.pdf" download style={{"color":"white"}}><u>Download whitepaper as PDF</u></a><br/>
+							<a href="#" style={{"color":"white"}} onClick={this.onCitadelWhitepaperClicked}><u>Read Whitepaper on Citadel.ink</u></a> (requires metamask)<br/>
 							-----------------------------<br/>
-							<span onClick={this.onEmailClicked}><u>Email team@citadel.ink</u></span>
+							<a href="#" style={{"color":"white"}} onClick={this.onEmailClicked}><u>Email team@citadel.ink</u></a>
 							</p>
 						</div>
 					</ScrollElement>

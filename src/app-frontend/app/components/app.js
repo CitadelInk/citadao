@@ -9,6 +9,8 @@ import actions from '../actions';
 import BuyMoreWidget from './header/buyMoreWidget'
 import { Fragment } from 'redux-little-router';
 import Landing from '../landingPage/components/landing';
+import initialState from '../components/compose/state.json';
+import { Value } from 'slate';
 
 const {
 	initializeContract,
@@ -18,7 +20,28 @@ const {
 class App extends Component {
   constructor(props) {
       super(props);
+      this.state = {
+        standardPost : Value.fromJSON(initialState),
+        bioPost : Value.fromJSON(initialState),
+        revisionPost : Value.fromJSON(initialState)
+      }
+      this.onStandardPostChanged = this.onStandardPostChanged.bind(this);
+      this.onBioPostChanged = this.onBioPostChanged.bind(this);
+      this.onRevisionPostChanged = this.onRevisionPostChanged.bind(this);
   }
+
+  onStandardPostChanged(value) {
+    this.setState({standardPost : value})
+  }
+
+  onBioPostChanged(value) {
+    this.setState({bioPost : value})
+  }
+
+  onRevisionPostChanged(value) {
+    this.setState({revisionPost : value})
+  }
+
 
   render() {
     let page;
@@ -30,7 +53,14 @@ class App extends Component {
             <Fragment forRoute="/">
               <div>
                 <Header />         
-                <Home/>
+                <Home 
+                  standardPostValue={this.state.standardPost}
+                  standardPostCallback={this.onStandardPostChanged}
+                  bioPostValue={this.state.bioPost}
+                  bioPostCallback={this.onBioPostChanged}
+                  revisionPostValue={this.state.revisionPost}
+                  revisionPostCallback={this.onRevisionPostChanged}
+                />
               </div>
             </Fragment>   
             <Fragment forRoute="/debug">
@@ -42,23 +72,46 @@ class App extends Component {
             <Fragment forRoute="/user/:account/rev/:revHash">
               <div>
                 <Header />         
-                <User/>
+                <User 
+                  standardPostValue={this.state.standardPost}
+                  standardPostCallback={this.onStandardPostChanged}
+                  bioPostValue={this.state.bioPost}
+                  bioPostCallback={this.onBioPostChanged}
+                  revisionPostValue={this.state.revisionPost}
+                  revisionPostCallback={this.onRevisionPostChanged}
+                />
               </div>
             </Fragment>
             <Fragment forRoute="/user/:account">
               <div>
                 <Header />         
-                <User/>
+                <User 
+                  standardPostValue={this.state.standardPost}
+                  standardPostCallback={this.onStandardPostChanged}
+                  bioPostValue={this.state.bioPost}
+                  bioPostCallback={this.onBioPostChanged}
+                  revisionPostValue={this.state.revisionPost}
+                  revisionPostCallback={this.onRevisionPostChanged}
+                />
               </div>
             </Fragment>
             <Fragment forRoute="/post/authorg/:authorg/sub/:subHash/rev/:revHash">
               <div>
                 <Header />
-                <PostPage />          
+                <PostPage 
+                  standardPostValue={this.state.standardPost}
+                  standardPostCallback={this.onStandardPostChanged}
+                  bioPostValue={this.state.bioPost}
+                  bioPostCallback={this.onBioPostChanged}
+                  revisionPostValue={this.state.revisionPost}
+                  revisionPostCallback={this.onRevisionPostChanged}
+                />          
               </div>
             </Fragment>
             <Fragment forRoute="/landing">
               <Landing />
+            </Fragment>
+            <Fragment forRoute="/whitepaper">
             </Fragment>
           </div>
         </Fragment>
@@ -69,6 +122,8 @@ class App extends Component {
           <div className="app">  
             <Fragment forRoute="/landing">
                 <Landing />
+            </Fragment>
+            <Fragment forRoute="/whitepaper">
             </Fragment>
             <Fragment forNoMatch>
               <Landing showMetaMaskOnLoad={true} />
