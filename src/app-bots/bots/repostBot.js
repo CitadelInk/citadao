@@ -1,6 +1,7 @@
 var Twit = require('twit');
 var fs = require('fs');
 var appContracts = require('app-contracts');
+var url = require('is-url');
 
 //Bot that takes tweets and puts them up as Citadel posts.
 class RepostBot {
@@ -69,7 +70,7 @@ class RepostBot {
                 var bioRevisions = result[0];
                 if (bioRevisions.length > 0) {
                     classInstance.checkTweets();
-                    setInterval(classInstance.checkTweets, 10000);
+                    setInterval(classInstance.checkTweets, 120000);
                 } else {
                     fs.readFile(__dirname + "/botAvatars/" + classInstance.avatarFilename, (err, data) => {
                         var bufferedData = Buffer.from(data).toString('base64');
@@ -101,7 +102,7 @@ class RepostBot {
                         var bioInput = {"name":"@" + classInstance.twitterScreenName + " REPOSTER", "image" : bufferedData, "text" : state}
                         classInstance.updateBio(JSON.stringify(bioInput), account, classInstance.web3).then((result) => {
                             classInstance.checkTweets();
-                            setInterval(classInstance.checkTweets, 10000);
+                            setInterval(classInstance.checkTweets, 120000);
                         })
                     })
                 }
@@ -157,7 +158,7 @@ class RepostBot {
                             res({tx_id, submissionEvent, revHash, subHash});  
                         }
                     })
-                }).catch(rej);
+                }).catch(rej)                
             });
           });
         }); 
@@ -178,13 +179,11 @@ class RepostBot {
     }
 
     flushTweetData() {
-        console.log("flush tweet data. tweetsIndex = " + this.tweetsIndex);
         var instance = this;
         if (this.tweetsIndex > -1) {
             var tweet = instance.tweetData[this.tweetsIndex];
 
             if(!instance.persistence.seenTweets[tweet.id]) {
-                instance.persistence.seenTweets[tweet.id] = true;
 
                 if (tweet.in_reply_to_screen_name == instance.twitterScreenName) {
                     var parentId = instance.persistence.tweetMap[tweet.in_reply_to_status_id];
@@ -197,15 +196,19 @@ class RepostBot {
 
                     var parentRevisionHash = instance.persistence.revisionMap[tweet.in_reply_to_status_id];
                     var parentSubmissionHash = instance.persistence.submissionMap[tweet.in_reply_to_status_id];
-                    const bzzAddress = parentRevisionHash.substring(2);
-                    instance.web3.bzz.retrieve(bzzAddress, (error, revision) => {
-                        const manifest = JSON.parse(revision);
-                        instance.web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
-                            var revJson = JSON.parse(rev)
-                            var state = revJson.text;
-                            instance.finishPost(state, tweet, parentSubmissionHash);
+                    if (parentRevisionHash) {
+                        const bzzAddress = parentRevisionHash.substring(2);
+                        instance.web3.bzz.retrieve(bzzAddress, (error, revision) => {
+                            const manifest = JSON.parse(revision);
+                            instance.web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
+                                var revJson = JSON.parse(rev)
+                                var state = revJson.text;
+                                instance.finishPost(state, tweet, parentSubmissionHash);
+                            })
                         })
-                    })
+                    } else {
+                        instance.saveAndFlush(tweet);
+                    }
                 } else if (!tweet.in_reply_to_screen_name && !tweet.retweeted_status) {
                     var state = {
                         "document":{
@@ -217,42 +220,82 @@ class RepostBot {
                     }
                     instance.finishPost(state, tweet);
                 } else {
-                    instance.tweetsIndex = this.tweetsIndex - 1;
-                    instance.flushTweetData();
+                    instance.saveAndFlush(tweet);
                 }
             } else {
-                instance.tweetsIndex = this.tweetsIndex - 1;
-                instance.flushTweetData();
+                instance.saveAndFlush(tweet);
             }
         } 
     }
 
     finishPost(state, tweet, submission = undefined) {
+
+        var text = tweet.full_text;
+        var textLeaves = text.split(' ');
+        var nodes = [];
+        textLeaves.forEach(function(leaf) {
+            if (url(leaf)) {
+                nodes.push({
+                    "kind":"inline",
+                    "type":"link",
+                    "data":{"url" : leaf},
+                    "nodes":[{
+                        "kind":"text",
+                        "leaves":[{
+                            "kind":"leaf",
+                            "marks":[],
+                            "text": leaf
+                        }]
+                    }]
+                })
+                nodes.push({
+                    "kind":"text",
+                    "leaves":[{
+                        "kind":"leaf",
+                        "marks":[],
+                        "text": " "
+                    }]
+                })
+            } else {
+                nodes.push({
+                    "kind":"text",
+                    "leaves":[{
+                        "kind":"leaf",
+                        "marks":[],
+                        "text": leaf + " "
+                    }]
+                })
+            }
+        })
+
         state.document.nodes.push({
             "data":{},
             "kind":"block",
             "isVoid":false,
             "type":"paragraph",
-            "nodes":[{
-                "kind":"text",
-                "leaves":[{
-                    "kind":"leaf",
-                    "marks":[],
-                    "text": tweet.full_text
-                }]
-            }]
+            "nodes":nodes
         })
+
 
         var instance = this;
         var postJson = {"authorg" : instance.ethAccount, "text" : state}
         instance.post(JSON.stringify(postJson), instance.ethAccount, instance.web3, tweet.id, submission).then((result) => {
-            fs.writeFile(__dirname + "/botsPersistence/" + instance.twitterScreenName + ".txt", JSON.stringify(instance.persistence), (err) => {
-                if (err) throw err;
-                    console.log("saved.");
-                instance.tweetsIndex = this.tweetsIndex - 1;
-                instance.flushTweetData();
-            });
+            console.log("posted.")
+            instance.saveAndFlush(tweet);
+        }).catch((reason) => {
+            console.warn("rejected for reason: " + reason);
+            instance.saveAndFlush(tweet);
         })
+    }
+
+    saveAndFlush(tweet) {
+        var instance = this;
+        instance.persistence.seenTweets[tweet.id] = true;
+        fs.writeFile(__dirname + "/botsPersistence/" + instance.twitterScreenName + ".txt", JSON.stringify(instance.persistence), (err) => {
+            if (err) throw err;
+            instance.tweetsIndex = this.tweetsIndex - 1;
+            instance.flushTweetData();
+        });
     }
 }
 
