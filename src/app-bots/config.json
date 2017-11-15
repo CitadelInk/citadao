@@ -2,11 +2,9 @@
   "bots" : [
     {
       "ethAccountIndex" : 2,
-      "twitterUsername" : "realDonaldTrump"
-    },
-    {
-      "ethAccountIndex" : 3,
-      "twitterUsername" : "Citadel_dot_ink"
+      "twitterUsername" : "renato_mariotti",
+      "twitterAvatarFilename" : "renato_mariotti.jpg",
+      "avatarDataPrefix" : "data:image/jpeg;base64,"
     }
   ]
 }

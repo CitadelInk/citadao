@@ -440,7 +440,7 @@ export const loadMiniUserData = (authorgAddress) => (dispatch, getState) => {
       console.info("loadUserData authorgAddress: " + authorgAddress);
       getAccountInfo(authorgAddress, network.web3).then((info) => {
         dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
-        res({name : info.revisionBio.name, avatar : info.revisionBio.image})
+        res({name : info.revisionBio.name, avatar : info.revisionBio.image, text : info.revisionBio.text})
       });    
   })
   loadMiniUserDataPromises.set(authorgAddress +"", promise);

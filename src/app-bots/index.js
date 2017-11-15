@@ -11,10 +11,8 @@ web3Provider.eth.getAccounts((error, accounts) => {
   if (error) {
     console.error(error);
   } else if (accounts) {
-    //console.log("accounts: " + accounts)
     for(i = 0; i < config.bots.length; i++) { 
-      //console.log("account: " + accounts[config.bots[i].ethAccountIndex]);
-      var r = new RepostBot(accounts[config.bots[i].ethAccountIndex], config.bots[i].twitterUsername, web3Provider, appContracts);
+      var r = new RepostBot(accounts[config.bots[i].ethAccountIndex], config.bots[i].twitterUsername, config.bots[i].twitterAvatarFilename, config.bots[i].avatarDataPrefix, web3Provider, appContracts);
     }    
   }
 });

@@ -4,7 +4,7 @@ var appContracts = require('app-contracts');
 
 //Bot that takes tweets and puts them up as Citadel posts.
 class RepostBot {
-    constructor(ethAccount, twitterScreenName, web3, appContracts) {
+    constructor(ethAccount, twitterScreenName, avatarFilename, avatarDataPrefix, web3, appContracts) {
         this.T = new Twit({
             consumer_key:         'MbGCRjZCei8OFkTxzmtDbWTW1', 
             consumer_secret:      'eLYWY4cmwX88SzCyHKU2JW1o09ob2RTDs0a6uJBEaqZ1ArWExV',
@@ -12,19 +12,49 @@ class RepostBot {
         });
         this.twitterScreenName = twitterScreenName;
         this.ethAccount = ethAccount;
+        this.avatarFilename = avatarFilename;
+        this.avatarDataPrefix = avatarDataPrefix;
         this.web3 = web3;
         this.appContracts = appContracts;
         this.checkTweets = this.checkTweets.bind(this);
         this.checkBio = this.checkBio.bind(this);
-
-        var instance = this;
-
+        this.tweetsIndex = -1;
+        var instance = this;        
+        
         fs.readFile(__dirname + "/botsPersistence/" + instance.twitterScreenName + ".txt", (err, data) => {
             try {
-                instance.seenTweets = JSON.parse(data);
+                var json = JSON.parse(data);
+                var seenTweets = json.seenTweets;
+                if (!seenTweets) {
+                    seenTweets = {}
+                }
+                var tweetMap = json.tweetMap;
+                if (!tweetMap) {
+                    tweetMap = {}
+                }
+                var submissionMap = json.submissionMap;
+                if (!submissionMap) {
+                    submissionMap = {}
+                }
+                var revisionMap = json.revisionMap;
+                if (!revisionMap) {
+                    revisionMap = {}
+                }
+
+                instance.persistence = {
+                    seenTweets : seenTweets,
+                    tweetMap : tweetMap,
+                    revisionMap : revisionMap,
+                    submissionMap : submissionMap
+                }
             } catch(ex) {
-                console.log("error on load file. maybe no file yet.")
-                instance.seenTweets = {};
+                console.log("error on load file. maybe no file yet. ex: " + ex);
+                instance.persistence = {
+                    seenTweets : {},
+                    tweetMap : {},
+                    submissionMap : {},
+                    revisionMap : {}
+                }
             } finally {
                 this.checkBio(ethAccount)
             }
@@ -38,11 +68,41 @@ class RepostBot {
             .then((result) => {
                 var bioRevisions = result[0];
                 if (bioRevisions.length > 0) {
+                    classInstance.checkTweets();
                     setInterval(classInstance.checkTweets, 10000);
                 } else {
-                    var bioInput = {"name":classInstance.twitterScreenName + " REPOSTER"}
-                    classInstance.updateBio(JSON.stringify(bioInput), account, classInstance.web3).then((result) => {
-                        setInterval(classInstance.checkTweets, 10000);
+                    fs.readFile(__dirname + "/botAvatars/" + classInstance.avatarFilename, (err, data) => {
+                        var bufferedData = Buffer.from(data).toString('base64');
+                        bufferedData = classInstance.avatarDataPrefix + bufferedData;
+
+                        var state = {
+                            "document":{
+                                "data":{},
+                                "kind":"document",
+                                "nodes":[]
+                            },
+                            "kind":"value"
+                        }
+                        state.document.nodes.push({
+                            "data":{},
+                            "kind":"block",
+                            "isVoid":false,
+                            "type":"paragraph",
+                            "nodes":[{
+                                "kind":"text",
+                                "leaves":[{
+                                    "kind":"leaf",
+                                    "marks":[],
+                                    "text": "I am a bot that reposts @" + classInstance.twitterScreenName + ". I do not repost Retweets or Replies to other users, only standalone"
+                                }]
+                            }]
+                        })
+
+                        var bioInput = {"name":"@" + classInstance.twitterScreenName + " REPOSTER", "image" : bufferedData, "text" : state}
+                        classInstance.updateBio(JSON.stringify(bioInput), account, classInstance.web3).then((result) => {
+                            classInstance.checkTweets();
+                            setInterval(classInstance.checkTweets, 10000);
+                        })
                     })
                 }
             })
@@ -60,15 +120,10 @@ class RepostBot {
                 appContracts.Ink.deployed()
                 .then((instance) => {
                   var subHash = '0x' + hash;
-                  console.log("subHash: " + subHash);
-                  console.log("account: " + account);
                   instance.submitBioRevision.sendTransaction(subHash, {from : account, gas : 200000, gasPrice : 1000000000}).then((tx_id) => {
                     var bioSubmissionEvent = instance.BioUpdated({_authorg : account, _subHash : subHash})
-                    console.log("have bioSubmissionEvent.")
                     bioSubmissionEvent.watch(function(error, result){
-                        console.log("watch bioSubmission event.")
                         if(!error && result.transactionHash == tx_id) {
-                            console.log("return res!")
                             res({tx_id})
                         }
                     })
@@ -80,101 +135,124 @@ class RepostBot {
         }); 
     };
 
-    post(postInput, account, web3) {
+    post(postInput, account, web3, tweetId, submissionHash = undefined) {
+        var classInstance = this;
         return new Promise((res, rej) => {
           web3.bzz.put(postInput, (error, hash) => {
             appContracts.Ink.deployed()
             .then((instance) => {
-              var maxGas = 400000;
-              var subHash = '0x' + hash;
-              var revHash = '0x' + hash;
-      
-              instance.submitRevisionWithReferences.sendTransaction(subHash, revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
-                var submissionEvent = instance.RevisionPosted({_authorg : account, _subHash : subHash, _revHash : revHash});
-                console.log("have submissionEvent.")
-                submissionEvent.watch(function(error, result) {
-                    console.log("watch submission event.")
-                    if (!error && result.transactionHash == tx_id) {
-                        console.log("return res!")
-                        res({tx_id, submissionEvent, revHash, subHash});  
-                    }
-                })
-              }).catch(rej);
+                var maxGas = 400000;
+                var subHash = submissionHash;
+                if (!subHash) { 
+                    subHash = '0x' + hash;
+                }
+                var revHash = '0x' + hash;
+        
+                instance.submitRevisionWithReferences.sendTransaction(subHash, revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+                    var submissionEvent = instance.RevisionPosted({_authorg : account, _subHash : subHash, _revHash : revHash});
+                    submissionEvent.watch(function(error, result) {
+                        if (!error && result.transactionHash == tx_id) {
+                            classInstance.persistence.revisionMap[tweetId] = revHash;
+                            classInstance.persistence.submissionMap[tweetId] = subHash;
+                            res({tx_id, submissionEvent, revHash, subHash});  
+                        }
+                    })
+                }).catch(rej);
             });
           });
         }); 
-      }
+    }
 
-    checkTweets() {       
-        var options = { screen_name: this.twitterScreenName,
-                        count: 5 };
+    checkTweets() {     
+        if (this.tweetsIndex == -1) {  
+            var options = { screen_name: this.twitterScreenName,
+                            count: 200,
+                            tweet_mode: "extended" };
+            var instance = this;
+            this.T.get('statuses/user_timeline', options , function(err, data) {
+                instance.tweetData = data;
+                instance.tweetsIndex = data.length - 1;
+                instance.flushTweetData();
+            })
+        }
+    }
+
+    flushTweetData() {
+        console.log("flush tweet data. tweetsIndex = " + this.tweetsIndex);
         var instance = this;
-        this.T.get('statuses/user_timeline', options , function(err, data) {
-            for (var i = 0; i < data.length ; i++) {
-                if(!instance.seenTweets[data[i].id]) {
-                    console.log(data[i].id + " - " + data[i].text);
-                    instance.seenTweets[data[i].id] = true;
-                    const state = {
+        if (this.tweetsIndex > -1) {
+            var tweet = instance.tweetData[this.tweetsIndex];
+
+            if(!instance.persistence.seenTweets[tweet.id]) {
+                instance.persistence.seenTweets[tweet.id] = true;
+
+                if (tweet.in_reply_to_screen_name == instance.twitterScreenName) {
+                    var parentId = instance.persistence.tweetMap[tweet.in_reply_to_status_id];
+                    if (parentId) {
+                        instance.persistence.tweetMap[tweet.id] = parentId;
+                    } else { 
+                        instance.persistence.tweetMap[tweet.id] = tweet.in_reply_to_status_id;
+                        parentId = tweet.in_reply_to_status_id;
+                    }
+
+                    var parentRevisionHash = instance.persistence.revisionMap[tweet.in_reply_to_status_id];
+                    var parentSubmissionHash = instance.persistence.submissionMap[tweet.in_reply_to_status_id];
+                    const bzzAddress = parentRevisionHash.substring(2);
+                    instance.web3.bzz.retrieve(bzzAddress, (error, revision) => {
+                        const manifest = JSON.parse(revision);
+                        instance.web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
+                            var revJson = JSON.parse(rev)
+                            var state = revJson.text;
+                            instance.finishPost(state, tweet, parentSubmissionHash);
+                        })
+                    })
+                } else if (!tweet.in_reply_to_screen_name && !tweet.retweeted_status) {
+                    var state = {
                         "document":{
                             "data":{},
                             "kind":"document",
-                            "nodes":
-                            [{
-                                "data":{},
-                                "kind":"block",
-                                "isVoid":false,
-                                "type":"paragraph",
-                                "nodes":[{
-                                    "kind":"text",
-                                    "ranges":[{
-                                        "kind":"range",
-                                        "marks":[],
-                                        "text": data[i].text
-                                    }]
-                                }]
-                            }]
+                            "nodes":[]
                         },
-                        "kind":"state"
+                        "kind":"value"
                     }
-                    var postJson = {"authorg" : instance.ethAccount, "text" : state}
-                    instance.post(JSON.stringify(postJson), instance.ethAccount, instance.web3).then((result) => {
-                        console.log("finally lets save.")
-                        
-                        fs.writeFile(__dirname + "/botsPersistence/" + instance.twitterScreenName + ".txt", JSON.stringify(instance.seenTweets), (err) => {
-                            if (err) throw err;
-                            console.log("saved.")
-                        });
-                    })
-
+                    instance.finishPost(state, tweet);
                 } else {
-                    console.log("already seen.")
+                    instance.tweetsIndex = this.tweetsIndex - 1;
+                    instance.flushTweetData();
                 }
+            } else {
+                instance.tweetsIndex = this.tweetsIndex - 1;
+                instance.flushTweetData();
             }
-
-        })
+        } 
     }
 
+    finishPost(state, tweet, submission = undefined) {
+        state.document.nodes.push({
+            "data":{},
+            "kind":"block",
+            "isVoid":false,
+            "type":"paragraph",
+            "nodes":[{
+                "kind":"text",
+                "leaves":[{
+                    "kind":"leaf",
+                    "marks":[],
+                    "text": tweet.full_text
+                }]
+            }]
+        })
 
-
-    // Here a tweet event is triggered!
-    tweetEvent(tweet) {
-
-        // If we wanted to write a file out
-        // to look more closely at the data
-        // var fs = require('fs');
-        // var json = JSON.stringify(tweet,null,2);
-        // fs.writeFile("tweet.json", json, output);
-
-        // Who is this in reply to?
-        var reply_to = tweet.in_reply_to_screen_name;
-        // Who sent the tweet?
-        var name = tweet.user.screen_name;
-        // What is the text?
-        var txt = tweet.text;
-        // If we want the conversation thread
-        var id = tweet.id_str;
-
-        console.log("tweet text: " + txt);
+        var instance = this;
+        var postJson = {"authorg" : instance.ethAccount, "text" : state}
+        instance.post(JSON.stringify(postJson), instance.ethAccount, instance.web3, tweet.id, submission).then((result) => {
+            fs.writeFile(__dirname + "/botsPersistence/" + instance.twitterScreenName + ".txt", JSON.stringify(instance.persistence), (err) => {
+                if (err) throw err;
+                    console.log("saved.");
+                instance.tweetsIndex = this.tweetsIndex - 1;
+                instance.flushTweetData();
+            });
+        })
     }
 }
 

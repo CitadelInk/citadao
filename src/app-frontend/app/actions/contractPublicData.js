@@ -185,7 +185,7 @@ export const giveEther = (amount, callback) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   var ethamount =  network.web3.toWei(amount, 'ether')
   const account = wallet.get('account');
-  const tokenOwner = wallet.get('tokenOwnerAccount');
+  const tokenOwner = wallet.get('inkComptrollerAccount');
 
   var xhr = new XMLHttpRequest();
   var url = network.web3.currentProvider.host;
