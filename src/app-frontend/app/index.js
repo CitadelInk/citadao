@@ -50,7 +50,7 @@ window.addEventListener('load', () => {
 
   console.log(store.getState())
 
-  const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+  const isChrome = true;///Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
   const hasMetamask = typeof web3 !== 'undefined'
 
   if (hasMetamask && isChrome) {
