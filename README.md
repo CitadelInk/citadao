@@ -2,7 +2,7 @@
 All CITADAO/CITADEL work before we go public
 
 ### Requirments
-Install Yarn: https://yarnpkg.com/lang/en/docs/install/
+Install Yarn: https://yarnpkg.com/lang/en/docs/install/ (1.3.2)
 
 ### Testing Swarm 
 1. run yarn upgrade within src/app-contracts

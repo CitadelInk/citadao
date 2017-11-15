@@ -104,7 +104,7 @@ export const initializeContract = () => (dispatch, getState) => {
       dispatch(initializeNeededPosts()).then(() => {
         res({done : true})
       })
-    });
+  });
   })
 };
 
@@ -117,7 +117,7 @@ export const initializeAccounts = (web3) => dispatch => {
           Promise.all([
             getEthBalance(account, web3),
             //getInkBalance(account)
-          ]).then(([ethBalance, inkBalance]) => {
+          ]).then(([ethBalance/*, inkBalance*/]) => {
             res({...accounts, account, ethBalance/*, inkBalance*/}); 
           })
         }
@@ -191,7 +191,10 @@ export const giveEther = (amount, callback) => (dispatch, getState) => {
   var url = network.web3.currentProvider.host;
   // hacky bullshit!!!
   if (url == undefined) {
-    url = window.location.href.replace(".ink", ".ink:8545")
+    if (process.env.NODE_ENV === 'production')
+     url = window.location.href.replace(".ink", ".ink:8545")
+    else
+     url = window.location.href.replace("8080", "8545")
   }
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-type", "application/json");
