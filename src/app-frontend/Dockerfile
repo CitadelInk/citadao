@@ -1,8 +1,7 @@
-FROM node:boron
+FROM node:carbon
 
 COPY package.json /src/package.json
 WORKDIR /src
-RUN npm install
 RUN npm install -g http-server
 ADD ./public .
 
