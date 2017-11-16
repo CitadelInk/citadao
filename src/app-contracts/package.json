@@ -42,7 +42,7 @@
       "win32": "truffle.cmd test",
       "linux": "yarn run truffle test"
     },
-    "testrpc": "testrpc --debug -u 0 -u 1"
+    "testrpc": "testrpc --debug -u 0 -u 1 -u 2 -u 3 -u 4"
   },
   "engines": {
     "node": ">=7.6.0"

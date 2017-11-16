@@ -159,7 +159,6 @@ const revs = (state = {}, action) => {
         })
       });
     case SET_REVISION_SWARM_DATA:
-      var test = Value.fromJSON(action.data.swarmRevText);
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           title: action.data.swarmRevTitle,

@@ -3,7 +3,7 @@
 
 const contract = require('truffle-contract')
 
-const contractNames = [ 'MyAdvancedToken', 'Citadel', 'Ink', 'CitadelResponseRequest' ]
+const contractNames = [ 'Citadel', 'Ink', 'CitadelResponseRequest' ]
 let contracts = {}
 contractNames.forEach(function (name) {
   const json = require(`./build/contracts/${name}.json`)
@@ -13,7 +13,8 @@ contractNames.forEach(function (name) {
 
 function setProvider (web3Provider) {
   for (let name in contracts) {
-    contracts[name].setProvider(web3Provider)
+    let contract = contracts[name];
+    contract.setProvider(web3Provider)
   }
 }
 
