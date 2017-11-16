@@ -16,7 +16,7 @@ export function setupWeb3() {
     return function(dispatch) {
       let web3Provider;
 
-      const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+      const isChrome = true;///Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
       const hasMetamask = typeof web3 !== 'undefined'
 
       if ((hasMetamask && isChrome)) {

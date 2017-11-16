@@ -8,12 +8,14 @@ class Posts extends Component {
 		 super(props);
 	}
 
+	shouldComponentUpdate(nextProps, nextState) {
+		return (this.props.postKeys !== nextProps.postKeys)
+	}
 
 	render() {
 		const style = {
 			position:'relative',
 			background:'#FFFFFF',
-			//float:'left',
 			width:'100%',
 			margin:'auto'
 		}
@@ -36,6 +38,7 @@ class Posts extends Component {
 			var authorgName = "";
 			var authorgAvatar;
 			var revisionHashes;
+			var show = false;
 			
 			if (authorg) {
 
@@ -63,6 +66,11 @@ class Posts extends Component {
 					if (submission) {
 						revisions = submission.revisions;
 						revisionHashes = revisions.revisionHashes;
+
+						// only show latest revisions in list
+						if (key.revisionHash === revisionHashes[revisionHashes.length - 1]) {
+							show = true;
+						}
 					}
 				}		
 				
@@ -82,8 +90,11 @@ class Posts extends Component {
 					}					
 				}			
 			}
-
-			return (<PostWidgetContainer revisionHashes={revisionHashes} authorgName={authorgName} authorgAvatar={authorgAvatar} submissionValue={submission} embededPostTextMap={embededPostTextMap} text={text} responseMap={responseMap} key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
+			if (show) {
+				return (<PostWidgetContainer revisionHashes={revisionHashes} authorgName={authorgName} authorgAvatar={authorgAvatar} submissionValue={submission} embededPostTextMap={embededPostTextMap} text={text} /*responseMap={responseMap}*/ key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
+			} else {
+				return (<div/>);
+			}
 		})
 		return (
 			

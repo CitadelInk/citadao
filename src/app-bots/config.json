@@ -1,0 +1,22 @@
+{
+  "bots" : [
+    {
+      "ethAccountIndex" : 2,
+      "twitterUsername" : "renato_mariotti",
+      "twitterAvatarFilename" : "renato_mariotti.jpg",
+      "avatarDataPrefix" : "data:image/jpeg;base64,"
+    },
+    {
+      "ethAccountIndex" : 3,
+      "twitterUsername" : "Citadel_dot_ink",
+      "twitterAvatarFilename" : "citadellogo.PNG",
+      "avatarDataPrefix" : "data:image/png;base64,"
+    },
+    {
+      "ethAccountIndex" : 4,
+      "twitterUsername" : "VitalikButerin",
+      "twitterAvatarFilename" : "vitalik.jpeg",
+      "avatarDataPrefix" : "data:image/jpeg;base64,"
+    }
+  ]
+}

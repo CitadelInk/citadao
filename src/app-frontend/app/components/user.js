@@ -96,13 +96,22 @@ class User extends Component {
 		var postKeys = [];
 
 		var bioSubHash;
+		var bioRevisionHashes = [];
+		var bioTimestamp;
+		var bioAuthorgName;
+		var bioAuthorgAvatar;
+		var bioText;
 		if (auth) {
 			if (auth.bioSubmission && auth.bioSubmission.revisions && auth.bioSubmission.revisions.length > 0) {
 				bioSubHash = auth.bioSubmission.revisions[auth.bioSubmission.revisions.length - 1];
-
+				bioRevisionHashes = auth.bioSubmission.revisions;
 				if(this.props.router.params["revHash"]) {
 					bioSubHash = this.props.router.params["revHash"];
 				}
+				bioTimestamp = auth.bioSubmission[bioSubHash].timestamp;
+				bioAuthorgName = auth.bioSubmission[bioSubHash].name;
+				bioAuthorgAvatar = auth.bioSubmission[bioSubHash].image;
+				bioText = auth.bioSubmission[bioSubHash].text;
 			}
 			if (auth.postKeys) {
 				postKeys = auth.postKeys;
@@ -165,7 +174,21 @@ class User extends Component {
 
 						<TabPanel>
 						<div style={postsStyle}>
-							<Post bio={true} authorg={user} revision={bioSubHash} focusedPost={true}/>
+							<Post 	bio={true} 
+									revisionHashes={bioRevisionHashes}
+									authorgAvatar={bioAuthorgAvatar}
+									authorgName={bioAuthorgName}
+									//submissionValue={bioSubmissionData}
+									text={bioText}
+									//embededPostTextMap={embededPostTextMap}
+									//responseMap={responseMap}
+									authorg={user} 
+									//submission={submission} 
+									revision={bioSubHash} 
+									timestamp={bioTimestamp}
+									focusedPost={true} 
+									//revisionPostCallback={this.props.revisionPostCallback}
+							/>
 						</div>
 						</TabPanel>
 						<TabPanel>

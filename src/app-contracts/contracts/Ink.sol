@@ -1,9 +1,5 @@
 pragma solidity ^0.4.13;
 
-contract AbstractWallet {
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
-}
-
 contract Managed {
     address public ink_comptroller;  
     modifier onlyComptroller {
@@ -17,15 +13,13 @@ contract Ink is Managed {
     event BioUpdated(address indexed _authorg, bytes32 indexed _revHash);
     event RevisionPosted(address indexed _authorg, bytes32 indexed _subHash, bytes32 indexed _revHash);
 
-    address public wallet_address;
     uint256 public bio_update_in_ink;
     uint256 public reaction_cost_in_ink;
     uint256 public submit_revision_cost_in_ink; 
     uint256 public submit_submission_cost_in_ink; 
     
-    function Ink(address wallet, uint bioCost, uint256 reactionCost, uint256 revisionCost, uint256 submissionCost) {
+    function Ink(uint bioCost, uint256 reactionCost, uint256 revisionCost, uint256 submissionCost) {
         ink_comptroller = msg.sender;
-        wallet_address = wallet;
         bio_update_in_ink = bioCost;
         reaction_cost_in_ink = reactionCost;
         submit_revision_cost_in_ink = revisionCost;
@@ -77,14 +71,6 @@ contract Ink is Managed {
     address[] allPostAuthorgs;
     bytes32[] allPostSubmissions;
     bytes32[] allPostRevisions;
-    
-    function spend(uint256 value) private {
-        AbstractWallet(wallet_address).transferFrom(msg.sender, wallet_address, value);
-    }
-    
-    function setWalletAddress(address newWalletAddress) onlyComptroller {
-        wallet_address = newWalletAddress;
-    }
 
     function getBioRevisions(address authorgAddress) constant returns (bytes32[] hashes, uint[] timestamps) {
         return (internalAuthorgs[authorgAddress].selfBioSubmission.revisionHashes, internalAuthorgs[authorgAddress].selfBioSubmission.revisionTimestamps);

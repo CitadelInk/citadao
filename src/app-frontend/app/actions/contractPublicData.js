@@ -1,11 +1,6 @@
 import appContracts from 'app-contracts';
 
 import {
-  getAdvancedTokenPublicData,
-  getInkBalance,
-} from '../api/getTokenData';
-
-import {
   getInkPublicData
 } from '../api/getInkData';
 
@@ -98,18 +93,18 @@ export const addNewApprovedReaction = () => (dispatch, getState) => {
 export const initializeContract = () => (dispatch, getState) => {
   const {network} = getState().core;
     return new Promise((res, rej) => { Promise.all([
-      getAdvancedTokenPublicData(),
+      //getAdvancedTokenPublicData(),
       getInkPublicData(),
       getApprovedReactions(network.web3),
       getApprovedAuthorgReactions(network.web3)
-    ]).then(([token, ink, reactions, authorgReactions]) => {
-      dispatch(setWalletData({...token, ...ink}));
+    ]).then(([ink, reactions, authorgReactions]) => {
+      dispatch(setWalletData({...ink}));
       dispatch(setApprovedReactions(reactions.approvedReactions));
       dispatch(setApprovedAuthorgReactions(authorgReactions.approvedAuthorgReactions));
       dispatch(initializeNeededPosts()).then(() => {
         res({done : true})
       })
-    });
+  });
   })
 };
 
@@ -121,9 +116,9 @@ export const initializeAccounts = (web3) => dispatch => {
           dispatch(loadUserData(account, true, true));
           Promise.all([
             getEthBalance(account, web3),
-            getInkBalance(account)
-          ]).then(([ethBalance, inkBalance]) => {
-            res({...accounts, account, ethBalance, inkBalance}); 
+            //getInkBalance(account)
+          ]).then(([ethBalance/*, inkBalance*/]) => {
+            res({...accounts, account, ethBalance/*, inkBalance*/}); 
           })
         }
       })
@@ -137,18 +132,18 @@ export const setSelectedAccount = (account) => (dispatch, getState) => {
   const {network} = getState().core;
   return Promise.all([
         getEthBalance(account, network.web3),
-        getInkBalance(account)
-      ]) .then(([ethBalance, inkBalance]) => {
+       // getInkBalance(account)
+      ]) .then(([ethBalance/*, inkBalance*/]) => {
       network.web3.eth.defaultAccount = account
 
-    return dispatch(setWalletData({account, ethBalance, inkBalance}))
+    return dispatch(setWalletData({account, ethBalance/*, inkBalance*/}))
   })
 };
 
 export const updateInkBalance = (account) => dispatch => {
-  return getInkBalance(account).then(inkBalance => {
+  /*return getInkBalance(account).then(inkBalance => {
     return dispatch(setWalletData({inkBalance}));
-  });
+  });*/
 };
 
 export const updateEthBalance = (account) => (dispatch, getState) => {
@@ -190,13 +185,16 @@ export const giveEther = (amount, callback) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   var ethamount =  network.web3.toWei(amount, 'ether')
   const account = wallet.get('account');
-  const tokenOwner = wallet.get('tokenOwnerAccount');
+  const tokenOwner = wallet.get('inkComptrollerAccount');
 
   var xhr = new XMLHttpRequest();
   var url = network.web3.currentProvider.host;
   // hacky bullshit!!!
   if (url == undefined) {
-    url = window.location.href.replace(".ink", ".ink:8545")
+    if (process.env.NODE_ENV === 'production')
+     url = window.location.href.replace(".ink", ".ink:8545")
+    else
+     url = window.location.href.replace("8080", "8545")
   }
   xhr.open("POST", url, true);
   xhr.setRequestHeader("Content-type", "application/json");

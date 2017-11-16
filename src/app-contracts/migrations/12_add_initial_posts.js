@@ -55,6 +55,8 @@ module.exports = function (deployer, done, accounts) {
 
         instance.respondToAuthorgSubmissionRevision.sendTransaction(refAuth, refSub, refRev, subHash, revHash, {from : accounts[1], gas : 800000, gasPrice : 1000000000}).then((tx_id_2) => {
           console.log("some kind of success");
+          process.exit()
+          
           //var submissionEvent = instance.RevisionPosted({_authorg : accounts[1]});
           //submissionEvent.watch(function(error2, result2) {
           //  if (!error2 && result2.transactionHash === tx_id_2) {

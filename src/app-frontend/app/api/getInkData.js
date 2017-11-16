@@ -4,13 +4,11 @@ export const getInkPublicData = () => {
   return appContracts.Ink.deployed()
     .then((instance) => {
       return Promise.all([
-          instance.ink_comptroller(),
-          instance.wallet_address()
-      ]).then(([ink_comptroller, wallet_address]) => {
+          instance.ink_comptroller()
+      ]).then(([ink_comptroller]) => {
         return {
           inkAddress: instance.address,
-          inkComptrollerAccount: ink_comptroller,
-          inkWalletAddress: wallet_address
+          inkComptrollerAccount: ink_comptroller
         };
       });
     });
