@@ -38,7 +38,6 @@ class PostWidgetContainer extends Component {
 }
 
 const mapStateToProps = state => {
-  const { } = state.core;
 
   return { };
 }

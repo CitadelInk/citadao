@@ -240,84 +240,128 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
   }
 }
 
-export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   const {network} = getState().core;
 
   return new Promise((res, rej) => {
     getSubmissionRevisions(authorgAddress, submissionHash).then((revHashResult) => {
-    var revisionHashes = revHashResult.revisionHashes;
-      getRevisionFromSwarm(revisionHash, network.web3).then(result => {
-        var resJson = result.revisionSwarmText;
-        // backwards compatibility with old Slate format
-        if (resJson.kind === "state") {
-          resJson.kind = "value";
-          if (resJson.document.nodes) {
-            resJson.document.nodes.forEach(function(node, index) {
-              if (node.nodes) {
-                node.nodes.forEach(function(innerNode, index) {
-                  if (innerNode.kind === "text") {
-                    if (innerNode.ranges) {
-                      innerNode.ranges.forEach(function(range, index) {
-                        range.kind = "leaf";
-                      })
-                      innerNode.leaves = innerNode.ranges;
-                    }
-                  }
-                })
-              }
-            })
-          }
+      var shouldContinue = true;
+      var revisionHashes = revHashResult.revisionHashes;
+      if (!focusedPost) {
+        if (revisionHashes[revisionHashes.length - 1] !== revisionHash) {
+          shouldContinue = false;
         }
-
-        var document = Value.fromJSON(resJson)
-        if(document) {        
-
-          var references = [];
-          var refLoadPromises = [];
-          document.document.nodes.forEach(function(section) {   
-            var refAuthorg = section.data.get("authorg");
-            var refSubmission = section.data.get("submission");
-            var refRevision = section.data.get("revision");
-            var index = section.data.get("index");
-            if(refAuthorg && refSubmission && refRevision) {
-              references.push({refAuthorg, refSubmission, refRevision, index});
-              if (firstLevel) {
-                refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false)));
-              }           
-            }  
-          })
-          Promise.all(refLoadPromises).then((results) => {
-          
-            var timePromise = [];
-            if (!timestamp) {
-              timePromise.push(getRevisionTime(authorgAddress, submissionHash, revisionHash))
-            }
-            Promise.all(timePromise).then((time) => {
-              if (time && time.length > 0) {
-                timestamp = time[0].timestamp;
-              }
-
-              dispatch(loadMiniUserData(authorgAddress)).then((userResult) => {
-                dispatch(setRevisionSwarmData(authorgAddress, 
-                  submissionHash, 
-                  revisionHash, 
-                  result.revisionSwarmTitle, 
-                  resJson));
-                dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
-                references.forEach(function(ref) {
-                  dispatch(setReference(ref.refAuthorg, ref.refSubmission, ref.refRevision, authorgAddress, submissionHash, revisionHash, ref.index));
-                })
-                if (results) {
-                  results.forEach(function(promiseResult) {
-                    dispatch(addEmbededPostMapping(authorgAddress, submissionHash, revisionHash, promiseResult.postKey, {text : promiseResult.result.revisionSwarmText, name : promiseResult.userResult.name, avatar : promiseResult.userResult.avatar, timestamp : promiseResult.timestamp, revisionHashes : promiseResult.revisionHashes}))
+      }
+      if (shouldContinue) {
+        getRevisionFromSwarm(revisionHash, network.web3).then(result => {
+          var resJson = result.revisionSwarmText;
+          // backwards compatibility with old Slate format
+          if (resJson.kind === "state") {
+            resJson.kind = "value";
+            if (resJson.document.nodes) {
+              resJson.document.nodes.forEach(function(node, index) {
+                if (node.nodes) {
+                  node.nodes.forEach(function(innerNode, index) {
+                    if (innerNode.kind === "text") {
+                      if (innerNode.ranges) {
+                        innerNode.ranges.forEach(function(range, index) {
+                          range.kind = "leaf";
+                        })
+                        innerNode.leaves = innerNode.ranges;
+                      }
+                    }
                   })
                 }
-                res({result, userResult, revisionHashes, references, timestamp})
+              })
+            }
+          }
+
+          // cut off extra sections from non-focused posts.
+          if (!focusedPost && resJson.document.nodes.length > 3) {
+            var nodes = resJson.document.nodes;
+            resJson.document.nodes = [nodes[0], nodes[1], nodes[2]];
+          } 
+          var document = Value.fromJSON(resJson)
+          if(document) {        
+
+            var references = [];
+            var refLoadPromises = [];
+
+            if (!focusedPost && document.document.nodes.count() > 3) {
+              document.document.nodes = document.document.nodes.splice(0,3);
+            }
+
+            document.document.nodes.forEach(function(section) {   
+              var refAuthorg = section.data.get("authorg");
+              var refSubmission = section.data.get("submission");
+              var refRevision = section.data.get("revision");
+              var index = section.data.get("index");
+              if(refAuthorg && refSubmission && refRevision) {
+                references.push({refAuthorg, refSubmission, refRevision, index});
+                if (firstLevel) {
+                  refLoadPromises.push(dispatch(doUnfocusedLoad(refAuthorg, refSubmission, refRevision, undefined, false)));
+                }           
+              }  
+            })
+            Promise.all(refLoadPromises).then((results) => {
+            
+              var timePromise = [];
+              if (!timestamp) {
+                timePromise.push(getRevisionTime(authorgAddress, submissionHash, revisionHash))
+              }
+              Promise.all(timePromise).then((time) => {
+                if (time && time.length > 0) {
+                  timestamp = time[0].timestamp;
+                }
+
+                dispatch(loadMiniUserData(authorgAddress)).then((userResult) => {
+
+                  // this is to make sure we don't overwrite text of a post with shortened version
+                  // (if focused post has been loaded and then we reload this post unfocused-ly.)
+                  const {auths} = getState().core;
+                  var isTextSet = false;
+                  var user = auths[authorgAddress];
+                  if (user) {  
+                    var submissionsData = user.submissions;
+                    if (submissionsData) {
+                      var submissionData = submissionsData[submissionHash];
+                      if (submissionData) {
+                        var revisionsData = submissionData.revisions;
+                        if (revisionsData) {
+                          var revisionData = revisionsData[revisionHash];
+                          if (revisionData) {
+                            if(revisionData.text) {
+                              isTextSet = true;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+
+                  if (!isTextSet || focusedPost) {
+                    dispatch(setRevisionSwarmData(authorgAddress, 
+                      submissionHash, 
+                      revisionHash, 
+                      result.revisionSwarmTitle, 
+                      document));
+                  }
+                  dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
+                  references.forEach(function(ref) {
+                    dispatch(setReference(ref.refAuthorg, ref.refSubmission, ref.refRevision, authorgAddress, submissionHash, revisionHash, ref.index));
+                  })
+                  if (results) {
+                    results.forEach(function(promiseResult) {
+                      dispatch(addEmbededPostMapping(authorgAddress, submissionHash, revisionHash, promiseResult.postKey, {text : promiseResult.result.revisionSwarmText, name : promiseResult.userResult.name, avatar : promiseResult.userResult.avatar, timestamp : promiseResult.timestamp, revisionHashes : promiseResult.revisionHashes}))
+                    })
+                  }
+                  res({result, userResult, revisionHashes, references, timestamp})
+                })
               })
             })
-          })
-        }       
-      })
+          }       
+        })
+      }
     })
   })
 }
@@ -384,7 +428,7 @@ export const doFocusedLoad = (authorgAddress, submissionHash, revisionHash, time
   dispatch(setFocusedPostLoadBegin(authorgAddress, submissionHash, revisionHash));
   return new Promise((res, rej) => {
     var promiseList = [];
-    promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
+    promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, true, true)));
     promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
     promiseList.push(dispatch(doDetailLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)))
 

@@ -27,7 +27,7 @@ class PostBody extends Component {
 			if (this.props.embeded) {
 				state = Block.fromJSON(this.props.text);
 			} else {
-				state = Value.fromJSON(this.props.text);
+				state = this.props.text;
 			}
 		}
 
@@ -57,8 +57,13 @@ class PostBody extends Component {
 			if(state && state.document.nodes) {	
 				var instance = this;
 				var nodes = state.document.nodes;
+
+				if (!focusedPost && nodes.count() > 3) {
+					nodes = nodes.slice(0, 3);
+				}
+
 				body = nodes.map((section, i) => {		
-					if (this.props.responseMap) {
+					if (focusedPost && this.props.responseMap) {
 						responses = this.props.responseMap.get(i);
 					}		
 								
