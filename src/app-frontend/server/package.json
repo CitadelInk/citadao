@@ -1,0 +1,15 @@
+{
+  "name": "app-frontend",
+  "version": "0.1.0",
+  "description": "Frontend for CitaDao",
+  "main": "index.js",
+  "repository": "https://github.com/Charterhouse/TruffleDevEnv.git",
+  "contributors": [
+    "Andrew Spiering",
+    "Nick Reynolds"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
