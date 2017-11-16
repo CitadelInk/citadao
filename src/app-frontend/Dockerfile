@@ -2,7 +2,7 @@ FROM node:carbon
 
 COPY package.json /src/package.json
 WORKDIR /src
-RUN yarn global add express
+RUN yarn add express
 RUN yarn global add http-server
 ADD ./public .
 
