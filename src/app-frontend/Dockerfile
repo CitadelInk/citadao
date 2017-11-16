@@ -2,7 +2,7 @@ FROM node:carbon
 
 COPY package.json /src/package.json
 WORKDIR /src
-RUN yarn add express
+RUN npm install express --no-save
 RUN yarn global add http-server
 ADD ./public .
 
