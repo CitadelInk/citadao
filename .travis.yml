@@ -1,12 +1,15 @@
 language: node_js
 node_js:
-- '7'
+- '8'
 services:
 - docker
 branches:
   only:
   - production
-script: yarn devsetup && cd src/app-frontend && yarn install && yarn build
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+script: yarn install && cd src/app-frontend && yarn install && yarn build
 env:
   global:
   - DOCKER_IMAGE_NAME=aspiering/frontend
