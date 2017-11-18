@@ -47,19 +47,24 @@ export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, we
       appContracts.Ink.deployed()
       .then((instance) => {
         var maxGas = 400000 + refKeyAuths.length * 200000;
-        var subHash = '0x' + hash;
         var revHash = '0x' + hash;
 
         if (reviseSubmissionHash) {
-          subHash = reviseSubmissionHash;
-        }
-
-        instance.submitRevisionWithReferences.sendTransaction(subHash, revHash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
-          var submissionEvent = instance.RevisionPosted({_authorg : account});
-          var t1 = performance.now();
-          console.debug("post took " + (t1 - t0) + " milliseconds.")
-          res({tx_id, submissionEvent, revHash, subHash});  
-        }).catch(rej);
+          var subHash = reviseSubmissionHash;
+          instance.submitRevisionWithReferences.sendTransaction(subHash, revHash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+            var submissionEvent = instance.RevisionPosted({_authorg : account});
+            var t1 = performance.now();
+            console.debug("post took " + (t1 - t0) + " milliseconds.")
+            res({tx_id, submissionEvent, revHash, subHash});  
+          }).catch(rej);
+        } else {
+          instance.submitSubmissionWithReferences.sendTransaction(revHash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+            var submissionEvent = instance.RevisionPosted({_authorg : account});
+            var t1 = performance.now();
+            console.debug("post took " + (t1 - t0) + " milliseconds.")
+            res({tx_id, submissionEvent, revHash, subHash});  
+          }).catch(rej);
+        }        
       });
     });
   }); 
