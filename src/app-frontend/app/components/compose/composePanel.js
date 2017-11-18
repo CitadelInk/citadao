@@ -45,13 +45,15 @@ class ComposePanel extends Component {
 				<TabPanel>
 					<Compose  					
 						value={this.props.standardPostValue}
-                  		callback={this.props.standardPostCallback}
+						  callback={this.props.standardPostCallback}
+						  onPostComplete={this.props.onStandardPostComplete}
 					/>
 				</TabPanel>
 				<TabPanel>
 					<BioCompose 
 						value={this.props.bioPostValue}
-                  		callback={this.props.bioPostCallback}
+						callback={this.props.bioPostCallback}
+						onPostComplete={this.props.onBioPostComplete}
 					/>
 				</TabPanel>
 				{ tabNames.length === 3 && 
@@ -59,6 +61,7 @@ class ComposePanel extends Component {
 						<ReviseSubmissionCompose 
 							value={this.props.revisionPostValue}
 							callback={this.props.revisionPostCallback}
+							onPostComplete={this.props.onRevisionPostComplete}
 							submission={this.props.wallet.get('reviseSubmissionHash')}
 						/>
 					</TabPanel>
