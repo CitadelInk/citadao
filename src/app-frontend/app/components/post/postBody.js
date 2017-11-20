@@ -51,7 +51,7 @@ class PostBody extends Component {
 				if (!responses) {
 				//	responses = [];
 				}
-				body = <PostSection authorgAvatar={this.props.authorgAvatar} authorgName={this.props.authorgName} embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={state} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionHash={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
+				body = <PostSection authorgAvatar={this.props.authorgAvatar} authorgName={this.props.authorgName} embededPostTextMap={this.props.embededPostTextMap} key={"post-body-" + this.props.sectionIndex} sectionResponses={responses} section={state} sectionIndex={this.props.sectionIndex} authorg={this.props.authorg} submissionIndex={this.props.submission} revisionHash={this.props.revision} focusedPost={focusedPost}/>
 			}
 		} else {
 			if(state && state.document.nodes) {	
@@ -78,7 +78,7 @@ class PostBody extends Component {
 								section={section} 
 								sectionIndex={i} 
 								authorg={instance.props.authorg} 
-								submissionHash={instance.props.submission} 
+								submissionIndex={instance.props.submission} 
 								revisionHash={instance.props.revision} 
 								focusedPost={focusedPost}/>);	
 					

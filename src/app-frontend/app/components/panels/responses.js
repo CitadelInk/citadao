@@ -29,7 +29,7 @@ class Responses extends Component {
 		var posts = this.props.responses.map(function(responseHash) {
 			var submission = instance.props.submissions.get(responseHash);
 			if (submission) {
-				return (<Post key={submission.submissionHash} submission={submission} />)
+				return (<Post key={submission.submissionIndex} submission={submission} />)
 			} else {
 				return ("loading...");
 			}

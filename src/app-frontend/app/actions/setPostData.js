@@ -33,47 +33,53 @@ export const setAuthorgFollowsAuthorg = (followingAuthorg, followedAuthorg) => {
 
 
 
-export const submitRevision = (input, revisionHash) => (dispatch, getState) => {
+export const submitRevision = (input, revisionHash, onComplete, onFailure) => (dispatch, getState) => {
   const {wallet} = getState().core;
   const account = wallet.get('account');
   if (!account) {
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
+    onFailure();
   } else {
-    dispatch(submitNewRevision(input, revisionHash))
+    dispatch(submitNewRevision(input, onComplete, onFailure, revisionHash))
   }
 }
 
-export const submitPost = (input) => (dispatch, getState) => {  
+export const submitPost = (input, onComplete, onFailure) => (dispatch, getState) => {
   const {wallet, auths} = getState().core;
   const account = wallet.get('account');
   if (!account) {
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
+    onFailure();
   } else {
 
     var auth = auths[account];
     if (auth) {
       if (auth.bioSubmission) {
-        dispatch(submitNewRevision(input));
+        dispatch(submitNewRevision(input, onComplete, onFailure));
       } else {
         alert("Please submit a bio before you post.")
+        onFailure();
       }
     } else {
       alert("Auth not found.")
+      onFailure();
     }
   }
 }
 
-export const submitBio = (bioTextInput) => (dispatch, getState) => {
+export const submitBio = (bioTextInput, onComplete, onFailure) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const account = wallet.get('account');
   if (!account) {
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
+    onFailure();
   } else {
     const ethBalance = wallet.get('ethBalance');
   
     // hack. need to check cost correctly.
     if (!ethBalance > 0) {
-      alert("Please buy ETH using the button in the top right corner of your screen. ETH is required to post.")
+      alert("Please buy ETH using the button in the top right corner of your screen. ETH is required to post.");
+      onFailure();
     } else {
       const bioNameInput = wallet.get('bioNameInput');
       const bioAvatarImage = wallet.get('bioAvatarImage');
@@ -83,6 +89,7 @@ export const submitBio = (bioTextInput) => (dispatch, getState) => {
         tx_result.bioSubmissionEvent.watch(function(error,result){
           if (!error && result.transactionHash === tx_result.tx_id) {
             dispatch(loadUserData(account, true, true));
+            onComplete();
             hasReloaded = true;
           }
         });
@@ -93,13 +100,14 @@ export const submitBio = (bioTextInput) => (dispatch, getState) => {
         }, 3000); 
       }).catch(function(e) {
         console.error("error - " + e);
+        onFailure();
       });
     }
   }
  
 };
 
-export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefined) => (dispatch, getState) => {
+export const submitNewRevision = (postTextInput, onComplete, onFailure, revisionsubmissionIndex = undefined) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const account = wallet.get('account');
 
@@ -108,6 +116,7 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
   // hack. need to check cost correctly.
   if (!ethBalance > 0) {
     alert("Please buy ETH using the button in the top right corner of your screen. ETH is required to post.")
+    onFailure();
   } else {
     var referenceKeyAuthorgs = [];
     var referenceKeySubmissions = [];
@@ -121,39 +130,39 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
           && section.data.get('submission')
           && section.data.get('revision')) {
           var authorg = section.data.get('authorg');
-          var submissionHash = section.data.get('submission');
+          var submissionIndex = section.data.get('submission');
           var revisionHash = section.data.get('revision');
           var index = section.data.get('index');
         
-          var refKey = {authorg:authorg, subHash:submissionHash, revHash:revisionHash}
-          var refMapSetKey = authorg + "-" + submissionHash + "-" + revisionHash;
+          var refKey = {authorg:authorg, subHash:submissionIndex, revHash:revisionHash}
+          var refMapSetKey = authorg + "-" + submissionIndex + "-" + revisionHash;
           if (!referenceKeyMapSet.get(refMapSetKey)) {
             referenceKeyMapSet.set(refMapSetKey, true);
             referenceKeyAuthorgs.push(authorg);
-            referenceKeySubmissions.push(submissionHash);
+            referenceKeySubmissions.push(submissionIndex);
             referenceKeyRevisions.push(revisionHash);
           }      
         }
       } catch (e) {
         console.error("error when posting: " + e);
+        onFailure();
       }
     })
 
     
     var postJson = {"authorg" : account, "text" : postTextInput}
-    //console.warn("lets put on swarm: " + JSON.stringify(postJson));
-    console.warn("referenceKeyAuthorgs: " + referenceKeyAuthorgs)
-    return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3, revisionSubmissionHash).then(function(resulty) {
+    return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3, revisionsubmissionIndex).then(function(resulty) {
       var hasReloaded = false;
-      var update = function(revisionSubmissionHash = undefined) {
-        if (revisionSubmissionHash) {
+      var update = function(revisionsubmissionIndex = undefined) {
+        if (revisionsubmissionIndex) {
           console.log("load revised post.")
-          dispatch(doFocusedLoad(account, revisionSubmissionHash, resulty.revHash, undefined, true, true))
+          dispatch(doFocusedLoad(account, revisionsubmissionIndex, resulty.revHash, undefined, true, true))
         } else {
           console.log("initialize needed posts")
           dispatch(doFocusedLoad(account, resulty.subHash, resulty.revHash, undefined, true, true))
         }
         hasReloaded = true;
+        onComplete();
       };
       resulty.submissionEvent.watch(function(error,result){
         if (!error && result.transactionHash === resulty.tx_id) {
@@ -167,27 +176,28 @@ export const submitNewRevision = (postTextInput, revisionSubmissionHash = undefi
       }, 3000)
     }).catch(function(e) {
       console.error("error - " + e);
+      onFailure();
     });
   }
 };
 
-export const submitReaction = (authorg, submissionHash, revisionHash, reaction) => (dispatch, getState) => {
+export const submitReaction = (authorg, submissionIndex, revisionHash, reaction) => (dispatch, getState) => {
   const {wallet, approvedReactions} = getState().core;
   const account = wallet.get('account');
   if (!account) {
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
-    return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(resulty) {
+    return addReaction(account, authorg, submissionIndex, revisionHash, reaction).then(function(resulty) {
       var hasReloaded = false;
       resulty.reactionEvent.watch(function(error,result){
         if (!error && result.transactionHash === resulty.tx_id) {
-          dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions));
+          dispatch(getReactions(authorg, submissionIndex, revisionHash, approvedReactions));
           hasReloaded = true;
         }
       });
       setTimeout(function() {
         if (!hasReloaded) {
-          dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions));
+          dispatch(getReactions(authorg, submissionIndex, revisionHash, approvedReactions));
         }
       }, 3000);
     }).catch(function(e) {

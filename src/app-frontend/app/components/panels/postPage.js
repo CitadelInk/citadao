@@ -125,12 +125,15 @@ class PostPage extends Component {
 			<div className={styles.page}>
 				<div className={styles.compose}>
 					<ComposePanel 
-						standardPostValue={this.props.standardPostValue}
-						standardPostCallback={this.props.standardPostCallback}
-						bioPostValue={this.props.bioPostValue}
-						bioPostCallback={this.props.bioPostCallback}
-						revisionPostValue={this.props.revisionPostValue}
-						revisionPostCallback={this.props.revisionPostCallback}
+					standardPostValue={this.props.standardPostValue}
+					standardPostCallback={this.props.standardPostCallback}
+					onStandardPostComplete={this.props.onStandardPostComplete}
+					bioPostValue={this.props.bioPostValue}
+					bioPostCallback={this.props.bioPostCallback}
+					onBioPostComplete={this.props.onBioPostComplete}
+					revisionPostValue={this.props.revisionPostValue}
+					revisionPostCallback={this.props.revisionPostCallback}
+					onRevisionPostComplete={this.props.onRevisionPostComplete}
 					/>
 				</div>
 				<div className={styles.postContainer}>

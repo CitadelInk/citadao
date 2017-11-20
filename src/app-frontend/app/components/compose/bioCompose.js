@@ -50,6 +50,7 @@ class BioCompose extends Component {
 					<ComposeRichText 
 						value={this.props.value}
                   		callback={this.props.callback}
+					  onPostComplete={this.props.onPostComplete}
 					  	bio={true} 
 						height={height} />
 				</div>

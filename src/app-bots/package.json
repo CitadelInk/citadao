@@ -18,7 +18,7 @@
     "webpack-dev-server": "^2.9.2"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.js --server localhost",
     "build": "cross-os buildInternal",
     "buildInternal": {
       "darwin": "rm -rf public/** && webpack --progress",
@@ -32,6 +32,7 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "is-url": "^1.2.2",
+    "optimist": "^0.6.1",
     "twit": "^2.2.9",
     "web3": "0.19.0"
   }

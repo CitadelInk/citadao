@@ -98,7 +98,7 @@ class PostSection extends Component {
 							authorgAvatar={this.props.authorgAvatar} 
 							sectionResponses={this.props.sectionResponses} 
 							authorg={this.props.authorg} 
-							submissionHash={this.props.submissionHash} 
+							submissionIndex={this.props.submissionIndex} 
 							revisionHash={this.props.revisionHash} 
 							sectionIndex={this.props.sectionIndex} />);
 		
@@ -118,7 +118,7 @@ class PostSection extends Component {
 			var referenceJson = {
 				"reference" : {
 					"authorg" : this.props.authorg,
-					"submissionHash" : this.props.submissionHash,
+					"submissionIndex" : this.props.submissionIndex,
 					"revisionHash" : this.props.revisionHash,
 					"sectionIndex" : this.props.sectionIndex,
 					"text" : this.props.section,

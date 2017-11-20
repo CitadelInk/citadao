@@ -47,6 +47,7 @@ class ReviseSubmissionCompose extends Component {
 				<ComposeRichText 
 					value={this.props.value}
                   	callback={this.props.callback}
+					onPostComplete={this.props.onPostComplete}
 					height={height} 
 					submission={this.props.submission}
 				/>
