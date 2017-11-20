@@ -1,6 +1,4 @@
 language: node_js
-node_js:
-- '8'
 services:
 - docker
 branches:
@@ -9,14 +7,26 @@ branches:
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH="$HOME/.yarn/bin:$PATH"
-script: yarn install && cd src/app-frontend && yarn install && yarn build
 env:
   global:
-  - DOCKER_IMAGE_NAME=aspiering/frontend
   - COMMIT=${TRAVIS_COMMIT::8}
   - secure: TAAwDLJygIZJx8no4zzIOlHZgcCcv1zshuoUirtwCemL4JR2+zj8LZc2pvdh0oX7tmrkXhyXqEEsGjAUcHvFpE6EqaxnQDZhrFI8bkmAukxbkMuQjrfxH6J0fvM9uNnfmp/CHkNLYDmNu3SBUnXkYhztfhub1oyqzxGtBjto/huHlfwt5z42YU24zGCzBj4WueizsDGWtQKtVGOLQ0hoR4kRi1bvL6gzJJBlSRYQ0JbGi7Xy0eaqWgCQzxDDTdtonc9GLGCq0KBBo2cpmNUeQr3Z5VULaGrh0qPjUFqh7tqM3+MSVw56oHwWpKmMgx7eovsadsZRNedCeLOI/WNYgp4hhu3OwpyAf8rqkOqNdaKNZfjDePVrJj9rApHOKnvjMYpt0IYj+G51sZzvwnpaGPdcXHOqu4lrF7U1PlgRaFX9TK6hKn56JktU45+orpqapvOy+70+YqbmUU2kip1IEi8pnyVyvcTFua5rhGKi/miwGYatBg/nliN2bbCjrkX70pRJjOPI2ZzOS1K2pXxxfReNggkxZCh6kHHQpYW7GQHA3UxtPv71Qz7j4If3MCwP5zB4G94YupSPhQ/FsenHIUPqrKwyVhzQkZRqG+MvUhY/EFDvnYn4RbUl4FKpdHWFWsacw3QBGSUKtLPB8FDWFZKRDWo25tM8frRZgmUpBf8=
   - secure: vHlaNqVkgSo4ZfDnvnfYJ+d13Rp5fpveeAtxZd6mrlGmbIcH0ifW7yr+zUvBw0ldRc6NRk9FFk1gsCSJTBSQigHFXg4iFSHklicm8nskGvfYBGOFIY6/dZ9XtyvtGvwz/Au6BbjDQmZcbXeLN0X42i0+jESbrLZSahrDkgMDLsYbiHRc19W3QpcVR6jKKsmLahp44JcXlg6SKKTMGCfDUDazYi90jhPFztXqM7Rf0g01enGED8aVb9WVeZR3UQVI6FrsA74rpR098cx30X0hi9jXsLFi8IjlDvgqupX0QnA2xUCeeVBMfZRtrr7Qu3bNRKJ/V1hvh+EoQerbdQVG7AFXrLcDHQulzxsRkT39RtijFBkS1aoNOTrqm2DLx5NGc0g3/JX7mnRFgH9J9YKyRfX4/sWze+KX33ICzJ5np+kDCoyrD9pJjCWJCzzXRjvX3pQ36fFlYGEVodWOIYQ6xSpaU7tnAFjG202MqBY1pZ0S2w+vu4MhH/RNvWPu3BPoz6l/4Nl+T70aQGV+ImNJDnSUMlnhjXYg4sgGbLpuJFZfBIyJP32A3l5tgrTa9/yjlQJ53w/JtGoWUy7JF/dz2m6UCAoFA2A2iT60IOcrYEEKgayC706VRdgXWqCI0qVeMWGUK+Anoam6liH9Uq8R/rgz49pAZ56fzrBADu6yWwc=
   - secure: I0pkLsqO+2a3c699N+aR6Zb7RiZxw40hpwEZ5Gc2TIBZFqauXq8rUEL3BLIbvudp2kpymKSMbX+fFv4PseB4ZP0CSI8t7De6g1dAahlry4OD7MTEd7LwzCk4W9I3RxQJW1Nc6Bc0WXrf6RItK1yALJyTe2hUQGXb5bVczYur2ueFzke/sDSgDKVObi77tFBLhI05S99VaAcfVQVd9AY1uwTPQ8b4YHwe81+sGde7Hfg3jv+kKiImlbIs/izzH/WHYK6klaILWxJnUrCTDE+W5ZWN/pj+8BgqMmUD4t3RQpHEnXdpr4k96WIVjJwj+7Q5RkzNlds0kUcBmCH9y7YQj2kKzAj48FnVfmqx/Ci3mlJe5dGLlxLUMP+KbPg8osdEPnuSO73q/VvzGZVJEa2452f76u7zIP16mfTj9ruzQ/OVFQusg6ESpwCrZtkEepXGvAeWjHIxze6wDWd5cP/2Xf2G+Xfu7aZB8JOcOlI/ECM4gcjMqUE7gQuFJnGmcSBg/qqspHR+F0j/NUsNIVpzkyanu5uabqG2aMZb2SgNpARYIUuf1R0B20Zkr6l+VbYWZMgg9WkLLlhR2aWlhZNzPKv+uwJ6yVwe92PuKKQ7FnKSnjeXvJ8fDpnOgrKpjI4qeFTTeeQwmKbVv2CQSId9+m+AERi7U0btp5x7qh9xJfQ=
+
+matrix:
+  include:
+    - node_js: 8
+      env:
+       - APP=src/app-frontend
+       - DOCKER_IMAGE_NAME=citadelink/frontend
+    - node_js: 8
+      env:
+       - APP=src/app-bots
+       - DOCKER_IMAGE_NAME=citadelink/bot
+
+script: yarn install && cd $APP && yarn install && yarn build
+
 notifications:
   slack: citadao:UWnLglAmQzx84RH67yRvaDQd
 after_success:

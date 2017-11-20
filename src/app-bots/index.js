@@ -13,7 +13,7 @@ web3Provider.eth.getAccounts((error, accounts) => {
   if (error) {
     console.error(error);
   } else if (accounts) {
-    for(i = 0; i < config.bots.length; i++) { 
+    for(var i = 0; i < config.bots.length; i++) { 
       var r = new RepostBot(accounts[config.bots[i].ethAccountIndex], config.bots[i].twitterUsername, config.bots[i].twitterAvatarFilename, config.bots[i].avatarDataPrefix, web3Provider, appContracts);
     }    
   }

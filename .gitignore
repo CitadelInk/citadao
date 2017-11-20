@@ -2,5 +2,6 @@ node_modules
 build
 src/app-frontend/app/config.json
 src/app-frontend/public
+src/app-bots/public
 src/app-bots/bots/botsPersistence
 yarn-error.log
