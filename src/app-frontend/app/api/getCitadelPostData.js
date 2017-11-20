@@ -1,13 +1,13 @@
 import appContracts from 'app-contracts'
 
 
-export const getRevisionReactions = (authorgAddress, revisionHash, submissionHash, reactions) => {
+export const getRevisionReactions = (authorgAddress, revisionHash, submissionIndex, reactions) => {
   var t0 = performance.now();
   var keys =  Array.from(reactions.keys());
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed().then((instance) => {
       var revisionReactionReactorPromisess = keys.map(function(entry) {
-        return instance.getReactorsForAuthorgRevisionReaction(authorgAddress, revisionHash, submissionHash, entry).then((result) => {
+        return instance.getReactorsForAuthorgRevisionReaction(authorgAddress, revisionHash, submissionIndex, entry).then((result) => {
           return {reactionHash : entry, reactionReactors : result[0], reactionReactorsTimestamps : result[1]};
         })
       })

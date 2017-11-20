@@ -1,6 +1,5 @@
 
 import { Editor, getEventTransfer } from 'slate-react';
-import Html from 'slate-html-serializer';
 import InsertImages from './plugins/dragAndDropImages/'
 import { Value, Block } from 'slate';
 
@@ -14,6 +13,7 @@ import styles from './composeRichText.css';
 import classNames from 'classnames/bind';
 import PasteLinkify from 'slate-paste-linkify';
 import PasteRef from './plugins/pasteRef';
+import PasteHtml from './plugins/pasteHtml';
 import Post from '../post/post';
 
 const {
@@ -26,120 +26,6 @@ const {
 let cx = classNames.bind(styles);
 
 
-/**
- * Tags to blocks.
- *
- * @type {Object}
- */
-const BLOCK_TAGS = {
-  p: 'paragraph',
-  li: 'list-item',
-  ul: 'bulleted-list',
-  ol: 'numbered-list',
-  blockquote: 'block-quote',
-  pre: 'code',
-  h1: 'heading-one',
-  h2: 'heading-two',
-  h3: 'heading-two',
-  h4: 'heading-two',
-  h5: 'heading-two',
-  h6: 'heading-two'
-}
-
-/**
- * Tags to marks.
- *
- * @type {Object}
- */
-const MARK_TAGS = {
-  strong: 'bold',
-  em: 'italic',
-  u: 'underline',
-  s: 'strikethrough',
-  code: 'code'
-}
-
-/**
- * Serializer rules.
- *
- * @type {Array}
- */
-const RULES = [
-  {
-    deserialize(el, next) {
-      const block = BLOCK_TAGS[el.tagName.toLowerCase()]
-      if (!block) return
-      return {
-        kind: 'block',
-        type: block,
-        nodes: next(el.childNodes)
-      }
-    }
-  },
-  {
-    deserialize(el, next) {
-      const mark = MARK_TAGS[el.tagName.toLowerCase()]
-      if (!mark) return
-      return {
-        kind: 'mark',
-        type: mark,
-        nodes: next(el.childNodes)
-      }
-    }
-  },
-  {
-    // Special case for code blocks, which need to grab the nested childNodes.
-    deserialize(el, next) {
-      if (el.tagName.toLowerCase() != 'pre') return
-      const code = el.childNodes[0]
-      const childNodes = code && code.tagName.toLowerCase() == 'code'
-        ? code.childNodes
-        : el.childNodes
-
-      return {
-        kind: 'block',
-        type: 'code',
-        nodes: next(childNodes)
-      }
-    }
-  },
-  {
-    // Special case for images, to grab their src.
-    deserialize(el, next) {
-      if (el.tagName.toLowerCase() != 'img') return
-      return {
-        kind: 'block',
-        type: 'image',
-        isVoid: true,
-        nodes: next(el.childNodes),
-        data: {
-          src: el.getAttribute('src')
-        }
-      }
-    }
-  },
-  {
-    // Special case for links, to grab their href.
-    deserialize(el, next) {
-      if (el.tagName.toLowerCase() != 'a') return
-      return {
-        kind: 'inline',
-        type: 'link',
-        nodes: next(el.childNodes),
-        data: {
-          href: el.getAttribute('href')
-        }
-      }
-    }
-  }
-]
-
-/**
- * Create a new HTML serializer with `RULES`.
- *
- * @type {Html}
- */
-const serializer = new Html({ rules: RULES })
 
 // Add the plugin to your set of plugins...
 const plugins = [
@@ -167,7 +53,8 @@ const plugins = [
     type: 'link',
     hrefProperty: 'url',
     collapseTo: 'end'
-  })  
+  }),
+  PasteHtml()  
 ]
 
 /**
@@ -237,6 +124,15 @@ const isCodeHotkey = isKeyHotkey('mod+`')
 
 class ComposeRichText extends React.Component {
 
+
+  constructor(props) {
+    console.log("constructor.")
+    super(props);
+    this.state = {
+      buttonEnabled : true
+    }
+  }
+
   /**
    * Check if the current selection has a mark with `type` in it.
    *
@@ -300,21 +196,6 @@ class ComposeRichText extends React.Component {
 
     event.preventDefault()
     change.toggleMark(mark)
-    return true
-  }
-
-  /**
-   * On paste, deserialize the HTML and then insert the fragment.
-   *
-   * @param {Event} event
-   * @param {Change} change
-   */
-  onPaste = (event, change) => {
-    console.log("onPaste.")
-    const transfer = getEventTransfer(event)
-    if (transfer.type != 'html') return
-    const { document } = serializer.deserialize(transfer.html)
-    change.insertFragment(document)
     return true
   }
 
@@ -417,6 +298,7 @@ class ComposeRichText extends React.Component {
       menu: true,
       toolbarMenu:true
     })
+
     return (
       <div className={styles.toolbarContainer}>
         <div className={classNames}>
@@ -445,24 +327,36 @@ class ComposeRichText extends React.Component {
     } else if (this.props.submission) {
       btnText = "Revise Post";
     }
-	  return (<RaisedButton primary className={styles.raisedButton} onClick={this.handleSubmitPost} label={btnText}/>);
+    if (this.state.buttonEnabled) {
+      return (<RaisedButton primary className={styles.raisedButton} onClick={this.handleSubmitPost} label={btnText}/>);
+    } else {
+      return (<RaisedButton disabled className={styles.raisedButton} onClick={this.handleSubmitPost} label={btnText}/>);
+    }
   }
 
 
 	handleSubmitPost = (e) => {
     const input = this.props.value;
+    this.setState({buttonEnabled : false})
     if(input) {
-      console.log("input: " + input);
-      console.log(JSON.stringify(input));
       if(this.props.bio) {
-        this.props.dispatch(submitBio(input));
+        this.props.dispatch(submitBio(input, this.handlePostComplete, this.handlePostFailure));
       } else if(this.props.submission) {
-        this.props.dispatch(submitRevision(input, this.props.submission));
+        this.props.dispatch(submitRevision(input, this.props.submission, this.handlePostComplete, this.handlePostFailure));
       } else { 
-        this.props.dispatch(submitPost(input));
+        this.props.dispatch(submitPost(input, this.handlePostComplete, this.handlePostFailure));
       }
     }
-	}
+  }
+
+  handlePostFailure = () => {
+    this.setState({buttonEnabled : true})
+  }
+
+  handlePostComplete = () => {
+    this.setState({buttonEnabled : true})
+    this.props.onPostComplete();
+  }
 
   /**
    * Render a mark-toggling toolbar button.
@@ -530,7 +424,6 @@ class ComposeRichText extends React.Component {
             plugins={plugins}
             value={this.props.value}
             onChange={this.onChange}
-            onPaste={this.onPaste}
             onKeyDown={this.onKeyDown}
             renderNode={this.renderNode}
             renderMark={this.renderMark}
@@ -557,10 +450,10 @@ class ComposeRichText extends React.Component {
   renderNode = (props) => {
     const { attributes, children, node } = props
     switch (node.type) {
-      case 'block-quote': return <blockquote {...attributes}>{children}</blockquote>
+      case 'block-quote': return <blockquote className={styles.blockquote} {...attributes}>{children}</blockquote>
       case 'bulleted-list': return <ul {...attributes}>{children}</ul>
-      case 'heading-one': return <h1 {...attributes}>{children}</h1>
-      case 'heading-two': return <h2 {...attributes}>{children}</h2>
+      case 'heading-one': return <h1 className={styles.h1} {...attributes}>{children}</h1>
+      case 'heading-two': return <h2 className={styles.h2} {...attributes}>{children}</h2>
       case 'list-item': return <li {...attributes}>{children}</li>
       case 'numbered-list': return <ol {...attributes}>{children}</ol>
       case 'image': {
@@ -588,6 +481,11 @@ class ComposeRichText extends React.Component {
             timestamp={props.node.data.get('timestamp')}
             revisionHashes={props.node.data.get('revHashes')}/>
           </div>
+        )
+      }
+      case 'paragraph': {
+        return (
+          <p className={styles.p} {...attributes}>{children}</p>
         )
       }
     }

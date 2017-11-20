@@ -1,47 +1,75 @@
 pragma solidity ^0.4.13;
 
 contract AbstractInk {
-    function doesPostReferencePost(address postUserAddress, address originalPostUserAddress, bytes32 originalPostSubmissionHash, bytes32 originalPostRevisionHash) constant returns (bool isPostRef);
+    function doesPostReferencePost(address postUserAddress, 
+                                    address originalPostUserAddress, 
+                                    uint originalPostsubmissionIndex, 
+                                    bytes32 originalPostRevisionHash) public constant returns (bool isPostRef);
 }
 
 contract CitadelResponseRequest {
 
-    event ResponseRequestCreated(address indexed _offererUser, address indexed _recipientUser, address _postUser, bytes32 _postSumission, bytes32 _postRevision);
-    event PostResponseRequestCreated(address indexed _postUser, bytes32 indexed _postSumission, bytes32 indexed _postRevision, address _offererUser, address _recipientUser);
+    event ResponseRequestCreated(address indexed _offererUser, 
+                                address indexed _recipientUser, 
+                                address _postUser, 
+                                uint _postSumission, 
+                                bytes32 _postRevision);
 
-    event ResponseRequestBountyCollected(address indexed _offererUser, address indexed _recipientUser, address _postUser, bytes32 _postSumission, bytes32 _postRevision);
-    event PostResponseRequestBountyCollected(address indexed _postUser, bytes32 indexed _postSumission, bytes32 indexed _postRevision, address _offererUser, address _recipientUser);
+    event PostResponseRequestCreated(address indexed _postUser, 
+                                    uint indexed _postSumission, 
+                                    bytes32 indexed _postRevision, 
+                                    address _offererUser, 
+                                    address _recipientUser);
 
-    event ResponseRequestBountyRefunded(address indexed _offererUser, address indexed _recipientUser, address _postUser, bytes32 _postSumission, bytes32 _postRevision);
-    event PostResponseRequestBountyRefunded(address indexed _postUser, bytes32 indexed _postSumission, bytes32 indexed _postRevision, address _offererUser, address _recipientUser);
+    event ResponseRequestBountyCollected(address indexed _offererUser, 
+                                        address indexed _recipientUser, 
+                                        address _postUser, 
+                                        uint _postSumission, 
+                                        bytes32 _postRevision);
+
+    event PostResponseRequestBountyCollected(address indexed _postUser, 
+                                            uint indexed _postSumission, 
+                                            bytes32 indexed _postRevision, 
+                                            address _offererUser, 
+                                            address _recipientUser);
+
+    event ResponseRequestBountyRefunded(address indexed _offererUser, 
+                                        address indexed _recipientUser, 
+                                        address _postUser, 
+                                        uint _postSumission, 
+                                        bytes32 _postRevision);
+
+    event PostResponseRequestBountyRefunded(address indexed _postUser, 
+                                            uint indexed _postSumission, 
+                                            bytes32 indexed _postRevision, 
+                                            address _offererUser, 
+                                            address _recipientUser);
 
 
     address public ink_address;
-    //uint bounty_fee;
 
     uint bounty_open_length_in_minutes;
 
-    function CitadelResponseRequest(address ink, uint bountyOpenLengthInMinutes/*, uint bountyFee*/) {
+    function CitadelResponseRequest(address ink, uint bountyOpenLengthInMinutes) public {
         ink_address = ink;
         bounty_open_length_in_minutes = bountyOpenLengthInMinutes;
-        //bounty_fee = bountyFee;
     }
 
     // and some reaction stuff  
     struct InkAuthorgExtension {
-        mapping(bytes32 => InkSubmissionExtension) submissions;
+        mapping(uint => InkSubmissionExtension) submissions;
 
         // these 4 will always have the same length. the 4 elements at each index function as a key to find response requests offered
         address[] responseRequestsOfferedToUsers;
         address[] responseRequestsOfferedToUsersPostUsers;
-        bytes32[] responseRequestsOfferedToUsersPostSubmissions;
+        uint[] responseRequestsOfferedToUsersPostSubmissions;
         bytes32[] responseRequestsOfferedToUsersPostRevisions;
 
 
         // these 4 will always have the same length. the 4 elements at each index function as a key to find response requests received
         address[] responseRequestsReceivedFromUsers;
         address[] responseRequestsReceivedFromUsersPostUsers;
-        bytes32[] responseRequestsReceivedFromUsersPostSubmissions;
+        uint[] responseRequestsReceivedFromUsersPostSubmissions;
         bytes32[] responseRequestsReceivedFromUsersPostRevisions;
     } 
 
@@ -50,7 +78,6 @@ contract CitadelResponseRequest {
     }
 
     struct InkRevisionExtension {
-        //ResponseRequest[] responseRequestsOnPost;
         mapping(address => mapping(address => ResponseRequestReceipt)) userToResponderToRequestReceipt;
         address[] responseRequestOffererUsers;
         address[] responseRequestRecipientUsers;
@@ -58,11 +85,6 @@ contract CitadelResponseRequest {
 
     struct ResponseRequestReceipt {
         bool exists;
-        /*address requestingUserAddress;
-        address respondingUserAddress;
-        address postUserAddress;
-        bytes32 postSubmissionHash;
-        bytes32 postRevisionHash;*/
         uint timestampCreated;
         uint bounty;
         bool hasBeenCollected;
@@ -76,7 +98,7 @@ contract CitadelResponseRequest {
     
     function submitResponseRequest(address userToRespond, 
                                     address postUser, 
-                                    bytes32 postSubmission, 
+                                    uint postSubmission, 
                                     bytes32 postRevision) 
     public payable 
     {
@@ -127,15 +149,15 @@ contract CitadelResponseRequest {
        PostResponseRequestCreated(postUser, postSubmission, postRevision, msg.sender, userToRespond);
     }
 
-    function getInkAddress() constant returns (address) {
+    function getInkAddress() public constant returns (address) {
         return ink_address;
     }
 
-    function doesUserReferencePost(address user, address postUser, bytes32 postSubmission, bytes32 postRevision) constant returns (bool) {
+    function doesUserReferencePost(address user, address postUser, uint postSubmission, bytes32 postRevision) public constant returns (bool) {
         return AbstractInk(ink_address).doesPostReferencePost(user, postUser, postSubmission, postRevision);
     }
 
-    function collectResponseRequestBounty(address offerUser, address postUser, bytes32 postSubmission, bytes32 postRevision) {
+    function collectResponseRequestBounty(address offerUser, address postUser, uint postSubmission, bytes32 postRevision) public {
 
         var receipt = authorgExtensionMap[postUser]
             .submissions[postSubmission]
@@ -162,7 +184,7 @@ contract CitadelResponseRequest {
         PostResponseRequestBountyCollected(postUser, postSubmission, postRevision, offerUser, msg.sender);
     }
 
-    function refundResponseRequestBounty(address recipientUser, address postUser, bytes32 postSubmission, bytes32 postRevision) {
+    function refundResponseRequestBounty(address recipientUser, address postUser, uint postSubmission, bytes32 postRevision) public {
 
         var receipt = authorgExtensionMap[postUser]
             .submissions[postSubmission]
@@ -192,30 +214,42 @@ contract CitadelResponseRequest {
         return authorgExtensionMap[postUser].submissions[postSubmission].revisions[postRevision].userToResponseRequestOfferer[offerUser].exists;
     }*/
 
-    function getUserBountiesCreated(address user) constant returns (address[] recipientUsers, address[] postUsers, bytes32[] postSubmissions, bytes32[] postRevisions) {
+    function getUserBountiesCreated(address user) 
+        public constant returns (address[] recipientUsers, address[] postUsers, uint[] postSubmissions, bytes32[] postRevisions) {
         recipientUsers = authorgExtensionMap[user].responseRequestsOfferedToUsers;
         postUsers = authorgExtensionMap[user].responseRequestsOfferedToUsersPostUsers;
         postSubmissions = authorgExtensionMap[user].responseRequestsOfferedToUsersPostSubmissions;
         postRevisions = authorgExtensionMap[user].responseRequestsOfferedToUsersPostRevisions;
     }
 
-    function getUserBountiesReceived(address user) constant returns (address[] offererUsers, address[] postUsers, bytes32[] postSubmissions, bytes32[] postRevisions) {
+    function getUserBountiesReceived(address user) 
+        public constant returns (address[] offererUsers, address[] postUsers, uint[] postSubmissions, bytes32[] postRevisions) {
         offererUsers = authorgExtensionMap[user].responseRequestsReceivedFromUsers;
         postUsers = authorgExtensionMap[user].responseRequestsReceivedFromUsersPostUsers;
         postSubmissions = authorgExtensionMap[user].responseRequestsReceivedFromUsersPostSubmissions;
         postRevisions = authorgExtensionMap[user].responseRequestsReceivedFromUsersPostRevisions;
     }
 
-    function hasUserMadeOfferOnPostToUser(address offerUser, address recipientUser, address postUser, bytes32 postSubmission, bytes32 postRevision) constant returns (bool) {
+    function hasUserMadeOfferOnPostToUser(address offerUser, 
+                                            address recipientUser, 
+                                            address postUser, 
+                                            uint postSubmission, 
+                                            bytes32 postRevision) 
+                                            public constant returns (bool) {
         return authorgExtensionMap[postUser].submissions[postSubmission].revisions[postRevision].userToResponderToRequestReceipt[offerUser][recipientUser].exists;
     }
 
-    function hasUserCollectedBounty(address recipientUser, address offerUser, address postUser, bytes32 postSubmission, bytes32 postRevision) constant returns (bool) {
+    function hasUserCollectedBounty(address recipientUser, 
+                                    address offerUser, 
+                                    address postUser, 
+                                    uint postSubmission, 
+                                    bytes32 postRevision) 
+                                    public constant returns (bool) {
         return authorgExtensionMap[postUser].submissions[postSubmission].revisions[postRevision].userToResponderToRequestReceipt[offerUser][recipientUser].hasBeenCollected;
     }
 
 
-    function getOffererRecipientKeysForPost(address postUser, bytes32 postSubmission, bytes32 postRevision) constant returns (address[] offerers, address[] recipients) {
+    function getOffererRecipientKeysForPost(address postUser, uint postSubmission, bytes32 postRevision) public constant returns (address[] offerers, address[] recipients) {
         offerers = authorgExtensionMap[postUser]
             .submissions[postSubmission]
             .revisions[postRevision]
@@ -227,8 +261,8 @@ contract CitadelResponseRequest {
             .responseRequestRecipientUsers;
     }
 
-    function getReceipt(address postUser, bytes32 postSubmission, bytes32 postRevision, address offererUser, address recipientUser) 
-    constant returns (bool exists, uint timestamp, uint bounty, bool collected, bool referenced, bool refunded)
+    function getReceipt(address postUser, uint postSubmission, bytes32 postRevision, address offererUser, address recipientUser) 
+    public constant returns (bool exists, uint timestamp, uint bounty, bool collected, bool referenced, bool refunded)
     {
         var receipt = authorgExtensionMap[postUser]
             .submissions[postSubmission]

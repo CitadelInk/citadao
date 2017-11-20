@@ -22,7 +22,7 @@ export const getPostKey = (index) => {
       instance.getAuthSubRevKey(index).then((results) => {
         var t1 = performance.now();
         console.debug("getPostKey took " + (t1 - t0) + " milliseconds.")
-        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
+        res({authorgAddress : results[0], submissionIndex : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
       })
     })
   })
@@ -47,7 +47,7 @@ export const getAuthorgPostKey = (account, index) => {
       instance.getAuthorgPostKey(account, index).then((results) => {
         var t1 = performance.now();
         console.debug("getAuthorgPostKey took " + (t1 - t0) + " milliseconds.")
-        res({authorgAddress : results[0], submissionHash : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
+        res({authorgAddress : results[0], submissionIndex : results[1], revisionHash : results[2], index : index, timestamp : results[3]});
       })
     })
   })
@@ -169,11 +169,11 @@ export const getRevisionFromSwarm = (revisionHash, web3) => {
   })
 }
 
-export const getNumReferences = (authorgAddress, submissionHash, revisionHash) => {
+export const getNumReferences = (authorgAddress, submissionIndex, revisionHash) => {
   return new Promise((res, rej) => {
     var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
-      instance.getNumberReferencesForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash).then((count) => {
+      instance.getNumberReferencesForAuthorgSubmissionRevision(authorgAddress, submissionIndex, revisionHash).then((count) => {
         var t1 = performance.now();
         console.debug("getNumReferences took " + (t1 - t0) + " milliseconds.")
         res({count : count})
@@ -182,11 +182,11 @@ export const getNumReferences = (authorgAddress, submissionHash, revisionHash) =
   })
 }
 
-/*export const getAllReferences = (authorgAddress, submissionHash, revisionHash) => {
+/*export const getAllReferences = (authorgAddress, submissionIndex, revisionHash) => {
   var t0 = performance.now();
   return new Promise((res, rej) => {
     appContracts.Ink.deployed().then((instance) => {
-      instance.getAllReferencesForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash).then((result) => {
+      instance.getAllReferencesForAuthorgSubmissionRevision(authorgAddress, submissionIndex, revisionHash).then((result) => {
         var t1 = performance.now();
         console.log("getAllReferences took " + (t1 - t0) + " milliseconds.")
         console.log("getAllReferences result: " + result)
@@ -197,11 +197,11 @@ export const getNumReferences = (authorgAddress, submissionHash, revisionHash) =
   })
 }*/
 
-export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, index) => {
+export const getReferenceKey = (authorgAddress, submissionIndex, revisionHash, index) => {
   return new Promise((res, rej) => {
     var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
-      instance.getReferenceForAuthorgSubmissionRevision(authorgAddress, submissionHash, revisionHash, index).then((refKey) => {
+      instance.getReferenceForAuthorgSubmissionRevision(authorgAddress, submissionIndex, revisionHash, index).then((refKey) => {
         var t1 = performance.now();
         console.debug("getReferenceKey took " + (t1 - t0) + " milliseconds.")
         res({refAuthAdd : refKey[0], refSubHash : refKey[1], refRevHash : refKey[2], timestamp : refKey[3]})
@@ -210,11 +210,11 @@ export const getReferenceKey = (authorgAddress, submissionHash, revisionHash, in
   })
 }
 
-export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) => {
+export const getRevisionTime = (authorgAddress, submissionIndex, revisionHash) => {
   return new Promise((res, rej) => {
     var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
-      instance.getTimestampForRevision(authorgAddress, submissionHash, revisionHash).then((timestamp) => {
+      instance.getTimestampForRevision(authorgAddress, submissionIndex, revisionHash).then((timestamp) => {
         var t1 = performance.now();
         console.debug("getRevisionTime took " + (t1 - t0) + " milliseconds.")
         res({timestamp : timestamp})
@@ -223,11 +223,11 @@ export const getRevisionTime = (authorgAddress, submissionHash, revisionHash) =>
   })
 }
 
-export const getSubmissionRevisions = (authorgAddress, submissionHash) => {
+export const getSubmissionRevisions = (authorgAddress, submissionIndex) => {
   return new Promise((res, rej) => {
     var t0 = performance.now();
     appContracts.Ink.deployed().then((instance) => {
-      instance.getSubmissionRevisions(authorgAddress, submissionHash).then((revisionHashes) => {
+      instance.getSubmissionRevisions(authorgAddress, submissionIndex).then((revisionHashes) => {
         var t1 = performance.now();
         console.debug("getSubmissionRevisions took " + (t1 - t0) + " milliseconds.")
         res({revisionHashes : revisionHashes})

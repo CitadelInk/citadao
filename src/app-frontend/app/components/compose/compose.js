@@ -32,7 +32,8 @@ class Compose extends Component {
 				<UserWidget authorg={this.props.wallet.get('account')}/>
 				<ComposeRichText 				
 					value={this.props.value}
-                  	callback={this.props.callback}
+					  callback={this.props.callback}
+					  onPostComplete={this.props.onPostComplete}
 					height={height}
 				/>
 			</div>

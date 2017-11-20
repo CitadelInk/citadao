@@ -28,6 +28,9 @@ class App extends Component {
       this.onStandardPostChanged = this.onStandardPostChanged.bind(this);
       this.onBioPostChanged = this.onBioPostChanged.bind(this);
       this.onRevisionPostChanged = this.onRevisionPostChanged.bind(this);
+      this.onStandardPostComplete = this.onStandardPostComplete.bind(this);
+      this.onBioPostComplete = this.onBioPostComplete.bind(this);
+      this.onRevisionPostComplete = this.onRevisionPostComplete.bind(this);
   }
 
   onStandardPostChanged(value) {
@@ -40,6 +43,18 @@ class App extends Component {
 
   onRevisionPostChanged(value) {
     this.setState({revisionPost : value})
+  }
+
+  onStandardPostComplete() {
+    this.setState({standardPost : Value.fromJSON(initialState)});
+  }
+
+  onBioPostComplete() {
+    this.setState({standardPost : Value.fromJSON(initialState)});
+  }
+
+  onRevisionPostComplete() {
+    this.setState({standardPost : Value.fromJSON(initialState)});
   }
 
 
@@ -56,10 +71,13 @@ class App extends Component {
                 <Home 
                   standardPostValue={this.state.standardPost}
                   standardPostCallback={this.onStandardPostChanged}
+                  onStandardPostComplete={this.onStandardPostComplete}
                   bioPostValue={this.state.bioPost}
                   bioPostCallback={this.onBioPostChanged}
+                  onBioPostComplete={this.onBioPostComplete}
                   revisionPostValue={this.state.revisionPost}
                   revisionPostCallback={this.onRevisionPostChanged}
+                  onRevisionPostComplete={this.onRevisionPostComplete}
                 />
               </div>
             </Fragment>   
@@ -73,12 +91,15 @@ class App extends Component {
               <div>
                 <Header />         
                 <User 
-                  standardPostValue={this.state.standardPost}
-                  standardPostCallback={this.onStandardPostChanged}
-                  bioPostValue={this.state.bioPost}
-                  bioPostCallback={this.onBioPostChanged}
-                  revisionPostValue={this.state.revisionPost}
-                  revisionPostCallback={this.onRevisionPostChanged}
+                standardPostValue={this.state.standardPost}
+                standardPostCallback={this.onStandardPostChanged}
+                onStandardPostComplete={this.onStandardPostComplete}
+                bioPostValue={this.state.bioPost}
+                bioPostCallback={this.onBioPostChanged}
+                onBioPostComplete={this.onBioPostComplete}
+                revisionPostValue={this.state.revisionPost}
+                revisionPostCallback={this.onRevisionPostChanged}
+                onRevisionPostComplete={this.onRevisionPostComplete}
                 />
               </div>
             </Fragment>
@@ -86,12 +107,15 @@ class App extends Component {
               <div>
                 <Header />         
                 <User 
-                  standardPostValue={this.state.standardPost}
-                  standardPostCallback={this.onStandardPostChanged}
-                  bioPostValue={this.state.bioPost}
-                  bioPostCallback={this.onBioPostChanged}
-                  revisionPostValue={this.state.revisionPost}
-                  revisionPostCallback={this.onRevisionPostChanged}
+                standardPostValue={this.state.standardPost}
+                standardPostCallback={this.onStandardPostChanged}
+                onStandardPostComplete={this.onStandardPostComplete}
+                bioPostValue={this.state.bioPost}
+                bioPostCallback={this.onBioPostChanged}
+                onBioPostComplete={this.onBioPostComplete}
+                revisionPostValue={this.state.revisionPost}
+                revisionPostCallback={this.onRevisionPostChanged}
+                onRevisionPostComplete={this.onRevisionPostComplete}
                 />
               </div>
             </Fragment>
@@ -99,12 +123,15 @@ class App extends Component {
               <div>
                 <Header />
                 <PostPage 
-                  standardPostValue={this.state.standardPost}
-                  standardPostCallback={this.onStandardPostChanged}
-                  bioPostValue={this.state.bioPost}
-                  bioPostCallback={this.onBioPostChanged}
-                  revisionPostValue={this.state.revisionPost}
-                  revisionPostCallback={this.onRevisionPostChanged}
+                standardPostValue={this.state.standardPost}
+                standardPostCallback={this.onStandardPostChanged}
+                onStandardPostComplete={this.onStandardPostComplete}
+                bioPostValue={this.state.bioPost}
+                bioPostCallback={this.onBioPostChanged}
+                onBioPostComplete={this.onBioPostComplete}
+                revisionPostValue={this.state.revisionPost}
+                revisionPostCallback={this.onRevisionPostChanged}
+                onRevisionPostComplete={this.onRevisionPostComplete}
                 />          
               </div>
             </Fragment>

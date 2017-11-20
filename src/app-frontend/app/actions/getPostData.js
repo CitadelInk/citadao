@@ -34,10 +34,10 @@ import {
 } from './responseRequestActions'
 
 export const ADD_POST_KEY = "ADD_POST_KEY";
-export const addPostKey = (authorgAddress, submissionHash, revisionHash, timestamp) => {
+export const addPostKey = (authorgAddress, submissionIndex, revisionHash, timestamp) => {
   return {
     type: ADD_POST_KEY,
-    data: {authAdd : authorgAddress, submissionHash, revisionHash, timestamp}
+    data: {authAdd : authorgAddress, submissionIndex, revisionHash, timestamp}
   }
 }
 
@@ -77,7 +77,7 @@ export const SET_REFERENCE = "SET_REFERENCE";
 export const setReference = (authAdd, subHash, revHash, refAuthAdd, refSubHash, refRevHash, index) => {
   return {
     type: SET_REFERENCE,
-    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, index : index, refKey: {authAdd : refAuthAdd, submissionHash : refSubHash, revisionHash : refRevHash}}
+    data: {authAdd : authAdd, subHash : subHash, revHash : revHash, index : index, refKey: {authAdd : refAuthAdd, submissionIndex : refSubHash, revisionHash : refRevHash}}
   }
 }
 
@@ -124,7 +124,7 @@ export const SET_AUTH_SUB_REV_REF_KEY = "SET_AUTH_SUB_REV_REF_KEY";
 export const addAuthSubRevRefKey = (authAdd, subHash, revHash, refAuthAdd, refSubHash, refRevHash, timestamp) => {
   return {
     type: SET_AUTH_SUB_REV_REF_KEY,
-    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refKey: {authAdd : refAuthAdd, submissionHash : refSubHash, revisionHash : refRevHash, timestamp : timestamp}}
+    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refKey: {authAdd : refAuthAdd, submissionIndex : refSubHash, revisionHash : refRevHash, timestamp : timestamp}}
   }
 }
 
@@ -240,11 +240,11 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
   }
 }
 
-export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
+export const doBasicLoad = (authorgAddress, submissionIndex, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   const {network} = getState().core;
 
   return new Promise((res, rej) => {
-    getSubmissionRevisions(authorgAddress, submissionHash).then((revHashResult) => {
+    getSubmissionRevisions(authorgAddress, submissionIndex).then((revHashResult) => {
       var shouldContinue = true;
       var revisionHashes = revHashResult.revisionHashes;
       if (!focusedPost) {
@@ -307,7 +307,7 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
             
               var timePromise = [];
               if (!timestamp) {
-                timePromise.push(getRevisionTime(authorgAddress, submissionHash, revisionHash))
+                timePromise.push(getRevisionTime(authorgAddress, submissionIndex, revisionHash))
               }
               Promise.all(timePromise).then((time) => {
                 if (time && time.length > 0) {
@@ -324,7 +324,7 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
                   if (user) {  
                     var submissionsData = user.submissions;
                     if (submissionsData) {
-                      var submissionData = submissionsData[submissionHash];
+                      var submissionData = submissionsData[submissionIndex];
                       if (submissionData) {
                         var revisionsData = submissionData.revisions;
                         if (revisionsData) {
@@ -341,18 +341,18 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
 
                   if (!isTextSet || focusedPost) {
                     dispatch(setRevisionSwarmData(authorgAddress, 
-                      submissionHash, 
+                      submissionIndex, 
                       revisionHash, 
                       result.revisionSwarmTitle, 
                       document));
                   }
-                  dispatch(setRevisionTime(authorgAddress, submissionHash, revisionHash, timestamp));
+                  dispatch(setRevisionTime(authorgAddress, submissionIndex, revisionHash, timestamp));
                   references.forEach(function(ref) {
-                    dispatch(setReference(ref.refAuthorg, ref.refSubmission, ref.refRevision, authorgAddress, submissionHash, revisionHash, ref.index));
+                    dispatch(setReference(ref.refAuthorg, ref.refSubmission, ref.refRevision, authorgAddress, submissionIndex, revisionHash, ref.index));
                   })
                   if (results) {
                     results.forEach(function(promiseResult) {
-                      dispatch(addEmbededPostMapping(authorgAddress, submissionHash, revisionHash, promiseResult.postKey, {text : promiseResult.result.revisionSwarmText, name : promiseResult.userResult.name, avatar : promiseResult.userResult.avatar, timestamp : promiseResult.timestamp, revisionHashes : promiseResult.revisionHashes}))
+                      dispatch(addEmbededPostMapping(authorgAddress, submissionIndex, revisionHash, promiseResult.postKey, {text : promiseResult.result.revisionSwarmText, name : promiseResult.userResult.name, avatar : promiseResult.userResult.avatar, timestamp : promiseResult.timestamp, revisionHashes : promiseResult.revisionHashes}))
                     })
                   }
                   res({result, userResult, revisionHashes, references, timestamp})
@@ -366,16 +366,16 @@ export const doBasicLoad = (authorgAddress, submissionHash, revisionHash, timest
   })
 }
 
-export const doUpdateLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+export const doUpdateLoad = (authorgAddress, submissionIndex, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
   const {approvedReactions} = getState().core;
   var promiseList = [];
   return new Promise((res, rej) => {
     Promise.all([
-      dispatch(getReactions(authorgAddress, submissionHash, revisionHash, approvedReactions)),
-      dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionHash)),
-      getNumReferences(authorgAddress, submissionHash, revisionHash)
+      dispatch(getReactions(authorgAddress, submissionIndex, revisionHash, approvedReactions)),
+      dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionIndex)),
+      getNumReferences(authorgAddress, submissionIndex, revisionHash)
     ]).then((refs) => {
-      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionHash,revisionHash, refs[2].count));
+      dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionIndex,revisionHash, refs[2].count));
       res({count : refs.count});
     })
   })
@@ -383,8 +383,8 @@ export const doUpdateLoad = (authorgAddress, submissionHash, revisionHash, times
 
 var unfocusedLoadPromises = new Map();
 
-export const doUnfocusedLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
-  var key = authorgAddress +"-"+ submissionHash + "-" + revisionHash;
+export const doUnfocusedLoad = (authorgAddress, submissionIndex, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+  var key = authorgAddress +"-"+ submissionIndex + "-" + revisionHash;
   if (unfocusedLoadPromises.has(key)) {
     console.log("doUnfocusedLoad already in progress/complete.")
     return unfocusedLoadPromises.get(key);
@@ -392,8 +392,8 @@ export const doUnfocusedLoad = (authorgAddress, submissionHash, revisionHash, ti
   var promise = new Promise((res, rej) => {
 
     var promiseList = [];
-    promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, firstLevel)));
-    promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, firstLevel)));
+    promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionIndex, revisionHash, timestamp, firstLevel)));
+    promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionIndex, revisionHash, timestamp, firstLevel)));
 
     Promise.all(
      [...promiseList]
@@ -406,15 +406,15 @@ export const doUnfocusedLoad = (authorgAddress, submissionHash, revisionHash, ti
   return promise;
 }
 
-export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
+export const doDetailLoad = (authorgAddress, submissionIndex, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   return new Promise((res, rej) =>{
-    getNumReferences(authorgAddress, submissionHash, revisionHash).then((refs) => {
+    getNumReferences(authorgAddress, submissionIndex, revisionHash).then((refs) => {
       dispatch(setAuthSubRevReferenceCount(refs));
       var refPromises = [];
       for(var i = 0; i < refs.count; i++) {
-        refPromises.push(dispatch(asyncLoadRef(authorgAddress, submissionHash, revisionHash, i)));
+        refPromises.push(dispatch(asyncLoadRef(authorgAddress, submissionIndex, revisionHash, i)));
       }
-      Promise.all([...refPromises, dispatch(loadPostResponseRequests(authorgAddress, submissionHash, revisionHash))])
+      Promise.all([...refPromises, dispatch(loadPostResponseRequests(authorgAddress, submissionIndex, revisionHash))])
       .then(() => {
         console.log("doDetailLoad result.")
         res({done : true})
@@ -423,45 +423,45 @@ export const doDetailLoad = (authorgAddress, submissionHash, revisionHash, times
   }) 
 }
 
-export const doFocusedLoad = (authorgAddress, submissionHash, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
-  console.info("doFocusedLoad - user: " + authorgAddress + " - subHash: " + submissionHash + " - revHash: " + revisionHash);
-  dispatch(setFocusedPostLoadBegin(authorgAddress, submissionHash, revisionHash));
+export const doFocusedLoad = (authorgAddress, submissionIndex, revisionHash, timestamp = undefined, firstLevel = true) => (dispatch, getState) => {
+  console.info("doFocusedLoad - user: " + authorgAddress + " - subHash: " + submissionIndex + " - revHash: " + revisionHash);
+  dispatch(setFocusedPostLoadBegin(authorgAddress, submissionIndex, revisionHash));
   return new Promise((res, rej) => {
     var promiseList = [];
-    promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionHash, revisionHash, timestamp, true, true)));
-    promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)));
-    promiseList.push(dispatch(doDetailLoad(authorgAddress, submissionHash, revisionHash, timestamp, true)))
+    promiseList.push(dispatch(doBasicLoad(authorgAddress, submissionIndex, revisionHash, timestamp, true, true)));
+    promiseList.push(dispatch(doUpdateLoad(authorgAddress, submissionIndex, revisionHash, timestamp, true)));
+    promiseList.push(dispatch(doDetailLoad(authorgAddress, submissionIndex, revisionHash, timestamp, true)))
 
     Promise.all(
       promiseList
     ).then(() => {
-      dispatch(setFocusedPostLoadFinished(authorgAddress, submissionHash, revisionHash));
+      dispatch(setFocusedPostLoadFinished(authorgAddress, submissionIndex, revisionHash));
       res({done : true})
     })
   })
   
 }
 
-export const asyncLoadRef = (authorgAddress, submissionHash, revisionHash, index) => (dispatch) => {
+export const asyncLoadRef = (authorgAddress, submissionIndex, revisionHash, index) => (dispatch) => {
   return new Promise((res,rej) => {
-    getReferenceKey(authorgAddress, submissionHash, revisionHash, index).then((result) => {
+    getReferenceKey(authorgAddress, submissionIndex, revisionHash, index).then((result) => {
       dispatch(doUnfocusedLoad(result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp, true, false)).then(() => {
-        dispatch(addAuthSubRevRefKey(authorgAddress, submissionHash, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
+        dispatch(addAuthSubRevRefKey(authorgAddress, submissionIndex, revisionHash, result.refAuthAdd, result.refSubHash, result.refRevHash, result.timestamp))
         res({done:true})
       })
     })
   });
 }
 
-export const loadSubmissionRevisionHashList = (authorgAddress, submissionHash) => (dispatch) => {
-  return getSubmissionRevisions(authorgAddress, submissionHash).then((result) => {
-    dispatch(setRevisionHashes(authorgAddress, submissionHash, result.revisionHashes))
+export const loadSubmissionRevisionHashList = (authorgAddress, submissionIndex) => (dispatch) => {
+  return getSubmissionRevisions(authorgAddress, submissionIndex).then((result) => {
+    dispatch(setRevisionHashes(authorgAddress, submissionIndex, result.revisionHashes))
   })
 }
 
-export const getReactions = (authorgAddress, submissionHash, revisionHash, approvedReactions) => (dispatch) => {
-  return getRevisionReactions(authorgAddress, submissionHash, revisionHash, approvedReactions).then((reactions) => {
-    dispatch(setRevisionReactions(authorgAddress, submissionHash, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
+export const getReactions = (authorgAddress, submissionIndex, revisionHash, approvedReactions) => (dispatch) => {
+  return getRevisionReactions(authorgAddress, submissionIndex, revisionHash, approvedReactions).then((reactions) => {
+    dispatch(setRevisionReactions(authorgAddress, submissionIndex, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
   })
 }
 
@@ -570,8 +570,8 @@ export const getNext10AuthorgPosts = (account) => (dispatch, getState) => {
     for(var i = numPostsLoaded2; i < numPostsLoaded2 + 10 && i < totalPostCount; i++) {
       var index = totalPostCount - i - 1;
       getAuthorgPostKey(account, index).then((result) => {
-        dispatch(doUnfocusedLoad(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp)).then((result2) => {
-          dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));      
+        dispatch(doUnfocusedLoad(result.authorgAddress, result.submissionIndex, result.revisionHash, result.timestamp)).then((result2) => {
+          dispatch(addPostKey(result.authorgAddress, result.submissionIndex, result.revisionHash, result.timestamp));      
         });      
       })
       postsLoaded++;
@@ -604,9 +604,9 @@ export const loadPostByIndex = (index) => (dispatch) => {
   return new Promise((res, rej) => {
     getPostKey(index).then((result) => {
       currentlyLoadingPosts--;
-      dispatch(doUnfocusedLoad(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp)).then((result2) => {
+      dispatch(doUnfocusedLoad(result.authorgAddress, result.submissionIndex, result.revisionHash, result.timestamp)).then((result2) => {
         console.log("post loaded")
-        dispatch(addPostKey(result.authorgAddress, result.submissionHash, result.revisionHash, result.timestamp));   
+        dispatch(addPostKey(result.authorgAddress, result.submissionIndex, result.revisionHash, result.timestamp));   
         res({done:true})   
       });      
     })

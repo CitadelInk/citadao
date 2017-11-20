@@ -120,51 +120,66 @@ class RepostBot {
               } else {
                 appContracts.Ink.deployed()
                 .then((instance) => {
-                  var subHash = '0x' + hash;
-                  instance.submitBioRevision.sendTransaction(subHash, {from : account, gas : 200000, gasPrice : 1000000000}).then((tx_id) => {
-                    var bioSubmissionEvent = instance.BioUpdated({_authorg : account, _subHash : subHash})
-                    bioSubmissionEvent.watch(function(error, result){
-                        if(!error && result.transactionHash == tx_id) {
-                            res({tx_id})
-                        }
-                    })
-                  }).catch(rej);
-                });
+                    var revHash = '0x' + hash;
+                    instance.submitBioRevision.sendTransaction(revHash, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+                        var bioSubmissionEvent = instance.BioUpdated({_authorg : account}, {fromBlock:0}, function(error, result){
+                            if(!error && result.transactionHash == tx_id) {
+                                res({tx_id})
+                            }
+                        })               
+                    });
+                }).catch(rej)
               }
             
           });
         }); 
     };
 
-    post(postInput, account, web3, tweetId, submissionHash = undefined) {
+    post(postInput, account, web3, tweetId, submissionIndex = undefined) {
         var classInstance = this;
         return new Promise((res, rej) => {
           web3.bzz.put(postInput, (error, hash) => {
             appContracts.Ink.deployed()
             .then((instance) => {
                 var maxGas = 400000;
-                var subHash = submissionHash;
-                if (!subHash) { 
-                    subHash = '0x' + hash;
-                }
                 var revHash = '0x' + hash;
-        
-                instance.submitRevisionWithReferences.sendTransaction(subHash, revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
-                    var submissionEvent = instance.RevisionPosted({_authorg : account, _subHash : subHash, _revHash : revHash});
-                    submissionEvent.watch(function(error, result) {
-                        if (!error && result.transactionHash == tx_id) {
-                            classInstance.persistence.revisionMap[tweetId] = revHash;
-                            classInstance.persistence.submissionMap[tweetId] = subHash;
-                            res({tx_id, submissionEvent, revHash, subHash});  
-                        }
+                console.log("before if else.")
+                if(submissionIndex) {
+                    instance.submitRevisionWithReferences.sendTransaction(submissionIndex, revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+                        var submissionEvent = instance.RevisionPosted({_authorg : account, _subIndex : submissionIndex, _revHash : revHash});
+                        submissionEvent.watch(function(error, result) {
+                            if (!error && result.transactionHash == tx_id) {
+                                classInstance.persistence.revisionMap[tweetId] = revHash;
+                                classInstance.persistence.submissionMap[tweetId] = submissionIndex;
+                                res({tx_id, submissionEvent, revHash, submissionIndex});  
+                            }
+                        })
+                    }).catch(rej) 
+                } else {
+                    instance.getUserCurrentSubmissionIndex(account).then((index) => {
+                        var nextSubIndex = index;
+                        instance.submitSubmissionWithReferences.sendTransaction(revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+                            var submissionEvent = instance.RevisionPosted({_authorg : account, _subIndex : nextSubIndex, _revHash : revHash});
+                            submissionEvent.watch(function(error, result) {
+                                if (!error && result.transactionHash == tx_id) {
+                                    classInstance.persistence.revisionMap[tweetId] = revHash;
+                                    classInstance.persistence.submissionMap[tweetId] = nextSubIndex;
+                                    res({tx_id, submissionEvent, revHash, nextSubIndex});  
+                                }
+                            })
+                        }).catch(rej) 
                     })
-                }).catch(rej)                
+
+                }
+        
+               
             });
           });
         }); 
     }
 
     checkTweets() {     
+        console.log("check tweets. tweetsIndex = " + this.tweetsIndex);
         if (this.tweetsIndex == -1) {  
             var options = { screen_name: this.twitterScreenName,
                             count: 200,
@@ -184,7 +199,6 @@ class RepostBot {
             var tweet = instance.tweetData[this.tweetsIndex];
 
             if(!instance.persistence.seenTweets[tweet.id]) {
-
                 if (tweet.in_reply_to_screen_name == instance.twitterScreenName) {
                     var parentId = instance.persistence.tweetMap[tweet.in_reply_to_status_id];
                     if (parentId) {
@@ -195,7 +209,7 @@ class RepostBot {
                     }
 
                     var parentRevisionHash = instance.persistence.revisionMap[tweet.in_reply_to_status_id];
-                    var parentSubmissionHash = instance.persistence.submissionMap[tweet.in_reply_to_status_id];
+                    var parentSubmissionIndex = instance.persistence.submissionMap[tweet.in_reply_to_status_id];
                     if (parentRevisionHash) {
                         const bzzAddress = parentRevisionHash.substring(2);
                         instance.web3.bzz.retrieve(bzzAddress, (error, revision) => {
@@ -203,7 +217,7 @@ class RepostBot {
                             instance.web3.bzz.retrieve(manifest.entries[0].hash, (error, rev) => {   
                                 var revJson = JSON.parse(rev)
                                 var state = revJson.text;
-                                instance.finishPost(state, tweet, parentSubmissionHash);
+                                instance.finishPost(state, tweet, parentSubmissionIndex);
                             })
                         })
                     } else {
@@ -225,7 +239,9 @@ class RepostBot {
             } else {
                 instance.saveAndFlush(tweet);
             }
-        } 
+        } else {
+           // this.tweetsIndex = -1;
+        }
     }
 
     finishPost(state, tweet, submission = undefined) {

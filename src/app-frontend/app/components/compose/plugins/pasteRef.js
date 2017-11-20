@@ -9,7 +9,7 @@ import { getEventTransfer } from 'slate-react'
  * @param {Object} options
  *   @property {String} type
  *   @property {String} authorgAddress
- *   @property {String} submissionHash
+ *   @property {String} submissionIndex
  *   @property {String} revisionHash
  *   @property {String} sectionIndex
  *   @property {String} authorgName
@@ -22,7 +22,7 @@ function PasteRef(options = {}) {
   const {
     type = 'ref',
     authorgAddress = 'authorg',
-    submissionHash = 'submission',
+    submissionIndex = 'submission',
     revisionHash = 'revision',
     sectionIndex = 'index',
     sectionText = 'text',
@@ -50,7 +50,7 @@ function PasteRef(options = {}) {
       type,
       isVoid: true,
       data: { [authorgAddress]: authorg, 
-        [submissionHash]: submission, 
+        [submissionIndex]: submission, 
         [revisionHash]: revision, 
         [sectionIndex]: index, 
         [sectionText]: text, 
@@ -76,7 +76,7 @@ function PasteRef(options = {}) {
         var section = json.reference.text;
         change.call(wrapRef, 
           json.reference.authorg, 
-          json.reference.submissionHash, 
+          json.reference.submissionIndex, 
           json.reference.revisionHash, 
           json.reference.sectionIndex, 
           Block.create(section), 
