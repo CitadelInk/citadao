@@ -27,6 +27,10 @@ contract Ink is Managed {
         submit_revision_cost_in_ink = revisionCost;
         submit_submission_cost_in_ink = submissionCost;
     }
+
+    function getComptroller() public constant returns (address) {
+        return ink_comptroller;
+    }
     
     struct Authorg {
         uint submissionIndex;
