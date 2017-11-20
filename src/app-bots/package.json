@@ -13,6 +13,7 @@
     "cross-os": "^1.1.2",
     "copy-webpack-plugin": "^4.0.1",
     "webpack": "^3.7.1",
+    "webpack": "^3.8.1",
     "webpack-config-utils": "^2.3.0",
     "webpack-dev-server": "^2.9.2"
   },
@@ -20,9 +21,9 @@
     "start": "node index.js",
     "build": "cross-os buildInternal",
     "buildInternal": {
-      "darwin": "rm -rf public/** && webpack -p --progress --optimize-minimize",
-      "win32": "rm -rf public/** && webpack -p --progress --optimize-minimize",
-      "linux": "rm -rf public/** && webpack -p --progress --optimize-minimize"
+      "darwin": "rm -rf public/** && webpack --progress",
+      "win32": "rm -rf public/** && webpack --progress",
+      "linux": "rm -rf public/** && webpack --progress"
     }
   },
   "engines": {
