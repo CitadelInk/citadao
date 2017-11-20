@@ -126,9 +126,9 @@ class RepostBot {
                 .then((instance) => {
                   var revHash = '0x' + hash;
                   console.log("go do 1.");
-                  insance.submitBioRevision.sendTransaction(revHash, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+                  instance.submitBioRevision.sendTransaction(revHash, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
                     console.log("go do 2")
-                    var bioSubmissionEvent = instance.BioUpdated({_authorg : account})
+                    var bioSubmissionEvent = instance.BioUpdated({_authorg : account}, {fromBlock:0})
                     bioSubmissionEvent.watch(function(error, result){
                         console.log("go do 3.")
                         if(!error && result.transactionHash == tx_id) {
