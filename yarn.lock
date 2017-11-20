@@ -5207,6 +5207,17 @@ slate-dev-logger@^0.1.32:
   version "0.1.32"
   resolved "https://registry.yarnpkg.com/slate-dev-logger/-/slate-dev-logger-0.1.32.tgz#76b73d75a149d0eac0cab134965aca14f7542888"
 
+slate-dev-logger@^0.1.36:
+  version "0.1.36"
+  resolved "https://registry.yarnpkg.com/slate-dev-logger/-/slate-dev-logger-0.1.36.tgz#ecdb37dbf944dfc742bab23b6a20d5a0472db95e"
+
+slate-html-serializer@^0.4.10:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/slate-html-serializer/-/slate-html-serializer-0.4.11.tgz#d8bcf3f649f41884e869640bbbc6d3795cd74c00"
+  dependencies:
+    slate-dev-logger "^0.1.36"
+    type-of "^2.0.1"
+
 slate-paste-linkify@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/slate-paste-linkify/-/slate-paste-linkify-0.5.0.tgz#fbb52216ae4c02475b42b3de3609de0ad6b07fd1"

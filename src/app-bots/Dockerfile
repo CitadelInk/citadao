@@ -1,8 +1,9 @@
-FROM node:boron
+FROM node:carbon
 
 COPY package.json /src/package.json
 WORKDIR /src
 RUN npm install
-ADD ./ .
 
-ENTRYPOINT ["node", "index.js"]
+ADD ./public .
+
+ENTRYPOINT ["node", "bot.js"]
