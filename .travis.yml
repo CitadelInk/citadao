@@ -19,9 +19,11 @@ matrix:
     - node_js: 8
       env:
        - APP=src/app-frontend
+       - DOCKER_IMAGE=citaldel/frontend
     - node_js: 8
       env:
        - APP=src/app-bot
+       - DOCKER_IMAGE=citaldel/bot
 
 script: yarn install && cd $APP && yarn install && yarn build
 
