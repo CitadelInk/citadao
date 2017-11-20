@@ -2,8 +2,10 @@ const RepostBot = require('./bots/repostBot');
 const config =  require('./config.json');
 const Web3 = require('web3');
 const appContracts = require('app-contracts');
+var myArgs = require('optimist').argv, help = 'No help available, dummy.';
 
-var provider = new Web3.providers.HttpProvider(`http://localhost:8545`);
+console.log("server: " + myArgs.server);
+var provider = new Web3.providers.HttpProvider("http://" + myArgs.server + ":8545");
 var web3Provider = new Web3(provider);
 appContracts.setProvider(web3Provider.currentProvider);
 

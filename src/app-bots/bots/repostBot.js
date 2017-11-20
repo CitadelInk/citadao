@@ -72,9 +72,7 @@ class RepostBot {
                     classInstance.checkTweets();
                     setInterval(classInstance.checkTweets, 120000);
                 } else {
-                    console.log("kick off 2a.");
                     fs.readFile(__dirname + "/botAvatars/" + classInstance.avatarFilename, (err, data) => {
-                        console.log("kick off 2b.");
                         var bufferedData = Buffer.from(data).toString('base64');
                         bufferedData = classInstance.avatarDataPrefix + bufferedData;
 
@@ -102,9 +100,7 @@ class RepostBot {
                         })
 
                         var bioInput = {"name":"@" + classInstance.twitterScreenName + " REPOSTER", "image" : bufferedData, "text" : state}
-                        console.log("kick off 2c.");
                         classInstance.updateBio(JSON.stringify(bioInput), account, classInstance.web3).then((result) => {
-                            console.log("kick off 2d.");
                             classInstance.checkTweets();
                             setInterval(classInstance.checkTweets, 120000);
                         })
@@ -124,20 +120,15 @@ class RepostBot {
               } else {
                 appContracts.Ink.deployed()
                 .then((instance) => {
-                  var revHash = '0x' + hash;
-                  console.log("go do 1.");
-                  instance.submitBioRevision.sendTransaction(revHash, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
-                    console.log("go do 2")
-                    var bioSubmissionEvent = instance.BioUpdated({_authorg : account}, {fromBlock:0})
-                    bioSubmissionEvent.watch(function(error, result){
-                        console.log("go do 3.")
-                        if(!error && result.transactionHash == tx_id) {
-                            console.log("go do 4.")
-                            res({tx_id})
-                        }
-                    })
-                  }).catch(rej);
-                });
+                    var revHash = '0x' + hash;
+                    instance.submitBioRevision.sendTransaction(revHash, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+                        var bioSubmissionEvent = instance.BioUpdated({_authorg : account}, {fromBlock:0}, function(error, result){
+                            if(!error && result.transactionHash == tx_id) {
+                                res({tx_id})
+                            }
+                        })               
+                    });
+                }).catch(rej)
               }
             
           });
@@ -154,10 +145,8 @@ class RepostBot {
                 var revHash = '0x' + hash;
                 console.log("before if else.")
                 if(submissionIndex) {
-                    console.log("submitRevisionWithReferences. submissionIndex: " + submissionIndex)
-                    console.log("submitRevisionWithReferences. typeof(submissionIndex): " + typeof(submissionIndex))
                     instance.submitRevisionWithReferences.sendTransaction(submissionIndex, revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
-                        var submissionEvent = instance.RevisionPosted({_authorg : account});
+                        var submissionEvent = instance.RevisionPosted({_authorg : account, _subIndex : submissionIndex, _revHash : revHash});
                         submissionEvent.watch(function(error, result) {
                             if (!error && result.transactionHash == tx_id) {
                                 classInstance.persistence.revisionMap[tweetId] = revHash;
@@ -169,15 +158,10 @@ class RepostBot {
                 } else {
                     instance.getUserCurrentSubmissionIndex(account).then((index) => {
                         var nextSubIndex = index;
-                        console.log("submitSubmissionWithReferences. account: " + account)
                         instance.submitSubmissionWithReferences.sendTransaction(revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
-                            console.log("in here. nextSubIndex: " + nextSubIndex);
                             var submissionEvent = instance.RevisionPosted({_authorg : account, _subIndex : nextSubIndex, _revHash : revHash});
-                            console.log("submissionEvent: " + submissionEvent)
                             submissionEvent.watch(function(error, result) {
-                                console.log("watch for event.")
                                 if (!error && result.transactionHash == tx_id) {
-                                    console.log("donezo...")
                                     classInstance.persistence.revisionMap[tweetId] = revHash;
                                     classInstance.persistence.submissionMap[tweetId] = nextSubIndex;
                                     res({tx_id, submissionEvent, revHash, nextSubIndex});  
@@ -212,27 +196,21 @@ class RepostBot {
     flushTweetData() {
         var instance = this;
         if (this.tweetsIndex > -1) {
-            console.log("flush a tweet.")
             var tweet = instance.tweetData[this.tweetsIndex];
 
             if(!instance.persistence.seenTweets[tweet.id]) {
-                console.log("have not seen this tweet.")
                 if (tweet.in_reply_to_screen_name == instance.twitterScreenName) {
-                    console.log("reply to self.")
                     var parentId = instance.persistence.tweetMap[tweet.in_reply_to_status_id];
                     if (parentId) {
                         instance.persistence.tweetMap[tweet.id] = parentId;
-                        console.log("yes there is a parent.")
                     } else { 
                         instance.persistence.tweetMap[tweet.id] = tweet.in_reply_to_status_id;
                         parentId = tweet.in_reply_to_status_id;
-                        console.log("create the parent.")
                     }
 
                     var parentRevisionHash = instance.persistence.revisionMap[tweet.in_reply_to_status_id];
                     var parentSubmissionIndex = instance.persistence.submissionMap[tweet.in_reply_to_status_id];
                     if (parentRevisionHash) {
-                        console.log("parentSubmissionIndex = " + parentSubmissionIndex);
                         const bzzAddress = parentRevisionHash.substring(2);
                         instance.web3.bzz.retrieve(bzzAddress, (error, revision) => {
                             const manifest = JSON.parse(revision);
@@ -246,7 +224,6 @@ class RepostBot {
                         instance.saveAndFlush(tweet);
                     }
                 } else if (!tweet.in_reply_to_screen_name && !tweet.retweeted_status) {
-                    console.log("regular post.")
                     var state = {
                         "document":{
                             "data":{},
@@ -318,7 +295,6 @@ class RepostBot {
 
         var instance = this;
         var postJson = {"authorg" : instance.ethAccount, "text" : state}
-        console.log("go to post.")
         instance.post(JSON.stringify(postJson), instance.ethAccount, instance.web3, tweet.id, submission).then((result) => {
             console.log("posted.")
             instance.saveAndFlush(tweet);
