@@ -72,7 +72,9 @@ class RepostBot {
                     classInstance.checkTweets();
                     setInterval(classInstance.checkTweets, 120000);
                 } else {
+                    console.log("kick off 2a.");
                     fs.readFile(__dirname + "/botAvatars/" + classInstance.avatarFilename, (err, data) => {
+                        console.log("kick off 2b.");
                         var bufferedData = Buffer.from(data).toString('base64');
                         bufferedData = classInstance.avatarDataPrefix + bufferedData;
 
@@ -100,7 +102,9 @@ class RepostBot {
                         })
 
                         var bioInput = {"name":"@" + classInstance.twitterScreenName + " REPOSTER", "image" : bufferedData, "text" : state}
+                        console.log("kick off 2c.");
                         classInstance.updateBio(JSON.stringify(bioInput), account, classInstance.web3).then((result) => {
+                            console.log("kick off 2d.");
                             classInstance.checkTweets();
                             setInterval(classInstance.checkTweets, 120000);
                         })
@@ -121,10 +125,14 @@ class RepostBot {
                 appContracts.Ink.deployed()
                 .then((instance) => {
                   var revHash = '0x' + hash;
-                  instance.submitBioRevision.sendTransaction(revHash, {from : account, gas : 200000, gasPrice : 1000000000}).then((tx_id) => {
-                    var bioSubmissionEvent = instance.BioUpdated({_authorg : account, _revHash : revHash})
+                  console.log("go do 1.");
+                  insance.submitBioRevision.sendTransaction(revHash, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+                    console.log("go do 2")
+                    var bioSubmissionEvent = instance.BioUpdated({_authorg : account})
                     bioSubmissionEvent.watch(function(error, result){
+                        console.log("go do 3.")
                         if(!error && result.transactionHash == tx_id) {
+                            console.log("go do 4.")
                             res({tx_id})
                         }
                     })
@@ -159,22 +167,25 @@ class RepostBot {
                         })
                     }).catch(rej) 
                 } else {
-                    var nextSubIndex = instance.getUserCurrentSubmissionIndex(account);
-                    console.log("submitSubmissionWithReferences.")
-                    instance.submitSubmissionWithReferences.sendTransaction(revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+                    instance.getUserCurrentSubmissionIndex(account).then((index) => {
+                        var nextSubIndex = index;
+                        console.log("submitSubmissionWithReferences. account: " + account)
+                        instance.submitSubmissionWithReferences.sendTransaction(revHash, [], [], [], {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
+                            console.log("in here. nextSubIndex: " + nextSubIndex);
+                            var submissionEvent = instance.RevisionPosted({_authorg : account, _subIndex : nextSubIndex, _revHash : revHash});
+                            console.log("submissionEvent: " + submissionEvent)
+                            submissionEvent.watch(function(error, result) {
+                                console.log("watch for event.")
+                                if (!error && result.transactionHash == tx_id) {
+                                    console.log("donezo...")
+                                    classInstance.persistence.revisionMap[tweetId] = revHash;
+                                    classInstance.persistence.submissionMap[tweetId] = nextSubIndex;
+                                    res({tx_id, submissionEvent, revHash, nextSubIndex});  
+                                }
+                            })
+                        }).catch(rej) 
+                    })
 
-                        var submissionEvent = instance.RevisionPosted({_authorg : account, _subIndex : nextSubIndex, _revHash : revHash});
-                        console.log("submissionEvent: " + submissionEvent)
-                        submissionEvent.watch(function(error, result) {
-                            console.log("watch for event.")
-                            if (!error && result.transactionHash == tx_id) {
-                                console.log("donezo...")
-                                classInstance.persistence.revisionMap[tweetId] = revHash;
-                                classInstance.persistence.submissionMap[tweetId] = nextSubIndex;
-                                res({tx_id, submissionEvent, revHash, nextSubIndex});  
-                            }
-                        })
-                    }).catch(rej) 
                 }
         
                
