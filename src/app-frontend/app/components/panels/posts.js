@@ -29,7 +29,7 @@ class Posts extends Component {
 		var auths = this.props.auths;
 
 		var posts = postos.map(function(key) {
-			var key2 = key.authAdd + "-" + key.submissionHash + "-" + key.revisionHash;
+			var key2 = key.authAdd + "-" + key.submissionIndex + "-" + key.revisionHash;
 			var authorg = auths[key.authAdd];
 			var text = ["loading"];
 			var submission;
@@ -62,7 +62,7 @@ class Posts extends Component {
 				var revisions;
 				var submissions = authorg.submissions;
 				if (submissions) {
-					submission = submissions[key.submissionHash];
+					submission = submissions[key.submissionIndex];
 					if (submission) {
 						revisions = submission.revisions;
 						revisionHashes = revisions.revisionHashes;
@@ -91,7 +91,7 @@ class Posts extends Component {
 				}			
 			}
 			if (show) {
-				return (<PostWidgetContainer revisionHashes={revisionHashes} authorgName={authorgName} authorgAvatar={authorgAvatar} submissionValue={submission} embededPostTextMap={embededPostTextMap} text={text} /*responseMap={responseMap}*/ key={key2} authorg={key.authAdd} submission={key.submissionHash} revision={key.revisionHash} timestamp={key.timestamp}/>)
+				return (<PostWidgetContainer revisionHashes={revisionHashes} authorgName={authorgName} authorgAvatar={authorgAvatar} submissionValue={submission} embededPostTextMap={embededPostTextMap} text={text} /*responseMap={responseMap}*/ key={key2} authorg={key.authAdd} submission={key.submissionIndex} revision={key.revisionHash} timestamp={key.timestamp}/>)
 			} else {
 				return (<div/>);
 			}

@@ -81,7 +81,7 @@ const wallet = (state = Map({
   selectedUserTabIndex: 0,
   selectedHomeTabIndex:0,
   selectedReactionHash:'',
-  reviseSubmissionHash:null,
+  revisesubmissionIndex:null,
 }), action) => {
   switch (action.type) {
     case SET_SELECTED_RESPONSES:
@@ -99,7 +99,9 @@ const postKeys = (state = [], action) => {
       var shouldAdd = true;
       for(var i = 0; i < state.length; i++) {
         if (state[i].authAdd == action.data.authAdd) {
-          if (state[i].submissionHash == action.data.submissionHash) {
+          var submissionIndex = Number(state[i].submissionIndex);
+          var actionIndex = Number(action.data.submissionIndex);
+          if (submissionIndex === actionIndex) {
             if (state[i].revisionHash == action.data.revisionHash) {
               shouldAdd = false;
             }
@@ -181,7 +183,7 @@ const revs = (state = {}, action) => {
       var shouldAddKey = true;
       for(var i = 0; i < refKeys.length; i++) {
         if(refKeys[i].authAdd == action.data.refKey.authAdd) {
-          if(refKeys[i].submissionHash == action.data.refKey.submissionHash) {
+          if(refKeys[i].submissionIndex == action.data.refKey.submissionIndex) {
             if(refKeys[i].revisionHash == action.data.refKey.revisionHash) {
               shouldAddKey = false;
               break;
@@ -266,7 +268,7 @@ const revs = (state = {}, action) => {
         existingReferences = sectionRefKeyMap.get(action.data.index);
         for(var i = 0; i < existingReferences.length; i++) {
           if (existingReferences[i].authAdd == action.data.refKey.authAdd) {
-            if (existingReferences[i].submissionHash == action.data.refKey.submissionHash) {
+            if (existingReferences[i].submissionIndex == action.data.refKey.submissionIndex) {
               if (existingReferences[i].revisionHash == action.data.refKey.revisionHash) {
                 alreadyReferenced = true;
               } 
@@ -405,7 +407,7 @@ const auths = (state = {}, action) => {
         if (stateAuth.postKeys) {
           postKeys2 = stateAuth.postKeys;
           for(var i = 0; i < stateAuth.postKeys.length; i++) {
-            if (stateAuth.postKeys[i].submissionHash == action.data.submissionHash) {
+            if (stateAuth.postKeys[i].submissionIndex == action.data.submissionIndex) {
               if (stateAuth.postKeys[i].revisionHash == action.data.revisionHash) {
                 shouldAdd = false;
               }

@@ -107,7 +107,7 @@ export const submitBio = (bioTextInput, onComplete, onFailure) => (dispatch, get
  
 };
 
-export const submitNewRevision = (postTextInput, onComplete, onFailure, revisionSubmissionHash = undefined) => (dispatch, getState) => {
+export const submitNewRevision = (postTextInput, onComplete, onFailure, revisionsubmissionIndex = undefined) => (dispatch, getState) => {
   const {wallet, network} = getState().core;
   const account = wallet.get('account');
 
@@ -130,16 +130,16 @@ export const submitNewRevision = (postTextInput, onComplete, onFailure, revision
           && section.data.get('submission')
           && section.data.get('revision')) {
           var authorg = section.data.get('authorg');
-          var submissionHash = section.data.get('submission');
+          var submissionIndex = section.data.get('submission');
           var revisionHash = section.data.get('revision');
           var index = section.data.get('index');
         
-          var refKey = {authorg:authorg, subHash:submissionHash, revHash:revisionHash}
-          var refMapSetKey = authorg + "-" + submissionHash + "-" + revisionHash;
+          var refKey = {authorg:authorg, subHash:submissionIndex, revHash:revisionHash}
+          var refMapSetKey = authorg + "-" + submissionIndex + "-" + revisionHash;
           if (!referenceKeyMapSet.get(refMapSetKey)) {
             referenceKeyMapSet.set(refMapSetKey, true);
             referenceKeyAuthorgs.push(authorg);
-            referenceKeySubmissions.push(submissionHash);
+            referenceKeySubmissions.push(submissionIndex);
             referenceKeyRevisions.push(revisionHash);
           }      
         }
@@ -151,12 +151,12 @@ export const submitNewRevision = (postTextInput, onComplete, onFailure, revision
 
     
     var postJson = {"authorg" : account, "text" : postTextInput}
-    return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3, revisionSubmissionHash).then(function(resulty) {
+    return post(JSON.stringify(postJson), referenceKeyAuthorgs, referenceKeySubmissions, referenceKeyRevisions, account, network.web3, revisionsubmissionIndex).then(function(resulty) {
       var hasReloaded = false;
-      var update = function(revisionSubmissionHash = undefined) {
-        if (revisionSubmissionHash) {
+      var update = function(revisionsubmissionIndex = undefined) {
+        if (revisionsubmissionIndex) {
           console.log("load revised post.")
-          dispatch(doFocusedLoad(account, revisionSubmissionHash, resulty.revHash, undefined, true, true))
+          dispatch(doFocusedLoad(account, revisionsubmissionIndex, resulty.revHash, undefined, true, true))
         } else {
           console.log("initialize needed posts")
           dispatch(doFocusedLoad(account, resulty.subHash, resulty.revHash, undefined, true, true))
@@ -181,23 +181,23 @@ export const submitNewRevision = (postTextInput, onComplete, onFailure, revision
   }
 };
 
-export const submitReaction = (authorg, submissionHash, revisionHash, reaction) => (dispatch, getState) => {
+export const submitReaction = (authorg, submissionIndex, revisionHash, reaction) => (dispatch, getState) => {
   const {wallet, approvedReactions} = getState().core;
   const account = wallet.get('account');
   if (!account) {
     alert("Please sign into MetaMask and reload the page. Make sure MetaMask is set to correct Custom RPC: http://citadel.ink:8545/")
   } else {
-    return addReaction(account, authorg, submissionHash, revisionHash, reaction).then(function(resulty) {
+    return addReaction(account, authorg, submissionIndex, revisionHash, reaction).then(function(resulty) {
       var hasReloaded = false;
       resulty.reactionEvent.watch(function(error,result){
         if (!error && result.transactionHash === resulty.tx_id) {
-          dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions));
+          dispatch(getReactions(authorg, submissionIndex, revisionHash, approvedReactions));
           hasReloaded = true;
         }
       });
       setTimeout(function() {
         if (!hasReloaded) {
-          dispatch(getReactions(authorg, submissionHash, revisionHash, approvedReactions));
+          dispatch(getReactions(authorg, submissionIndex, revisionHash, approvedReactions));
         }
       }, 3000);
     }).catch(function(e) {

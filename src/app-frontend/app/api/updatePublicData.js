@@ -40,7 +40,7 @@ export const updateBio = (bioInput, account, web3) => {
   }); 
 };
 
-export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, web3, reviseSubmissionHash) => {
+export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, web3, revisesubmissionIndex) => {
   var t0 = performance.now();
   return new Promise((res, rej) => {
     web3.bzz.put(postInput, (error, hash) => {
@@ -49,8 +49,8 @@ export const post = (postInput, refKeyAuths, refKeySubs, refKeyRevs, account, we
         var maxGas = 400000 + refKeyAuths.length * 200000;
         var revHash = '0x' + hash;
 
-        if (reviseSubmissionHash) {
-          var subHash = reviseSubmissionHash;
+        if (revisesubmissionIndex) {
+          var subHash = revisesubmissionIndex;
           instance.submitRevisionWithReferences.sendTransaction(subHash, revHash, refKeyAuths, refKeySubs, refKeyRevs, {from : account, gas : maxGas, gasPrice : 1000000000}).then((tx_id) => {
             var submissionEvent = instance.RevisionPosted({_authorg : account});
             var t1 = performance.now();
@@ -82,12 +82,12 @@ export const submitBuy = (eth, account, tokenOwnerAccount) => {
     });
 };
 
-export const addReaction = (account, authorg, submissionHash, revisionHash, reaction) => {
+export const addReaction = (account, authorg, submissionIndex, revisionHash, reaction) => {
   return new Promise((res, rej) => {
     appContracts.Citadel.deployed()
     .then((instance) => {
-      instance.submitReaction.sendTransaction(authorg, submissionHash, revisionHash, reaction, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
-        var reactionEvent = instance.ReactionRecorded({_postAuthorg : authorg, _postSubmission : submissionHash, _postRevision : revisionHash});
+      instance.submitReaction.sendTransaction(authorg, submissionIndex, revisionHash, reaction, {from : account, gas : 300000, gasPrice : 1000000000}).then((tx_id) => {
+        var reactionEvent = instance.ReactionRecorded({_postAuthorg : authorg, _postSubmission : submissionIndex, _postRevision : revisionHash});
         res({tx_id, reactionEvent})    
       });      
     });

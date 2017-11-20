@@ -11,14 +11,16 @@ contract Managed {
 contract Ink is Managed {
 
     event BioUpdated(address indexed _authorg, bytes32 indexed _revHash);
-    event RevisionPosted(address indexed _authorg, uint indexed _subHash, bytes32 indexed _revHash);
+    event RevisionPosted(address indexed _authorg, uint indexed _subIndex, bytes32 indexed _revHash);
+    event PostReferencedPost(address indexed _authorg, uint indexed _subIndex, bytes32 indexed _revHash, address _refAuthorg, uint _refSubIndex, bytes32 _refRevHash);
+    event PostReferencedByPost(address indexed _refAuthorg, uint indexed _refSubIndex, bytes32 indexed _refRevHash, address _authorg, uint _subIndex, bytes32 _revHash);
 
     uint256 public bio_update_in_ink;
     uint256 public reaction_cost_in_ink;
     uint256 public submit_revision_cost_in_ink; 
     uint256 public submit_submission_cost_in_ink; 
     
-    function Ink(uint bioCost, uint256 reactionCost, uint256 revisionCost, uint256 submissionCost) {
+    function Ink(uint bioCost, uint256 reactionCost, uint256 revisionCost, uint256 submissionCost) public {
         ink_comptroller = msg.sender;
         bio_update_in_ink = bioCost;
         reaction_cost_in_ink = reactionCost;
@@ -51,13 +53,13 @@ contract Ink is Managed {
     }
 
     struct SubRevKey {
-        uint submissionHash;
+        uint submissionIndex;
         bytes32 revisionHash;
     }
 
     struct AuthSubRevKey {
         address authorgAddress;
-        uint submissionHash;
+        uint submissionIndex;
         bytes32 revisionHash;
     }
 
@@ -70,12 +72,12 @@ contract Ink is Managed {
     uint[] allPostSubmissions;
     bytes32[] allPostRevisions;
 
-    function getBioRevisions(address authorgAddress) constant returns (bytes32[] hashes, uint[] timestamps) {
+    function getBioRevisions(address authorgAddress) public constant returns (bytes32[] hashes, uint[] timestamps) {
         return (internalAuthorgs[authorgAddress].selfBioSubmission.revisionHashes, 
                 internalAuthorgs[authorgAddress].selfBioSubmission.revisionTimestamps);
     }
 
-    function getTotalAuthSubRevKeyCount() constant returns (uint) {
+    function getTotalAuthSubRevKeyCount() public constant returns (uint) {
         if (allPostAuthorgs.length != allPostSubmissions.length || allPostAuthorgs.length != allPostRevisions.length) {
             return 0;
         } else {
@@ -83,7 +85,7 @@ contract Ink is Managed {
         }
     }
 
-    function getAuthSubRevKey(uint index) constant returns (address, uint, bytes32, uint) {
+    function getAuthSubRevKey(uint index) public constant returns (address, uint, bytes32, uint) {
         var authorg = allPostAuthorgs[index];
         var submission = allPostSubmissions[index];
         var revision = allPostRevisions[index];
@@ -91,7 +93,7 @@ contract Ink is Managed {
         return (authorg, submission, revision, timestamp);
     }
     
-    function submitBioRevision(bytes32 citadelManifestHash) {
+    function submitBioRevision(bytes32 citadelManifestHash) public {
         //spend(bio_update_in_ink);
         var newAuthorgs = new address[](0);
         var newSubmissions = new uint[](0);
@@ -109,32 +111,32 @@ contract Ink is Managed {
         BioUpdated(msg.sender, citadelManifestHash);
     }
     
-    function isAuthorgOfSubmission(address authorgAddress, uint submissionHash) constant returns (bool) {
+    function isAuthorgOfSubmission(address authorgAddress, uint submissionIndex) public constant returns (bool) {
         var authorg = internalAuthorgs[authorgAddress];
-        var submission = authorg.submissions[submissionHash];
+        var submission = authorg.submissions[submissionIndex];
         return submission.revisionHashes.length != 0;
     }
     
     function isAuthorgOfBio(address authorgAddress, 
                             bytes32 bioRevisionHash) 
-                            constant returns (bool) {
+                            public constant returns (bool) {
         var authorg = internalAuthorgs[authorgAddress];
         authorg.selfBioSubmission.revisions[bioRevisionHash].citadelManifestHash != 0;
     }
     
     function isAuthorgOfSubmissionRevision(address authorgAddress, 
-                                            uint submissionHash, 
+                                            uint submissionIndex, 
                                             bytes32 revisionHash) 
-                                            constant returns (bool) {
+                                             public constant returns (bool) {
         var authorg = internalAuthorgs[authorgAddress];
-        var submission = authorg.submissions[submissionHash];
+        var submission = authorg.submissions[submissionIndex];
         return submission.revisions[revisionHash].citadelManifestHash != 0;
     }
 
     function submitSubmissionWithReferences(bytes32 revCitadelManifestHash, 
                                             address[] refKeyAuthorgs, 
                                             uint[] refKeySubmissions, 
-                                            bytes32[] refKeyRevisions) {
+                                            bytes32[] refKeyRevisions) public {
         //spend(submit_submission_cost_in_ink);
         var index = internalAuthorgs[msg.sender].submissionIndex;
         internalAuthorgs[msg.sender].submissionIndex++;
@@ -145,7 +147,7 @@ contract Ink is Managed {
                                             bytes32 revCitadelManifestHash, 
                                             address[] refKeyAuthorgs, 
                                             uint[] refKeySubmissions, 
-                                            bytes32[] refKeyRevisions) {
+                                            bytes32[] refKeyRevisions) public {
 
         require(internalAuthorgs[msg.sender].submissionIndex > subCitadelManifestHash); // can't revise a submission that hasn't happened yet
 
@@ -194,77 +196,84 @@ contract Ink is Managed {
     }
     
     function respondToAuthorgSubmissionRevision(address originalAuthorgAddress, 
-                                                uint originalSubmissionHash, 
+                                                uint originalsubmissionIndex, 
                                                 bytes32 originalRevisionHash, 
-                                                uint responseSubmissionHash, 
-                                                bytes32 responseRevisionHash) {
-        require (isAuthorgOfSubmissionRevision(msg.sender, responseSubmissionHash, responseRevisionHash));
-        //spend(1);
+                                                uint responsesubmissionIndex, 
+                                                bytes32 responseRevisionHash) public {
+        require (isAuthorgOfSubmissionRevision(msg.sender, responsesubmissionIndex, responseRevisionHash));
         var originalAuthorg = internalAuthorgs[originalAuthorgAddress];
-        var originalSubmission = originalAuthorg.submissions[originalSubmissionHash];
+        var originalSubmission = originalAuthorg.submissions[originalsubmissionIndex];
         var originalRevision = originalSubmission.revisions[originalRevisionHash];
 
         originalRevision.referenceKeyAuthorgs.push(msg.sender);
-        originalRevision.referenceKeySubmissions.push(responseSubmissionHash);
+        originalRevision.referenceKeySubmissions.push(responsesubmissionIndex);
         originalRevision.referenceKeyRevisions.push(responseRevisionHash);
 
         originalRevision.hasUserReferencedRevision[msg.sender] = true;
+
+        PostReferencedPost(msg.sender, responsesubmissionIndex, responseRevisionHash, originalAuthorgAddress, originalsubmissionIndex, originalRevisionHash);
+        PostReferencedByPost(originalAuthorgAddress, originalsubmissionIndex, originalRevisionHash, msg.sender, responsesubmissionIndex, responseRevisionHash);
     }
 
     function getNumberReferencesForAuthorgSubmissionRevision(address authorgAddress, 
-                                                                uint submissionHash, 
-                                                                bytes32 revisionHash) constant returns (uint) 
+                                                                uint submissionIndex, 
+                                                                bytes32 revisionHash) public constant returns (uint) 
     {
-        return internalAuthorgs[authorgAddress].submissions[submissionHash].revisions[revisionHash].referenceKeyRevisions.length;
+        return internalAuthorgs[authorgAddress].submissions[submissionIndex].revisions[revisionHash].referenceKeyRevisions.length;
     }
 
     function getReferenceForAuthorgSubmissionRevision(address authorgAddress, 
-                                                        uint submissionHash, 
+                                                        uint submissionIndex, 
                                                         bytes32 revisionHash, 
-                                                        uint index) constant returns(address, uint, bytes32, uint) {
-        Revision rev = internalAuthorgs[authorgAddress].submissions[submissionHash].revisions[revisionHash];
+                                                        uint index) public constant returns(address, uint, bytes32, uint) {
+        Revision rev = internalAuthorgs[authorgAddress].submissions[submissionIndex].revisions[revisionHash];
         address refAuthorgAddress = rev.referenceKeyAuthorgs[index];
-        uint refSubmissionHash = rev.referenceKeySubmissions[index];
+        uint refsubmissionIndex = rev.referenceKeySubmissions[index];
         bytes32 refRevisionHash = rev.referenceKeyRevisions[index];
-        Revision refRevision = internalAuthorgs[refAuthorgAddress].submissions[refSubmissionHash].revisions[refRevisionHash];
-        return (refAuthorgAddress, refSubmissionHash, refRevisionHash, refRevision.timestamp);
+        Revision refRevision = internalAuthorgs[refAuthorgAddress].submissions[refsubmissionIndex].revisions[refRevisionHash];
+        return (refAuthorgAddress, refsubmissionIndex, refRevisionHash, refRevision.timestamp);
     }
 
-    function getPostKeyCountForAuthorg(address authorgAddress) constant returns (uint) {
+    function getPostKeyCountForAuthorg(address authorgAddress) 
+                                        public constant returns (uint) {
         return internalAuthorgs[authorgAddress].postKeyIndexes.length;
     }
 
-    function getAuthorgPostKey(address authAdd, uint indexIndex) constant returns (address authorgAddress, uint submissionHash, bytes32 revisionHash, uint timestamp) {
+    function getAuthorgPostKey(address authAdd, uint indexIndex) 
+                                public constant returns (address authorgAddress, uint submissionIndex, bytes32 revisionHash, uint timestamp) {
         uint index = internalAuthorgs[authAdd].postKeyIndexes[indexIndex];
         return (getAuthSubRevKey(index));
     }
 
-    function getTimestampForRevision(address authorgAddress, uint submissionHash, bytes32 revisionHash) constant returns(uint) {
-        return internalAuthorgs[authorgAddress].submissions[submissionHash].revisions[revisionHash].timestamp;
+    function getTimestampForRevision(address authorgAddress, uint submissionIndex, bytes32 revisionHash) public constant returns(uint) {
+        return internalAuthorgs[authorgAddress].submissions[submissionIndex].revisions[revisionHash].timestamp;
     }
 
-    function getSubmissionRevisions(address authorgAddress, uint submissionHash) constant returns (bytes32[] revisionHashes) {
-         return internalAuthorgs[authorgAddress].submissions[submissionHash].revisionHashes;
+    function getSubmissionRevisions(address authorgAddress, uint submissionIndex) public constant returns (bytes32[] revisionHashes) {
+         return internalAuthorgs[authorgAddress].submissions[submissionIndex].revisionHashes;
     }
 
     function doesPostReferencePost(address postUserAddress, 
                                     address originalPostUserAddress, 
-                                    uint originalPostSubmissionHash, 
+                                    uint originalPostsubmissionIndex, 
                                     bytes32 originalPostRevisionHash) 
                                     constant returns (bool) 
     {
-        Revision rev = internalAuthorgs[originalPostUserAddress].submissions[originalPostSubmissionHash].revisions[originalPostRevisionHash];
+        Revision rev = internalAuthorgs[originalPostUserAddress].submissions[originalPostsubmissionIndex].revisions[originalPostRevisionHash];
         return rev.hasUserReferencedRevision[postUserAddress];
     }
 
     function constDoesPostReferencePost(address postUserAddress, 
                                     address originalPostUserAddress, 
-                                    uint originalPostSubmissionHash, 
+                                    uint originalPostsubmissionIndex, 
                                     bytes32 originalPostRevisionHash) 
-                                    constant returns (bool) 
+                                    public constant returns (bool) 
     {
-        Revision rev = internalAuthorgs[originalPostUserAddress].submissions[originalPostSubmissionHash].revisions[originalPostRevisionHash];
+        Revision rev = internalAuthorgs[originalPostUserAddress].submissions[originalPostsubmissionIndex].revisions[originalPostRevisionHash];
         return rev.hasUserReferencedRevision[postUserAddress];
     }
 
+    function getUserCurrentSubmissionIndex(address user) public constant returns (uint) {
+        return internalAuthorgs[user].submissionIndex;
+    }
 }

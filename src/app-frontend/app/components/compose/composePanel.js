@@ -23,7 +23,7 @@ class ComposePanel extends Component {
 		var selectedIndex = this.props.wallet.get('selectedTabIndex');
 
 		var tabNames = ["New Post", "UpdateBio"];
-		if(this.props.wallet.get('reviseSubmissionHash')) {
+		if(this.props.wallet.get('revisesubmissionIndex')) {
 			tabNames.push("Revise");
 		}
 		return(
@@ -62,7 +62,7 @@ class ComposePanel extends Component {
 							value={this.props.revisionPostValue}
 							callback={this.props.revisionPostCallback}
 							onPostComplete={this.props.onRevisionPostComplete}
-							submission={this.props.wallet.get('reviseSubmissionHash')}
+							submission={this.props.wallet.get('revisesubmissionIndex')}
 						/>
 					</TabPanel>
 				}

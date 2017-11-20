@@ -2,7 +2,7 @@ pragma solidity ^0.4.13;
 
 contract Citadel {
 
-    event ReactionRecorded(address indexed _postAuthorg, bytes32 indexed _postSubmission, bytes32 indexed _postRevision);
+    event ReactionRecorded(address indexed _postAuthorg, uint indexed _postSubmission, bytes32 indexed _postRevision);
     event AuthorgReactionRecorded(address indexed _authorg);
     event AuthorgFollowed(address indexed _followedAuthorg, address indexed _follower);
 
@@ -21,7 +21,7 @@ contract Citadel {
 
     // and some reaction stuff  
     struct InkAuthorgExtension {
-        mapping(bytes32 => InkSubmissionExtension) submissions;
+        mapping(uint => InkSubmissionExtension) submissions;
         mapping(bytes32 => InkBioRevisionExtension) bioRevisions;
     } 
 
@@ -74,7 +74,7 @@ contract Citadel {
     }
      
 
-    function getReactorsForAuthorgRevisionReaction(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction) constant returns (address[], uint[]) {
+    function getReactorsForAuthorgRevisionReaction(address authorg, uint submission, bytes32 revision, bytes32 reaction) constant returns (address[], uint[]) {
         if (reaction_approved[reaction]) {
             return (authorgExtensionMap[authorg].submissions[submission].revisions[revision].reactionToReactors[reaction],
                     authorgExtensionMap[authorg].submissions[submission].revisions[revision].reactionToReactorsTimestamps[reaction]
@@ -84,7 +84,7 @@ contract Citadel {
         }
     }
 
-    function getReactorsCountForAuthorgRevisionReaction(address authorg, bytes32 submission, bytes32 revision, bytes32 reaction) constant returns (uint) {
+    function getReactorsCountForAuthorgRevisionReaction(address authorg, uint submission, bytes32 revision, bytes32 reaction) constant returns (uint) {
         if (reaction_approved[reaction]) {
             return authorgExtensionMap[authorg].submissions[submission].revisions[revision].reactionToReactors[reaction].length;
         } else {
@@ -92,7 +92,7 @@ contract Citadel {
         }
     }    
     
-    function submitReaction(address authorgAddress, bytes32 subCitadelManifestHash, bytes32 revCitadelManifestHash, bytes32 reaction) {
+    function submitReaction(address authorgAddress, uint subCitadelManifestHash, bytes32 revCitadelManifestHash, bytes32 reaction) {
         require(reaction_approved[reaction]);
         InkRevisionExtension rev = authorgExtensionMap[authorgAddress].submissions[subCitadelManifestHash].revisions[revCitadelManifestHash];
         
