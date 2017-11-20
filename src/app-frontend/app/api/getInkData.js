@@ -4,7 +4,7 @@ export const getInkPublicData = () => {
   return appContracts.Ink.deployed()
     .then((instance) => {
       return Promise.all([
-          instance.ink_comptroller()
+          instance.getComptroller()
       ]).then(([ink_comptroller]) => {
         return {
           inkAddress: instance.address,
