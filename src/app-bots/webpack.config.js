@@ -42,7 +42,7 @@ module.exports = {
     },
     plugins: [
       new CopyWebpackPlugin([
-        { from: './bots/botAvatars', to:"bots/botAvatars" }
+        { from: './bots/botAvatars', to:"botAvatars" }
       ]),
     ],
    target:"async-node"
