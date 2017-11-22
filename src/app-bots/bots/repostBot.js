@@ -188,7 +188,7 @@ class RepostBot {
         console.log("check tweets. tweetsIndex = " + this.tweetsIndex);
         if (this.tweetsIndex == -1) {  
             var options = { screen_name: this.twitterScreenName,
-                            count: 200,
+                            count: 50,
                             tweet_mode: "extended" };
             var instance = this;
             this.T.get('statuses/user_timeline', options , function(err, data) {
