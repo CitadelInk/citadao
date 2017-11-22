@@ -22,7 +22,9 @@ class RepostBot {
         this.tweetsIndex = -1;
         var instance = this;        
         
-        fs.readFile(__dirname + "/botsPersistence/" + instance.twitterScreenName + ".txt", (err, data) => {
+        var botPath = ("production" === process.env.NODE_ENV) ? "./botsPersistence/" : __dirname + "/botsPersistence/"        
+
+        fs.readFile(botPath + instance.twitterScreenName + ".txt", (err, data) => {
             try {
                 var json = JSON.parse(data);
                 var seenTweets = json.seenTweets;
@@ -72,7 +74,10 @@ class RepostBot {
                     classInstance.checkTweets();
                     setInterval(classInstance.checkTweets, 120000);
                 } else {
-                    fs.readFile(__dirname + "/botAvatars/" + classInstance.avatarFilename, (err, data) => {
+
+                    var filePath = ("production" === process.env.NODE_ENV) ? "./botAvatars/" : __dirname + "/botAvatars/"
+
+                    fs.readFile( filePath + classInstance.avatarFilename, (err, data) => {
                         var bufferedData = Buffer.from(data).toString('base64');
                         bufferedData = classInstance.avatarDataPrefix + bufferedData;
 
