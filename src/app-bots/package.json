@@ -21,9 +21,9 @@
     "start": "node index.js --server localhost",
     "build": "cross-os buildInternal",
     "buildInternal": {
-      "darwin": "rm -rf public/** && webpack --progress",
-      "win32": "rm -rf public/** && webpack --progress",
-      "linux": "rm -rf public/** && webpack --progress"
+      "darwin": "rm -rf public/** && NODE_ENV=production webpack --progress",
+      "win32": "rm -rf public/** && set NODE_ENV=production && webpack --progress",
+      "linux": "rm -rf public/** && NODE_ENV=production webpack --progress"
     }
   },
   "engines": {

@@ -2,6 +2,7 @@ var Twit = require('twit');
 var fs = require('fs');
 var appContracts = require('app-contracts');
 var url = require('is-url');
+var path = require('path');
 
 //Bot that takes tweets and puts them up as Citadel posts.
 class RepostBot {
@@ -22,7 +23,9 @@ class RepostBot {
         this.tweetsIndex = -1;
         var instance = this;        
         
-        fs.readFile(__dirname + "/botsPersistence/" + instance.twitterScreenName + ".txt", (err, data) => {
+        var botPath = ("production" === process.env.NODE_ENV) ? path.resolve("./botsPersistence/") : path.resolve(__dirname + "/botsPersistence/")
+
+        fs.readFile(path.join(botPath, instance.twitterScreenName + ".txt"), (err, data) => {
             try {
                 var json = JSON.parse(data);
                 var seenTweets = json.seenTweets;
@@ -72,7 +75,10 @@ class RepostBot {
                     classInstance.checkTweets();
                     setInterval(classInstance.checkTweets, 120000);
                 } else {
-                    fs.readFile(__dirname + "/botAvatars/" + classInstance.avatarFilename, (err, data) => {
+
+                    var filePath = ("production" === process.env.NODE_ENV) ? path.resolve("./botAvatars/") : path.resolve(__dirname + "/botAvatars/")
+
+                    fs.readFile(path.join(filePath, classInstance.avatarFilename), (err, data) => {
                         var bufferedData = Buffer.from(data).toString('base64');
                         bufferedData = classInstance.avatarDataPrefix + bufferedData;
 
@@ -307,7 +313,9 @@ class RepostBot {
     saveAndFlush(tweet) {
         var instance = this;
         instance.persistence.seenTweets[tweet.id] = true;
-        fs.writeFile(__dirname + "/botsPersistence/" + instance.twitterScreenName + ".txt", JSON.stringify(instance.persistence), (err) => {
+        var botPath = ("production" === process.env.NODE_ENV) ? path.resolve("./botsPersistence/") : path.resolve(__dirname + "/botsPersistence/")
+        
+        fs.writeFile(path.join(botPath, instance.twitterScreenName + ".txt"), JSON.stringify(instance.persistence), (err) => {
             if (err) throw err;
             instance.tweetsIndex = this.tweetsIndex - 1;
             instance.flushTweetData();
