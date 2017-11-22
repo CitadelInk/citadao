@@ -44,6 +44,11 @@ module.exports = {
       new CopyWebpackPlugin([
         { from: './bots/botAvatars', to:"botAvatars" }
       ]),
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: '"production"'
+        }
+      }),
     ],
    target:"async-node"
   }
