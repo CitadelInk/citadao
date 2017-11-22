@@ -17,6 +17,12 @@
       "twitterUsername" : "VitalikButerin",
       "twitterAvatarFilename" : "vitalik.jpeg",
       "avatarDataPrefix" : "data:image/jpeg;base64,"
+    },
+    {
+      "ethAccountIndex" : 5,
+      "twitterUsername" : "SethAbramson",
+      "twitterAvatarFilename" : "seth_abramson.jpeg",
+      "avatarDataPrefix" : "data:image/jpeg;base64,"
     }
   ]
 }
