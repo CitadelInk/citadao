@@ -4,7 +4,8 @@ import appContracts from 'app-contracts';
 
 import {
   initializeContract,
-  initializeAccounts  
+  initializeAccounts ,
+  startGettingPosts 
 } from './contractPublicData'
 
 
@@ -46,14 +47,15 @@ export function setupWeb3() {
       });
 
         // can't run this in mist as of yet as we are not deployed to a public network
-        // SOON! Test against local browser to see if this works! Should see account - 1000 or whatever was reflected in the deplpoy
         if (typeof mist === "undefined") {
-          console.info("initialize accounts.")
+          console.info("initialize contracts.")
+          dispatch(initializeContract()).then(() => {
+            console.info("initialize accounts.")
             dispatch(initializeAccounts(web3Provider)).then(() => {
-              console.info("initialize contract.")
-              dispatch(initializeContract())
-              ;
+              console.info("start getting posts.")
+              dispatch(startGettingPosts())
             })
+          })
         }
   
     };

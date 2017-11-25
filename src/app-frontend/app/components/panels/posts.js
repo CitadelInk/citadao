@@ -39,6 +39,9 @@ class Posts extends Component {
 			var authorgAvatar;
 			var revisionHashes;
 			var show = false;
+			var reactionCount;
+			var reactions;
+			var mentionCount;
 			
 			if (authorg) {
 
@@ -87,11 +90,29 @@ class Posts extends Component {
 								embededPostTextMap = revision.embededPostTextMap;
 							}
 						}
+						reactionCount = revision.reactionCount;
+						reactions = revision.reactions;
+						mentionCount = revision.refCount;
 					}					
 				}			
 			}
 			if (show) {
-				return (<PostWidgetContainer revisionHashes={revisionHashes} authorgName={authorgName} authorgAvatar={authorgAvatar} submissionValue={submission} embededPostTextMap={embededPostTextMap} text={text} /*responseMap={responseMap}*/ key={key2} authorg={key.authAdd} submission={key.submissionIndex} revision={key.revisionHash} timestamp={key.timestamp}/>)
+				return (<PostWidgetContainer 
+							revisionHashes={revisionHashes} 
+							authorgName={authorgName} 
+							authorgAvatar={authorgAvatar} 
+							submissionValue={submission} 
+							embededPostTextMap={embededPostTextMap} 
+							text={text} 
+							/*responseMap={responseMap}*/ 
+							key={key2} 
+							authorg={key.authAdd} 
+							submission={key.submissionIndex} 
+							revision={key.revisionHash} 
+							timestamp={key.timestamp}
+							reactionCount={reactionCount}
+							reactions={reactions}
+							mentionCount={mentionCount}/>)
 			} else {
 				return (<div/>);
 			}

@@ -43,6 +43,9 @@ class PostPage extends Component {
 		var authorgAvatar;
 		var focusedLoadDone = false;
 		var revisionHashes;
+		var mentionCount = 0;
+		var reactionCount = 0;
+		var reactions;
 
 		if (authorgData) {
 			if(authorgData.bioSubmission) {
@@ -90,6 +93,10 @@ class PostPage extends Component {
 							if (revisionData.embededPostTextMap) {
 								embededPostTextMap = revisionData.embededPostTextMap;
 							}
+
+							mentionCount = revisionData.refCount;
+							reactions = revisionData.reactions;
+							reactionCount = revisionData.reactionCount;
 						}
 					}					
 				}			
@@ -113,7 +120,10 @@ class PostPage extends Component {
 							revision={revision} 
 							timestamp={timestamp}
 							focusedPost={true} 
-							revisionPostCallback={this.props.revisionPostCallback}/>
+							revisionPostCallback={this.props.revisionPostCallback}
+							mentionCount={mentionCount}
+							reactionCount={reactionCount}
+							reactions={reactions}/>
 					</Card>
 				</div>
 			);

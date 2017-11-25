@@ -2,13 +2,13 @@
 
 .focusedFooter {
 	position:relative;
-	border:1px solid gray;
+	border-top:1px solid #E0E0E0;
 	width:100%;
 }
 
 .unfocusedFooter {
 	position:relative;
-	border:1px solid gray;
+	border-top:1px solid #E0E0E0;
 	width:100%;
 }
 
