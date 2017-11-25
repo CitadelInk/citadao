@@ -35,38 +35,23 @@ class PostFooter extends Component {
 		} else { 
 			approvedReactions = this.props.approvedReactions; 
 		}
-		
-		if (this.props.submissionValue) {
-			var revisions = this.props.submissionValue.revisions;
 
-			if (revisions) {
-				var revision = revisions[this.props.revision];
-				if (revision) {
-					mentions = revision.refCount + " - mentions";
-				
-					if (revision.reactions) {
-						mentions += " / " + revision.reactionCount + " - reactions";
-						
-						if (this.props.focusedPost) {
-							reactionButtons = revision.reactions.map(reaction => {
-								var reactionFocused = this.props.wallet.get('selectedReactionHash') === reaction.reactionHash;
-								var buttonText = approvedReactions.get(reaction.reactionHash) + " - " + reaction.reactionReactors.length;
-								return (<div key={"reaction-div-" + reaction.reactionHash} className={styles.singleButton}>
-									{
-										reactionFocused && <ReactionList key={"reaction-list-" + reaction.reactionHash} bio={this.props.bio} users={reaction.reactionReactors} timestamps={reaction.reactionReactorsTimestamps} text={approvedReactions.get(reaction.reactionHash)} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash}/>
-									}
-										<ReactionButton key={"reaction-" + reaction.reactionHash} bio={this.props.bio} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash} text={buttonText} key={reaction.reactionHash}/>
-									</div>
-								)
-							})
-						}
+		mentions = this.props.mentionsCount + " - mentions";
+		mentions += " / " + this.props.reactionCount + " - reactions";
+	
+		if (this.props.reactions && this.props.focusedPost) {
+			reactionButtons = this.props.reactions.map(reaction => {
+				var reactionFocused = this.props.wallet.get('selectedReactionHash') === reaction.reactionHash;
+				var buttonText = approvedReactions.get(reaction.reactionHash) + " - " + reaction.reactionReactors.length;
+				return (<div key={"reaction-div-" + reaction.reactionHash} className={styles.singleButton}>
+					{
+						reactionFocused && <ReactionList key={"reaction-list-" + reaction.reactionHash} bio={this.props.bio} users={reaction.reactionReactors} timestamps={reaction.reactionReactorsTimestamps} text={approvedReactions.get(reaction.reactionHash)} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash}/>
 					}
-				}
-			}					
-			
-		}
-
-		
+						<ReactionButton key={"reaction-" + reaction.reactionHash} bio={this.props.bio} authorg={this.props.authorg} submission={this.props.submission} revision={this.props.revision} reactionValue={reaction.reactionHash} text={buttonText} key={reaction.reactionHash}/>
+					</div>
+				)
+			})
+		}		
 		
 		return (			
 			<div className={footerStyle}>
