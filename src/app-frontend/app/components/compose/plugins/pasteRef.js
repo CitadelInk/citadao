@@ -31,7 +31,8 @@ function PasteRef(options = {}) {
     postTimestamp = 'timestamp',
     revisionHashes = 'revHashes',
     mentCount = 'mentionCount',
-    reactCount = 'reactionCount'
+    reactCount = 'reactionCount',
+    bountCount = 'bountyCount'
   } = options
 
   function unwrapRef(change) {
@@ -49,7 +50,8 @@ function PasteRef(options = {}) {
                   timestamp,
                   revHashes,
                   mentionCount,
-                  reactionCount) {
+                  reactionCount,
+                  bountyCount) {
     change.insertBlock({
       type,
       isVoid: true,
@@ -63,7 +65,8 @@ function PasteRef(options = {}) {
         [postTimestamp]: timestamp,
         [revisionHashes]: revHashes,
         [mentCount]: mentionCount,
-        [reactCount]: reactionCount },
+        [reactCount]: reactionCount,
+        [bountCount]: bountyCount },
     })
   }
 
@@ -90,7 +93,8 @@ function PasteRef(options = {}) {
           json.reference.timestamp,
           json.reference.revHashes,
           json.reference.mentionCount,
-          json.reference.reactionCount);
+          json.reference.reactionCount,
+          json.reference.bountyCount);
       } catch (e) {
         console.log("caught - e: " + e);
         return;

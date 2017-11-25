@@ -36,7 +36,8 @@ class PostWidgetContainer extends Component {
 					focusedPost={false} 
 					reactionCount={this.props.reactionCount}
 					reactions={this.props.reactions}
-					mentionCount={this.props.mentionCount}/>
+					mentionCount={this.props.mentionCount}
+					bountyCount={this.props.bountyCount}/>
 				</Card>
 			</div>
 		);

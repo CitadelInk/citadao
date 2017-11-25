@@ -51,6 +51,7 @@ class Post extends Component {
 							mentionsCount={this.props.mentionCount} 
 							reactions={this.props.reactions}
 							reactionCount={this.props.reactionCount}
+							bountyCount={this.props.bountyCount}
 							/>
 				{this.props.children}
 			</div>

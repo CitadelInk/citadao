@@ -131,7 +131,8 @@ class PostSection extends Component {
 					"timestamp" : this.props.timestamp,
 					"revHashes" : this.props.revisionHashes,
 					"reactionCount" : this.props.reactionCount,
-					"mentionCount" : this.props.mentionCount
+					"mentionCount" : this.props.mentionCount,
+					"bountyCount" : this.props.bountyCount
 				}
 			}		
 			var referenceString = JSON.stringify(referenceJson);
@@ -208,7 +209,8 @@ class PostSection extends Component {
 			timestamp={props.node.data.get('timestamp')}
 			revisionHashes={props.node.data.get('revHashes')}
 			reactionCount={props.node.data.get('reactionCount')}
-			mentionCount={props.node.data.get('mentionCount')}/>
+			mentionCount={props.node.data.get('mentionCount')}
+			bountyCount={props.node.data.get('bountyCount')}/>
           </div>
         )
 	  }

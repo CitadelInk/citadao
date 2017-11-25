@@ -64,7 +64,9 @@ class PostBody extends Component {
 							revisionHash={this.props.revision} 
 							focusedPost={focusedPost}
 							mentionCount={this.props.mentionCount}
-							reactionCount={this.props.reactionCount}/>
+							reactionCount={this.props.reactionCount}
+							bountyCount={this.props.bountyCount}
+							/>
 			}
 		} else {
 			if(state && state.document.nodes) {	
@@ -95,7 +97,8 @@ class PostBody extends Component {
 								revisionHash={instance.props.revision} 
 								focusedPost={focusedPost}
 								mentionCount={this.props.mentionCount}
-								reactionCount={this.props.reactionCount}/>);	
+								reactionCount={this.props.reactionCount}
+								bountyCount={this.props.bountyCount}/>);	
 					
 				});
 			}
