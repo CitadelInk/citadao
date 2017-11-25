@@ -518,28 +518,35 @@ export const loadUserData = (authorgAddress, focusedUser , userAccount = false, 
   const {network, approvedAuthorgReactions} = getState().core;
 
   return new Promise((res, rej) => {
+    console.log("load user 1.")
       var promise1 = getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
+        console.log("load user 2.")
         dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
         dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions));
       });    
 
       var promise2 = getAccountPostKeyCount(authorgAddress).then((result) => {
+        console.log("load user 3.")
         dispatch(setAuthorgPostKeyCount(authorgAddress, result.count));
         dispatch(setAuthorgPostKeysLoadedCount(authorgAddress, 0));
         dispatch(getNext10AuthorgPosts(authorgAddress));
       })
       getFollowers(authorgAddress).then((result) => {
+        console.log("load user 4.")
         dispatch(setAuthorgFollowers(authorgAddress, result.followers));
         if (result.followers) {
           result.followers.forEach(function(authorg) {
+            console.log("load user 5.")
             dispatch(loadMiniUserData(authorg));
           })
         }
       })
       getAuthorgsFollowing(authorgAddress).then((result) => {
+        console.log("load user 6.")
         dispatch(setAuthorgFollowsAuthorgs(authorgAddress, result.authorgsFollowing));
         if (result.authorgsFollowing) {
           result.authorgsFollowing.forEach(function(authorg) {
+            console.log("load user 7.")
             dispatch(loadUserData(authorg, userAccount));
           })
         }
@@ -547,6 +554,7 @@ export const loadUserData = (authorgAddress, focusedUser , userAccount = false, 
       dispatch(loadResponseRequestsCreated(authorgAddress));
       dispatch(loadResponseRequestsReceived(authorgAddress));
       Promise.all([promise1, promise2]).then(() => {
+        console.log("load user 8.")
         res({done : true})
       })
     })

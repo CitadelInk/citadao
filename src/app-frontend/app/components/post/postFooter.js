@@ -38,6 +38,7 @@ class PostFooter extends Component {
 
 		mentions = this.props.mentionsCount + " - mentions";
 		mentions += " / " + this.props.reactionCount + " - reactions";
+		mentions += " / " + this.props.bountyCount + " - bounties";
 	
 		if (this.props.reactions && this.props.focusedPost) {
 			reactionButtons = this.props.reactions.map(reaction => {

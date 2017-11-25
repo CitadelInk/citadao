@@ -39,9 +39,10 @@ class Posts extends Component {
 			var authorgAvatar;
 			var revisionHashes;
 			var show = false;
-			var reactionCount;
+			var reactionCount = 0;
 			var reactions;
-			var mentionCount;
+			var mentionCount = 0;
+			var bountyCount = 0;
 			
 			if (authorg) {
 
@@ -112,7 +113,8 @@ class Posts extends Component {
 							timestamp={key.timestamp}
 							reactionCount={reactionCount}
 							reactions={reactions}
-							mentionCount={mentionCount}/>)
+							mentionCount={mentionCount}
+							bountyCount={bountyCount}/>)
 			} else {
 				return (<div/>);
 			}
