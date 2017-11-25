@@ -129,14 +129,16 @@ class PostSection extends Component {
 					"name" : this.props.authorgName,
 					"avatar" : this.props.authorgAvatar,
 					"timestamp" : this.props.timestamp,
-					"revHashes" : this.props.revisionHashes
+					"revHashes" : this.props.revisionHashes,
+					"reactionCount" : this.props.reactionCount,
+					"mentionCount" : this.props.mentionCount
 				}
 			}		
 			var referenceString = JSON.stringify(referenceJson);
 
 			return (
 			<CopyToClipboard text={referenceString}
-											 onCopy={() => this.setState({copied: true})}>
+							 onCopy={() => this.setState({copied: true})}>
 				<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
 					{section}
 					{showActions && 

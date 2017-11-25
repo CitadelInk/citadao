@@ -29,7 +29,9 @@ function PasteRef(options = {}) {
     authorgName = 'name',
     authorgAvatar = 'avatar',
     postTimestamp = 'timestamp',
-    revisionHashes = 'revHashes'
+    revisionHashes = 'revHashes',
+    mentCount = 'mentionCount',
+    reactCount = 'reactionCount'
   } = options
 
   function unwrapRef(change) {
@@ -45,7 +47,9 @@ function PasteRef(options = {}) {
                   name, 
                   avatar, 
                   timestamp,
-                  revHashes) {
+                  revHashes,
+                  mentionCount,
+                  reactionCount) {
     change.insertBlock({
       type,
       isVoid: true,
@@ -57,7 +61,9 @@ function PasteRef(options = {}) {
         [authorgName]: name, 
         [authorgAvatar]: avatar, 
         [postTimestamp]: timestamp,
-        [revisionHashes]: revHashes },
+        [revisionHashes]: revHashes,
+        [mentCount]: mentionCount,
+        [reactCount]: reactionCount },
     })
   }
 
@@ -69,7 +75,6 @@ function PasteRef(options = {}) {
     onPaste(event, change, editor) {
       const transfer = getEventTransfer(event)
       const { text, target } = transfer
-
       try {
         var json = JSON.parse(text);
         if (!json.reference) return;
@@ -83,7 +88,9 @@ function PasteRef(options = {}) {
           json.reference.name, 
           json.reference.avatar,
           json.reference.timestamp,
-          json.reference.revHashes);
+          json.reference.revHashes,
+          json.reference.mentionCount,
+          json.reference.reactionCount);
       } catch (e) {
         console.log("caught - e: " + e);
         return;

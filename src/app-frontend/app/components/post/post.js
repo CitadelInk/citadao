@@ -40,7 +40,9 @@ class Post extends Component {
 							submission={this.props.submission} 
 							revision={this.props.revision} 
 							sectionIndex={this.props.sectionIndex} 
-							focusedPost={this.props.focusedPost} />
+							focusedPost={this.props.focusedPost}
+							mentionCount={this.props.mentionCount}
+							reactionCount={this.props.reactionCount} />
 				<PostFooter bio={this.props.bio} 
 							authorg={this.props.authorg} 
 							submission={this.props.submission} 
