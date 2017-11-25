@@ -101,12 +101,14 @@ export const initializeContract = () => (dispatch, getState) => {
       dispatch(setWalletData({...ink}));
       dispatch(setApprovedReactions(reactions.approvedReactions));
       dispatch(setApprovedAuthorgReactions(authorgReactions.approvedAuthorgReactions));
-      dispatch(initializeNeededPosts()).then(() => {
-        res({done : true})
-      })
-  });
+      res({done : true})
+    });
   })
 };
+
+export const startGettingPosts = () => (dispatch, getState) => {
+  dispatch(initializeNeededPosts())
+}
 
 export const initializeAccounts = (web3) => dispatch => {
   return new Promise((res, rej) => {
@@ -217,6 +219,7 @@ export const giveEther = (amount, callback) => (dispatch, getState) => {
 };
 
 export default {
+  startGettingPosts,
   initializeContract,
   initializeAccounts,
   updateInkBalance,

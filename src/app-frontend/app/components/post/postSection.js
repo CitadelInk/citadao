@@ -47,6 +47,8 @@ class PostSection extends Component {
 					var embAuthorgAvatar = this.props.embededPostTextMap.get(embKey).avatar;
 					var embTimestamp = this.props.embededPostTextMap.get(embKey).timestamp;
 					var embRevHashes = this.props.embededPostTextMap.get(embKey).revisionHashes;
+					var embReactionCount = this.props.embededPostTextMap.get(embKey).reactionCount;
+					var embMentionCount = this.props.embededPostTextMap.get(embKey).mentionCount;
 
 					if (embText) {
 						var newState = Value.fromJSON(embText);
@@ -59,6 +61,8 @@ class PostSection extends Component {
 							nodeData = nodeData.set('avatar', embAuthorgAvatar);
 							nodeData = nodeData.set('timestamp', embTimestamp);
 							nodeData = nodeData.set('revHashes', embRevHashes);
+							nodeData = nodeData.set('reactionCount', embReactionCount);
+							nodeData = nodeData.set('mentionCount', embMentionCount);
 							node = node.set('data', nodeData);
 						}
 						
@@ -125,14 +129,16 @@ class PostSection extends Component {
 					"name" : this.props.authorgName,
 					"avatar" : this.props.authorgAvatar,
 					"timestamp" : this.props.timestamp,
-					"revHashes" : this.props.revisionHashes
+					"revHashes" : this.props.revisionHashes,
+					"reactionCount" : this.props.reactionCount,
+					"mentionCount" : this.props.mentionCount
 				}
 			}		
 			var referenceString = JSON.stringify(referenceJson);
 
 			return (
 			<CopyToClipboard text={referenceString}
-											 onCopy={() => this.setState({copied: true})}>
+							 onCopy={() => this.setState({copied: true})}>
 				<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
 					{section}
 					{showActions && 
@@ -200,7 +206,9 @@ class PostSection extends Component {
 			revision={props.node.data.get('revision')} 
 			sectionIndex={props.node.data.get('index')}
 			timestamp={props.node.data.get('timestamp')}
-			revisionHashes={props.node.data.get('revHashes')}/>
+			revisionHashes={props.node.data.get('revHashes')}
+			reactionCount={props.node.data.get('reactionCount')}
+			mentionCount={props.node.data.get('mentionCount')}/>
           </div>
         )
 	  }

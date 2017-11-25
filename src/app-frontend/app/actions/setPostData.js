@@ -1,5 +1,6 @@
 import appContracts from 'app-contracts';
 import localWeb3 from "../helpers/web3Helper";
+import { Node, Value } from 'slate';
 
 import {
   addReaction,
@@ -123,6 +124,36 @@ export const submitNewRevision = (postTextInput, onComplete, onFailure, revision
     var referenceKeyRevisions = [];
 
     var referenceKeyMapSet = new Map(); //using map as a set cause sets are weird or something...
+
+    var jsonInput = postTextInput.toJSON();
+    var nodes = jsonInput.document.nodes;
+
+    var firstNodeEmpty = true;
+    do {
+      var firstNode = nodes[0]
+      var node = Node.fromJSON(firstNode);
+      var textEmpty = !(node.text) || (node.text == "")
+      if(!node.isVoid && textEmpty) {
+        nodes.shift();
+      } else {
+        firstNodeEmpty = false;
+      }
+    } while (firstNodeEmpty);
+
+    var lastNodeEmpty = true;
+    do {
+      var lastNode = nodes[nodes.length - 1]
+      var node = Node.fromJSON(lastNode);
+      var textEmpty = !(node.text) || (node.text == "")
+      if(!node.isVoid && textEmpty) {
+        nodes.pop();
+      } else {
+        lastNodeEmpty = false;
+      }
+    } while (lastNodeEmpty);
+
+    jsonInput.nodes = nodes;
+    postTextInput = Value.fromJSON(jsonInput);
 
     postTextInput.document.nodes.map((section) => {
       try {

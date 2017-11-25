@@ -131,7 +131,7 @@ const RULES = [
       textBlocks.forEach(function(block) {
         var textLeaves = block.split(' ');
         textLeaves.forEach(function(leaf) {
-          console.log("LEAF: " + leaf)
+          //console.log("LEAF: " + leaf)
           if (url(leaf)) {
               nodes.push({
                   "kind":"inline",

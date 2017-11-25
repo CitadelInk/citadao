@@ -40,14 +40,18 @@ class Post extends Component {
 							submission={this.props.submission} 
 							revision={this.props.revision} 
 							sectionIndex={this.props.sectionIndex} 
-							focusedPost={this.props.focusedPost} />
-				{!this.props.embeded && 
-				<PostFooter  bio={this.props.bio} 
+							focusedPost={this.props.focusedPost}
+							mentionCount={this.props.mentionCount}
+							reactionCount={this.props.reactionCount} />
+				<PostFooter bio={this.props.bio} 
 							authorg={this.props.authorg} 
 							submission={this.props.submission} 
 							revision={this.props.revision} 
 							focusedPost={this.props.focusedPost} 
-							submissionValue={this.props.submissionValue} />}
+							mentionsCount={this.props.mentionCount} 
+							reactions={this.props.reactions}
+							reactionCount={this.props.reactionCount}
+							/>
 				{this.props.children}
 			</div>
 		);

@@ -352,7 +352,20 @@ export const doBasicLoad = (authorgAddress, submissionIndex, revisionHash, times
                   })
                   if (results) {
                     results.forEach(function(promiseResult) {
-                      dispatch(addEmbededPostMapping(authorgAddress, submissionIndex, revisionHash, promiseResult.postKey, {text : promiseResult.result.revisionSwarmText, name : promiseResult.userResult.name, avatar : promiseResult.userResult.avatar, timestamp : promiseResult.timestamp, revisionHashes : promiseResult.revisionHashes}))
+                      dispatch(addEmbededPostMapping(authorgAddress, 
+                                                      submissionIndex, 
+                                                      revisionHash, 
+                                                      promiseResult.postKey, 
+                                                      {
+                                                        text : promiseResult.result.revisionSwarmText, 
+                                                        name : promiseResult.userResult.name, 
+                                                        avatar : promiseResult.userResult.avatar, 
+                                                        timestamp : promiseResult.timestamp, 
+                                                        revisionHashes : promiseResult.revisionHashes,
+                                                        reactionCount : promiseResult.reactionCount,
+                                                        mentionCount: promiseResult.mentionCount
+                                                      }
+                                                    ))
                     })
                   }
                   res({result, userResult, revisionHashes, references, timestamp})
@@ -376,7 +389,7 @@ export const doUpdateLoad = (authorgAddress, submissionIndex, revisionHash, time
       getNumReferences(authorgAddress, submissionIndex, revisionHash)
     ]).then((refs) => {
       dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionIndex,revisionHash, refs[2].count));
-      res({count : refs.count});
+      res({mentionCount : refs[2].count, reactionCount : refs[0].reactionCount});
     })
   })
 }
@@ -399,7 +412,14 @@ export const doUnfocusedLoad = (authorgAddress, submissionIndex, revisionHash, t
      [...promiseList]
     ).then(([basicResult, updateResult]) => {
       //TODO: get rev hashes via doUpdateLoad instead of crap I added to doBasicLoad
-      res({result : basicResult.result, userResult : basicResult.userResult, postKey : key, timestamp : basicResult.timestamp, revisionHashes : basicResult.revisionHashes})
+      res({ result : basicResult.result, 
+            userResult : basicResult.userResult, 
+            postKey : key, 
+            timestamp :  basicResult.timestamp, 
+            revisionHashes : basicResult.revisionHashes,
+            mentionCount : updateResult.mentionCount,
+            reactionCount : updateResult.reactionCount
+          })
     })
   })
   unfocusedLoadPromises.set(key, promise);
@@ -460,8 +480,11 @@ export const loadSubmissionRevisionHashList = (authorgAddress, submissionIndex) 
 }
 
 export const getReactions = (authorgAddress, submissionIndex, revisionHash, approvedReactions) => (dispatch) => {
-  return getRevisionReactions(authorgAddress, submissionIndex, revisionHash, approvedReactions).then((reactions) => {
-    dispatch(setRevisionReactions(authorgAddress, submissionIndex, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
+  return new Promise((res, rej) => {
+    getRevisionReactions(authorgAddress, submissionIndex, revisionHash, approvedReactions).then((reactions) => {
+      dispatch(setRevisionReactions(authorgAddress, submissionIndex, revisionHash, reactions.revisionReactionReactors, reactions.reactionCount))
+      res({reactionCount : reactions.reactionCount})
+    })
   })
 }
 

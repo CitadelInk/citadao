@@ -479,7 +479,9 @@ class ComposeRichText extends React.Component {
             revision={props.node.data.get('revision')} 
             sectionIndex={props.node.data.get('index')}
             timestamp={props.node.data.get('timestamp')}
-            revisionHashes={props.node.data.get('revHashes')}/>
+            revisionHashes={props.node.data.get('revHashes')}
+            mentionCount={props.node.data.get('mentionCount')}
+            reactionCount={props.node.data.get('reactionCount')}/>
           </div>
         )
       }
