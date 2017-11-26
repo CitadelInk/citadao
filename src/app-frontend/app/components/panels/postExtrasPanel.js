@@ -33,9 +33,23 @@ class PostExtrasPanel extends Component {
 
 
 	render() {
-		const authorg = this.props.router.params["authorg"];
-		const submission = this.props.router.params["subHash"];
-		const revision = this.props.router.params["revHash"];
+		var authorg;
+		var submission;
+		var revision;
+
+		if (this.props.router && this.props.router.params) {
+			authorg = this.props.router.params["authorg"];
+			submission = this.props.router.params["subHash"];
+			revision = this.props.router.params["revHash"];
+		}
+
+		if (!authorg) {
+			authorg = this.props.authorg;
+			submission = this.props.submission;
+			revision = this.props.revision;
+		}
+
+		
 		var post = "loading...";
 		var timestamp = undefined;
 		
@@ -127,11 +141,6 @@ class PostExtrasPanel extends Component {
 				</TabPanel>
 			</Tabs>
 		);
-		
-
-
-
-
 	}
 }
 

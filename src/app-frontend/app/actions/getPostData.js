@@ -239,6 +239,7 @@ export const addEmbededPostMapping = (authAdd, subHash, revHash, embKey, embResu
 export const initializeNeededPosts = () => (dispatch, getState) => {
   const {ui} = getState().core;
   const {router} = getState();
+
   if(router.result.title === 'Home') {
     return dispatch(initializeTestTypedRevisions());
   } else if (router.result.title === 'Post') {
@@ -247,6 +248,8 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
     }
   } else if (router.result.title === 'Account') {
     return dispatch(loadUserData(router.params["account"], true, false, router.params["revHash"]));
+  } else if (router.result.title === 'Whitepaper') {
+    return dispatch(doFocusedLoad('0x9a47ad077c5c2ef01667190f243d1ee676c47a43', '2', '0x1ac0b392e2f7732e684724a04f6cc73cf3430bb97239a0ca0f1dcf354f6cf7e8', undefined, true))
   } else {
     return dispatch(initializeTestTypedRevisions());
   }

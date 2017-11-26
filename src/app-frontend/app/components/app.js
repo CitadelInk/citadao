@@ -139,6 +139,23 @@ class App extends Component {
               <Landing />
             </Fragment>
             <Fragment forRoute="/whitepaper">
+            <div>
+                <Header />
+                <PostPage 
+                authorg={'0x9287a797ca9d0d477db92bd8ae350bce99fa58f1'}
+                submission={'12'}
+                revision={'0x4b9059322239b527b60e1d8d11d8f656a90f50d3930ff85bc684e8bbda24bad4'}
+                standardPostValue={this.state.standardPost}
+                standardPostCallback={this.onStandardPostChanged}
+                onStandardPostComplete={this.onStandardPostComplete}
+                bioPostValue={this.state.bioPost}
+                bioPostCallback={this.onBioPostChanged}
+                onBioPostComplete={this.onBioPostComplete}
+                revisionPostValue={this.state.revisionPost}
+                revisionPostCallback={this.onRevisionPostChanged}
+                onRevisionPostComplete={this.onRevisionPostComplete}
+                />          
+              </div>
             </Fragment>
           </div>
         </Fragment>
