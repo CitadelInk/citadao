@@ -249,7 +249,7 @@ export const initializeNeededPosts = () => (dispatch, getState) => {
   } else if (router.result.title === 'Account') {
     return dispatch(loadUserData(router.params["account"], true, false, router.params["revHash"]));
   } else if (router.result.title === 'Whitepaper') {
-    return dispatch(doFocusedLoad('0x9a47ad077c5c2ef01667190f243d1ee676c47a43', '2', '0x1ac0b392e2f7732e684724a04f6cc73cf3430bb97239a0ca0f1dcf354f6cf7e8', undefined, true))
+    return dispatch(doFocusedLoad('0x9287a797ca9d0d477db92bd8ae350bce99fa58f1', '12', '0x4b9059322239b527b60e1d8d11d8f656a90f50d3930ff85bc684e8bbda24bad4', undefined, true))
   } else {
     return dispatch(initializeTestTypedRevisions());
   }
