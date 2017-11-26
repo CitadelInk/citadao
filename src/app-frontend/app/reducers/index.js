@@ -19,6 +19,7 @@ const {
   ADD_POST_KEY,
   SET_AUTHORG_INFO,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
+  SET_AUTH_SUB_REV_BOUNTY_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
   WEB_SETUP_COMPLETE,
   SET_LOAD_STARTED,
@@ -132,7 +133,7 @@ const bio = (state = {}, action) => {
           revisions : bioRevisionHashes,
           [bioRevHash]: Object.assign({}, state[bioRevHash], {
             name : action.data.bioRevision.name,
-            text : action.data.bioRevision.text,
+            text : Value.fromJSON(action.data.bioRevision.text),
             image : action.data.bioRevision.image,
             timestamp : action.data.bioRevisionTimestamps[action.data.bioLoadedIndex]
           })
@@ -172,6 +173,12 @@ const revs = (state = {}, action) => {
       return Object.assign({}, state, {
         [revHash]: Object.assign({}, state[revHash], {
           refCount: action.data.refCount
+        })
+      });
+    case SET_AUTH_SUB_REV_BOUNTY_COUNT:
+      return Object.assign({}, state, {
+        [revHash]: Object.assign({}, state[revHash], {
+          bountyCount: action.data.bountyCount
         })
       });
     case SET_AUTH_SUB_REV_REF_KEY:
@@ -331,6 +338,7 @@ const subs = (state = {}, action) => {
     case SET_REVISION_REACTIONS:
     case SET_AUTH_SUB_REV_REF_KEY:
     case SET_AUTH_SUB_REV_REFERENCE_COUNT:
+    case SET_AUTH_SUB_REV_BOUNTY_COUNT:
     case SET_REVISION_SWARM_DATA:
     case SET_LOAD_STARTED:
     case SET_REFERENCE:
@@ -368,6 +376,7 @@ const auths = (state = {}, action) => {
       case SET_REVISION_REACTIONS:
       case SET_AUTH_SUB_REV_REF_KEY:
       case SET_AUTH_SUB_REV_REFERENCE_COUNT:
+      case SET_AUTH_SUB_REV_BOUNTY_COUNT:
       case SET_REVISION_SWARM_DATA:
       case SET_LOAD_STARTED:
       case SET_REFERENCE:

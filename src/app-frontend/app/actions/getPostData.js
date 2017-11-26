@@ -33,6 +33,10 @@ import {
   loadResponseRequestsReceived
 } from './responseRequestActions'
 
+import {
+  getNumPostBounties
+} from '../api/citadelResponseRequestCalls'
+
 export const ADD_POST_KEY = "ADD_POST_KEY";
 export const addPostKey = (authorgAddress, submissionIndex, revisionHash, timestamp) => {
   return {
@@ -117,6 +121,14 @@ export const setAuthSubRevReferenceCount = (authAdd, subHash, revHash, count) =>
   return {
     type: SET_AUTH_SUB_REV_REFERENCE_COUNT,
     data: {authAdd: authAdd, subHash: subHash, revHash: revHash, refCount:count}
+  }
+}
+
+export const SET_AUTH_SUB_REV_BOUNTY_COUNT = "SET_AUTH_SUB_REV_BOUNTY_COUNT";
+export const setAuthSubRevBountyCount = (authAdd, subHash, revHash, count) => {
+  return {
+    type: SET_AUTH_SUB_REV_BOUNTY_COUNT,
+    data: {authAdd: authAdd, subHash: subHash, revHash: revHash, bountyCount:count}
   }
 }
 
@@ -363,7 +375,8 @@ export const doBasicLoad = (authorgAddress, submissionIndex, revisionHash, times
                                                         timestamp : promiseResult.timestamp, 
                                                         revisionHashes : promiseResult.revisionHashes,
                                                         reactionCount : promiseResult.reactionCount,
-                                                        mentionCount: promiseResult.mentionCount
+                                                        mentionCount: promiseResult.mentionCount,
+                                                        bountyCount : promiseResult.bountyCount
                                                       }
                                                     ))
                     })
@@ -386,10 +399,12 @@ export const doUpdateLoad = (authorgAddress, submissionIndex, revisionHash, time
     Promise.all([
       dispatch(getReactions(authorgAddress, submissionIndex, revisionHash, approvedReactions)),
       dispatch(loadSubmissionRevisionHashList(authorgAddress, submissionIndex)),
-      getNumReferences(authorgAddress, submissionIndex, revisionHash)
+      getNumReferences(authorgAddress, submissionIndex, revisionHash),
+      getNumPostBounties(authorgAddress, submissionIndex, revisionHash)
     ]).then((refs) => {
       dispatch(setAuthSubRevReferenceCount(authorgAddress, submissionIndex,revisionHash, refs[2].count));
-      res({mentionCount : refs[2].count, reactionCount : refs[0].reactionCount});
+      dispatch(setAuthSubRevBountyCount(authorgAddress, submissionIndex, revisionHash, refs[3].bountyCount))
+      res({mentionCount : refs[2].count, reactionCount : refs[0].reactionCount, bountyCount : refs[3].bountyCount});
     })
   })
 }
@@ -418,7 +433,8 @@ export const doUnfocusedLoad = (authorgAddress, submissionIndex, revisionHash, t
             timestamp :  basicResult.timestamp, 
             revisionHashes : basicResult.revisionHashes,
             mentionCount : updateResult.mentionCount,
-            reactionCount : updateResult.reactionCount
+            reactionCount : updateResult.reactionCount,
+            bountyCount : updateResult.bountyCount
           })
     })
   })
@@ -428,10 +444,11 @@ export const doUnfocusedLoad = (authorgAddress, submissionIndex, revisionHash, t
 
 export const doDetailLoad = (authorgAddress, submissionIndex, revisionHash, timestamp = undefined, firstLevel = true, focusedPost = false) => (dispatch, getState) => {
   return new Promise((res, rej) =>{
-    getNumReferences(authorgAddress, submissionIndex, revisionHash).then((refs) => {
-      dispatch(setAuthSubRevReferenceCount(refs));
+    Promise.all([getNumReferences(authorgAddress, submissionIndex, revisionHash), getNumPostBounties(authorgAddress, submissionIndex, revisionHash)]).then((refs) => {
+      dispatch(setAuthSubRevReferenceCount(refs[0]));
+      dispatch(setAuthSubRevBountyCount(authorgAddress, submissionIndex, revisionHash, refs[1].bountyCount));
       var refPromises = [];
-      for(var i = 0; i < refs.count; i++) {
+      for(var i = 0; i < refs[0].count; i++) {
         refPromises.push(dispatch(asyncLoadRef(authorgAddress, submissionIndex, revisionHash, i)));
       }
       Promise.all([...refPromises, dispatch(loadPostResponseRequests(authorgAddress, submissionIndex, revisionHash))])
@@ -518,28 +535,35 @@ export const loadUserData = (authorgAddress, focusedUser , userAccount = false, 
   const {network, approvedAuthorgReactions} = getState().core;
 
   return new Promise((res, rej) => {
+    console.log("load user 1.")
       var promise1 = getAccountInfo(authorgAddress, network.web3, specificRev).then((info) => {
+        console.log("load user 2.")
         dispatch(setAuthorgInfo(authorgAddress, info.bioRevisionHashes, info.bioRevisionTimestamps, info.bioLoadedIndex, info.revisionBio));
         dispatch(loadAuthorgBioReactions(authorgAddress, info.bioRevisionHashes[info.bioLoadedIndex], approvedAuthorgReactions));
       });    
 
       var promise2 = getAccountPostKeyCount(authorgAddress).then((result) => {
+        console.log("load user 3.")
         dispatch(setAuthorgPostKeyCount(authorgAddress, result.count));
         dispatch(setAuthorgPostKeysLoadedCount(authorgAddress, 0));
         dispatch(getNext10AuthorgPosts(authorgAddress));
       })
       getFollowers(authorgAddress).then((result) => {
+        console.log("load user 4.")
         dispatch(setAuthorgFollowers(authorgAddress, result.followers));
         if (result.followers) {
           result.followers.forEach(function(authorg) {
+            console.log("load user 5.")
             dispatch(loadMiniUserData(authorg));
           })
         }
       })
       getAuthorgsFollowing(authorgAddress).then((result) => {
+        console.log("load user 6.")
         dispatch(setAuthorgFollowsAuthorgs(authorgAddress, result.authorgsFollowing));
         if (result.authorgsFollowing) {
           result.authorgsFollowing.forEach(function(authorg) {
+            console.log("load user 7.")
             dispatch(loadUserData(authorg, userAccount));
           })
         }
@@ -547,6 +571,7 @@ export const loadUserData = (authorgAddress, focusedUser , userAccount = false, 
       dispatch(loadResponseRequestsCreated(authorgAddress));
       dispatch(loadResponseRequestsReceived(authorgAddress));
       Promise.all([promise1, promise2]).then(() => {
+        console.log("load user 8.")
         res({done : true})
       })
     })
@@ -650,6 +675,7 @@ export default {
   ADD_POST_KEY,
   SET_AUTHORG_INFO,
   SET_AUTH_SUB_REV_REFERENCE_COUNT,
+  SET_AUTH_SUB_REV_BOUNTY_COUNT,
   SET_AUTH_SUB_REV_REF_KEY,
   SET_REFERENCE,
   SET_LOAD_STARTED,

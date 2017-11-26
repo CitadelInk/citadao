@@ -17,7 +17,8 @@ import {
 import {
   loadUserData,
   loadMiniUserData,
-  doUnfocusedLoad
+  doUnfocusedLoad,
+  doFocusedLoad
 } from './getPostData'
 
 
@@ -65,13 +66,13 @@ export const submitResponseRequest = (recipientUser, postUser, postSubmission, p
       var hasReloaded = false;
       resulty.event.watch(function(error,result){
         if (!error && result.transactionHash === resulty.tx_id) {
-          dispatch(loadPost(postUser, postSubmission, postRevision, undefined, true, true));
+          dispatch(doFocusedLoad(postUser, postSubmission, postRevision, undefined, true, true));
           hasReloaded = true;
         }
       });
       setTimeout(function() {
         if (!hasReloaded) {
-          dispatch(loadPost(postUser, postSubmission, postRevision, undefined, true, true));
+          dispatch(doFocusedLoad(postUser, postSubmission, postRevision, undefined, true, true));
         }
       }, 3000);
     }).catch(function(e) {

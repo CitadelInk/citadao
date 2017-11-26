@@ -45,6 +45,7 @@ class PostPage extends Component {
 		var revisionHashes;
 		var mentionCount = 0;
 		var reactionCount = 0;
+		var bountyCount = 0;
 		var reactions;
 
 		if (authorgData) {
@@ -97,6 +98,7 @@ class PostPage extends Component {
 							mentionCount = revisionData.refCount;
 							reactions = revisionData.reactions;
 							reactionCount = revisionData.reactionCount;
+							bountyCount = revisionData.bountyCount;
 						}
 					}					
 				}			
@@ -123,7 +125,8 @@ class PostPage extends Component {
 							revisionPostCallback={this.props.revisionPostCallback}
 							mentionCount={mentionCount}
 							reactionCount={reactionCount}
-							reactions={reactions}/>
+							reactions={reactions}
+							bountyCount={bountyCount}/>
 					</Card>
 				</div>
 			);

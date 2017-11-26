@@ -54,12 +54,16 @@ export const getAuthorgPostKey = (account, index) => {
 }
 
 export const getAccountInfo = (account, web3, specificRev = undefined) => {
+  console.log("getAccountInfo 1.")
    return new Promise((res, rej) => {
+    console.log("getAccountInfo 2.")
     var t0 = performance.now();
     appContracts.Ink.deployed()
     .then((instance) => {
+      console.log("getAccountInfo 3.")
       instance.getBioRevisions(account) 
       .then((result) => {
+        console.log("getAccountInfo 4.")
         var bioRevisions = result[0];
         var timestamps = result[1];
         if(bioRevisions !== null) {
@@ -71,9 +75,10 @@ export const getAccountInfo = (account, web3, specificRev = undefined) => {
             const bioToLoad = bioRevisions[bioToLoadIndex];
             getAccountBioRevision(bioToLoad, web3)
             .then((data) => {
-              var revision = JSON.parse(data.selectedBioRevision.toString());
+              console.log("getAccountInfo 5.")
+              var revision = JSON.parse(data.selectedBioRevision);
               var t1 = performance.now();
-              console.debug("getAccountInfo took " + (t1 - t0) + " milliseconds.")
+              console.info("getAccountInfo took " + (t1 - t0) + " milliseconds.")
               res({
                 authorg : account,
                 bioRevisionHashes : bioRevisions,
