@@ -132,7 +132,7 @@ const bio = (state = {}, action) => {
           revisions : bioRevisionHashes,
           [bioRevHash]: Object.assign({}, state[bioRevHash], {
             name : action.data.bioRevision.name,
-            text : action.data.bioRevision.text,
+            text : Value.fromJSON(action.data.bioRevision.text),
             image : action.data.bioRevision.image,
             timestamp : action.data.bioRevisionTimestamps[action.data.bioLoadedIndex]
           })
