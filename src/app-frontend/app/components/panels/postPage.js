@@ -98,6 +98,7 @@ class PostPage extends Component {
 							mentionCount = revisionData.refCount;
 							reactions = revisionData.reactions;
 							reactionCount = revisionData.reactionCount;
+							bountyCount = revisionData.bountyCount;
 						}
 					}					
 				}			
