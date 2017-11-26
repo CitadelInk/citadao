@@ -2,6 +2,12 @@ export const routes = {
     '/': {
       title: 'Home',
     },
+    '/whitepaper/': {
+        title: 'Whitepaper',
+    },
+    '/whitepaper': {
+        title: 'Whitepaper',
+    },
     '/landing': {
         title: 'Landing',
     },
@@ -9,12 +15,12 @@ export const routes = {
         title: 'Debug',
     },
     '/user/:account': {
-        title: 'Account'
+        title: 'Account',
     },
     '/user/:account/rev/:revHash': {
-        title: 'Account'
+        title: 'Account',
     },
     '/post/authorg/:authorg/sub/:subHash/rev/:revHash': {
         title: 'Post',
-    },
+    }
   };
