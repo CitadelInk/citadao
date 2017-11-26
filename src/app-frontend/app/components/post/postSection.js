@@ -29,7 +29,6 @@ class PostSection extends Component {
 
 	render() {
 		var reference;
-
 		var node = this.props.section;
 		if (node.data.get)  {
 			var authorg = node.data.get("authorg");
@@ -49,6 +48,7 @@ class PostSection extends Component {
 					var embRevHashes = this.props.embededPostTextMap.get(embKey).revisionHashes;
 					var embReactionCount = this.props.embededPostTextMap.get(embKey).reactionCount;
 					var embMentionCount = this.props.embededPostTextMap.get(embKey).mentionCount;
+					var embBountyCount = this.props.embededPostTextMap.get(embKey).bountyCount;
 
 					if (embText) {
 						var newState = Value.fromJSON(embText);
@@ -63,6 +63,7 @@ class PostSection extends Component {
 							nodeData = nodeData.set('revHashes', embRevHashes);
 							nodeData = nodeData.set('reactionCount', embReactionCount);
 							nodeData = nodeData.set('mentionCount', embMentionCount);
+							nodeData = nodeData.set('bountyCount', embBountyCount);
 							node = node.set('data', nodeData);
 						}
 						
@@ -90,8 +91,8 @@ class PostSection extends Component {
 				<Editor 
 					readOnly 
 					value={state} 
-         	renderNode={this.renderNode}
-          renderMark={this.renderMark} />
+         			renderNode={this.renderNode}
+          			renderMark={this.renderMark} />
 			</div>);
 		var actions = (<PostSectionActions
               className={styles.actionsSection}
@@ -106,7 +107,7 @@ class PostSection extends Component {
 							revisionHash={this.props.revisionHash} 
 							sectionIndex={this.props.sectionIndex} />);
 		
-		if(this.props.focusedPost){				
+		if(this.props.focusedPost && !this.props.bio){				
 			if(this.props.section.type == "ref") {
 				showActions = false;
 			} else if (this.props.section.type == "paragraph") {
@@ -142,18 +143,13 @@ class PostSection extends Component {
 							 onCopy={() => this.setState({copied: true})}>
 				<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
 					{section}
-					{showActions && 
-						actions
-					}
+					{actions}
 				</div>
 			</CopyToClipboard>);
 		} else {
 			return (			
 				<div ref={el => this.decoratedComponent = el} className={styles.sectionDiv}>
 					{section}
-					{showActions && 
-						actions
-					}
 				</div>
 			);
 		}		

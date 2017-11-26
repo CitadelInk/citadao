@@ -81,7 +81,6 @@ class PostBody extends Component {
 					if (focusedPost && this.props.responseMap) {
 						responses = this.props.responseMap.get(i);
 					}		
-								
 					return (<PostSection 
 								authorgAvatar={this.props.authorgAvatar} 
 								timestamp={this.props.timestamp}
@@ -98,12 +97,11 @@ class PostBody extends Component {
 								focusedPost={focusedPost}
 								mentionCount={this.props.mentionCount}
 								reactionCount={this.props.reactionCount}
-								bountyCount={this.props.bountyCount}/>);	
-					
+								bountyCount={this.props.bountyCount}
+								bio={this.props.bio}/>);	
 				});
 			}
 		}
-
 		return (			
 			<div className={bodyClassName}>{body}</div>
 		);

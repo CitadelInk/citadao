@@ -88,6 +88,20 @@ export const getCitadelResponseRequestInkAddress = () => {
   })
 }
 
+export const getNumPostBounties  = (postUser, postSubmission, postRevision) => {
+  var t0 = performance.now();
+  return new Promise((res, rej) => {
+    appContracts.CitadelResponseRequest.deployed()
+    .then((instance) => {
+      instance.getOffererRecipientKeysForPost(postUser, postSubmission, postRevision).then((result) => {
+        var t1 = performance.now();
+        console.debug("getPostResponseRequestOfferers took " + (t1 - t0) + " milliseconds.")
+        res({bountyCount : result[0].length});
+      })
+    })
+  })
+}
+
 export const getPostResponseRequestOfferers = (postUser, postSubmission, postRevision) => {
   var t0 = performance.now();
   return new Promise((res, rej) => {

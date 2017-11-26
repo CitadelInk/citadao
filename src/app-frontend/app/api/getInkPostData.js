@@ -76,7 +76,7 @@ export const getAccountInfo = (account, web3, specificRev = undefined) => {
             getAccountBioRevision(bioToLoad, web3)
             .then((data) => {
               console.log("getAccountInfo 5.")
-              var revision = JSON.parse(data.selectedBioRevision.toString());
+              var revision = JSON.parse(data.selectedBioRevision);
               var t1 = performance.now();
               console.info("getAccountInfo took " + (t1 - t0) + " milliseconds.")
               res({
