@@ -27,7 +27,6 @@ class Header extends Component {
 		this.handleAccountSelected = this.handleAccountSelected.bind(this);
 		this.gotoAccountPageClicked = this.gotoAccountPageClicked.bind(this);
 		this.gotoDebugPageClicked = this.gotoDebugPageClicked.bind(this);
-		this.gotoLandingPageClicked = this.gotoLandingPageClicked.bind(this);
 		this.handleBuyMoreClicked = this.handleBuyMoreClicked.bind(this);
 		this.handleClickDiv = this.handleClickDiv.bind(this);
 		this.handleHomeClicked = this.handleHomeClicked.bind(this);
@@ -88,7 +87,7 @@ class Header extends Component {
 		if (account) {
 			accountsDropDown = <b>Account: {account} </b>;
 		} else {
-			accountsDropDown = <p style={pStyle}>No account found. Please unlock MetaMask, set network to 'Custom RPC' URL = "http://citadel.ink:8545/" then refresh the page.</p>
+			accountsDropDown = <p style={pStyle}>No account found. Please unlock MetaMask, set network to 'Custom RPC' URL = "http://proto.citadel.ink:8545/" then refresh the page.</p>
 		}
 
 
@@ -102,7 +101,7 @@ class Header extends Component {
 			<span><Link href="/debug"><u>View Debug Page</u></Link></span>
 		);*/
 		const gotoLandingPage = (
-			<span><Link href="/landing"><u>What is C I T A D E L.ink?</u></Link></span>
+			<span><a href="http://citadel.ink">What is CITADEL.ink ?</a></span>
 		);
 		var ethBalanceVal = this.props.wallet.get('ethBalance');
 		const ethBalance = (
@@ -154,9 +153,6 @@ class Header extends Component {
 
 	gotoDebugPageClicked(e) {
 		this.props.dispatch(navigatePage({page:'debug', route:'\/debug'}));
-	}
-	gotoLandingPageClicked(e) {
-		this.props.dispatch(navigatePage({page:'landing', route:'\/landing'}));
 	}
 }
 
