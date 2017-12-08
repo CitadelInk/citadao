@@ -142,9 +142,9 @@ class App extends Component {
             <div>
                 <Header />
                 <PostPage 
-                authorg={'0x9287a797ca9d0d477db92bd8ae350bce99fa58f1'}
+                authorg={'0x696e017e56171dda7977978b9ed3f11e737356ab'}
                 submission={'12'}
-                revision={'0x4b9059322239b527b60e1d8d11d8f656a90f50d3930ff85bc684e8bbda24bad4'}
+                revision={'0xb63e3b4a50be8752add75b05dcbe74f57215c1668e75195be8fb51e7541fcab0'}
                 standardPostValue={this.state.standardPost}
                 standardPostCallback={this.onStandardPostChanged}
                 onStandardPostComplete={this.onStandardPostComplete}
